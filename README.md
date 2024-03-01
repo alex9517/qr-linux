@@ -18,12 +18,12 @@ It's HTML/CSS/JS, manually created, i.e. source files are readable and editable 
 Probably I should have excluded JavaScript and jQuery. And obviously `main.css` requires optimization. But this is an old project
 and radical changes would be time consuming. So, maybe some day ...
 
-There are two versions: one for the big screens, one for the smartphones.
+There are two versions: one for the big screens (PC, laptop), one for the smartphones.
 
-- [PC version](https://alex9517.github.io/qr-linux/index_2.html) is two column (iframes), fixed width (1294px), tested mostly with
+- [PC version](https://alex9517.github.io/qr-linux/index_2.html) is two columns (iframes), fixed width (1294px), tested mostly with
 Mozilla Firefox.
 - [Mobile version](https://alex9517.github.io/qr-linux) tested with Android smartphone, not tested with any tablets. I think the PC
-version may be appropriate for a 10" tablets.
+version may be acceptable for the 10" (or bigger) tablets.
 
 
 ## Disclaimer
