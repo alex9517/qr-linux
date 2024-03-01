@@ -20,9 +20,10 @@ and radical changes would be time consuming. So, maybe some day ...
 
 There are two versions: one for the big screens, one for the smartphones.
 
-- [PC version](index_2.html) is two column (iframes), fixed width (1294px), tested mostly with Mozilla Firefox.
-- [Mobile version](index.html) tested with Android smartphone, not tested with any tablets. I think the PC version may be
-appropriate for a 10" tablets.
+- [PC version](https://alex9517.github.io/qr-linux/index_2.html) is two column (iframes), fixed width (1294px), tested mostly with
+Mozilla Firefox.
+- [Mobile version](https://alex9517.github.io/qr-linux) tested with Android smartphone, not tested with any tablets. I think the PC
+version may be appropriate for a 10" tablets.
 
 
 ## Disclaimer
