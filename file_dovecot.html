@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference / dovecot.conf</title>
+<meta name="description" content="linux quick reference, dovecot config file" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<pre>
+# 2.0.13: /etc/dovecot/dovecot.conf
+# OS: Linux 3.0.0-12-server x86_64 Ubuntu 11.10 ext4
+listen = *
+auth_mechanisms = plain login
+disable_plaintext_auth = no
+log_path = /var/vmail/dovecot-deliver.log
+log_timestamp = "%Y-%m-%d %H:%M:%S "
+mail_location = maildir:/var/vmail/%d/%n
+# mail_debug = yes
+# auth_debug = yes
+# lda_mailbox_autocreate = yes
+namespace {
+  inbox = yes
+  location =
+  prefix = INBOX.
+  separator = .
+  type = private
+}
+passdb {
+  args = /etc/dovecot/dovecot-sql.conf
+  driver = sql
+}
+protocols = imap pop3
+service auth {
+  unix_listener /var/spool/postfix/private/auth {
+    user = postfix
+    group = postfix
+    mode = 0660
+  }
+  unix_listener auth-master {
+    user = vmail
+    group = vmail
+    mode = 0660
+  }
+  unix_listener auth-userdb {
+    user = vmail
+    group = vmail
+    mode = 0660
+  }
+# user = root
+}
+ssl_cert = &lt;/etc/ssl/certs/servcert.pem
+ssl_key = &lt;/etc/ssl/private/servkey.pem
+
+userdb {
+  args = /etc/dovecot/dovecot-sql.conf
+  driver = sql
+}
+protocol lda {
+  auth_socket_path = /var/run/dovecot/auth-master
+  log_path = /var/vmail/dovecot-deliver.log
+  mail_plugins = sieve
+  postmaster_address = postmaster@example.com
+}
+protocol pop3 {
+  pop3_uidl_format = %08Xu%08Xv
+}</pre>
+
+</div>
+
+</body></html>

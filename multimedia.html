@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (cdparanoia, lame, mkisofs, growisofs)</title>
+<meta name="description" content="linux quick reference, CD, DVD, DVD+RW, audio, mp3, wav, cdparanoia, lame, mkisofs, growisofs, cdrecord" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<h1 class="part">
+<a name="mmedia">Multimedia></a></h1>
+
+<div id="contents" style="margin-top:0px">
+<table class="menu">
+<tr>
+<td class="menu1"><a href="#ripping">Audio CD ripping</a></td>
+<td class="menu2"><a href="#blank_dvdrw">Blanking DVD+RW</a></td></tr>
+
+<tr>
+<td class="menu1"><a href="#wav2mp3">WAV &gt;&gt; MP3</a></td>
+<td class="menu2"><a href="#audio_stack">MP3 player (mpg321)</a></td></tr>
+
+<tr>
+<td class="menu1"><a href="#video_dvd">Video DVD creation</a></td>
+<td class="menu2"><a href="#mplayer">Video / Mplayer</a></td></tr>
+
+<tr>
+<td class="menu1"><a href="#avconv">Video / ffmpeg, avconv</a></td>
+<td class="menu2"><a href="#anim_gif">Video &gt;&gt;  Anim GIF</a></td></tr>
+
+</table>
+
+</div>
+<p>
+See also <a href="misc.html">Miscellaneous : Data CD/DVD creation</a>.</p>
+
+<a name="audio_stack">
+<p class="center">Linux audio stack</p>
+<img class="centered" src="images/audio_stack.png" /></a>
+<p>
+You can play MP3 files with <code>mpg321</code> (cmdline app):</p>
+
+<p class="cmdc">mpg321 flute.mp3</p>
+<p class="cmdc">mpg321 -o alsa flute.mp3</p>
+<p class="cmdc">mpg321 -o alsa09 flute.mp3</p>
+<p class="cmd">mpg321 --gain 25 -o alsa09 flute.mp3</p>
+<p>
+The first cmd uses a default output device, other cmds send output
+to ALSA driver. The last cmd plays with lower volume (25%). You can use
+these cmds in scripts (e.g., to produce warning sounds) or
+with<samp> cron </samp>to simulate an alarm clock
+(<samp>/dev/null </samp>is used to suppress screen msgs):</p>
+
+<p class="cmd">mpg321 warn01.mp3 1&gt; /dev/null 2&gt; /dev/null</p>
+<p>
+This program can also be used to cut a fragment from MP3 file:</p>
+
+<p class="cmd">mpg321 -v --skip 11720<br>--frames 19760 --wav solo.wav CrazyDiamond.mp3</p>
+<p>
+This cmd plays a fragment and writes it to<samp> solo.wav </samp>file.</p>
+
+<p class="opt">
+<em>Options:</em> <code>--help</code> / <code>-v --verbose</code></p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-o</code> <kbd>dev</kbd></td><td class="opt_desc">output device (<samp>alsa</samp>, <samp>oss</samp>, <samp>pulse</samp>, ...);</td></tr>
+<tr><td class="opt_name"><code>--skip</code> <kbd>n</kbd></td><td class="opt_desc">start at frame <kbd>n+1</kbd>;</td></tr>
+<tr><td class="opt_name"><code>--frames</code> <kbd>m</kbd></td><td class="opt_desc">stop at frame <kbd>m</kbd>;</td></tr>
+<tr><td class="opt_name"><code>--wav</code> <kbd>file</kbd></td><td class="opt_desc">save decoded data to a specified WAV file;</td></tr>
+</table>
+<p>
+This program does not
+play<samp> wav </samp>and<samp> ogg</samp>.
+But<code> mplayer </code>does:</p>
+
+<p class="cmdc">mplayer -volume 50 Good_song_1.wav</p>
+<p class="cmd">mplayer -af volume=-12 Good_song_2.wav</p>
+<p>
+Note that first cmd sets volume at<samp> 50% </samp>of master volume,
+while second cmd decreases volume by<samp> 12dB</samp>.</p>
+
+
+
+<a name="ripping">
+<h4 class="part3">Audio CD ripping</h4></a>
+<p>
+Insert an Audio CD and run <code>cdparanoia</code>.
+It reads the specified track, converts it to a <code>wav</code>,
+and saves this file to the current dir:</p>
+
+<p class="fmt"><code>cdparanoia&nbsp;</code><kbd>n&nbsp;</kbd>[<kbd>fname</kbd>]</p>
+<p>
+<kbd>n</kbd> - track number; the default output file - <code>cdda.wav</code>:</p>
+
+<p class="cmdc">cdparanoia 2</p>
+<p class="cmd">cdparanoia 5 LivingNextDoorToAlice.wav</p>
+
+
+
+<a name="wav2mp3">
+<h4 class="part3">Converting WAV to MP3</h4></a>
+<p>
+You can use <code>lame</code> to convert <code>wav</code> files to
+<code>mp3</code>. Installation (Ubuntu):</p>
+
+<p class="cmd">sudo apt-get install lame</p>
+<p>
+The syntax is:</p>
+<p class="fmt"><code>lame&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;inpfile&nbsp;</kbd>[<kbd>outfile</kbd>]</p>
+<p>
+The <b>joint stereo</b> (jstereo) mode implies the use of some tricks that
+allow to increase the bandwidth - it has sense with low bit rates only
+(default for bit rates <samp>&lt;=</samp> 128 kbps). The
+<b>high quality</b> option forces the internal algorithm quality setting
+<code>-q</code><kbd>n</kbd>, where <kbd>n</kbd> lies within the range
+<samp>0..9</samp> (speed/quality ratio: from slow/high to fast/low).
+In practice, <samp>0</samp> and <samp>1</samp> do not provide essential
+improvements, so <code>-h</code> is equivalent to <code>-q2</code>.</p>
+
+<p class="cmdc">lame song01.wav song01.mp3</p>
+<p class="desc">
+constant bit rate (CBR) encoding, 128 kbps, average quality, jstereo
+(joint stereo) mode;</p>
+
+<p class="cmdc">lame -h song02.wav song02.mp3</p>
+<p class="desc">
+CBR encoding, 128 kbps, high quality, jstereo mode;</p>
+
+<p class="cmdc">lame -b 160 -h song03.wav song03.mp3</p>
+<p class="desc">
+CBR encoding, 160 kbps, high quality, stereo mode;</p>
+
+<p class="cmdc">lame -m m song04.wav song04.mp3</p>
+<p class="desc">
+CBR encoding, 128 kbps, average quality, mono sound;</p>
+
+<p class="cmdc">lame -h --abr 192 song05.wav song05.mp3</p>
+<p class="desc">
+variable bit rate encoding (ABR type), 192 kbps (average bit rate),
+high quality;</p>
+
+<p class="cmdc">lame -V2 song06.wav song06.mp3</p>
+<p class="desc">
+variable bit rate encoding (VBR type), high quality (~ 200 kbps);</p>
+
+
+
+<a name="video_dvd">
+<h4 class="part3">Video DVD creation</h4></a>
+<p>
+It's assumed that files were ripped from the original DVD to some dir
+on HDD (dir <code>matrix</code>, in the following example). For reference:
+it should contain AUDIO_TS (optional) and VIDEO_TS. Many movie DVDs can
+be just copied file by file. Damaged files can be copied with
+<a href="cmds_d.html#ddrescue"><code>ddrescue</code></a>
+utility (not always, of course).</p>
+<p>
+One-step procedure:</p>
+
+<p class="cmd">growisofs -dvd-video -Z /dev/hda -V Matrix.1 ./matrix</p>
+<p>
+Option <code>-dvd-video</code> specifies the creation of UDF filesystem,
+and this is important for video DVD.</p>
+<p>
+Two-step procedure (requires additional space for an image file):</p>
+
+<p class="cmd">mkisofs -o matrix1.iso -dvd-video -V Matrix.1 ./matrix</p>
+<p>
+Second step, burning DVD (+/-R, +/-RW):</p>
+
+<p class="cmd">growisofs -dvd-compat -Z /dev/hda=matrix1.iso</p>
+
+
+
+<a name="mplayer">
+<h4 class="part3">Mplayer (playing, ripping, encoding video)</h4></a>
+<p>
+There are 2 related apps: <code>mplayer</code> (main) and
+<code>mencoder</code> (video encoding). Both are command line
+apps with intimidating qty of options. You can get src, codecs, skins, etc.
+from <a href="https://www.mplayerhq.hu" target="_top">www.mplayerhq.hu</a>.
+Also, there are misc GUI front-ends, like <code>SMPlayer</code> or
+<code>GMPlayer</code>. Following keys can be used to control
+<code>mplayer</code> (cmd line and GUI):</p>
+
+<table class="options" style="margin-bottom:2%">
+<tr><td class="opt_name"><span class="keys">f</span></td><td class="opt_desc">toggle fullscreen;</td></tr>
+<tr><td class="opt_name"><span class="keys">m</span></td><td class="opt_desc">mute sound;</td></tr>
+<tr><td class="opt_name"><span class="keys">p</span></td><td class="opt_desc">pause;</td></tr>
+<tr><td class="opt_name"><span class="keys">q</span></td><td class="opt_desc">quit;</td></tr>
+<tr><td class="opt_name"><span class="keys">&#8592;</span> / <span class="keys">&#8594;</span></td><td class="opt_desc">(Left/Right Arrow) 10 sec backward / forward;</td></tr>
+<tr><td class="opt_name"><span class="keys">&#8595;</span> / <span class="keys">&#8593;</span></td><td class="opt_desc">(Down/Up Arrow) 60 sec backward / forward;</td></tr>
+
+<tr><td class="opt_name"><span class="keys">Page Up</span></td><td class="opt_desc">10 min backward;</td></tr>
+<tr><td class="opt_name"><span class="keys">Page Down</span></td><td class="opt_desc">10 min forward;</td></tr>
+</table>
+
+<p>
+Playing and ripping from DVD:</p>
+
+<p class="cmdc">mplayer dvd://1</p>
+<p class="desc">play title 1 (all chapters) from the default DVD device;</p>
+
+<p class="cmdc">mplayer dvd://1 -chapter 2-2</p>
+<p class="desc">play title 1, chapter 2 from the default DVD device;</p>
+
+<p class="cmdc">mplayer dvd://6 -aid 129 -dvd-device /dev/hda</p>
+<p class="desc">play title 6 from non-default device using audio track 129;</p>
+
+<p class="cmdc">mplayer dvd://2 -chapter 4-9 -aid 138 -dvd-device /opt/movies/TheCore</p>
+<p class="desc">play title 2, chapters 4..9, use audio track 138 (the movie was copied from DVD to HDD);</p>
+
+<p class="cmdc">mplayer dvd://4 -aid 128 -dumpstream</p>
+<p class="desc">save title 4, audio track 128 from DVD to a file (by default <code>stream.dump</code> in the current dir);</p>
+
+<p class="cmdc">mplayer dvd://24 -dumpstream -dumpfile clip024.vob</p>
+<p class="desc">save title 24 from a DVD to the file <code>clip024.vob</code>;</p>
+
+<p class="cmdc">mplayer dvd://1 -aid 130 -vf cropdetect -dvd-device /dev/sr0</p>
+<p class="desc">find actual picture size to be used by mencoder;</p>
+
+<p class="cmdc">mplayer -ss 00:01:48 -endpos 10 mov005.mp4</p>
+<p class="desc">skip the first 1 min 48 sec of<samp> mov005.mp4 </samp>and
+play the following 10s;</p>
+<p>
+The next example is DVD to AVI two-pass encoding: audio track 138 is copied
+as is, video is encoded using <samp>xvid</samp> codec, bitrate is auto
+adjusted to produce ~1.4 Gb output file <samp>faculty.avi</samp>,
+codec options (<samp>vhq</samp>, <samp>bvhq</samp>, etc) are set for
+"good" video quality, picture size is left unchanged, black areas around
+the picture are removed (<samp>crop</samp> option):</p>
+
+<p class="cmd">mencoder -oac copy -ovc xvid
+-xvidencopts pass=1:vhq=2:
+bvhq=1:chroma_opt:quant_type=mpeg
+-vf crop=704:544:4:16 -o /dev/null
+dvd://1 -aid 138 -dvd-device /dev/hda</p>
+<p class="cmd" style="margin-top:2px">mencoder -oac copy -ovc xvid
+-xvidencopts pass=2:bitrate=-1400000:
+vhq=2:bvhq=1:chroma_opt:quant_type=mpeg
+-vf crop=704:544:4:16 -o faculty.avi
+dvd://1 -aid 138 -dvd-device /dev/hda</p>
+
+
+
+<a name="avconv">
+<h4 class="part3">Ffmpeg, avconv</h4></a>
+<p>
+<b>Currently (2013),<code> avconv </code>is considered to be a fork
+of<code> ffmpeg</code>! Options are mostly the same.</b></p>
+<p>
+The following cmds can give you some useful info about the
+current<code> ffmpeg </code>version and also about media files (last cmd):</p>
+
+<p class="cmdc">ffmpeg -formats</p>
+<p class="cmdc">ffmpeg -codecs</p>
+<p class="cmdc">ffmpeg -filters</p>
+<p class="cmd">ffmpeg -i file01.vob</p>
+<p>
+<b>One-pass encoding</b>. In the following example, instead of a fixed video
+bitrate, <code>-crf</code> (constant rate factor, const quality mode) is used
+to set the desired quality [<samp>15-31</samp>], where <samp>15</samp> is the
+best, but reasonable values are around <samp>22</samp>. Audio bitrate is set
+to 160 Kbit/s:</p>
+
+<p class="cmd">ffmpeg -i movie01.vob -acodec libmp3lame -ab 160k -map 0.0 -map 0.1 -map 0.3 -vcodec libx264 -vpre slow -crf 20 -threads 0 movie01.mp4</p>
+<p>
+To use variable bitrate for audio, specify <code>-aq</code>
+[<samp>0-255</samp>], where <samp>0</samp> gives the best quality, and
+<samp>100</samp> is a decent value.</p>
+<p>
+If you want to keep audio "as is", use<code> -acodec copy</code>.</p>
+<p>
+Container format is auto detected from the output file extenstion.</p>
+<p>
+Note that by default only <b>map 0.0</b> (video stream) and <b>map 0.1</b>
+(audio track #1) is encoded. Thus, to get several audio tracks, you should
+specify them explicitly with<code> -map</code>.</p>
+
+<p>
+<b>Two-pass encoding</b>, high-quality:</p>
+
+<p class="cmd">ffmpeg -i video04.vob -an -vcodec libx264 -pass 1
+-preset veryslow -threads 0 -b 3000k -x264opts frameref=15:fast_pskip=0
+-f rawvideo -y /dev/null</p>
+<p>
+Note that<code> -an </code>is used to disable audio processing during
+the first pass - only video stats is recorded anyway.</p>
+
+<p class="cmd">ffmpeg -i video04.vob -acodec libvo-aacenc -ab 256k -ar 96000
+-vcodec libx264 -pass 2 -preset veryslow -threads 0 -b 3000k -x264opts
+frameref=15:fast_pskip=0 video04.mp4</p>
+<p>
+In some cases you should specify this audio codec as<code> libvo_aacenc</code>.
+Currently (2013)<code> ffmpeg </code> supports several
+<b>AAC</b> (Advanced Audio Coding) standards: 4 AAC-LC encoders
+(<samp>aac</samp>, <samp>libfaac</samp>, <samp>libfdk_aac</samp>,
+<samp>libvo_aacenc</samp>) and 2 AAC-HE (<samp>libaacplus</samp> and
+<samp>libfdk_aac</samp>), however, <samp>libaacplus</samp>,
+<samp>libfaac</samp>, <samp>libfdk_aac</samp> are <b>not compatible
+with GPL</b>!</p>
+<p>
+To convert audio to MP3, use <samp>libmp3lame</samp>.</p>
+<p>
+<b>Cuttung a fragment</b> from a video file. The following cmd cuts
+a fragment from <samp>Movie.vob</samp> starting at 1 hour 1 min 30 sec from
+the beginning (<code>-ss</code>), the length of the fragment is 122 sec
+(<code>-t</code>). It's also important to notice that streams to be copied
+are explicitly specified: video stream (<code>-map 0.0</code>) and
+audio track # 2 (129) (<code>-map 0.2</code>):</p>
+
+<p class="cmd">ffmpeg -ss 01:01:30 -t 00:02:02 -i Movie.vob -vcodec copy -acodec copy TinManSong.vob -map 0.0 -map 0.2</p>
+<p>
+Note that <code>-ss</code> and <code>-t</code> must precede input file,
+otherwise the result could be strange. Anyway, the starting point and
+the ending point of the clip may not be exactly what you want, because
+the clip can only start at the base frame. Since VOB files have more base
+frames then AVI or MP4 or FLV, they are the most suitable for cutting.</p>
+<p>
+<b>Converting VOB, AVI to MP4</b>:</p>
+
+<p class="cmdc" style="margin-bottom:1%">
+avconv -i clip01.vob -c:v libx264 clip01.mp4</p>
+
+<p class="cmd">
+avconv -i file02.avi -filter:v fade=in:0:50,fade=out:1704:50 -c:v libx264 file02.mp4</p>
+<p>
+The second cmd applies fade-in/fade-out. With the frame rate 25 frames/s,
+<samp>fade=in:0:25</samp> means that picture
+appears from black within 1s, while <samp>fade=out:1704:50</samp>
+fades it to black within 2s. You must know the total number of frames
+to set fade-out.</p>
+<p>
+<b>Resizing MP4</b> (assuming that src file is 640x480):</p>
+
+<p class="cmd">
+avconv -i clip01.mp4 -s 320x240 -c:v libx264 -c:a copy clip01small.mp4</p>
+<p>
+Cutting fragment from MP4, reducing frame rate from 30 to 25,
+converting (+ resizing) to FLV:</p>
+
+<p class="cmdc">
+ffmpeg -ss 00:00:06 -t 00:02:01 -i file20.mp4 -vcodec copy -acodec copy file22.mp4</p>
+
+<p class="cmdc">
+avconv -i file22.mp4 -r 25 -c:v libx264 -c:a copy file24.mp4</p>
+
+<p class="cmd">
+avconv -i file24.mp4 -filter:v fade=out:890:75 -s 320x240 -c:v libx264 -c:a copy -q:v 5 file24.flv</p>
+<p>
+<b>Converting MP4 to WEBM</b>:</p>
+
+<p class="cmd">
+ffmpeg -i clip04.mp4 -acodec libvorbis -aq 5 -ac 2 -qmax 20 -threads 2 clip04.webm</p>
+<p>
+Audio codec for WebM is Ogg Vorbis (<code>-acodec libvorbis</code>,
+default in late versions). The quality can be adjusted with
+<code>-aq</code> [<samp>1-10</samp>], higher means better quality,
+<samp>4</samp> or <samp>5</samp> is good in most cases. To be exact:</p>
+
+<table class="options" style="margin-bottom:1%">
+<tr>
+<td class="opt_name"><code>-aq 4</code></td>
+<td class="opt_desc">= 128 kb/s</td></tr>
+<tr>
+<td class="opt_name"><code>-aq 5</code></td>
+<td class="opt_desc">= 160 kb/s</td></tr>
+<tr>
+<td class="opt_name"><code>-aq 6</code></td>
+<td class="opt_desc">= 192 kb/s</td></tr>
+<tr>
+<td class="opt_name"><code>-aq 7</code></td>
+<td class="opt_desc">= 224 kb/s</td></tr>
+<tr>
+<td class="opt_name"><code>-aq 8</code></td>
+<td class="opt_desc">= 256 kb/s</td></tr>
+</table>
+<p>
+You can also ajust audio volume:</p>
+
+<table class="options" style="margin-bottom:1%">
+<tr>
+<td class="opt_name"><code>-vol 256</code></td>
+<td class="opt_desc">= 100%</td></tr>
+<tr>
+<td class="opt_name"><code>-vol 512</code></td>
+<td class="opt_desc">= 200%</td></tr>
+<tr>
+<td class="opt_name"><code>-vol 768</code></td>
+<td class="opt_desc">= 300%</td></tr>
+<tr>
+<td class="opt_name"><code>-vol 1024</code></td>
+<td class="opt_desc">= 400%</td></tr>
+<tr>
+<td class="opt_name"><code>-vol 2048</code></td>
+<td class="opt_desc">= 800%</td></tr>
+</table>
+<p>
+Intermediate values can be used as well.</p>
+<p>
+Use<code> -ac </code>to set the number of channels: <samp>1</samp> (mono),
+<samp>2</samp> (stereo).</p>
+<p>
+With the <samp>libvpx</samp> used for WebM, quality depends
+on a quantization level, <code>-qmin</code> and <code>-qmax</code>
+ranging from <samp>0</samp> to <samp>51</samp>. Setting <samp>qmin</samp>
+may have no difference. Setting <samp>qmax</samp> effectively controls the
+max compression that will be applied to each frame, i.e.,
+a higher <samp>qmax</samp> means higher compression, lower quality, smaller
+size. Try to start with <samp>25</samp>.
+Setting bitrate (<code>-ab</code> for audio, <code>-b</code> for video)
+makes little or no difference.</p>
+<p>
+Transcoding flags: <code>-threads</code> sets the num of CPU threads to be
+used when transcoding, <code>-pass</code> provides 2-pass encoding.</p>
+<p>
+<b>Changing audio volume</b>.
+Reducing audio to 25% of the original value:</p>
+
+<p class="cmd">ffmpeg -i CAM00015.mp4 -vcodec copy -ab 96k -vol 64 mov0015.mp4</p>
+<p>
+Note that 256 = 100%, so<code> -vol 64 </code>means 25% of the initial level,
+while<code> -vol 512 </code>means 200% of the initial level. Audio bit rate
+spec (like<code> -ab 96K</code>) is required because the default value may be
+too low.</p>
+
+
+
+<h4 class="part3">Creating a poster for video</h4>
+<p>
+HTML5 video players have a <samp>poster</samp> property that requires
+a picture of the appropriate size. The following cmds give you the simplest
+way to create such pictures. Convert PNG to JPG to decrease size.</p>
+<p>
+The following cmd takes a single (first) frame from a video file and converts
+it to a PNG image file.</p>
+
+<p class="cmd">ffmpeg -i file01.mp4 -vcodec png -vframes 1 file01.png</p>
+<p>
+You can also get at once the series of PNG images based on the sequential
+frames from video file (20 pictures in this case):</p>
+
+<p class="cmd">ffmpeg -i file01.mp4 -vcodec png -vframes 20 file01-%03d.png</p>
+
+
+
+
+<h4 class="part3">Extracting audio.</h4>
+<p>
+To extract the first (<samp>-map 0:1</samp>) AC-3 encoded audio stream exactly
+as it was multiplexed (<code>-vn </code>disables video stream processing):</p>
+
+<p class="cmd">ffmpeg -i video01.vob -map 0:1 -acodec copy -vn video01.ac3</p>
+<p>
+To convert the third (<samp>-map 0:3</samp>) DTS audio stream to an AAC file
+with a bitrate of 192 kb/s and a sampling rate of 96000 Hz:</p>
+
+<p class="cmd">ffmpeg -i video02.vob -map 0:3 -acodec libvo-aacenc -ab 192k -ar 96000 -vn video02.aac</p>
+
+
+
+
+<a name="anim_gif">
+<h4 class="part3">Creating animated GIF from video</h4></a>
+<p>
+First, we need an appropriate video file, i.e., MP4, AVI, quite small
+(like 160x120), with low framerate (~15 frames/s), 30..100 sec length.
+Otherwise the resulting GIF can be very large.</p>
+
+<p class="cmdc">ffmpeg -i file1.mp4 file1.gif</p>
+
+<p class="or">or (if the above does not work)</p>
+
+<p class="cmd">ffmpeg -i file1.mp4 -pix_fmt rgb24 file1.gif</p>
+<p>
+Now we can use <b>ImageMagick</b>'s <code>convert</code> utility to reduce
+the file size:</p>
+
+<p class="cmd">convert -layers Optimize file1.gif file2.gif</p>
+<p>
+Let's make this GIF playing in an infinite loop:</p>
+
+<p class="cmd">convert -loop 0 -layers Optimize file2.gif file3.gif</p>
+<p>
+Sometimes it plays too fast or too slow. You can ajust the animation speed
+with the following utilities (ImageMagick). First, let's see what is the
+current delay param:</p>
+
+<p class="cmd">identify -verbose file3.gif | grep Delay</p>
+<p>
+It shows delay for each frame, i.e., the output can be 1000 lines and more
+(<span class="keys">CTRL+C</span> stops the process). If delay is
+<samp>4x100</samp>, then <samp>2x100</samp> would make animation faster,
+while <samp>10x100</samp> would make it essentially slower:</p>
+
+<p class="cmdc">convert -delay 10x100 file3.gif file3slow.gif</p>
+<p class="or">or</p>
+<p class="cmd">convert -delay 10 file3.gif file3slow.gif</p>
+
+</div>
+
+</body></html>

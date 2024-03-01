@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (umount, uname, uniq, unzip, useradd, usermod, uuidgen)</title>
+<meta name="description" content="linux quick reference, umount, uname, unexpand, uniq, unzip, useradd, userdel, usermod, uuidgen" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<div id="topmenu">
+<p class="menu">
+<a href="#umount">umount</a>&nbsp;|
+<a href="#uname">uname</a>&nbsp;|
+<a href="#unexpand">unexpand</a>&nbsp;|
+<a href="#uniq">uniq</a>&nbsp;|
+<a href="#unzip">unzip</a>&nbsp;|
+<a href="#useradd">useradd</a>&nbsp;|
+<a href="#usedel">userdel</a>&nbsp;|
+<a href="#usermod">usermod</a>&nbsp;|
+<a href="#uuidgen">uuidgen</a></p>
+</div>
+
+
+
+<p class="cmdname"><a name="umount">umount</a></p>
+<p>
+unmounts filesystem specified by the dir name where it has been mounted.
+Special device name can also be used, but this is obsolete and doesn’t work
+in case the device was mounted on several directories.</p>
+
+<p class="fmt"><code>umount&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;dir</kbd></p>
+<p>
+A filesystem cannot be unmounted while it is busy (when there are open
+files on it, some process has working dir there, swap file on this system
+is used). A lazy (<code>-l</code>) unmount helps to solve this problem.</p>
+
+<p class="cmdc">umount /mnt</p>
+<p class="desc">unmount filesystem mouted on dir <samp>/u01</samp>;</p>
+
+<p class="cmdc">umount /media/cdrom</p>
+<p class="desc">unmount CD;</p>
+
+<p class="cmdc">umount /dev/sde1</p>
+<p class="desc">unmount fs on the specified device;</p>
+
+
+
+<h5>Some options</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-h</code></td>
+<td class="opt_desc">help;</td></tr>
+<tr>
+<td class="opt_name"><code>-V</code></td>
+<td class="opt_desc">version;</td></tr>
+<tr>
+<td class="opt_name"><code>-v</code></td>
+<td class="opt_desc">verbose;</td></tr>
+<tr>
+<td class="opt_name"><code>-a</code></td>
+<td class="opt_desc">unmount all filesystems described in <samp>/etc/mtab</samp>;</td></tr>
+<tr>
+<td class="opt_name"><code>-d</code></td>
+<td class="opt_desc">if the unmounted device was a loop device, free this
+device;</td></tr>
+<tr>
+<td class="opt_name"><code>-f</code></td>
+<td class="opt_desc">force unmount (in case of an unreachable NFS system);</td></tr>
+<tr>
+<td class="opt_name"><code>-l</code></td>
+<td class="opt_desc">lazy unmount: detach the filesystem from the tree now,
+and cleanup all references to it as soon as possible;</td></tr>
+<tr>
+<td class="opt_name"><code>-n</code></td>
+<td class="opt_desc">unmount without writing in <samp>/etc/mtab</samp>;</td></tr>
+<tr>
+<td class="opt_name"><code>-r</code></td>
+<td class="opt_desc">if unmount fails, try to remount read-only;</td></tr>
+</table>
+
+
+
+
+
+<p class="cmdname"><a name="uname">uname</a></p>
+<p>
+outputs some system information.</p>
+
+<p class="cmdc">uname</p>
+<p class="desc">show kernel name;</p>
+
+<p class="cmdc">uname -a</p>
+<p class="desc">show all relevant system info;</p>
+
+<p class="cmdc">uname -m</p>
+<p class="desc">show system architecture: <samp>i686</samp> means
+that your system is Intel 32-bit, <samp>x86_64</samp> means your system
+is Intel 64-bit;</p>
+
+<p class="cmdc">uname -rvi</p>
+<p class="desc">show kernel release / version and hw platform;</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>-a</code>, <code>--all</code></p>
+<p class="desc">print all in the order of the following options;</p>
+
+<p class="fmtc"><code>-s</code>, <code>--kernel-name</code></p>
+<p class="desc">print kernel name (default);</p>
+
+<p class="fmtc"><code>-n</code>, <code>--nodename</code></p>
+<p class="desc">print network node hostname;</p>
+
+<p class="fmtc"><code>-r</code>, <code>--kernel-release</code></p>
+<p class="desc">print kernel release;</p>
+
+<p class="fmtc"><code>-v</code>, <code>--kernel-version</code></p>
+<p class="desc">print kernel version;</p>
+
+<p class="fmtc"><code>-m</code>, <code>--machine</code></p>
+<p class="desc">print machine hardware name;</p>
+
+<p class="fmtc"><code>-p</code>, <code>--processor</code></p>
+<p class="desc">print processor type;</p>
+
+<p class="fmtc"><code>-i</code>, <code>--hardware-platform</code></p>
+<p class="desc">print hardware platform;</p>
+
+<p class="fmtc"><code>-o</code>, <code>--operating-system</code></p>
+<p class="desc">print operating system;</p>
+
+
+
+
+
+<p class="cmdname"><a name="unexpand">unexpand</a></p>
+<p>
+writes contents of the specified files to stdout, replacing strings of
+two or more spaces with as many tabs as possible followed by as many spaces
+as needed.</p>
+
+<p class="fmt"><code>unexpand&nbsp;</code>[<kbd>options</kbd>] [<kbd>file</kbd>]<kbd>&nbsp;...</kbd></p>
+<p>
+If there is no file, or '<code>-</code>' is specified, <code>~</code> gets
+data from stdin. By default only initial spaces are converted (those
+preceding all non-space or non-tab chars).</p>
+
+<p class="cmdc">unexpand -a ex1.cpp &gt; ex2.cpp</p>
+<p class="desc">replace spaces with tabs in <samp>ex1.cpp</samp> and save
+new version to <samp>ex2.cpp</samp>;</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>-a</code>, <code>--all</code></p>
+<p class="desc">convert all strings of two or more spaces or tabs
+(not just initial ones) to tabs;</p>
+
+<p class="fmtc"><code>-t</code> <kbd>n</kbd>[<code>,</code><kbd>m</kbd>]<kbd>...</kbd>,
+<code>--tabs=</code><kbd>n</kbd>[<code>,</code><kbd>m</kbd>]<kbd>...</kbd></p>
+<p class="desc">if only <kbd>n</kbd> is given, set tabs <kbd>n</kbd> spaces
+apart; otherwise set tabs at columns <kbd>n</kbd>, <kbd>m</kbd>, etc (starting
+from <samp>0</samp>); when the list is over, leave the remaining tabs and
+spaces unchanged; <code>-t</code> implies <code>-a</code>;</p>
+
+<p class="fmtc"><code>--first-only</code></p>
+<p class="desc">convert only leading sequences of whitespace;</p>
+<p>
+Omitting <code>-t</code> is equivalent to specifying &nbsp; <code>-t 8</code>;</p>
+
+
+
+
+
+<p class="cmdname"><a name="uniq">uniq</a></p>
+<p>
+copies text lines from input (stdin, pipe, file) to output
+(stdout, pipe, file) discarding adjacent identical lines (default
+behaviour that can be changed by options). Exit status is <samp>0</samp>
+on success, non-zero otherwise.</p>
+
+<p class="cmdc">cat messages.txt | uniq -u</p>
+<p class="desc">display only uniq lines in <samp>messages.txt</samp>;</p>
+
+<p class="fmt"><code>uniq&nbsp;</code>[<kbd>options</kbd>] [<kbd>input&nbsp;</kbd>[<kbd>output</kbd>]]</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>-c</code>, <code>--count</code></p>
+<p class="desc">prefix lines by the number of occurrences;</p>
+
+<p class="fmtc"><code>-d</code>, <code>--repeated</code></p>
+<p class="desc">output duplicate lines only;</p>
+
+<p class="fmtc"><code>-D</code>,
+<code>--all-repeated=</code><kbd>method</kbd></p>
+<p class="desc">do not discard the repeated input lines, but discard lines
+that are not repeated; an optional <kbd>method</kbd> (<code>none</code>,
+<code>prepend</code>, <code>separate</code>) defines how to delimit groups
+of repeated lines;</p>
+
+<p class="fmtc"><code>-f</code> <kbd>n</kbd>,
+<code>--skip-fields=</code><kbd>n</kbd></p>
+<p class="desc">don't compare the first <kbd>n</kbd> fields;</p>
+
+<p class="fmtc"><code>-i</code>, <code>--ignore-case</code></p>
+<p class="desc">ignore case when comparing;</p>
+
+<p class="fmtc"><code>-s</code> <kbd>n</kbd>,
+<code>--skip-chars=</code><kbd>n</kbd></p>
+<p class="desc">don't compare the first <kbd>n</kbd> chars;</p>
+
+<p class="fmtc"><code>-u</code>, <code>--unique</code></p>
+<p class="desc">output unique lines only (by default, the repeated input
+lines are detected only if they are adjacent;</p>
+
+<p class="fmtc"><code>-w</code> <kbd>n</kbd>,
+<code>--check-chars=</code><kbd>n</kbd></p>
+<p class="desc">compare no more than <kbd>n</kbd> chars;</p>
+
+
+
+
+
+<p class="cmdname"><a name="unzip">unzip</a></p>
+<p>
+lists, tests, extracts files from a ZIP archive. Similar to DOS
+<code>pkunzip</code>, though options and default behaviour differ.
+See also <code><a href="cmds_z.html#zip">zip</a></code>.</p>
+<p>
+The default behavior (with no options) is to extract into the curr dir
+(and subdirs below it) all files from the specified ZIP archive.</p>
+
+<p class="cmdc">unzip backup01.zip</p>
+<p class="desc">extract all files from <samp>backup01.zip</samp> into the
+curr dir preserving original dir structure;</p>
+
+<p class="cmdc">unzip backup02 -d tmp2</p>
+<p class="desc">extract all files from <samp>backup02.zip</samp> to
+<samp>tmp2</samp> dir;</p>
+
+<p class="cmdc">unzip backup01 -x a2712.dat</p>
+<p class="desc">extract all files except <samp>a2712.dat</samp> from the
+archive <samp>backup01.zip</samp>;</p>
+
+<p class="cmdc">unzip -fo bkp04 notes.txt</p>
+<p class="desc">quietly replace an existing <samp>notes.txt</samp> if the
+archived <samp>notes.txt</samp> is newer;</p>
+
+<p class="fmt"><code>unzip&nbsp;</code>[<code>-Z</code>]
+[<code>-</code><kbd>opts</kbd>[<kbd>modifiers</kbd>]
+]<kbd>&nbsp;file</kbd>[<code>.zip</code>] [<kbd>list</kbd>]<br>
+[<code>-x</code> <kbd>xlist</kbd>] [<code>-d</code> <kbd>exdir</kbd>]</p>
+
+
+
+<h5>Options</h5>
+
+<table class="options">
+<tr><td class="opt_name"><code>-d</code></td>
+<td class="opt_desc">extract files into <kbd>exdir</kbd>;</td></tr>
+
+<tr><td class="opt_name"><code>-f</code></td>
+<td class="opt_desc">freshen existing files, do not create new;</td></tr>
+
+<tr><td class="opt_name"><code>-l</code></td>
+<td class="opt_desc">list files in archive;</td></tr>
+
+<tr><td class="opt_name"><code>-p</code></td>
+<td class="opt_desc">extract files to pipe (no messages);</td></tr>
+
+<tr><td class="opt_name"><code>-t</code></td>
+<td class="opt_desc">test compressed archive data;</td></tr>
+
+<tr><td class="opt_name"><code>-u</code></td>
+<td class="opt_desc">update files, create new, if necessary;</td></tr>
+
+<tr><td class="opt_name"><code>-x</code></td>
+<td class="opt_desc">exclude files specified in <kbd>xlist</kbd>;</td></tr>
+
+<tr><td class="opt_name"><code>-z</code></td>
+<td class="opt_desc">display archive comment;</td></tr>
+</table>
+
+
+<h5>Modifiers</h5>
+
+<table class="options">
+<tr><td class="opt_name"><code>-a</code></td>
+<td class="opt_desc">auto-convert text files;</td></tr>
+
+<tr><td class="opt_name"><code>-aa</code></td>
+<td class="opt_desc">treat all files as text;</td></tr>
+
+<tr><td class="opt_name"><code>-C</code></td>
+<td class="opt_desc">match file names case-insensitively;</td></tr>
+
+<tr><td class="opt_name"><code>-j</code></td>
+<td class="opt_desc">junk paths (do not make dirs);</td></tr>
+
+<tr><td class="opt_name"><code>-L</code></td>
+<td class="opt_desc">make some names lowercase;</td></tr>
+
+<tr><td class="opt_name"><code>-M</code></td>
+<td class="opt_desc">pipe through <code>more</code>;</td></tr>
+
+<tr><td class="opt_name"><code>-n</code></td>
+<td class="opt_desc">never overwrite existing files;</td></tr>
+
+<tr><td class="opt_name"><code>-o</code></td>
+<td class="opt_desc">overwrite files without prompting;</td></tr>
+
+<tr><td class="opt_name"><code>-q</code></td>
+<td class="opt_desc">quiet mode (<code>-qq</code> even more quiet mode);</td></tr>
+
+<tr><td class="opt_name"><code>-v</code></td>
+<td class="opt_desc">verbose; (also displays version info);</td></tr>
+
+<tr><td class="opt_name"><code>-X</code></td>
+<td class="opt_desc">restore UID/GID info;</td></tr>
+</table>
+
+
+
+
+
+<p class="cmdname"><a name="useradd">useradd</a></p>
+<p>
+creates a new user account or updates default values (<code>-D</code>).</p>
+
+<p class="cmdc">useradd -m vmail</p>
+<p class="desc">the most basic user creation cmd: it creates user named
+<samp>vmail</samp>, user's group <samp>vmail</samp> (only if
+<samp>USERGROUPS_ENAB=yes</samp> in <samp>/etc/login.defs</samp>),
+user's home dir (most likely <samp>/home/vmail</samp>, check defaults);
+
+<p class="cmdc">useradd jane -m -N -g users</p>
+<p class="desc">create new user account (<samp>jane</samp>) assuming
+defaults for shell, expiration date, home dir name, etc;</p>
+
+<p class="cmdc">useradd oracle -g oinstall -G dba</p>
+<p class="desc">create new user account named <samp>oracle</samp> with an
+initial login group <samp>oinstall</samp> and a supplementary group <samp>dba</samp>;</p>
+
+<p class="cmdc">useradd -D</p>
+<p class="desc">show current defaults;</p>
+
+<p class="cmdc">useradd -D -g users -e 60 -f 0</p>
+<p class="desc">change new user creation defaults (initial group
+<samp>users</samp>, expiration time <samp>60</samp> days, the number of
+inactive days <samp>0</samp>);</p>
+
+<p class="fmt"><code>useradd&nbsp;</code><kbd>username&nbsp;</kbd>[<kbd>options</kbd>]</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-h</code> &nbsp;&nbsp; <code>--help</code></p>
+
+<p class="fmtc"><code>-b</code> <kbd>dir</kbd>,
+<code>--base-dir</code> <kbd>dir</kbd></p>
+<p class="desc">the default base dir for the system;</p>
+
+<p class="fmtc"><code>-c</code> <kbd>str</kbd>,
+<code>--comment</code> <kbd>str</kbd></p>
+<p class="desc">comment field in passwd file (usually user's full name);</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-D</code></td>
+<td class="opt_desc">display current or set new default values:</td></tr>
+</table>
+
+<p class="fmtc"><code>-d</code> <kbd>home_dir</kbd>,
+<code>--home</code> <kbd>home_dir</kbd></p>
+<p class="desc">the new user’s home dir (by default it is usually login
+name + base dir);</p>
+
+<p class="fmtc"><code>-e</code> <kbd>date</kbd>,
+<code>--expiredate</code> <kbd>date</kbd></p>
+<p class="desc">the date on which the user account will be disabled;
+the date format should be <samp>YYYY-MM-DD</samp>;</p>
+
+<p class="fmtc"><code>-f</code> <kbd>days</kbd>,
+<code>--inactive</code> <kbd>days</kbd></p>
+<p class="desc">the number of days after a password expires until the
+account is permanently disabled; the default is <samp>-1</samp>, which
+makes this feature inactive; <samp>0</samp> disables account immediately
+after password expiration;</p>
+
+<p class="fmtc"><code>-G</code> <kbd>list</kbd>,
+<code>--groups</code> <kbd>list</kbd></p>
+<p class="desc">a comma-separated list of supplementary groups which
+the user is a member of;</p>
+
+<p class="fmtc"><code>-g</code> <kbd>init_grp</kbd>,
+<code>--gid</code> <kbd>init_grp</kbd></p>
+<p class="desc">the name or the number of the user’s initial login group
+(must exist);</p>
+
+<p class="fmtc"><code>-k</code> <kbd>dir</kbd>,
+<code>--skel</code> <kbd>dir</kbd></p>
+<p class="desc">(is only valid if home dir is created) skeleton dir containing
+files and dirs to be copied to the user's home dir (by default it is
+<samp>/etc/skel</samp>);</p>
+
+<p class="fmtc"><code>-K <span class="arg">key</span>=<span class="arg">value</span></code>,
+<code>--key <span class="arg">key</span>=<span class="arg">value</span></code></p>
+<p class="desc">overrides default values in <samp>/etc/login.defs</samp>
+(<samp>UID_MIN</samp>, <samp>UID_MAX</samp>, <samp>UMASK</samp>, etc);</p>
+
+<p class="fmtc"><code>-l</code>, <code>--no-log-init</code></p>
+<p class="desc">do not add user to the lastlog and faillog databases;</p>
+
+<p class="fmtc"><code>-m</code>, <code>--create-home</code></p>
+<p class="desc">create (if it doesn't exist) a home dir for new user;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-M</code></td>
+<td class="opt_desc">don't create the user's home dir, even if the
+system defaults require it;</td></tr>
+</table>
+
+<p class="fmtc"><code>-N</code>, <code>--no-user-group</code></p>
+<p class="desc">do not create a group with the same name as the user,
+but add the user to the group specified by the <code>-g</code> option
+or by the <samp>GROUP</samp> var in <samp>/etc/default/useradd</samp>;</p>
+
+<p class="fmtc"><code>-o</code>, <code>--non-unique</code></p>
+<p class="desc">allow to create users with duplicate UID;</p>
+
+<p class="fmtc"><code>-p</code> <kbd>passwd</kbd>,
+<code>--passowrd</code> <kbd>passwd</kbd></p>
+<p class="desc">the encrypted password, as returned by <code>crypt</code>
+(bad, because passwords are visible to users listing processes);</p>
+
+<p class="fmtc"><code>-r</code>, <code>--system</code></p>
+<p class="desc">create a <a href="#system_account">system account</a>;</p>
+
+<p class="fmtc"><code>-s</code> <kbd>shell</kbd></p>
+<p class="desc">the name of the user’s login shell;</p>
+
+<p class="fmtc"><code>-U</code>, <code>--user-group</code></p>
+<p class="desc">create a group with the same name as the user,
+and add user to this group;</p>
+
+<p class="fmtc"><code>-u</code> <kbd>uid</kbd></p>
+<p class="desc">the numerical value of the user's ID (must be unique unless
+<code>-o</code>); <samp>0..999</samp> are usually reserved for system accounts;</p>
+
+<p class="fmtc"><code>-Z</code> <kbd>user</kbd>,
+<code>--selinux-user</code> <kbd>user</kbd></p>
+<p class="desc">SELinux user for the user's login (the default is to leave
+this field blank, which causes system to select the default SELinux user);</p>
+
+
+<table class="files">
+<caption>Files</caption>
+<tr>
+<td class="file_name">/etc/passwd</td>
+<td class="file_desc">user account info;</td></tr>
+<tr>
+<td class="file_name">/etc/shadow</td>
+<td class="file_desc">secure user account info;</td></tr>
+<tr>
+<td class="file_name">/etc/group</td>
+<td class="file_desc">group info;</td></tr>
+<tr>
+<td class="file_name">/etc/gshadow</td>
+<td class="file_desc">secure group info;</td></tr>
+<tr>
+<td class="file_name">/etc/default/useradd</td>
+<td class="file_desc">useradd defaults;</td></tr>
+<tr>
+<td class="file_name">/etc/login.defs</td>
+<td class="file_desc">system-wide settings;</td></tr>
+<tr>
+<td class="file_name">/etc/skel</td>
+<td class="file_desc">directory containing default files;</td></tr>
+</table>
+
+
+
+<h5>
+<a name="system_account">System account vs [regular] user account</a></h5>
+<p>
+There is no big difference. But it may be useful to keep in mind that
+system users are created with no aging info in <samp>/etc/shadow</samp>,
+and their numeric identifiers are chosen in the
+<samp>SYS_UID_MIN - SYS_UID_MAX</samp> range, defined in
+<samp>/etc/login.defs</samp>, instead of <samp>UID_MIN - UID_MAX</samp>
+(same with <samp>GID</samp>s).</p>
+<p>
+The main difference is the purpose: these accounts in most cases are auto
+created by system and supposed to be used by daemons, system apps, and for
+other [system] purposes. Some system accounts have predefiend user IDs, e.g.
+<samp>root</samp> account.</p>
+<p>
+There are also <b>Service accounts</b> - the accounts used by web servers,
+database servers, application servers. The difference between system accounts
+and service accounts is vague.</p>
+<p>
+A <b>privileged account</b> is a user account that has more privileges than
+ordinary users. System/service accounts are usually privileged accounts.</p>
+
+
+
+
+
+<p class="cmdname"><a name="userdel">userdel</a></p>
+<p>
+deletes a user account and related files.</p>
+
+<p class="fmt"><code>userdel&nbsp;</code>[<code>-r</code>]<kbd>&nbsp;username</kbd></p>
+<p>
+In fact, it modifies the system account files, removing all entries that
+refer to <kbd>username</kbd>. The option <code>-r</code> causes the user’s
+home directory to be removed with all its contents (the user mail spool also
+will be removed). However, files, belonging to this user in other
+filesystems, must be removed manually. You cannot remove an account,
+if the user is currently logged in.</p>
+
+
+
+
+
+<p class="cmdname"><a name="usermod">usermod</a></p>
+<p>
+modifies a user account (modifies the system account files).</p>
+
+<p class="fmt"><code>usermod&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;username</kbd></p>
+<p>
+Usually this is a bad idea to modify an account while user is logged in.
+You cannot change user’s login name in this case, however some values can be
+changed (expiration date, inactive days, supplementary groups, etc).</p>
+
+<p class="cmdc">usermod -d /var/vmail -m vmail</p>
+<p class="desc">move user's home dir (with all contents) to a new location;</p>
+
+<p class="cmdc">usermod -g oinstall -G dba oracle</p>
+<p class="desc">change user's initial grp and add one supplementary grp;</p>
+
+<p class="cmdc">usermod -e 2005-12-10 alex</p>
+<p class="desc">set new expiration date for this account;</p>
+
+<p class="cmdc">usermod -L pro9</p>
+<p class="desc">lock user's account;</p>
+
+<p class="cmdc">usermod -U pro9</p>
+<p class="desc">unlock user's account;</p>
+
+<p class="cmdc">usermod -a -G vboxusers ozzy</p>
+<p class="desc">add user <samp>ozzy</samp> to a supplementary group
+<samp>vboxusers</samp>; Note! If you successfully add yourself to some
+group, you won't see any changes until you logout/login (or reboot);</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmtc"><code>-a</code>, <code>--append</code></p>
+<p class="desc">add user to supplementary group(s); it should only be used
+with <code>-G</code>;</p>
+
+<p class="fmtc"><code>-c</code> <kbd>str</kbd>,
+<code>--append</code> <kbd>str</kbd></p>
+<p class="desc">change user's comment field;</p>
+
+<p class="fmtc"><code>-d</code> <kbd>dir</kbd>,
+<code>--home</code> <kbd>dir</kbd></p>
+<p class="desc">change user's login (home) dir; if <code>-m</code> is given,
+the contents of the current home dir are moved to the new dir (it's not
+neccessary to create it beforehand);</p>
+
+<p class="fmtc"><code>-e</code> <kbd>date</kbd>,
+<code>--expiredate</code> <kbd>date</kbd></p>
+<p class="desc">set user account expiration date (<samp>YYYY-MM-DD</samp>);</p>
+
+<p class="fmtc"><code>-f</code> <kbd>days</kbd>,
+<code>--inactive</code> <kbd>days</kbd></p>
+<p class="desc">set the number of days after pass expiration until account
+is permanently disabled;</p>
+
+<p class="fmtc"><code>-g</code> <kbd>grp</kbd>,
+<code>--gid</code> <kbd>grp</kbd></p>
+<p class="desc">user's new initial login group (name or number / must exist);</p>
+
+<p class="fmtc"><code>-G</code> <kbd>list</kbd>,
+<code>--groups</code> <kbd>list</kbd></p>
+<p class="desc">new list of user's supplementary groups; if user is
+currently a member of a grp which is not listed, user will be removed
+from that grp (<code>-a</code> can change this behaviour);</p>
+
+<p class="fmtc"><code>-L</code>, <code>--lock</code></p>
+<p class="desc">lock user's password;</p>
+
+<p class="fmtc"><code>-l</code> <kbd>new_name</kbd>,
+<code>--login</code> <kbd>new_name</kbd></p>
+<p class="desc">change user's account name; other params (including home dir)
+are not changed;</p>
+
+<p class="fmtc"><code>-m</code>, <code>--move-home</code></p>
+<p class="desc">move contents of the user's home dir to a new location
+(can be used with <code>-d</code> only);</p>
+
+<p class="fmtc"><code>-o</code>, <code>--non-unique</code></p>
+<p class="desc">allow to use non-unique UIDs;</p>
+
+<p class="fmtc"><code>-p</code> <kbd>new_pass</kbd>,
+<code>--password</code> <kbd>new_pass</kbd></p>
+<p class="desc">a bad way to change user's password; <code>~</code> works
+with classical password files only and does not understand more advanced
+auth schemas;</p>
+
+<p class="fmtc"><code>-s</code> <kbd>str</kbd>,
+<code>--shell</code> <kbd>str</kbd></p>
+<p class="desc">set new login shell; if <kbd>str</kbd> is missing,
+<code>~</code> selects system's default shell;</p>
+
+<p class="fmtc"><code>-u</code> <kbd>uid</kbd>,
+<code>--uid</code> <kbd>uid</kbd></p>
+<p class="desc">set new UID, non-negative and unique
+(unless <code>-o</code> is also given); <samp>0..999</samp> are usually
+reserved for system; the inodes of files owned by user and
+located in user's home dir (+mailbox) will be properly modified;
+however, the ownership of user's files outside of the home dir must be
+fixed manually;</p>
+
+<p class="fmtc"><code>-U</code>, <code>--unlock</code></p>
+<p class="desc">unlock user's password;</p>
+
+<p class="fmtc"><code>-Z</code> <kbd>user</kbd>,
+<code>--selinux-user</code> <kbd>user</kbd></p>
+<p class="desc">set SELinux user for the user's login (the default is to
+leave this field blank, which causes the system to select the default SELinux
+user);</p>
+
+
+
+
+
+<p class="cmdname"><a name="uuidgen">uuidgen</a></p>
+<p>
+creates a new universally unique identifier (UUID).</p>
+
+<p class="cmdc">uuidgen</p>
+<p class="cmdc">uuidgen -r</p>
+<p class="desc">
+generate a random-based UUID; a high quality random number generator
+(<samp>/dev/random</samp>) is required (default);</p>
+
+<p class="cmdc">uuidgen -t</p>
+<p class="desc">
+generate a time-based UUID (system time plus ethernet hardware address,
+if available);</p>
+<p>
+The UUID looks like:</p>
+
+<p class="fmt"><samp>1e4v28ma-2fo6-33p2-97q5-hg8dnpf1996i</samp></p>
+
+</div>
+
+</body></html>

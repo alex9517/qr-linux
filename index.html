@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference / Mobile version</title>
+<meta name="description" content="Linux quick reference for administrators and users comfortable with command line, mobile (smartphone) version" />
+<meta name="keywords" content="linux, os, operating system, command line, ubuntu, unix" />
+<meta name="charset" content="UTF-8" />
+<meta name="author" content="A. S. Tarasenkov" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+</head><body>
+
+<script>
+const keyStyle = "qr_lin_style";
+const refStyle = "mobile";
+
+localStorage.setItem(keyStyle, refStyle);
+//Cookies.set(keyStyle, refStyle, { path: '' });
+
+var currPage = window.location.href;
+var currPath = currPage.substring(0, currPage.lastIndexOf("/") + 1);
+var tocPage = currPath + 'toc.html';
+
+var refStyleStored = localStorage.getItem(keyStyle);
+
+if (refStyle !== refStyleStored) {
+  console.log('Setting ' + keyStyle + ' as ' + refStyle);
+  console.log('Getting ' + keyStyle + ' as ' + refStyleStored);
+  alert('Cannot get correct refStyle from local storage!');
+  history.back();
+}
+window.location.replace(tocPage);
+// window.location.assign(tocPage);
+</script>
+
+<noscript>
+<p class="center">
+This cannot work if JavaScript is disabled in your browser!</p>
+</noscript>
+
+</body></html>

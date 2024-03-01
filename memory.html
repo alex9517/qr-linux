@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference / Memory management</title>
+<meta name="description" content="linux quick reference, memory page, RAM, x86, x86-64, kernel space, user space, pae, HIGHMEM, ZONE_DMA, ZONE_NORMAL, ZONE_HIGHMEM" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<h1 class="part">Linux Memory Management</h1>
+
+<p class="menu">
+<a href="#mem32">32-bit</a>&nbsp;//
+<a href="#mem64">64-bit</a>&nbsp;//
+<a href="#mem_page">Memory page</a>
+</p>
+
+
+<h4 class="part2">
+<a name="mem64">64-bit (x86-64) memory</a></h4>
+<p>
+Though theoretically virtual addresses are <samp>64</samp> bits wide in
+<samp>64</samp>-bit mode, current
+<span class="sserif"><b><a href="howto.html#x86-64">x86-64</a></b></span>
+implementations do not allow the entire virtual address space of
+<samp>2<sup>64</sup></samp> bytes (<samp>16</samp> EB) to be used. In fact,
+<samp>64</samp>-bit Linux allows only up to <samp>128</samp> TB of virtual
+address space for individual processes, and can address approximately
+<samp>64</samp> TB of physical memory, subject to processor and system
+limitations.</p>
+
+<img class="float_right" src="images/AMD64_canonical_48-bit.png" />
+<p>
+While working on <span class="sserif"><b>x86-64</b></span> spec, AMD decided
+that operating systems and applications won't need <samp>2<sup>64</sup></samp>
+address space in the foreseeable future, and there is no reason to increase the
+complexity and cost of hardware. Thus, only <samp>48</samp> bits of virtual
+address are used in address translation. And since AMD spec also requires that
+bits <samp>48-63</samp> (i.e. most significant <samp>16</samp> bits) of any
+virtual address must be copies of bit <samp>47</samp> (like sign extension),
+the address space consists of "lower half"
+(<samp>0000000'00000000 - 00007FFF'FFFFFFFF</samp>) and "higher half"
+(<samp>FFFF8000'00000000 - FFFFFFFF'FFFFFFFF</samp>) with a big gap in the
+middle. Addresses complying with this rule are referred to as <b>canonical
+form</b> addresses. Even with this limitations we still have <samp>256</samp>
+TB of usable virtual address space, which is <samp>65,536</samp> times larger
+than <samp>4</samp> GB of <samp>32</samp>-bit machines.</p>
+<p>
+Linux OS takes the higher half of the address space for itself (<b>kernel
+space</b>) and leaves the lower half for app code, user mode stacks, heaps,
+etc (<b>user space</b>).</p>
+<p>
+This architecture has two primary modes of operation:</p>
+<ul>
+<li><b>Long mode</b> (primary mode; used by <samp>64</samp>-bit OSs only)
+is a combination of the processor's native <samp>64</samp>-bit mode and
+<samp>32</samp>-bit/<samp>16</samp>-bit compatibility mode. <samp>64</samp>-bit
+programs run under <samp>64</samp>-bit mode, <samp>32</samp>-bit and
+<samp>16</samp>-bit protected mode apps (that do not need to use either real
+mode or virtual 8086 mode) run under compatibility mode. Real-mode programs
+and programs that use virtual 8086 mode at any time cannot be run in long mode
+unless those modes are emulated in software. However, such programs may be
+started from an OS running in long mode on processors supporting VT-x or AMD-V
+by creating a virtual processor running in the desired mode.</li>
+
+<li><b>Legacy mode</b> is used by <samp>16</samp>-bit ("protected mode"
+or "real mode") and <samp>32</samp>-bit operating systems. In this mode, the
+processor acts like a <samp>32</samp>-bit x86 proc, and only
+<samp>16</samp>-bit and <samp>32</samp>-bit code can be executed. Legacy mode
+allows for a maximum of <samp>32</samp> bit virtual addressing which limits the
+virtual address space to <samp>4</samp> GB. <samp>64-bit</samp> programs cannot
+be run from legacy mode.</li>
+</ul>
+
+
+
+<h4 class="part2">
+<a name="mem32">32-bit (x86) memory</a></h4>
+<p>
+<samp>32</samp>-bit architectures can reference <samp>4</samp> GB of physical
+memory (<samp>2<sup>32</sup></samp>). Processors that have an MMU (Memory
+Management Unit) support the concept of virtual memory: page tables are set up
+by the kernel which map "virtual addresses" to "physical addresses"; this means
+that each process can access <samp>4</samp> GB of mem, thinking it's the only
+proc running on the machine.</p>
+<p>
+The virtual address to physical address mappings are done by the kernel.
+When a new proc is forked, the kernel creates a new set of page tables for
+the proc. The addresses referenced within a process in user-space are virtual
+addresses. They do not necessarily map directly to the same physical address.
+The virtual address is passed to the MMU which converts it to the proper
+physical address based on the tables set up by the kernel. Thus, 2
+processes can refer to mem address <samp>0x08329</samp>, but they would
+refer to 2 different locations in memory.</p>
+<p>
+The Linux kernel splits the <samp>4</samp> GB virtual address space of
+a process in two parts: <samp>3</samp> GB and <samp>1</samp> GB. The lower
+<samp>3</samp> GB of the process virtual address space is accessible as the
+user-space virtual addresses and the upper <samp>1</samp> GB space is reserved
+for the kernel virtual addresses. This is true for all processes.</p>
+<p>
+The kernel virtual area (<samp>3-4</samp> GB address space) maps to the first
+<samp>1</samp> GB of physical RAM. The <samp>3</samp> GB addressable RAM
+available to each proc is mapped to the available physical RAM.</p>
+<p>
+The basic problem: the kernel can address <samp>1</samp> GB of virtual
+addresses, which can translate to a maximum of <samp>1</samp> GB of physical
+memory. This is because the kernel directly maps all available kernel virtual
+space addresses to the available physical memory.</p>
+
+
+<h5>Solutions</h5>
+<p>
+There are following solutions:</p>
+<ol>
+<li><samp>2G/2G</samp> or <samp>1G/3G</samp> split</li>
+<li><samp>HIGHMEM</samp> solution for using up to <samp>4</samp> GB of memory</li>
+<li><samp>HIGHMEM</samp> solution for using up to <samp>64</samp> GB of memory</li>
+</ol>
+<p>
+<samp>PAE</samp> (Physical Address Extension) allows processors to access
+physical mem up to <samp>64</samp> GB (<samp>36</samp> bits of address bus).
+However, since the virtual addr space is just <samp>32</samp> bits wide, each
+proc can't grow beyond <samp>4</samp> GB. The mechanism used to access mem from
+<samp>4</samp> GB to <samp>64</samp> GB is essentially the same as that of
+accessing the <samp>1-4 GB</samp> RAM via the <samp>HIGHMEM</samp> solution.</p>
+
+<table class="grid">
+<tr>
+<td class="grid_2"><samp>ZONE_DMA</samp></td>
+<td class="grid_2_cen"><samp>0 MB - 16 MB</samp></td></tr>
+<tr>
+<td class="grid_2"><samp>ZONE_NORMAL</samp></td>
+<td class="grid_2_cen"><samp>16 MB - 896 MB</samp></td></tr>
+<tr>
+<td class="grid_2"><samp>ZONE_HIGHMEM</samp></td>
+<td class="grid_2_cen"><samp>1 GB - 64 GB</samp></td></tr>
+</table>
+<p>
+<samp>ZONE_DMA</samp> is used by some devices for data transfer and is
+mapped in the lower phys mem range (up to <samp>16</samp> MB). Memory in the
+<samp>ZONE_NORMAL</samp> region is mapped by the kernel in the upper region
+of the linear addr space. Most operations can only take place in
+<samp>ZONE_NORMAL</samp>; so this is the most performance critical
+zone. <samp>ZONE_NORMAL</samp> goes from <samp>16</samp> MB to
+<samp>896</samp> MB.</p>
+<p>
+<samp>128</samp> MB (on <samp>x86</samp>) is reserved for storing
+several kernel data structures that store info about the mem map and page
+tables. This means that the kernel virtual address in this <samp>128</samp>
+MB is not mapped to phys mem. Thus, even if you have <samp>1</samp> GB of
+physical RAM, only <samp>896</samp> MB will be actually available for
+<samp>ZONE_NORMAL</samp>.</p>
+<p>
+To address memory from <samp>1</samp> GB onwards (<samp>ZONE_HIGHMEM</samp>),
+the kernel has to map pages from high mem into <samp>ZONE_NORMAL</samp>.</p>
+<p>
+Config options for PAE kernel:</p>
+
+<div class="file">
+<pre>CONFIG_HIMEM64G=y</pre>
+</div>
+<p>
+Config options for non-PAE kernel:</p>
+
+<div class="file">
+<pre>
+CONFIG_X86_PAE=n
+CONFIG_HIMEM64G=n
+CONFIG_HIMEM4G=y
+CONFIG_PARAVIRT=n
+CONFIG_PARAVIRT_GUEST=n
+CONFIG_XEN=n
+CONFIG_VMI=n</pre>
+</div>
+
+
+
+<h4 class="part2">
+<a name="mem_page">Memory page</a></h4>
+<p>
+(or just <b>page</b>, or <b>virtual page</b>) is a fixed-length contiguous
+block of virtual memory, described by a single entry in the page table. It's
+the smallest unit of data for memory management in a virtual memory OS.
+A <b>page frame</b> is the smallest fixed-length contiguous block of physical
+memory into which mem pages are mapped by OS.</p>
+<p>
+In the past all mem pages had a uniform size, usually <samp>4</samp> KB
+(<samp>4096</samp> bytes). Modern processors allow to use pages of several
+sizes, though <samp>4</samp> KB stays most popular for general purpose systems.</p>
+<ul>
+<li><span class="sserif"><b>x86</b></span> arch (<samp>32</samp>-bit) supports
+<samp>4</samp> KB, <samp>2</samp> MB (in PAE mode), <samp>4</samp> MB (in PSE
+mode).</li>
+<li><span class="sserif"><b>x86-64</b></span> arch (long mode) supports
+<samp>4</samp> KB, <samp>2</samp> MB, <samp>1</samp> GB (only CPUs with
+<samp>PDPE1GB</samp> flag).</li>
+</ul>
+<p>
+<b>PSE</b> - Page Size Extension, a feature of old x86 processors
+(Pentium Pro, etc).</p>
+<p>
+<b>PAE</b> - Physical Address Extension (sometimes "Page Address Extension")
+is a mem management feature for <span class="sserif"><b>x86</b></span> arch.
+It defines a page table hierarchy of three levels (instead of two), with table
+entries of <samp>64</samp> bits each instead of <samp>32</samp>, allowing these
+CPUs to directly access a physical address space larger than <samp>4</samp> GB.</p>
+<p>
+The page table struct used by <span class="sserif"><b>x86-64</b></span> CPUs
+[in long mode] extends the page table hierarchy to four levels, and uses
+additional physical address bits at all levels of the page table, extending the
+physical address space. It also uses the topmost bit of the <samp>64</samp>-bit
+page table entry as a "no-execute bit" (<b>NX</b>), indicating that the code
+from the associated page cannot be executed. NX feature is also available in
+protected mode when these CPUs are running a <samp>32</samp>-bit OS, provided
+that PAE is enabled.</p>
+<p>
+To find your system's page size, try:</p>
+
+<p class="cmd">getconf PAGESIZE</p>
+<p>
+Note that the use of larger pages usually requires elevated privileges,
+cooperation from the app making the large allocation (usually setting a flag
+to ask OS for huge pages), or manual admin config; paging (swapping) of large
+pages out to disk may not work.</p>
+
+</div>
+
+</body></html>

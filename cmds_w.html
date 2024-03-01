@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (w, wc, wget, whatis, whereis, which, who)</title>
+<meta name="description" content="linux quick reference, w, wc, wget, whatis, whereis, which, who" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<div id="topmenu">
+<p class="menu">
+<a href="#w">w</a>&nbsp;|
+<a href="#wc">wc</a>&nbsp;|
+<a href="#wget">wget</a>&nbsp;|
+<a href="#whatis">whatis</a>&nbsp;|
+<a href="#whereis">whereis</a>&nbsp;|
+<a href="#which">which</a>&nbsp;|
+<a href="#who">who</a></p>
+</div>
+
+
+
+<p class="cmdname"><a name="w">w</a></p>
+<p>
+displays info about the users currently logged on and their processes.
+If user is specified, <code>~</code> shows info about this user only.</p>
+
+<p class="fmt"><code>w&nbsp;</code>[<kbd>options</kbd>] [<kbd>user</kbd>]</p>
+<p>
+The following entries are displayed for each user:
+<samp>login name</samp>, <samp>tty</samp>, <samp>remote host</samp>,
+<samp>login time</samp>, <samp>idle time</samp>, <samp>JCPU</samp>,
+<samp>PCPU</samp>, and the cmd line of their current process.</p>
+<p>
+<samp>JCPU</samp> is the time used by all processes attached to the tty.
+It does not include past background jobs, but does include currently running
+background jobs.</p>
+<p>
+<samp>PCPU</samp> is the time used by the current process, named in
+<samp>WHAT</samp> field.</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>-V</code>
+&nbsp;&nbsp; <code>--version</code></p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-f</code></td>
+<td class="opt_desc">toggle <samp>FROM</samp> field (remote host);</td></tr>
+<tr>
+<td class="opt_name"><code>-h</code></td>
+<td class="opt_desc">don't show the header;</td></tr>
+<tr>
+<td class="opt_name"><code>-s</code></td>
+<td class="opt_desc">use short format (omit <samp>login time</samp>,
+<samp>JCPU</samp>, <samp>PCPU</samp>);</td></tr>
+<tr>
+<td class="opt_name"><code>-u</code></td>
+<td class="opt_desc">ignore username while figuring out curr process and cpu time;</td></tr>
+</table>
+
+
+
+
+
+<p class="cmdname"><a name="wc">wc</a></p>
+<p>
+counts bytes, words, lines in text files.</p>
+
+<p class="fmt"><code>wc&nbsp;</code>[<kbd>options</kbd>] [<kbd>files</kbd>]</p>
+<p>
+If file spec is missing or '<code>-</code>' is used, <code>~</code> gets
+data from stdin.</p>
+
+<p class="cmdc">ls -l | wc -l</p>
+<p class="desc">show the number of entries in the current dir
+(except <samp>.</samp> / <samp>..</samp> and hidden);</p>
+
+<p class="cmdc">wc -c notes.html</p>
+<p class="cmdc">wc -m notes.html</p>
+<p class="desc">count the number of bytes (1) and chars (2) in the specified
+file; for UTF8 encoding the first number can be greater;</p>
+
+<p class="cmdc">wc -w readme.txt</p>
+<p class="desc">count words in the specified text file;</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>-c</code>, <code>--bytes</code></p>
+<p class="desc">count bytes;</p>
+
+<p class="fmtc"><code>-m</code>, <code>--chars</code></p>
+<p class="desc">count characters;</p>
+
+<p class="fmtc"><code>-l</code>, <code>--lines</code></p>
+<p class="desc">count lines;</p>
+
+<p class="fmtc"><code>-L</code>, <code>--max-line-length</code></p>
+<p class="desc">show the length of the longest line;</p>
+
+<p class="fmtc"><code>-w</code>, <code>--words</code></p>
+<p class="desc">count words;</p>
+
+
+
+
+
+<p class="cmdname"><a name="wget">wget</a></p>
+<p>
+is non-interactive network downloader.</p>
+
+<p class="fmt"><code>wget&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;...&nbsp;</kbd>[<kbd>URL</kbd>]<kbd>&nbsp;...</kbd></p>
+<p>
+It supports HTTP, HTTPS, FTP and retrieval through HTTP proxies. It has many
+options, not all of them are described here. Use quotes to specify
+<kbd>URL</kbd> containing '<samp>&</samp>'.</p>
+
+<p class="cmdc">wget -m http://www.abcd.com</p>
+<p class="desc">mirror the web-site <samp>www.abcd.com</samp>;</p>
+
+<p class="cmdc">wget -i updates.lst</p>
+<p class="desc">download files specified in <samp>updates.lst</samp>
+(text file, each line is URL, like <samp>http://download.fedora...</samp>);</p>
+
+<p class="cmdc">wget -H -r --level=1 -k -p  http://www.bum.com</p>
+<p class="desc">download all pages on the specified site plus 1 (one) level
+into any other site it links to, convert links in downloaded pages for local
+access, get all components (images, etc);</p>
+
+<p class="cmdc">wget -c --output-document=movie4.avi http://...</p>
+<p class="desc">resume download of a large file that was not completely
+transferred in the previous session;</p>
+
+
+
+<h5>Some options</h5>
+
+<p class="fmt"><code>-h</code> &nbsp;&nbsp; <code>--help</code>
+&nbsp;&nbsp; <code>-V</code> &nbsp;&nbsp; <code>--version</code>
+&nbsp;&nbsp; <code>-v</code> &nbsp;&nbsp; <code>--verbose</code></p>
+
+<p class="fmtc"><code>-a</code> <kbd>logfile</kbd>,
+<code>--append-output=</code><kbd>logfile</kbd></p>
+<p class="desc">append messages to the specified log file (create new,
+if it doesn't exist);</p>
+
+<p class="fmtc"><code>-b</code>, <code>--background</code></p>
+<p class="desc">go to the background immediately after startup;
+without <code>-o</code> output is redirected to <samp>wget-log</samp>;</p>
+
+<p class="fmtc"><code>-c</code>, <code>--continue</code></p>
+<p class="desc">continue getting a partially-downloaded file;
+should be used to resume download started by the previous instance of
+<code>~</code>; current instance in case of a connection break resumes
+download from the correct point by default;</p>
+
+<p class="fmtc"><code>-H</code>, <code>--span-hosts</code></p>
+<p class="desc">enable spanning across hosts when performing recursive
+retrieving;</p>
+
+<p class="fmtc"><code>-i</code> <kbd>file</kbd>,
+<code>--input-file=</code><kbd>file</kbd></p>
+<p class="desc">read URLs from <kbd>file</kbd>;</p>
+
+<p class="fmtc"><code>-k</code>, <code>--convert-links</code></p>
+<p class="desc">convert links in the downloaded documents to make them
+suitable for local viewing;</p>
+
+<p class="fmtc"><code>-l</code> <kbd>n</kbd>,
+<code>--level=</code><kbd>n</kbd></p>
+<p class="desc">set max depth of recursion (default is 5);</p>
+
+<p class="fmtc"><code>-L</code>, <code>--relative</code></p>
+<p class="desc">follow relative links only;</p>
+
+<p class="fmtc"><code>-m</code>, <code>--mirror</code></p>
+<p class="desc">turn on options suitable for mirroring (recursion,
+time-stamping, etc; it is currently equivalent to <code>-r -N -l inf
+--no-remove-listing</code>;</p>
+
+<p class="fmtc"><code>-N</code>, <code>--timestamping</code></p>
+<p class="desc">turn on time-stamping;</p>
+
+<p class="fmtc"><code>-o</code> <kbd>logfile</kbd>,
+<code>--output-file=</code><kbd>logfile</kbd></p>
+<p class="desc">log all messages to the specified file (default is
+<samp>stderr</samp>), overwrite old;</p>
+
+<p class="fmtc"><code>-O</code> <kbd>file</kbd>,
+<code>--output-document=</code><kbd>file</kbd></p>
+<p class="desc">don't save each document separately, but concatenate
+and write to <kbd>file</kbd>;</p>
+
+<p class="fmtc"><code>-p</code>, <code>--page-requisites</code></p>
+<p class="desc">download all files required to properly display a HTML page
+(images, sounds, stylesheets);</p>
+
+<p class="fmtc"><code>-q</code>, <code>--quiet</code></p>
+<p class="desc">turn off <code>~</code> output;</p>
+
+<p class="fmtc"><code>-r</code>, <code>--recursive</code></p>
+<p class="desc">turn on recursive retrieving;</p>
+
+<p class="fmtc"><code>-t</code> <kbd>n</kbd>,
+<code>--tries=</code><kbd>n</kbd></p>
+<p class="desc">set the number of retries to <kbd>n</kbd>; <samp>0</samp>
+means infinite (also <code>inf</code>), default is <samp>20</samp> except
+fatal errors (404, etc);</p>
+
+<p class="fmtc"><code>-w</code> <kbd>n</kbd>,
+<code>--wait=</code><kbd>n</kbd></p>
+<p class="desc">wait <kbd>n</kbd> sec between the retrievals;</p>
+
+<p class="fmtc"><code>--no-proxy</code></p>
+<p class="desc">don't use proxy, even if the appropriate <samp>*_proxy</samp>
+env variable is defined;</p>
+
+<p class="fmtc"><code>--user=</code><kbd>user</kbd></p>
+<p class="fmtc"><code>--password=</code><kbd>pass</kbd></p>
+<p class="desc">set username / password for both HTTP and FTP file retrieval;
+there are also separate:</p>
+
+<table class="options" style="margin-left:60px;width:80%">
+<tr>
+<td class="opt_name"><code>--ftp-user</code></td>
+<td class="opt_desc"><code>--ftp-password</code></td></tr>
+<tr>
+<td class="opt_name"><code><code>--http-user</code></td>
+<td class="opt_desc"><code>--http-password</code></td></tr>
+<tr>
+<td class="opt_name"><code><code>--proxy-user &nbsp; </code></td>
+<td class="opt_desc"><code>--proxy-password</code></td></tr>
+</table>
+
+
+
+
+
+<p class="cmdname"><a name="whatis">whatis</a></p>
+<p>
+Each man page contains a short one-line page description, and
+<code>whatis</code> can find and display this description using a set
+of index databases updated by <code>mandb</code> program (usually auto).</p>
+
+<p class="fmt"><code>whatis&nbsp;</code> [<kbd>options</kbd>]<kbd>&nbsp;name ...</kbd></p>
+<p>
+With the appropriate options (see below) <kbd>name</kbd> can include wildcards
+and regular expressions. However, sometimes it may be necessary to quote names
+or escape (<samp>\</samp>) special chars to stop shell from interpreting them.</p>
+
+
+
+<h5>Some options</h5>
+
+<p class="fmt"><code>-?</code> &nbsp;&nbsp; <code>--help</code>
+&nbsp;&nbsp; <code>--usage</code>
+&nbsp;&nbsp; <code>-V</code> &nbsp;&nbsp; <code>--version</code>
+&nbsp;&nbsp; <code>-v</code> &nbsp;&nbsp; <code>--verbose</code></p>
+
+<p class="fmtc"><code>-r</code>, <code>--regex</code></p>
+<p class="desc">interpret each <kbd>name</kbd> as a regular expression,
+and try to match any part of a page name; this option slows <code>~</code>
+down a little bit;</p>
+
+<p class="fmtc"><code>-w</code>, <code>--wildcard</code></p>
+<p class="desc">interpret each <kbd>name</kbd> as a pattern containing
+shell-style wildcards; for a match to be made, an expanded name must match
+the entire page name; this option slows <code>~</code> down a little bit;</p>
+
+<p class="fmtc"><code>-l</code>, <code>--long</code></p>
+<p class="desc">do not trim output to the terminal width (normally,
+output is truncated to the terminal width to avoid ugly display of the
+poorly-written NAME sections);</p>
+
+
+
+
+
+<p class="cmdname"><a name="whereis">whereis</a></p>
+<p>
+locates source, binary and manuals sections for the specified files.</p>
+
+<p class="fmt"><code>whereis&nbsp;</code>[<code>-bmsu</code>] [<code>-BMS</code> <kbd>dir ...</kbd><code> -f</code>]<kbd>&nbsp;filename ...</kbd></p>
+<p>
+The <kbd>filename</kbd> is first stripped of leading pathname components
+and any single trailing extension, then searched in standard Linux places.</p>
+
+<p class="cmdc">whereis rar</p>
+<p class="desc">search for <code>rar</code> binary, source, and manual
+sections everywhere (i.e., in all standard Linux places);</p>
+
+<p class="cmdc">whereis -b -B /usr/bin -f wget</p>
+<p class="desc">search for <code>wget</code> executable file in
+<samp>/usr/bin</samp> only;</p>
+
+<p class="cmdc">whereis -B /usr/bin -f wget</p>
+<p class="desc">search for <code>wget</code> executable in
+<samp>/usr/bin</samp>, also search for source and manual sections in
+standard places;</p>
+
+
+
+<h5>Options</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-b</code></td>
+<td class="opt_desc">search only for binaries;</td></tr>
+<tr>
+<td class="opt_name"><code>-m</code></td>
+<td class="opt_desc">search only for manual sections;</td></tr>
+<tr>
+<td class="opt_name"><code>-s</code></td>
+<td class="opt_desc">search only for sources;</td></tr>
+<tr>
+<td class="opt_name"><code>-u</code></td>
+<td class="opt_desc">search for unusual entries (a file is unusual if it
+does not have one entry of each requested type);</td></tr>
+<tr>
+<td class="opt_name"><code>-B</code></td>
+<td class="opt_desc">change or otherwise limit places to be searched for
+binaries;</td></tr>
+<tr>
+<td class="opt_name"><code>-M</code></td>
+<td class="opt_desc">change or otherwise limit places to be searched for
+manual sections;</td></tr>
+<tr>
+<td class="opt_name"><code>-S</code></td>
+<td class="opt_desc">change or otherwise limit places to be searched for
+sources;</td></tr>
+<tr>
+<td class="opt_name"><code>-f</code></td>
+<td class="opt_desc">terminate the last dir list and signal the start of file
+names (must be used with <code>-B</code>, <code>-M</code>, <code>-S</code>);</td></tr>
+</table>
+
+
+
+
+
+<p class="cmdname"><a name="which">which</a></p>
+<p>
+locates the specified command and shows the pathname of its executable file.</p>
+
+<p class="fmt"><code>which&nbsp;</code>[<code>-a</code>]<kbd>&nbsp;command ...</kbd></p>
+<p>
+<code>~</code> returns the pathnames of the files (or links) which would
+be executed in the current env, had the <kbd>command</kbd> (or commands) been
+given as a command (or commands) in a strictly POSIX-conformant shell. It does
+this by searching the paths in the <samp>PATH</samp> env var for executable
+files matching the names of the commands given to <code>~</code> as args.
+Note that <code>~</code> <b>does not follow symlinks</b>.</p>
+
+<p class="cmdc">which gcc</p>
+<p class="desc">shows the full path of GNU C compiler that will be started
+by default;</p>
+
+<p class="cmdc">which -a sqlplus</p>
+<p class="desc">shows the full paths of all versions of <samp>Oracle
+SQL*Plus</samp>, if any; even if <code>~</code> shows nothing, it does not
+mean that subj is totally missing, it only means subj cannot be found using
+<samp>PATH</samp>;</p>
+
+
+
+<h5>Options</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-a</code></td>
+<td class="opt_desc">display all matching pathnames of each matching
+<kbd>command</kbd>;</td></tr>
+</table>
+<!--
+<p class="fmtc"><code>-a</code>, <code>--all</code></p>
+<p class="desc">print all matching executables, not just the first;</p>
+
+<p class="fmtc"><code>-i</code>, <code>--read-alias</code></p>
+<p class="desc">read aliases from <samp>stdin</samp>, reporting matching
+ones on <samp>stdout</samp> (useful in combination with alias for
+<code>~</code> itself);</p>
+
+<p class="fmtc"><code>--skip-alias</code></p>
+<p class="desc">ignore option <code>--read-alias</code>, if any;</p>
+
+<p class="fmtc"><code>--read-functions</code></p>
+<p class="desc">read shell function definitions from <samp>stdin</samp>,
+reporting matching ones on <samp>stdout</samp>;</p>
+
+<p class="fmtc"><code>--skip-functions</code></p>
+<p class="desc">ignore <code>--read-function</code>, if any;</p>
+
+<p class="fmtc"><code>--skip-dot</code></p>
+<p class="desc">skip dirs in <samp>PATH</samp> that start with a dot;</p>
+
+<p class="fmtc"><code>--skip-tilde</code></p>
+<p class="desc">skip dirs in <samp>PATH</samp> that start with a tilde and
+executables which reside in the <samp>HOME</samp> dir;</p>
+
+<p class="fmtc"><code>--show-dot</code></p>
+<p class="desc">if a dir in <samp>PATH</samp> starts with a dot and
+a matching executable was found for that path, then print
+<code>./</code><kbd>progname</kbd> rather than the full path;</p>
+
+<p class="fmtc"><code>--show-tilde</code></p>
+<p class="desc">output a tilde when a dir matches the <samp>HOME</samp>
+dir (this is ignored when <code>~</code> is invoked by <samp>root</samp>);</p>
+
+<p class="fmtc"><code>--tty-only</code></p>
+<p class="desc">stop processing options on the right if not on tty;</p>
+-->
+
+<table class="exit">
+<caption>Exit status</caption>
+<tr>
+<td class="exit_code">0</td>
+<td class="code_desc">all specified cmds are found and executable;</td></tr>
+<tr>
+<td class="exit_code">1</td>
+<td class="code_desc">one or more specified cmds is non-existent or not
+executable;</td></tr>
+<tr>
+<td class="exit_code">2</td>
+<td class="code_desc">an invalid option was specified;</td></tr>
+</table>
+
+
+
+
+
+<p class="cmdname"><a name="who">who</a></p>
+<p>
+shows who is logged on.</p>
+
+<p class="fmt"><code>who&nbsp;</code>[<kbd>options</kbd>]
+[<kbd>file</kbd> | <kbd>arg1</kbd> | <kbd>arg2</kbd>]</p>
+<p>
+By default <samp>/var/run/utmp</samp> is used to get info.</p>
+
+<p class="cmdc">who -b</p>
+<p class="desc">show the boot time (when the system was started);</p>
+
+<p class="cmdc">who am i</p>
+<p class="desc">show who is logged on this terminal (note, that this is
+not equivalent to <code>whoami</code>);</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>-a</code>, <code>--all</code></p>
+<p class="desc">same as <code>-b -d --login -p -r -t -T -u</code>;</p>
+
+<p class="fmtc"><code>-b</code>, <code>--boot</code></p>
+<p class="desc">time of last system boot;</p>
+
+<p class="fmtc"><code>-d</code>, <code>--dead</code></p>
+<p class="desc">show dead processes;</p>
+
+<p class="fmtc"><code>-H</code>, <code>--heading</code></p>
+<p class="desc">show column headers;</p>
+
+<p class="fmtc"><code>-i</code>, <code>--idle</code></p>
+<p class="desc">add idle time as <kbd>hours</kbd><code>:</code><kbd>minutes</kbd>;</p>
+
+<p class="fmtc"><code>-l</code>, <code>--login</code></p>
+<p class="desc">show system login processes;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-m</code></td>
+<td class="opt_desc">show only hostname and user associated with stdin;</td></tr>
+</table>
+
+<p class="fmtc"><code>-p</code>, <code>--process</code></p>
+<p class="desc">print active processes spawned by <code>init</code>;</p>
+
+<p class="fmtc"><code>-q</code>, <code>--count</code></p>
+<p class="desc">show login names and num of users logged on;</p>
+
+<p class="fmtc"><code>-r</code>, <code>--runlevel</code></p>
+<p class="desc">show current runlevel;</p>
+
+<p class="fmtc"><code>-s</code>, <code>--short</code></p>
+<p class="desc">show only name, line and time (default);</p>
+
+<p class="fmtc"><code>-t</code>, <code>--time</code></p>
+<p class="desc">show last system clock change;</p>
+
+<p class="fmtc"><code>-T</code>,
+<code>--mesg</code>, <code>-w</code>,
+<code>--message</code>, <code>--writable</code></p>
+<p class="desc">add user's message status as <samp>+</samp>, <samp>-</samp>,
+<samp>?</samp>;</p>
+
+<p class="fmtc"><code>-u</code>, <code>--users</code></p>
+<p class="desc">list users logged in;</p>
+
+</div>
+
+</body></html>

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference / MySQL</title>
+<meta name="description" content="linux quick reference, mysql, sql, database" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<h1 class="part">MySQL notes</h1>
+<p class="center"><i>
+(latest stable release: 5.7.32 / 19 October 2020)</i></p>
+<p>
+As it usually happens with SQL databases, there are two main components:</p>
+<ul>
+<li><code>mysqld</code> - MySQL server (Linux daemon);</li>
+<li><code>mysql</code> - MySQL client (cmdline app);</li>
+</ul>
+<p>
+By default MySQL server accepts connection requests from the network on
+<samp>tcp/3306</samp>, but it may not accept network requests at all due
+to config option:</p>
+<div class="file">
+<pre>bind-address = 127.0.0.1</pre>
+</div>
+<p>
+Check <samp>/etc/mysql/my.cnf</samp> file and (only if you really need this!)
+set</p>
+<div class="file">
+<pre>bind-address = 0.0.0.0</pre>
+</div>
+<p>
+Restart MySQL server to activate changes. Remember that this config is not
+safe, and you should carefully protect your database server with firewall.</p>
+
+
+
+<h4>Startup/Shutdown</h4>
+<p>
+You can handle MySQL server using standard Linux cmds:</p>
+
+<p class="cmdc">systemctl status mysql</p>
+<p class="cmdc">systemctl start mysql</p>
+<p class="cmdc">systemctl stop mysql</p>
+<p class="cmdc">systemctl restart mysql</p>
+
+<p class="or">or</p>
+
+<p class="cmdc">service mysql status</p>
+<p class="cmdc">service mysql start</p>
+<p class="cmdc">service mysql stop</p>
+<p class="cmd">service mysql restart</p>
+<p>
+Old style:</p>
+<p class="cmdc">/etc/init.d/mysql status</p>
+<p class="cmdc">/etc/init.d/mysql start</p>
+<p class="cmdc">/etc/init.d/mysql stop</p>
+<p class="cmd">/etc/init.d/mysql restart</p>
+
+
+
+<h4>Connecting</h4>
+<p>
+Let's assume that <samp>inet_logs</samp> is a database, and MySQL server
+is running. You can connect to this database using the following command:</p>
+
+<p class="cmd">mysql inet_logs -u root -p</p>
+<p>
+(<code>-u </code>specifies a username, <code>-p </code>means "prompt for
+password")</p>
+<p>
+When user successfully connects, MySQL client displays its prompt:</p>
+
+<p class="fmt"><span class="prom">mysql&gt;</span></p>
+<p>
+To disconnect and exit:</p>
+
+<p class="fmt"><span class="prom">mysql&gt;</span> <code>exit</code></p>
+<p>
+You can connect to MySQL server without specifying a database name:</p>
+
+<p class="cmdc">mysql -u root -p</p>
+<p class="or">or</p>
+<p class="cmd">mysql --user=root mysql -p</p>
+<p>
+In general, to connect to a database at the localhost:</p>
+
+<p class="fmt"><code>mysql </code><span class="arg">db_name</span><code> -u </code><span class="arg">user</span> <code>-p</code></p>
+<p>
+To connect to a remote database, you must specify the remote host name
+or IP address, e.g.:</p>
+
+<p class="cmd">mysql -h 192.168.0.4 -u avatar -p</p>
+
+
+
+<h4>Creating databases, users, tables, etc</h4>
+<p>
+To create a new database named <samp>test_db</samp>:</p>
+
+<p class="fmtc"><span class="prom">mysql&gt;</span> <code>create database test_db;</code></p>
+
+<p class="or">or</p>
+
+<p class="fmt"><span class="prom">mysql&gt;</span> <code>create database test_db character set utf8 collate utf8_general_ci;</code></p>
+<p>
+In MySQL, max length of identifiers (database name, table name, column name,
+etc) is <samp>64</samp> chars, except <i>Alias</i> which can be
+<samp>256</samp>, and <i>Compound Statement Lablel</i> which is limited to
+<samp>16</samp>.</p>
+<p>
+Each MySQL database corresponds to a specific directory within the data
+directory. Each table corresponds to at least one file within the database
+dir (maybe more, depending on the storage engine). Triggers also correspond
+to files. As a result, the case sensitivity of the underlying OS affects the
+case sensitivity of databases, tables, and trigger names. Shortly speaking,
+<b>in Windows, names are case-insensitive</b>, <b>in Linux, names are
+case-sensitive</b>. The last is true for the most varieties of Unix, though
+MacOS is an exception.</p>
+<p>
+Some useful cmds:</p>
+<p class="fmtc"><span class="prom">mysql&gt;</span> <code>show databases;</code></p>
+<p class="fmtc"><span class="prom">mysql&gt;</span> <code>use test_db;</code></p>
+<p class="fmt"><span class="prom">mysql&gt;</span> <code>show tables;</code></p>
+<p>
+To see the creation parameters of an existing database:</p>
+
+<p class="fmt"><span class="prom">mysql&gt;</span> <code>show create database inet_logs;</code></p>
+<p>
+To create a local user (e.g., home PC, client and server in the same system):</p>
+
+<p class="fmt"><span class="prom">mysql&gt;</span> <code>CREATE USER 'avatar'@'localhost'<br>
+IDENTIFIED BY 'dmsa72n9pf';</code></p>
+<p class="fmtc"><span class="prom">mysql&gt;</span> <code>GRANT ALL PRIVILEGES ON site2.*<br>
+TO 'avatar'@'localhost' WITH GRANT OPTION;</code></p>
+
+<p class="or">or</p>
+
+<p class="fmt"><span class="prom">mysql&gt;</span> <code>grant all privileges on site2.*<br>
+to avatar@localhost identified by 'dmsa72n9pf';</code></p>
+<p>
+To create a new user with remote access and limited privileges
+(e.g. <samp>SELECT</samp> on all tables in <samp>test_db</samp> database):</p>
+
+<p class="fmtc"><span class="prom">mysql&gt;</span> <code>CREATE USER 'my_guest'@'%' IDENTIFIED BY 'ndmif8gh43';</code></p>
+<p class="fmt"><span class="prom">mysql&gt;</span> <code>GRANT SELECT ON test_db.* TO 'my_guest'@'%';</code></p>
+<p>
+Superuser account:</p>
+
+<p class="fmt"><span class="prom">mysql&gt;</span> <code>GRANT ALL PRIVILEGES ON *.*<br>
+TO 'adm'@'localhost' WITH GRANT OPTION;</code></p>
+
+
+
+
+<h4>SQL scripts</h4>
+<p>
+can be used to create databases, tables, indexes, triggers, etc.
+A typical SQL script is a text file with <samp>.sql</samp> extension
+containing SQL statements and comments. Here is an example of SQL script
+named <samp>userlist.sql</samp> which is supposed to create a database table
+<samp>userlist</samp> and fill it with a couple of records:</p>
+<div class="file"><pre>
+# Table 'userlist';
+# Created : 2019-Feb-28
+
+CREATE TABLE userlist (
+  empno INT(5) NOT NULL auto_increment,
+  ename VARCHAR(40) NOT NULL,
+  dept VARCHAR(36),
+  job VARCHAR(36),
+  PRIMARY KEY (empno))
+  ENGINE=InnoDB;
+
+INSERT INTO userlist(ename, dept, job)
+    VALUES ('Adam Jones', 'HR', 'Manager');
+INSERT INTO userlist(ename, dept, job)
+    VALUES ('James Brown', 'HR', 'Assistant');
+</pre></div>
+<p>
+MySQL supports three comment styles:</p>
+<ul>
+<li><samp># some text ...</samp> (one line, from <samp>#</samp> to EOL);</li>
+<li><samp>-- some text ...</samp> (one line, from <samp>--</samp> to EOL);</li>
+<li><samp>/* some text ... */</samp> (multiline, C-style);</li>
+</ul>
+<p>
+To run the above SQL script on behalf of user <samp>max</samp>:</p>
+
+<p class="cmd">mysql test_db -u max -p &lt; userlist.sql</p>
+<p>
+If <samp>mysql</samp> client is already running and connected to a database,
+you can execute SQL script using <samp>source</samp> cmd:</p>
+
+<p class="fmt"><span class="prom">mysql&gt;</span> <code>source userlist.sql;</code></p>
+<p>
+The script must be in the current dir, otherwise you should specify path.</p>
+
+
+
+
+<h4>An example of a session</h4>
+<p>
+If you start <samp>mysql</samp> client without specifying the database,
+you can select database with:</p>
+
+<p class="fmt"><span class="prom">mysql&gt;</span> <code>use test_db;</code></p>
+<p>
+This cmd also allows you to change the current database at any moment.
+If you lost the track and want to know what is your current database,</p>
+
+<p class="fmt"><span class="prom">mysql&gt;</span> <code>select database();</code></p>
+<p>
+Note that <samp>database()</samp> is a function.</p>
+<p>
+A typical session may look like this:</p>
+
+<p class="cmd">mysql test_db -u max -p</p>
+<p class="fmtc"><span class="prom">mysql&gt;</span> <code>show tables;</code></p>
+<p class="fmtc"><span class="prom">mysql&gt;</span> <code>desc userlist;</code></p>
+<p class="fmtc"><span class="prom">mysql&gt;</span> <code>select count(*) from userlist;</code></p>
+<p class="fmt"><span class="prom">mysql&gt;</span> <code>select empno, ename from userlist;</code></p>
+<p class="fmt"><span class="prom">mysql&gt;</span> <code>insert into userlist (<br>
+ename,dept,job)<br>
+values ('Alex Marshall','IT','Admin');</code></p>
+<p class="fmt"><span class="prom">mysql&gt;</span> <code>update userlist<br>
+set job = 'Manager' where empno = 204;</code></p>
+<p class="fmtc"><span class="prom">mysql&gt;</span> <code>delete from userlist where empno &gt; 500;</code></p>
+<p class="fmt"><span class="prom">mysql&gt;</span> <code>exit</code></p>
+<p>
+To list available databases:</p>
+
+<p class="cmd">mysqlshow -u root -p</p>
+<p>
+To shutdown MySQL database:</p>
+
+<p class="cmd">mysqladmin -u root -p shutdown</p>
+<p>
+To erase the database (think twice before doing it):</p>
+
+<p class="cmd">drop database test_db;</p>
+
+
+
+
+<h4>
+<a name="mysqldump">Database backup</a></h4>
+<p>
+This is the simplest way to perform an online backup:</p>
+
+<p class="cmd">mysqldump -u root -p -A &gt; mysql-bkp.sql</p>
+<p>
+With <code>-A</code> (or <code>--all-databases</code>) this utility writes
+all databases to a specified file as a sequence of SQL statements that later
+can be used to re-create all database objects and to re-insert all records.</p>
+<p>
+Alternatively, you can shutdown database cleanly (!) and backup database
+files using <a href="cmds_t.html#tar"><code>tar</code></a> or some other
+appropriate application.</p>
+
+
+
+<h4>
+<a name="ubuntu_pass">Setting MySQL root password in Ubuntu</a></h4>
+<p>
+If you cannot connect as root (because root password is not set in Ubuntu
+by default), restart MySQL with special options:</p>
+
+<p class="cmdc">sudo stop mysql</p>
+<p class="cmd">sudo /usr/sbin/mysqld --skip-grant-tables --skip-networking &amp;</p>
+<p>
+In this mode you can connect MySQL without a password:</p>
+
+<p class="cmd">mysql -u root</p>
+<p>
+Exec the following cmds (use some good pass of your choice):</p>
+
+<p class="fmtc"><span class="prom">mysql&gt;</span> <code>FLUSH PRIVILEGES;</code></p>
+<p class="fmtc"><span class="prom">mysql&gt;</span> <code>USE mysql;</code></p>
+<p class="fmt"><span class="prom">mysql&gt;</span> <code>UPDATE user<br>
+SET password = PASSWORD('mtsk9u3pat')<br>
+WHERE host = 'localhost' AND user = 'root';</code></p>
+<p>
+This is for local access; if you want to access MySQL from anywhere,
+then this statement must be slightly different:</p>
+
+<p class="fmtc"><span class="prom">mysql&gt;</span> <code>USE mysql;</code></p>
+<p class="fmt"><span class="prom">mysql&gt;</span> <code>UPDATE user<br>
+SET password = PASSWORD('mtsk9u3pat')<br>
+WHERE host = '%' AND user = 'root';</code></p>
+<p>
+Restart MySQL in normal mode:</p>
+
+<p class="cmdc">sudo stop mysql</p>
+<p class="or">or</p>
+<p class="cmd">sudo /etc/init.d/mysql stop</p>
+<p>
+Use</p>
+<p class="cmd">ps ax|grep mysql</p>
+<p>
+to be sure that<code>&nbsp;/usr/sbin/mysqld&nbsp;</code>(!) is not running.
+If you cannot stop it decently, use soft
+<a href="cmds_k.html#kill"><code>kill</code></a> (<samp>SIGTERM</samp>),
+wait ~10 sec before checking; if it fails twice, send <samp>SIGKILL</samp>.
+When you're sure that MySQL is stopped, go on:</p>
+
+<p class="cmd">sudo start mysql</p>
+<p>
+Now you should be able to connect as root using that password:</p>
+
+<p class="cmd">mysql -u root -p</p>
+
+</div>
+
+</body></html>

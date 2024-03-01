@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (badblocks, base64, bzip2)</title>
+<meta name="description" content="linux quick reference, badblocks, base64, bzip2" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<div id="topmenu">
+<p class="menu">
+<a href="#badblocks">badblocks</a>&nbsp;|
+<a href="#base64">base64</a>&nbsp;|
+<a href="#bzip2">bzip2</a></p>
+</div>
+
+<p class="cmdname"><a name="badblocks">badblocks</a></p>
+<p>
+searches a device (HDD partition) for bad blocks; fs must be unmounted.
+In general, <code><a href="cmds_e.html#e2fsck">e2fsck</a></code>
+(or <code><a href="cmds_m.html#mke2fs">mke2fs</a></code>) with
+<code>-c</code> option is preferred.</p>
+
+<p class="cmdc">badblocks /dev/sda4</p>
+<p class="desc">check <samp>/dev/sda4</samp> for bad blocks (read only);</p>
+
+<p class="cmdc">badblocks -w -v -o /root/badblk.t /dev/sda2</p>
+<p class="desc">check <samp>/dev/sda2</samp> for bad blocks
+(read/write, destructive), save the list of the found bad blocks to
+<code>/root/badblk.t</code>;</p>
+
+<p class="fmt"><code>badblocks&nbsp;</code>[<kbd>opts</kbd>]<kbd>&nbsp;device&nbsp;</kbd>[<kbd>last_blk</kbd>] [<kbd>first_blk</kbd>]</p>
+
+
+<h5>Options</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-v</code></td>
+<td class="opt_desc">verbose;</td></tr>
+<tr>
+<td class="opt_name"><code>-b</code> <kbd>n</kbd></td>
+<td class="opt_desc">the size of the block in bytes (the default is
+<samp>1024</samp>);</td></tr>
+<tr>
+<td class="opt_name"><code>-c</code> <kbd>n</kbd></td>
+<td class="opt_desc">num of blocks that are tested at a time (the default
+is <samp>64</samp>);</td></tr>
+<tr>
+<td class="opt_name"><code>-e</code> <kbd>n</kbd></td>
+<td class="opt_desc">max num of bad blocks before aborting the test;
+the default is <samp>0</samp> (continue until the end of the test range);</td></tr>
+</table>
+<p class="fmtc"><code>-i</code> <kbd>file</kbd></p>
+<p class="desc">read a list of known bad blocks from <kbd>file</kbd>;</p>
+
+<table class="options"><tr>
+<td class="opt_name"><code>-n</code></td>
+<td class="opt_desc">run non-destructive read/write test (time-consuming);</td></tr>
+</table>
+
+<p class="fmtc"><code>-o</code> <kbd>file</kbd></p>
+<p class="desc">write the list of the bad block to <kbd>file</kbd>;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-p</code> <kbd>n</kbd></td>
+<td class="opt_desc">num of passes; the default is <samp>0</samp>
+(exit after the first pass);</td></tr>
+<tr>
+<td class="opt_name"><code>-s</code></td>
+<td class="opt_desc">show the progress;</td></tr>
+<tr>
+<td class="opt_name"><code>-w</code></td>
+<td class="opt_desc">destructive read/write test; faster than <code>-n</code>,
+but all user data on the tested partition will be destroyed;</td></tr>
+</table>
+
+<p class="warn">Note!</p>
+<p class="indent">
+If the output of <code>~</code> is going to be fed to
+<code><a href="cmds_e.html#e2fsck">e2fsck</a></code> or
+<code><a href="commands.html#mke2fs">mke2fs</a></code>,
+the block size must be carefully specified!</p>
+
+
+
+<p class="cmdname"><a name="base64">base64</a></p>
+<p>
+encodes/decodes file (or stdin) using base64 encoding schemes.
+Base64 encoding schemes are used to encode binary data that needs to be
+stored or transferred over media that are designed to deal with textual
+data (e-mail, XML, etc).</p>
+
+<p class="cmdc">base64 pic01.jpg &gt; pic01jpg.enc</p>
+<p class="desc">convert a JPG image file to a text file;</p>
+
+<p class="cmdc">base64 -d pic01jpg.enc &gt; pic01.jpg</p>
+<p class="desc">convert a base64-encoded file to its original state (JPG);</p>
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>-d</code>, <code>--decode</code></p>
+<p class="desc">decode data;</p>
+
+<p class="fmtc"><code>-i</code>, <code>--ignore-garbage</code></p>
+<p class="desc">when decoding, ignore non-alphabet chars;</p>
+
+<p class="fmtc"><code>-w</code> <kbd>n</kbd>, <code>--wrap=</code><kbd>n</kbd></p>
+<p class="desc">wrap encoded lines after <kbd>n</kbd> chars (<samp>76</samp>
+by default; <samp>0</samp> disables line wrapping);</p>
+
+
+
+<p class="cmdname"><a name="bzip2">bzip2</a></p>
+<p>
+compresses files using the Burrows-Wheeler block sorting text
+compression algorithm and Huffman coding; <code>bunzip2</code> decompresses
+bzip2 files; <code>bzcat</code> decompresses bzip2 files to stdout.
+<code>bzip2recover</code> recovers data from the damaged bzip2 files.</p>
+
+<p class="cmdc">tar cvf - . | bzip2 -c > ../arc01.tar.bz2</p>
+<p class="desc">archive and compress the whole contents of the current dir;</p>
+
+<p class="cmdc">tar cvf - ./arc01 | bzip2 -c > arc01.tar.bz2</p>
+<p class="desc">archive and compress the whole contents of <samp>arc01</samp> subdir;</p>
+<p>
+By default <code>bzip2</code> replaces each processed file with its
+compressed version retaining the same mod date, perms, ownership (when
+possible). New filename is derived from the original like
+<code>orig_name.bz2</code>. If no filenames are specified <code>bzip2</code>
+compresses from stdin to stdout, but wouldn’t write compressed output
+to the terminal.</p>
+<p class="fmt"><code>bzip2&nbsp;</code>[<kbd>options</kbd>] [<kbd>filenames</kbd>]</p>
+
+<p class="cmdc">bzip2 *</p>
+<p class="desc">compress all files in the current dir (src files will be deleted);</p>
+
+<p class="cmdc">bzip2 -k *</p>
+<p class="desc">compress all files in the current dir, do not remove src files;</p>
+
+<p class="cmdc">bzip2 -k -9 *</p>
+<p class="desc">compress all files in the current dir, use the max block size
+(900K) for better compression, do not remove the source files;</p>
+
+<p class="fmt"><code>bunzip2&nbsp;</code>[<kbd>options</kbd>] [<kbd>filenames</kbd>]</p>
+
+<p class="cmdc">bunzip2 *.bz2</p>
+<p class="desc">decompress all files with <samp>.bz2</samp> extension
+in the current dir;</p>
+<p>
+<code>bzip2</code> and <code>bunzip2</code> by default do not overwrite
+existing files. <code>bzcat</code> (or <code>bzip2 –dc</code>) decompresses
+all specified files to stdout.</p>
+
+<p class="fmt"><code>bzcat&nbsp;</code>[<code>-s</code>] [<kbd>filenames</kbd>]</p>
+<p>
+<code>bzip2</code> uses 32-bit CRC to protect against corruption.
+It won’t help to recover the damaged file, in such case try
+<code>bzip2recover</code>, it may help you to restore the undamaged blocks
+of a corrupted file.</p>
+<p class="cmd">bzip2recover <span class="arg">filenames</span></p>
+
+
+<h5>Some options</h5>
+
+<p class="fmt"><code>-h</code> &nbsp;&nbsp; <code>--help</code> &nbsp;&nbsp;
+<code>-V</code> &nbsp;&nbsp; <code>--version</code> &nbsp;&nbsp;
+<code>-v</code> &nbsp;&nbsp; <code>--verbose</code></p>
+
+<p class="fmtc"><code>-c</code>, <code>--stdout</code></p>
+<p class="desc">compress or decompress to stdout;</p>
+
+<p class="fmtc"><code>-d</code>, <code>--decompress</code></p>
+<p class="desc">force <code>bzip2</code> to decompress regardless of the
+invocation name (<code>bzip2</code>, <code>bunzip2</code>, <code>bzcat</code>
+are the same program, and the invocation name defines what to do);</p>
+
+<p class="fmtc"><code>-f</code>, <code>--force</code></p>
+<p class="desc">overwrite output files (normally <code>bzip2</code> will
+not overwrite existing output files) and break hard links to files, which
+otherwise wouldn't be done;</p>
+
+<p class="fmtc"><code>-k</code>, <code>--keep</code></p>
+<p class="desc">don't delete (keep) input (original) files during
+compression or decompression;</p>
+
+<p class="fmtc"><code>-L</code>, <code>--license</code></p>
+<p class="desc">display the <code>bzip2</code> license terms and quit;</p>
+
+<p class="fmtc"><code>-q</code>, <code>--quiet</code></p>
+<p class="desc">suppress non-essential warnings; I/O errors and other
+critical events will not be suppressed;</p>
+
+<p class="fmtc"><code>-s</code>, <code>--small</code></p>
+<p class="desc">reduce memory usage; sensless unless you are really
+short of memory; speed/ratio is below average;</p>
+
+<p class="fmtc"><code>-t</code>, <code>--test</code></p>
+<p class="desc">check file integrity, don't decompress; in fact
+decompression will be done, but the result will be thrown away;</p>
+
+<p class="fmtc"><code>-z</code>, <code>--compress</code></p>
+<p class="desc">force compression regardless of the invocation name;
+complementary to <code>-d</code>;</p>
+
+<p class="fmtc"><code>-</code><kbd>n</kbd>, <code>--fast</code>, <code>--best</code></p>
+<p class="desc">set the block size to 100k (<code>-1</code>) .. 900k
+(<code>-9</code>, default) when compressing; <code>--fast</code> and
+<code>--best</code> are used for compatibility with GNU GZIP and have
+little effect; higher block sizes give better compression, but require
+more memory, speed is nearly the same; compression takes approximately
+2 times more memory than decompression;</p>
+
+<table class="options"><tr>
+<td class="opt_name"><code>--</code></td>
+<td class="opt_desc">treat all subsequent arguments as file names;</td></tr>
+</table>
+
+</div>
+
+</body></html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>GNU/Linux quick reference</title>
+<meta name="description" content="Linux quick reference for users and administrators comfortable with command line, PC and mobile (smartphone) versions" />
+<meta name="keywords" content="linux, os, operating system, unix, ubuntu, command line, cmdline, boot process" />
+<meta name="charset" content="UTF-8" />
+<meta name="author" content="A. S. Tarasenkov" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+<script src="js/toc.js"></script>
+</head><body class="toc">
+
+<script>
+console.log("-> toc.html");
+
+// var w = $('body').width();
+// w = w - getScrollbarWidth();
+// console.log("-> Width = " + w);
+
+let refStyle = localStorage.getItem(keyStyle)
+
+if (refStyle && refStyle == "two") {
+  document.write("<a id=\"restart\" title=\"Start ");
+  document.write("from the beginning\" href=\"#\">");
+  document.write("<img class=\"butt\" src=\"images/reset.png\" /></a>");
+}
+</script>
+
+<div id="main" style="padding-bottom:1%">
+
+<h1>Linux quick reference</h1>
+
+<p class="date_center">Updated: Feb 29, 2024</p>
+
+</div>
+
+<div id="topmenu" style="background:#C2CBFD">
+
+<p class="submenu"><i>
+<a href="abbrev.html">Abbrev</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="#cmds">Commands</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="multipliers.html">Multipliers</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="shortcuts.html">Shortcuts</a></i></p>
+
+</div>
+
+<div id="abc_index">
+
+<p class="center">
+<a href="#aaa">&nbsp;A&nbsp;</a>
+<a href="#bbb">&nbsp;B&nbsp;</a>
+<a href="#ccc">&nbsp;C&nbsp;</a>
+<a href="#ddd">&nbsp;D&nbsp;</a>
+<a href="#eee">&nbsp;E&nbsp;</a>
+<a href="#fff">&nbsp;F&nbsp;</a>
+<a href="#ggg">&nbsp;G&nbsp;</a>
+<a href="#hhh">&nbsp;H&nbsp;</a>
+<a href="#iii">&nbsp;I&nbsp;</a>
+<a href="#jjj">&nbsp;J&nbsp;</a>
+<a href="#kkk">&nbsp;K&nbsp;</a>
+<a href="#lll">&nbsp;L&nbsp;</a>
+<a href="#mmm">&nbsp;M&nbsp;</a>
+<a href="#nnn">&nbsp;N&nbsp;</a>
+<a href="#ooo">&nbsp;O&nbsp;</a>
+<a href="#ppp">&nbsp;P&nbsp;</a>
+<a href="#rrr">&nbsp;R&nbsp;</a>
+<a href="#sss">&nbsp;S&nbsp;</a>
+<a href="#ttt">&nbsp;T&nbsp;</a>
+<a href="#uuu">&nbsp;U&nbsp;</a>
+<a href="#vvv">&nbsp;V&nbsp;</a>
+<a href="#www">&nbsp;W&nbsp;</a>
+<a href="#yyy">&nbsp;Y&nbsp;</a>
+<a href="#zzz">&nbsp;Z&nbsp;</a>
+</p>
+<hr>
+<p class="center" style="font-size:80%">
+<script>
+refStyle = localStorage.getItem(keyStyle);
+
+if (refStyle && refStyle == "two") {
+  document.write("<a href=\"apache.html\" target=\"frame2\">APACHE</a>&nbsp; ")
+  document.write("<a href=\"audio.html\" target=\"frame2\">AUDIO</a>&nbsp; ")
+  document.write("<a href=\"bash.html\" target=\"frame2\">BASH</a>&nbsp; ")
+  document.write("<a href=\"boot.html\" target=\"frame2\">BOOT</a>&nbsp; ")
+  document.write("<a href=\"sw_inst.html\" target=\"frame2\">INSTALL</a>&nbsp; ")
+  document.write("<a href=\"keys.html\" target=\"frame2\">KEYS</a>&nbsp; ")
+  document.write("<a href=\"video.html\" target=\"frame2\">MULTIMEDIA</a>&nbsp; ")
+  document.write("<a href=\"mysql.html\" target=\"frame2\">MySQL</a>&nbsp; ")
+  document.write("<a href=\"net.html\" target=\"frame2\">NETWORK</a>&nbsp; ")
+  document.write("<a href=\"programming.html\" target=\"frame2\">PROG</a>&nbsp; ")
+  document.write("<a href=\"psql.html\" target=\"frame2\">PSQL</a>&nbsp; ")
+  document.write("<a href=\"regexp.html\" target=\"frame2\">REGEX</a>&nbsp; ")
+  document.write("<a href=\"storage.html\" target=\"frame2\">STORAGE</a>&nbsp; ")
+  document.write("<a href=\"system.html\" target=\"frame2\">SYSTEM</a>&nbsp; ")
+  document.write("<a href=\"tcpip.html\" target=\"frame2\">TCP/IP</a>&nbsp; ")
+  document.write("<a href=\"storage.html#usb\" target=\"frame2\">USB</a>&nbsp; ")
+  document.write("<a href=\"video.html\" target=\"frame2\">VIDEO</a>&nbsp; ")
+  document.write("<a href=\"wifi.html\" target=\"frame2\">WIRELESS</a>&nbsp; ")
+  document.write("<a href=\"howto.html\" target=\"frame2\">HOWTO..</a>")
+} else {
+  document.write("<a href=\"apache.html\">APACHE</a>&nbsp; ")
+  document.write("<a href=\"audio.html\">AUDIO</a>&nbsp; ")
+  document.write("<a href=\"bash.html\">BASH</a>&nbsp; ")
+  document.write("<a href=\"boot.html\">BOOT</a>&nbsp; ")
+  document.write("<a href=\"sw_inst.html\">INSTALL</a>&nbsp; ")
+  document.write("<a href=\"keys.html\">KEYS</a>&nbsp; ")
+  document.write("<a href=\"video.html\">MULTIMEDIA</a>&nbsp; ")
+  document.write("<a href=\"mysql.html\">MySQL</a>&nbsp; ")
+  document.write("<a href=\"net.html\">NETWORK</a>&nbsp; ")
+  document.write("<a href=\"programming.html\">PROG</a>&nbsp; ")
+  document.write("<a href=\"psql.html\">PSQL</a>&nbsp; ")
+  document.write("<a href=\"regexp.html\">REGEX</a>&nbsp; ")
+  document.write("<a href=\"storage.html\">STORAGE</a>&nbsp; ")
+  document.write("<a href=\"system.html\">SYSTEM</a>&nbsp; ")
+  document.write("<a href=\"tcpip.html\">TCP/IP</a>&nbsp; ")
+  document.write("<a href=\"storage.html#usb\">USB</a>&nbsp; ")
+  document.write("<a href=\"video.html\">VIDEO</a>&nbsp; ")
+  document.write("<a href=\"wifi.html\">WIRELESS</a>&nbsp; ")
+  document.write("<a href=\"howto.html\">HOWTO..</a>")
+}
+</script>
+</p>
+
+</div>
+
+<div id="contents">
+
+<p class="center" style="color:darkviolet">
+<a name="cmds"></a>
+<i>Some parts of this manual may be outdated!</i></p>
+
+<p class="center" style="color:steelblue">
+<i>Some programs (utilities) described/mentioned/referenced here
+may not be installed by default or missing from your distribution!</i></p>
+
+<script>
+refStyle = localStorage.getItem(keyStyle);
+
+if (refStyle && refStyle == "two") {
+  makeFrameToc();
+} else if (refStyle && refStyle == "one") {
+  makeOneColToc();
+} else {
+  makeMobileToc();
+}
+</script>
+
+
+<h4 class="part4" style="margin-top:0">Note!</h4>
+<p>
+In the command descriptions the following widely-used arguments may be given
+without explanation:</p>
+
+<p class="fmtc"><code>-h -? --help --usage</code></p>
+<p class="desc">show [short] help/usage info;</p>
+
+<p class="fmtc"><code>-V --version</code></p>
+<p class="desc">show program version;</p>
+
+<p class="fmtc"><code>-v --verbose</code></p>
+<p class="desc">produce verbose output;</p>
+
+</div>
+
+<div id="main" style="padding-top:1em">
+
+<p style="font-size:170%;padding:2%;text-align:right"><i>
+<a href="javascript:resetState()" style="color:#00606D">Reset State</a></i>
+</p>
+
+</div>
+
+</body></html>

@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (rename, renice, rm, rmdir, route, rpm)</title>
+<meta name="description" content="linux quick reference, rename, renice, rm, rmdir, route, rpm" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<div id="topmenu">
+<p class="menu">
+<a href="#rename">rename</a>&nbsp;|
+<a href="#renice">renice</a>&nbsp;|
+<a href="#rm">rm</a>&nbsp;|
+<a href="#rmdir">rmdir</a>&nbsp;|
+<a href="#route">route</a>&nbsp;|
+<a href="#rpm">rpm</a></p>
+</div>
+
+
+
+<p class="cmdname"><a name="rename">rename</a></p>
+<p>
+can be used to rename multiple files. In the past it was available out of
+the box, but in Ubuntu 19.04 it is not installed by default, and probably
+you won't need it - use <code> <a href="cmds_m.html#mv">mv</a></code>, or use
+GUI file manager (e.g., Nautilus), etc. Of course, if you really need to
+perform some non-trivial renaming operation on a large number of files, then:</p>
+
+<p class="cmd">sudo apt install rename</p>
+<p>
+It looks like there are several versions of <code>rename</code> with
+different syntax. The version I've installed turned to be a PERL script
+<samp>/usr/bin/file-rename</samp>. I say, before you try smth with this
+program, read manual, or at least run:</p>
+
+<p class="cmd">rename --help</p>
+<p>
+The syntax is a little bit confusing for a program named <i>rename</i>:</p>
+
+<p class="fmtc"><code>rename </code>[<kbd>options</kbd>]<kbd> perlexpr files </kbd></p>
+
+<p class="or">or</p>
+
+<p class="fmt"><code>rename </code>[<kbd>options</kbd>]<code> 's/</code><kbd>expr</kbd><code>/</code><kbd>repl</kbd><code>/'</code> <kbd>files</kbd></p>
+<p>
+It's supposed to rename the specified file(s) by replacing the first occurrence
+of <kbd>expr</kbd> in their name with <kbd>repl</kbd>. Both <i>expression</i>
+and <i>replacement</i> are PERL <a href="regexp.html">regex</a>.</p>
+
+
+<p class="cmdc">rename 'y/A-Z/a-z/' *</p>
+<p class="desc">convert all filenames in the curr dir to lowercase;</p>
+
+<p class="cmdc">rename 's/\.jade$/\.pug/' *.jade</p>
+<p class="desc">change file extension from <samp>.jade</samp> to
+<samp>.pug</samp> for all matching files (<samp>*.jade</samp>) in
+the curr dir;</p>
+
+<p class="cmdc">rename 's/\.bak$//' *.bak</p>
+<p class="desc">strip the <samp>.bak</samp> ext from all matching files;</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-h</code>, <code>--help</code></p>
+
+<p class="fmt"><code>-V</code>, <code>--version</code></p>
+
+<p class="fmt"><code>-v</code>, <code>--verbose</code></p>
+
+<p class="fmtc"><code>-0</code>, <code>--null</code></p>
+<p class="desc">use <samp>\0</samp> as record separator when reading
+from <samp>stdin</samp>;</p>
+
+<p class="fmtc"><code>-d</code>, <code>--filename</code>,
+<code>--nopath</code>, <code>--nofullpath</code></p>
+<p class="desc">do not rename directories, only rename filename components
+of the full path;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-e</code></td>
+<td class="opt_desc">expression: code to act on filenames; may be repeated
+to build up code (like "<code>perl -e</code>"); without this option the first
+arg is used as code;</td></tr>
+<tr>
+<td class="opt_name"><code>-E</code></td>
+<td class="opt_desc">statement: code to act on filenames; like prev, but
+terminated with '<samp>;</samp>'</td></tr>
+</table>
+
+<p class="fmtc"><code>-f</code>, <code>--force</code></p>
+<p class="desc">overwrite existing files;</p>
+
+<p class="fmtc"><code>-n</code>, <code>--no-act</code>, or maybe <code>--nono</code></p>
+<p class="desc">show what will be done, but do not make any changes
+(add <code>-v</code> for details);</p>
+
+<p class="fmtc"><code>--path</code>, <code>--fullpath</code></p>
+<p class="desc">rename full path including any dir components (default);</p>
+
+
+
+<h5>Some versions of <i>rename</i> use these options:</h5>
+
+<p class="fmtc"><code>-i</code>, <code>--interactive</code></p>
+<p class="desc">ask before overwriting existing files;</p>
+
+<p class="fmtc"><code>-o</code>, <code>--no-overwrite</code></p>
+<p class="desc">do not overwrite existing files; if <code>--symlink</code>
+is active, do not overwrite symlinks pointing to existing targets;</p>
+
+<p class="fmtc"><code>-s</code>, <code>--symlink</code></p>
+<p class="desc">do not rename a symlink, rename its target;</p>
+
+<!--
+<table class="exit">
+<caption>Exit codes</caption>
+<tr>
+<td class="exit_code">0</td>
+<td class="code_desc">all requested operations were successful;</td></tr>
+<tr>
+<td class="exit_code">1</td>
+<td class="code_desc">all requested operations failed;</td></tr>
+<tr>
+<td class="exit_code">2</td>
+<td class="code_desc">some requested operations failed;</td></tr>
+<tr>
+<td class="exit_code">4</td>
+<td class="code_desc">nothing was renamed;</td></tr>
+<tr>
+<td class="exit_code">64</td>
+<td class="code_desc">unanticipated error occurred;</td></tr>
+</table>
+-->
+
+
+
+
+
+<p class="cmdname"><a name="renice">renice</a></p>
+<p>
+alters the scheduling priority of one or more running processes.</p>
+
+<p class="fmt"><code>renice&nbsp;</code><kbd>pri&nbsp;</kbd>[[<code>-p</code>] <kbd>pid ...</kbd>]
+[[<code>-g</code>] <kbd>pgrp ...</kbd>] [[<code>-u</code>] <kbd>user ...</kbd>]</p>
+<p>
+Negative <kbd>pri</kbd> increases priority, positive - decreases.
+By default the processes are specified by PID. <code>-g</code> causes all
+processes in the specified process group to be affected, <code>-u</code>
+causes all processes of the specified user to be affected.</p>
+<p>
+Superuser can <code>~</code> any process and change priority in the
+range from <samp>PRIO_MIN</samp> (-20) to <samp>PRIO_MAX</samp> (20).
+Other users can only control their own processes, and the available range
+is from 0 to 20.</p>
+
+<p class="cmdc">renice +15 1234</p>
+<p class="desc">slow down the process with PID = 1234;</p>
+
+<p class="cmdc">renice +20 -u alex</p>
+<p class="desc">slow down all processes of <samp>alex</samp>;</p>
+
+
+
+
+
+<p class="cmdname"><a name="rm">rm</a></p>
+<p>
+removes files and directories, though does not remove dirs by default.</p>
+
+<p class="cmdc">rm message2.txt</p>
+<p class="desc">remove file <samp>message2.txt</samp>;</p>
+
+<p class="cmdc">rm -- -f</p>
+<p class="desc">remove file with an unusual name <samp>-f</samp>;</p>
+
+<p class="cmdc">rm ./-f</p>
+<p class="desc">same as previous;</p>
+
+<p class="cmdc">rm -r install</p>
+<p class="desc">remove dir <samp>install</samp> recursively;</p>
+
+<p class="cmdc">rm -f *</p>
+<p class="desc">remove all files, never ask;</p>
+
+<p class="cmdc">rm -d temp1</p>
+<p class="desc">unlink directory <samp>temp1</samp>;</p>
+
+<p class="fmt"><code>rm&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;file ...</kbd></p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code>
+&nbsp;&nbsp; <code>-v</code> &nbsp;&nbsp; <code>--verbose</code></p>
+
+<p class="fmtc"><code>-d</code>, <code>--dir</code></p>
+<p class="desc">remove empty directories;</p>
+
+<p class="fmtc"><code>-f</code>, <code>--force</code></p>
+<p class="desc">never prompt, ignore non-existent files and arguments;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-i</code></td>
+<td class="opt_desc">prompt before every removal;</td></tr>
+<tr>
+<td class="opt_name"><code>-I</code></td>
+<td class="opt_desc">prompt once before removing more than three files,
+or when removing recursively;</td></tr>
+</table>
+
+<p class="fmtc"><code>--interactive</code>[<code>=never</code>|<code>once</code>|<code>always</code>]</p>
+<p class="desc">prompt before removal: <samp>never</samp> is never,
+<samp>once</samp> is like <code>-I</code>, <samp>always</samp> (default)
+is like <code>-i</code>;</p>
+
+<p class="fmtc"><code>--one-file-system</code></p>
+<p class="desc">when removing a hierarchy recursively, skip any dir that
+is on a file system different from that of the corresponding cmdline arg;</p>
+
+<p class="fmtc"><code>--no-preserve-root</code></p>
+<p class="desc">do not treat '<samp>/</samp>' specially;</p>
+
+<p class="fmtc"><code>--preserve-root</code></p>
+<p class="desc">do not remove '<samp>/</samp>' (default);</p>
+
+<p class="fmtc"><code>-r</code>, <code>-R</code>,
+<code>--recursive</code></p>
+<p class="desc">remove dirs and their contents recursively;</p>
+
+
+
+
+
+<p class="cmdname"><a name="rmdir">rmdir</a></p>
+<p>
+removes empty directories.</p>
+
+<p class="cmdc">rmdir -p temp/misc/work</p>
+<p class="desc">remove dir <samp>work</samp>, then try to remove dirs <samp>misc</samp> and <samp>temp</samp>;</p>
+
+<p class="fmt"><code>rmdir&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;dir ...</kbd></p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code>
+&nbsp;&nbsp; <code>-v</code> &nbsp;&nbsp; <code>--verbose</code></p>
+
+<p class="fmtc"><code>-p</code>, <code>--parents</code></p>
+<p class="desc">remove dir, then try to remove each dir component of
+that path name;</p>
+
+<p class="fmtc"><code>--ignore-fail-on-non-empty</code></p>
+<p class="desc">ignore failures that happen because dirs are not empty;</p>
+
+
+
+
+
+<p class="cmdname_dep"><a name="route">route</a></p>
+<p class="dep">Deprecated</p>
+<p>
+manipulates the kernel's IP routing tables (mainly to set up the static routes). When <code>add</code> or <code>del</code> are
+used, <code>~</code> modifies kernel table, otherwise displays current contents. Since it is deprecated, you should probably
+try to use <code>ip</code> (specifically<code> ip route </code>...).</p>
+
+<p class="cmdc">route -n</p>
+<p class="desc">show routing table using numerical addresses;</p>
+
+<p class="cmdc">route add -net 127.0.0.0</p>
+<p class="desc">add the normal loopback entry, using netmask <samp>255.0.0.0</samp>
+and associated with <samp>lo</samp> device (assuming it was previously set up
+with <a href="cmds_i.html#ifconfig"><code>ifconfig</code></a>);
+
+<p class="cmdc">route add -host 192.168.12.190 dev eth0</p>
+<p class="desc">add route to the host <samp>192.168.12.190</samp> via <samp>eth0</samp>;</p>
+
+<p class="cmdc">route add -net 192.168.12.0<br>netmask 255.255.255.0 gw 192.168.4.250</p>
+<p class="desc">add a route to the network <samp>192.168.12.0/24</samp> via
+the gateway <samp>192.168.4.250</samp>;</p>
+
+<p class="cmdc">route del default gw 192.168.0.247</p>
+<p class="desc">remove default gateway <samp>192.168.0.247</samp>;</p>
+
+<p class="cmdc">route add default gw 192.168.0.254</p>
+<p class="desc">add default gateway <samp>192.168.0.254</samp>;</p>
+
+<p class="cmdc">route add -net 10.0.0.0 netmask 255.0.0.0 reject</p>
+<p class="desc">install a rejecting route for the private network <samp>10.0.0.0</samp>;</p>
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-h</code> &nbsp;&nbsp; <code>--help</code>
+&nbsp;&nbsp; <code>-V</code> &nbsp;&nbsp; <code>--version</code>
+&nbsp;&nbsp; <code>-v</code> &nbsp;&nbsp; <code>--verbose</code></p>
+
+<p class="fmtc"><code>-A</code> <kbd>family</kbd></p>
+<p class="desc">use the specified address family: <samp>inet</samp> (default),
+<samp>inet6</samp>, <samp>ax25</samp>, <samp>ipx</samp>,
+.. (for a list of currently supported families run <code>route --help</code>);</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-C</code></td>
+<td class="opt_desc">operate on the kernel’s routing cache;</td></tr>
+<tr>
+<td class="opt_name"><code>-F</code></td>
+<td class="opt_desc">operate on the kernel’s FIB (Forwarding Information Base) routing table (default);</td></tr>
+<tr>
+<td class="opt_name"><code>-e</code></td>
+<td class="opt_desc">use <a href="cmds_n.html#netstat"><code>netstat</code></a> format to display the routing table;</td></tr>
+</table>
+
+<p class="fmtc"><code>-gw</code> <kbd>gateway</kbd></p>
+<p class="desc">route packets via a specified gateway
+(usually you have to set up a static route to this gateway first);</p>
+
+<p class="fmtc"><code>-host</code></p>
+<p class="desc">the target is a host;</p>
+
+<p class="fmtc"><code>-net</code></p>
+<p class="desc">the target is a net;</p>
+
+<p class="fmtc"><code>-netmask </code><kbd>mask</kbd></p>
+<p class="desc">when adding a network route use the specified netmask;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-n</code></td>
+<td class="opt_desc">show numerical addresses;</td></tr>
+</table>
+
+<p class="fmtc"><code>add</code></p>
+<p class="desc">add new route;</p>
+
+<p class="fmtc"><code>del</code></p>
+<p class="desc">delete a route;</p>
+
+<p class="fmtc"><code>dev</code> <kbd>iface</kbd></p>
+<p class="desc">force route to be associated with the specified dev;</p>
+
+<p class="fmtc"><code>metric</code> <kbd>n</kbd></p>
+<p class="desc">set the metric field in the routing table;</p>
+
+<p class="fmtc"><code>mss</code> <kbd>n</kbd></p>
+<p class="desc">set TCP MSS (Maximum Segment Size) for connections
+over this route to <kbd>n</kbd> bytes (default is MTU minus headers);</p>
+
+
+<h5>Output</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><samp>Destination&nbsp;</samp></td>
+<td class="opt_desc">the destination network or host;</td></tr>
+<tr>
+<td class="opt_name"><samp>Gateway</samp></td>
+<td class="opt_desc">the gateway address or <samp>*</samp> if none set;</td></tr>
+<tr>
+<td class="opt_name"><samp>Genmask</samp></td>
+<td class="opt_desc">the netmask for the destination net; 255.255.255.255 for host destination, 0.0.0.0 for the default route;</td></tr>
+<tr>
+<td class="opt_name"><samp>Flags</samp></td>
+<td class="opt_desc">
+
+<table class="opts" style="margin-left:0">
+<tr>
+<td class="opts">U</td><td class="opt_desc">route is up;</td></tr>
+<tr>
+<td class="opts">H</td><td class="opt_desc">target is a host;</td></tr>
+<tr>
+<td class="opts">G</td><td class="opt_desc">use gateway;</td></tr>
+<tr>
+<td class="opts">R</td><td class="opt_desc">reinstate route for dynamic routing;</td></tr>
+<tr>
+<td class="opts">D</td><td class="opt_desc">dynamically installed by daemon or redirect;</td></tr>
+<tr>
+<td class="opts">M</td><td class="opt_desc">modified from routing daemon or redirect;</td></tr>
+<tr>
+<td class="opts">A</td><td class="opt_desc">installed by <samp>addrconf</samp>;</td></tr>
+<tr>
+<td class="opts">C</td><td class="opt_desc">cache entry;</td></tr>
+<tr>
+<td class="opts">!</td><td class="opt_desc">reject route;</td></tr>
+</table>
+</td></tr>
+
+<tr>
+<td class="opt_name"><samp>Metric</samp></td>
+<td class="opt_desc">the distance to the target (in hops);</td></tr>
+<tr>
+<td class="opt_name"><samp>Ref</samp></td>
+<td class="opt_desc">number of references to this route;</td></tr>
+<tr>
+<td class="opt_name"><samp>Use</samp></td>
+<td class="opt_desc">count of lookups for the route;</td></tr>
+<tr>
+<td class="opt_name"><samp>Iface</samp></td>
+<td class="opt_desc">interface to which packets for this route will be sent;</td></tr>
+</table>
+
+
+
+<p class="cmdname"><a name="rpm">rpm</a></p>
+<p>
+(<b>Red Hat Package Manager</b>) is used to install, update,
+remove (erase), query, verify and build individual software packages.</p>
+
+<p class="cmdc">rpm -i foobar-1.0-1.i386.rpm</p>
+<p class="desc">install package <samp>foobar-1.0-1.i386.rpm</samp>;</p>
+
+<p class="cmdc">rpm -U --force foobar-1.0-1.i386.rpm</p>
+<p class="desc">upgrade package <samp>foobar...</samp> that was installed earlier;</p>
+
+<p class="cmdc">rpm -Uvh postfix-<span class="arg">XXXX</span>.rpm</p>
+<p class="desc">upgrade package <samp>postfix-<span class="arg">XXXX</span></samp> (use verbose mode and show progress marks);</p>
+
+<p class="cmdc">rpm -e foobar-1.0.0.i386</p>
+<p class="desc">remove package <samp>foobar...</samp>;</p>
+
+<p class="cmdc">rpm -Va</p>
+<p class="desc">check if some of installed files are missing;</p>
+
+<p class="cmdc">rpm -qa</p>
+<p class="desc">list all installed packages;</p>
+
+<p class="cmdc">rpm -qa | grep openoffice</p>
+<p class="desc">list all installed packages related to <samp>OpenOffice</samp>;</p>
+
+<p class="cmdc">rpm -qf /usr/X11R6/bin/xjewel</p>
+<p class="desc">find what package this file belongs to;</p>
+
+<p class="cmdc">rpm -qpi koules-1.2-2.i386.rpm</p>
+<p class="desc">report what is this package for;</p>
+
+<p class="cmdc">rpm -qpl koules-1.2-2.i386.rpm</p>
+<p class="desc">list files this package is going to install;</p>
+
+<p class="cmdc">rpm --import http://freshrpms.net/packages/RPM-GPG-KEY.txt</p>
+<p class="desc">import GnuPG public key from <samp>freshrpms.net</samp>;</p>
+<p>
+A package includes a file archive + metadata (helper scripts, file
+attributes, package description). There are 2 types of packages:
+<strong>binary</strong> and <strong>source</strong>.
+
+<p class="fmt"><code>rpm&nbsp;</code>{<code>-i</code> | <code>--install</code>} [<kbd>options</kbd>]<kbd>&nbsp;package</kbd></p>
+<p class="fmt"><code>rpm&nbsp;</code>{<code>-U</code> | <code>--upgrade</code>} [<kbd>options</kbd>]<kbd>&nbsp;package</kbd></p>
+<p class="fmt"><code>rpm&nbsp;</code>{<code>-F</code> | <code>--freshen</code>} [<kbd>options</kbd>]<kbd>&nbsp;package</kbd></p>
+<p class="fmt"><code>rpm&nbsp;</code>{<code>-e</code> | <code>--erase</code>} [<kbd>options</kbd>]<kbd>&nbsp;package</kbd></p>
+<p class="fmt"><code>rpm&nbsp;</code>{<code>-q</code> | <code>--query</code>} [<kbd>select_opts</kbd>] [<kbd>query_opts</kbd>]</p>
+<p class="fmt"><code>rpm&nbsp;</code>{<code>-V</code> | <code>--verify</code>} [<kbd>select_opts</kbd>] [<kbd>verify_opts</kbd>]</p>
+<p class="fmtc"><code>rpm --initdb&nbsp;</code>[<code>-v</code>] [<code>--dbpath</code> <kbd>dir</kbd>] [<code>--root</code> <kbd>dir</kbd>]</p>
+<p class="desc">create a new RPM database;</p>
+<p class="fmtc"><code>rpm --rebuilddb&nbsp;</code>[<code>-v</code>] [<code>--dbpath</code> <kbd>dir</kbd>] [<code>--root</code> <kbd>dir</kbd>]</p>
+<p class="desc">rebuild database indices from the installed pkg headers;</p>
+<p>
+There are also: Uninstall, Signature Check, Resign, Add Signature,
+Set Owners / Groups, Show Query-tags, Show Configuration.</p>
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-?</code> &nbsp;&nbsp; <code>--help</code>
+&nbsp;&nbsp; <code>--version</code> &nbsp;&nbsp; <code>-v</code>
+&nbsp;&nbsp; <code>--verbose</code></p>
+
+<p class="fmtc"><code>--dbpath</code> <kbd>dir</kbd></p>
+<p class="desc">use the database in <kbd>dir</kbd> rather then
+the default path (<samp>/var/lib/rpm</samp>);</p>
+
+<p class="fmtc"><code>--pipe</code> <kbd>cmd</kbd></p>
+<p class="desc">pipe the output of <code>~</code> to the command
+<kbd>cmd</kbd>;</p>
+
+<p class="fmtc"><code>--quiet</code></p>
+<p class="desc">quiet mode (only error message are displayed);</p>
+
+<p class="fmtc"><code>--rcfile</code> <kbd>list</kbd></p>
+<p class="desc">each of the files in the colon-separated list is read
+sequentially for configuration info; the default is:</p>
+<p class="fmtc" style="margin-left:10%"><samp>/usr/lib/rpm/rpmrc</samp>;</p>
+<p class="fmtc" style="margin-left:10%"><samp>/usr/lib/rpm/red-hat/rpmrc</samp>;</p>
+<p class="fmt" style="margin-left:10%"><samp>/etc/rpmrc/:~/.rpmrc</samp>;</p>
+
+<p class="fmtc"><code>--root</code> <kbd>dir</kbd></p>
+<p class="desc">use the filesystem tree rooted at <kbd>dir</kbd> for all ops;</p>
+
+
+<h5>Install / Upgrade options</h5>
+<p>
+<code>--install</code> is appropriate, if the package is not installed.
+Otherwise, use <code>--upgrade</code>, which installs a newer version and
+removes all other versions. <code>--freshen</code> installs only if an
+earlier version exists.</p>
+
+<p class="fmtc"><code>--excludedocs</code></p>
+<p class="desc">don't install any files which are marked
+as documentation (manpages, texinfo, etc);</p>
+
+<p class="fmtc"><code>--force</code>,
+<code>--replacepkgs</code>, <code>--replacefiles</code></p>
+<p class="desc">install the pkgs even if they replace files from other,
+already installed, pkgs;</p>
+
+<p class="fmtc"><code>-h</code>, <code>--hash</code></p>
+<p class="desc">print 50 hash marks as the package archive is unpacked
+(use with <code>-v</code>, <code>--verbose</code>);</p>
+
+<p class="fmtc"><code>--ignoresize</code></p>
+<p class="desc">don't check disk space before installation;</p>
+
+<p class="fmtc"><code>--ignorearch</code></p>
+<p class="desc">install/upgrade even if the architectures of the binary
+package and host don't match;</p>
+
+<p class="fmtc"><code>--ignoreos</code></p>
+<p class="desc">install/upgrade even if the operating systems
+of the binary package and host don't match;</p>
+
+<p class="fmtc"><code>--nodeps</code></p>
+<p class="desc">don't check dependencies before installation;</p>
+
+<p class="fmtc"><code>--nodigest</code></p>
+<p class="desc">don't verify package or header digest;</p>
+
+<p class="fmtc"><code>--nosignature</code></p>
+<p class="desc">don't verify package or header signatures;</p>
+
+<p class="fmtc"><code>--oldpackage</code></p>
+<p class="desc">allow to replace a newer pkg with an older;</p>
+
+<p class="fmtc"><code>--prefix</code> <kbd>newpath</kbd></p>
+<p class="desc">for relocatable binary pkgs, translate all file paths that
+start with the installaion prefix in the pkg relocation hint(s) to <kbd>newpath</kbd>;</p>
+
+<p class="fmtc"><code>--test</code></p>
+<p class="desc">do not install, just check and report potential conflicts;</p>
+
+
+<h5>Remove (erase) options</h5>
+
+<p class="fmtc"><code>--allmatches</code></p>
+<p class="desc">remove all versions of the package;</p>
+
+<p class="fmtc"><code>--nodeps</code></p>
+<p class="desc">don't check dependencies before uninstalling;</p>
+
+<p class="fmtc"><code>--test</code></p>
+<p class="desc">do not really uninstall, just simulate the procedure;</p>
+
+
+<h5>Query options</h5>
+
+<p class="fmtc"><code>-a</code>, <code>--all</code></p>
+<p class="desc">query all installed packages;</p>
+
+<p class="fmtc"><code>-f</code> <kbd>file</kbd>,
+<code>--file</code> <kbd>file</kbd></p>
+<p class="desc">find what package this <kbd>file</kbd> belongs to;</p>
+
+<p class="fmtc"><code>--whatprovides</code> <kbd>capability</kbd></p>
+<p class="desc">query all packages that provide the specified capability;</p>
+
+<p class="fmtc"><code>--whatrequires</code> <kbd>capability</kbd></p>
+<p class="desc">query all packages that require the specified capability
+for proper functioning;</p>
+
+
+<h5>Query options (specific package)</h5>
+
+<p class="fmtc"><code>-i</code>, <code>--info</code></p>
+<p class="desc">display package info (name, version, description);</p>
+
+<p class="fmtc"><code>-l</code>, <code>--list</code></p>
+<p class="desc">list files in the package;</p>
+
+<p class="fmtc"><code>-R</code>, <code>--requires</code></p>
+<p class="desc">list packages on which this pkg depends;</p>
+
+<p class="fmtc"><code>-s</code>, <code>--state</code></p>
+<p class="desc">display the states of the files in the package;
+the states are: <samp>normal</samp> / <samp>not installed</samp> /
+<samp>replaced</samp>;</p>
+
+<p class="fmtc"><code>--changelog</code></p>
+<p class="desc">display change info on this package;</p>
+
+<p class="fmtc"><code>--filesbypkg</code></p>
+<p class="desc">list all files in each selected package;</p>
+
+<p class="fmtc"><code>--dump</code></p>
+<p class="desc">dump file info in a special format: <samp>path size mtime
+md5sum mode owner group isconfig isdoc rdev symlink</samp>;</p>
+
+<p class="fmtc"><code>--provides</code></p>
+<p class="desc">list the capabilities this package provides;</p>
+
+<p class="fmtc"><code>--scripts</code></p>
+<p class="desc">list the package specific scriplets that are used
+as part of the installation / uninstallation processes;</p>
+
+
+<h5>Verify options</h5>
+<p>
+Verification procedure compares info about the installed files with
+info about the files taken from the package metadata stored in the
+rpm database.</p>
+
+<p class="fmtc"><code>--nodeps</code></p>
+<p class="desc">don't verify dependencies;</p>
+
+<p class="fmtc"><code>--nodigest</code></p>
+<p class="desc">don't verify package or header digest;</p>
+
+<p class="fmtc"><code>--nofiles</code></p>
+<p class="desc">don't verify file attributes;</p>
+
+<p class="fmtc"><code>--nosignature</code></p>
+<p class="desc">don't verify package or header signatures;</p>
+
+<p class="fmtc"><code>--nosize</code>, <code>--nouser</code>,
+<code>--nogroup</code>, <code>--nomtime</code>, <code>--nomode</code></p>
+<p class="desc">don't verify the corresponding file attribute;</p>
+
+</div>
+
+</body></html>

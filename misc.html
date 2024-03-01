@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (miscellaneous cmds)</title>
+<meta name="description" content="linux quick reference, ethtool, getfacl, hddtemp, hddparm, htpasswd, ntfsfix, pgp, sar, sensors, smbclient, smbpasswd, tape, uptime" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<h1 class="part">Miscellaneous</h1>
+
+<p class="menu">
+<a href="#misc_cmds">Miscell cmds</a>&nbsp;//
+<a href="#hack_lin">Hack your Linux</a>&nbsp;//
+<a href="#hack_win">Hack your Windows</a>&nbsp;//
+<a href="#hashcat">Hashcat</a>&nbsp;//
+<a href="#xorg_reinst">Re-install Xorg</a></p>
+
+
+<h4 class="part2">
+<a name="misc_cmds">Miscellaneous commands</a></h4>
+
+<p class="cmdc">apparmor_status</p>
+<p class="desc">list the current status of <b>apparmor</b> (<code>sudo ~</code>);</p>
+
+<p class="cmdc">aa-complain /usr/sbin/mysqld</p>
+<p class="desc">put MySQL profile in complain mode (<code>sudo ~</code>);</p>
+
+<p class="cmdc">aa-complain /etc/apparmor.d/*</p>
+<p class="desc">put all profiles into complain mode (<code>sudo ~</code>);</p>
+
+<p class="cmdc">aa-enforce /usr/sbin/mysqld</p>
+<p class="desc">put MySQL in enforce mode (<code>sudo ~</code>);</p>
+
+<p class="cmdc">apparmor_parser -r<br>/etc/apparmor.d/usr.bin.firefox</p>
+<p class="desc">reload the specified profile (<code>sudo ~</code>);</p>
+
+<p class="cmdc">cat /sys/kernel/security/apparmor/profiles</p>
+<p class="desc">display info about <b>apparmor</b> profiles
+(<code>sudo ~</code>);</p>
+
+<p class="cmdc">clear</p>
+<p class="desc">clears the terminal screen; it looks in the env for the
+terminal type, then in the terminfo database to figure out how to clear
+the screen; though it was created for non-GUI env, it may work in X terminal
+window too;</p>
+
+<p class="cmdc">convert picPrevNext.png -transparent white picPrevNext.png</p>
+<p class="desc">(ImageMagic pkg) makes a PNG image with transparent background
+(assuming that original background is white);</p>
+
+<p class="cmdc">convert -transparent lightgrey btn01.svg btn01.png</p>
+<p class="desc">(ImageMagic pkg) creates a transparent PNG image from an
+SVG file (assuming that SVG background is lightgrey);</p>
+
+<p class="cmdc">depmod -a</p>
+<p class="desc">probe all modules, create a list of module dependencies
+(<samp>modules.dep</samp>) by reading each module under
+<samp>/lib/modules/version</samp>, create map files;</p>
+
+<p class="cmdc">ethtool eth0</p>
+<p class="desc">show current setting of <samp>eth0</samp> device;</p>
+
+<p class="cmdc">ethtool -i eth0</p>
+<p class="desc">show <samp>eth0</samp> driver info;</p>
+
+<p class="cmdc">ethtool -s speed 10 eth0</p>
+<p class="desc">set <samp>eth0</samp> speed to 10 Mb/s;</p>
+
+<p class="cmdc">fetchmail -F -u elma some.domain.net</p>
+<p class="desc">remove messages from a mail box on a remote mail server;</p>
+
+<p class="cmdc">getfacl info.dat</p>
+<p class="desc">show ACLs of the specified file;</p>
+
+<p class="fmtc"><code>getfacl </code><kbd>data_dir</kbd></p>
+<p class="desc">show ACLs of the specified dir;</p>
+
+<p class="fmtc"><code>getfacl -R </code><kbd>data_dir</kbd></p>
+<p class="desc">show ACLs of the specified dir recursively;</p>
+
+<p class="fmt"><code>hddtemp /dev/sda</code> &nbsp; &nbsp; show HDD temperature;</p>
+<p class="fmt"><code>hdparm /dev/hda</code> &nbsp; &nbsp; show HDD I/O parameters;</p>
+<p class="fmt"><code>hdparm -t /dev/hda</code> &nbsp; &nbsp; test HDD transfer rate;</p>
+<p class="fmt"><code>hdparm -d1m2c3u1</code> &nbsp; &nbsp; set HDD parameters;</p>
+
+<p class="cmdc">htpasswd /usr/local/etc/passwd pro07</p>
+<p class="desc">set/modify SQUID proxy password for user <samp>pro07</samp>
+(root priv);</p>
+
+<p class="cmdc">htpasswd -D /usr/local/etc/passwd pro09</p>
+<p class="desc">delete user's (<samp>pro09</samp>) password from SQUID proxy
+password file (root priv);</p>
+
+<p class="cmdc">md5sum /u01/Download/ffmpeg-release-64bit-static.tar.xz</p>
+<p class="desc">output the md5 checksum of the specified archive; usually you
+must compare it with the checksum in a separately downloaded <samp>*.md5</samp>
+file;</p>
+
+<p class="cmdc">mlabel -i /dev/sdd1 -s ::</p>
+<p class="desc">(<code>sudo ~</code>) display FAT32 volume label;
+usually you should also set<samp> mtools_skip_check=1 </samp>in<samp>
+~/.mtoolsrc</samp>;</p>
+
+<p class="cmdc">mlabel -i /dev/sdd1 ::MY_USB02</p>
+<p class="desc">(<code>sudo ~</code>) assign label (<samp>MY_USB02</samp>)
+to a USB flash drive (assuming fs type is FAT32); label makes mount procedure
+more predictable and helps to avoid random (sometimes awkward) chars in path;</p>
+
+<p class="cmdc">mount -tsecurityfs securityfs /sys/kernel/security</p>
+<p class="desc">mount securityfs (usually it is mounted auto);</p>
+
+<p class="cmdc">nohup <span class="arg">command</span> &amp;</p>
+<p class="desc">continue program execution even after user logs out;</p>
+
+<p class="cmdc">ntfsfix -n /dev/sda2</p>
+<p class="desc">check NTFS volume, don't try to repair/modify anything;</p>
+
+<p class="cmdc">pgp -c info.msg</p>
+<p class="desc">encrypt the specified file; this is the simplest method,
+no public / private key is required, you must only type a sufficiently long
+pass phrase when prompted;</p>
+
+<p class="cmdc">pgp info.pgp</p>
+<p class="desc">decrypt the pgp-encrypted file (you'll be prompted for
+password that was used for encryption);</p>
+
+<p class="fmtc"><code>pgp </code><kbd>cfile </kbd>[<code>-o</code> <kbd>pfile</kbd>]</p>
+<p class="desc">decrypt / check the signature integrity of a signed file;</p>
+
+<p class="fmt"><code>pgp -kg</code> &nbsp; &nbsp;
+generate unique public / secret key pair;</p>
+
+<p class="fmtc"><code>pgp -ka</code> <kbd>keyfile </kbd>[<kbd>keyring</kbd>]</p>
+<p class="desc">add a public or secret key file's contents to pub or sec key
+ring;</p>
+
+<p class="fmtc"><code>pgp -kx</code> <kbd>userid keyfile </kbd>[<kbd>keyring</kbd>]</p>
+<p class="fmtc"><code>pgp -kxa</code> <kbd>userid keyfile </kbd>[<kbd>keyring</kbd>]</p>
+<p class="desc">extract (copy) a key from the public or secret key ring;</p>
+
+<p class="fmtc"><code>pgp -kv</code>[<code>v</code>] [<kbd>userid</kbd>] [<kbd>keyring</kbd>]</p>
+<p class="desc">view the contents of the public key ring;</p>
+
+<p class="fmtc"><code>pgp -kvc</code> [<kbd>userid</kbd>] [<kbd>keyring</kbd>]</p>
+<p class="desc">view the "fingerprint" of a public key;</p>
+
+<p class="fmtc"><code>pgp -kc</code> [<kbd>userid</kbd>] [<kbd>keyring</kbd>]</p>
+<p class="desc">view the contents and check the certifying signatures of
+your public key ring;</p>
+
+<p class="fmtc"><code>pgp -e </code><kbd>textfile userid</kbd></p>
+<p class="desc">encrypt a plaintext file with the recipient's public key;</p>
+
+<p class="fmtc"><code>pgp -s </code><kbd>textfile </kbd>[<code>-u </code><kbd>my_userid</kbd>]</p>
+<p class="desc">sign a plaintext file with your secret key;</p>
+
+<p class="fmtc"><code>pgp -sta </code><kbd>textfile </kbd>[<code>-u </code><kbd>my_userid</kbd>]</p>
+<p class="desc">sign a plaintext ASCII text file with your secret key,
+producing a signed plaintext message suitable for sending via e-mail;</p>
+
+<p class="fmtc"><code>pgp -es </code><kbd>textfile userid </kbd>[<code>-u </code><kbd>my_userid</kbd>]</p>
+<p class="desc">sign a plaintext file with your secret key, and then encrypt
+it with the recipient's public key;</p>
+
+<p class="fmtc"><code>pgp -e </code><kbd>textfile userid1 userid2 userid3</kbd></p>
+<p class="desc">encrypt a message for any number of multiple recipients;</p>
+
+<p class="cmdc">rev mesg.txt &gt; mesg2.txt</p>
+<p class="desc">reverse the order of chars in each line;</p>
+
+<p class="fmt"><code>sar -u 5 5</code> &nbsp; &nbsp;
+CPU utilization (every 5 sec, 5 times);</p>
+
+<p class="fmt"><code>sar -u -o cpu.rpt 3 10</code> &nbsp; &nbsp;
+CPU utilization (<code>-o</code> : write to a file);</p>
+
+<p class="fmt"><code>sar -U 0 5 5</code> &nbsp; &nbsp;
+first CPU utilization (in SMP system);</p>
+
+<p class="fmt"><code>sar -r 3 5</code> &nbsp; &nbsp;
+mem &amp; swap utilization (3 sec interval);</p>
+
+<p class="fmt"><code>sar -c 3 5</code> &nbsp; &nbsp; process creation activity;</p>
+<p class="fmt"><code>sar -b 3 10</code> &nbsp; &nbsp; block I/O activity;</p>
+<p class="fmt"><code>sar -d 3 10</code> &nbsp; &nbsp; block I/O activity on each block device;</p>
+<p class="fmt"><code>sar -q 5 10</code> &nbsp; &nbsp; queue length &amp; load averages;</p>
+<p class="fmt"><code>sar -R 5 10</code> &nbsp; &nbsp; mem statistics;</p>
+<p class="fmt"><code>sar -w 3 5</code> &nbsp; &nbsp; total number of context switches per sec;</p>
+<p class="fmt"><code>sar -W 3 10</code> &nbsp; &nbsp; swapping activity;</p>
+<p class="fmt"><code>sar -B 3 10</code> &nbsp; &nbsp; paging activity;</p>
+<p class="fmt"><code>sar -n eth1 3 10</code> &nbsp; &nbsp; network activity;</p>
+
+<p class="fmt"><code>sensors</code> &nbsp; &nbsp;
+show sensors info (voltages, temperatures, etc);</p>
+
+<p class="fmt"><code>sensors -f</code> &nbsp; &nbsp;
+show temperatures in Fahrenheit;</p>
+
+<p class="fmtc"><code>setfacl -m u:alex:rw </code><kbd>data_dir</kbd></p>
+<p class="desc">grant read / write aceess on <kbd>data_dir</kbd> to user <samp>alex</samp>;</p>
+
+<p class="fmtc"><code>setfacl -x g:sales:w </code><kbd>data_dir</kbd></p>
+<p class="desc">revoke write access on <kbd>data_dir</kbd> from group <samp>sales</samp>;</p>
+
+<p class="cmdc">smbclient -L srv2</p>
+<p class="desc">show services (shares) available on <samp>srv2</samp>;</p>
+
+<p class="cmdc">smbclient -L srv2 -U max</p>
+<p class="desc">show services (shares) available on <samp>srv2</samp>
+(connect as user <samp>max</samp>; you'll be prompted for a password);</p>
+
+<p class="cmdc">smbclient -L srv2 -A nt_auth.dat</p>
+<p class="desc">show services (shares) available on <samp>srv2</samp>
+(connect using auth data stored in <samp>nt_auth.dat</samp> file);</p>
+
+<p class="cmdc">smbclient //srv3/user -A ntfile.txt</p>
+<p class="desc">connect to the shared resource <samp>user</samp> on
+<samp>srv3</samp> using auth file <samp>ntfile.txt</samp>;</p>
+
+<p class="cmdc">smbmount \\srv3\user /disk_h<br>
+-o codepage=cp1251,iocharset=utf-8,rw</p>
+<p class="desc">mount shared resource <samp>\\srv3\user</samp> on dir
+<samp>/disk_h</samp> in read-write mode providing character translation;</p>
+
+<p class="cmdc">smbumount /disk_h</p>
+<p class="desc">unmount shared resource mounted on <samp>/disk_h</samp>;</p>
+
+<p class="cmdc">smbpasswd</p>
+<p class="desc">change your SMB password on the local machine
+(you'll be prompted for old password and then twice for a new one);</p>
+
+<p class="cmdc">smbpasswd -r srv2 -U pro7</p>
+<p class="desc">change password for user <samp>pro07</samp> (assuming that
+<samp>srv2</samp> is a Windows NT Primary Domain Controller); you'll be
+prompted for old and new passwords;</p>
+
+<p class="cmdc">smbpasswd -r srv2 -U pro7 -s &lt; pass.txt</p>
+<p class="desc">change password for user <samp>pro07</samp>
+(<samp>srv2</samp> is a Windows NT PDC); <code>-s&nbsp;</code>is used to
+suppress prompting for passwords and to force program to take them from
+<samp>pass.txt</samp> (ad hoc name) file that looks like this:</p>
+
+<p class="desc" style="padding-left:80px">
+<kbd>old_pass</kbd><br>
+<kbd>new_pass</kbd><br>
+<kbd>new_pass</kbd></p>
+
+<p class="fmt"><code>tape rewind</code> &nbsp; &nbsp; rewind tape (SCSI, QIC..);</p>
+<p class="fmt"><code>tape erase</code> &nbsp; &nbsp; erase tape (SCSI, QIC..);</p>
+<p class="fmt"><code>tape reten</code> &nbsp; &nbsp; re-tension tape (SCSI, QIC..);</p>
+<p class="fmt"><code>tape reset</code> &nbsp; &nbsp; reset tape controller &amp; drive;</p>
+
+<p class="fmt"><code>tzselect</code> &nbsp; &nbsp;
+asks user for info about the current location, and outputs the resulting
+time zone description to stdout (output is suitable as a value for the
+<samp>TZ</samp> env variable);</p>
+
+<p class="fmt"><code>unlink app.dat</code> &nbsp; &nbsp;
+remove file;</p>
+
+<p class="fmt"><code>uptime</code> &nbsp; &nbsp;
+show current time, how long the system has been running, how many users are
+currently logged on, and the system load averages for the past 1, 5, and
+15 minutes;</p>
+
+<p class="fmt"><code>users</code> &nbsp; &nbsp;
+show user names of users currently logged in;</p>
+
+<a name="xxd">
+<p class="fmt"><code>xxd -ps mbr.dat</code></a> &nbsp; &nbsp;
+ouput binary contents of <samp>mbr.dat</samp> in hex form;
+in some way <code>xxd</code> is similar to <code>uudecode</code> and
+<code>uuencode</code>, it can convert a binary file to a hex dump
+and vice versa;</p>
+
+
+
+<h4 class="part2">
+<a name="hack_lin">Hacking your own system (Linux)</a></h4>
+<p>
+You forgot your password. What are you going to do?</p>
+<ol>
+<li>Reboot and pause GRUB (<span class="keys">Shift</span> or
+<span class="keys">Esc</span>. See <a href="boot.html">Boot</a>).</li>
+<li>Select and edit kernel line (<span class="keys">e</span>):
+replace <samp> ro quiet splash</samp>, etc with
+<samp>rw&nbsp;init=/bin/bash</samp></li>
+<li>Press <span class="keys">b</span> key to boot.</li>
+<li>When the system is ready, change the pass (<code>passwd </code><kbd>name</kbd>).</li>
+<li>Reboot (<code>sync; reboot -f</code>).</li>
+</ol>
+<p>
+Also, you can boot in <a href="boot.html#single_user">single user mode</a>
+(pass is not required). If root fs is mounted read-only (and in this case it
+usually is), remount it with:</p>
+
+<p class="cmd">mount -o remount,rw /</p>
+
+
+
+<h4 class="part2">
+<a name="hack_win">Hacking your own system (MS Windows)</a></h4>
+<p>
+The Windows SAM database is usually in the
+<samp>.../Windows/System32/config</samp>. You can use some Linux Live CD/USB
+with <code>chntpw</code> (or you can download/install it).</p>
+
+<p class="cmd">chntpw -l SAM</p>
+<p>
+outputs a list of usernames on the system. Choose the name and type:</p>
+
+<p class="cmd">chntpw -u <span class="arg">username</span> SAM</p>
+<p>
+This cmd allows you to clear or change pass (the last may not work with Win 7/8).</p>
+<p>
+With Kali Linux <code>ophcrack</code> application you can try to crack
+a pass, but it may be waste of time if pass is good.</p>
+
+
+
+<h4 class="part2">
+<a name="xorg_reinst">Reinstall Xorg (Ubuntu)</a></h4>
+<p>
+Each Ubuntu Desktop Environment has its own pkg name. Reinstalling Xorg:</p>
+
+<p class="cmd">sudo apt-get purge xorg-* xserver-xorg;
+sudo apt-get install xorg xserver-xorg;
+sudo dpkg-reconfigure xorg</p>
+<p>
+Reinstalling desktop env Unity:</p>
+
+<p class="cmd">sudo apt-get purge ubuntu-desktop;
+sudo apt-get install ubuntu-desktop</p>
+<p>
+Reinstalling desktop env Gnome:</p>
+
+<p class="cmd">sudo apt-get purge ubuntu-gnome-desktop
+gnome-desktop-environment; sudo apt-get install ubuntu-gnome-desktop</p>
+<p>
+Reinstalling desktop env Mate:</p>
+
+<p class="cmd">sudo apt-get purge ubuntu-mate-desktop mate-desktop-environment;
+sudo apt-get install ubuntu-mate-desktop</p>
+
+
+
+<h4 class="part2">
+<a name="hashcat">Hashcat</a></h4>
+<p>
+See doc at <a href="http://hashcat.net/wiki" target="_top">hashcat.net/wiki</a>.</p>
+
+
+<h5>Building hashcat for Linux (and MacOS)</h5>
+<p>
+Find some empty dir, and get a copy of the hashcat repository:</p>
+
+<p class="cmd">git clone https://github.com/hashcat/hashcat.git</p>
+<p>
+Get a copy of the OpenCL Headers repository:</p>
+
+<p class="cmdc">cd hashcat</p>
+<p class="cmd">git submodule update --init</p>
+<p>
+Build:</p>
+
+<p class="cmd">make</p>
+<p>
+Install:</p>
+
+<p class="cmd">sudo make install</p>
+
+
+<h5>Usage example</h5>
+<p>
+(Assuming you've got the hash)<br>
+Prepare target hash file (i.e., file containing hashes to be cracked),
+e.g.:</p>
+
+<p class="cmd">cp /etc/shadow hash.lst</p>
+<p>
+This file keeps the whole lines form a password file, you must remove
+everything except hashes itselves (it usually begins with <samp>$6$...</samp>
+and goes until first colon (<samp>:</samp>). The cmd itself looks like:</p>
+
+<p class="cmd">hashcat -m 1800 -a 0 -o cracked.txt --remove hash.lst /usr/local/share/doc/hashcat/example.dict</p>
+<p>
+where:</p>
+<ul>
+<li><code>-m 1800</code> designates the type of hash we are cracking (SHA-512);</li>
+<li><code>-a 0</code> designates a dictionary attack;</li>
+<li><code>-o cracked.txt</code> is the output file for the cracked passwords;</li>
+<li><code>--remove</code> tells hashcat to remove the hash after it has been
+cracked;</li>
+<li><samp>hash.lst</samp> is our input file of hashes;</li>
+<li><samp>/usr/local/share/doc/hashcat/example.dict</samp> is the absolute
+path to our wordlist for this dictionary attack;</li>
+</ul>
+
+</div>
+
+</body></html>

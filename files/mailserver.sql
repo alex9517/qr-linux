@@ -1,0 +1,52 @@
+-- Database objects for Postfix MTA;
+
+-- CREATE DATABASE mailserver;
+-- GRANT ALL ON mailserver.* TO postman@localhost identified BY 'stdpass';
+
+
+CREATE TABLE virtual_domains (
+id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+name VARCHAR(50) NOT NULL
+) ENGINE = InnoDB;
+
+
+CREATE TABLE virtual_users (
+id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+domain_id INT(11) NOT NULL,
+user VARCHAR(40) NOT NULL,
+password VARCHAR(32) NOT NULL,
+CONSTRAINT unique_email UNIQUE KEY (domain_id,user),
+CONSTRAINT virtual_users_fk1 FOREIGN KEY (domain_id) REFERENCES virtual_domains(id) ON DELETE CASCADE
+) ENGINE = InnoDB;
+
+
+CREATE TABLE virtual_aliases (
+id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+domain_id INT(11) NOT NULL,
+source VARCHAR(100) NOT NULL,
+destination VARCHAR(100) NOT NULL,
+CONSTRAINT virtual_aliases_fk1 FOREIGN KEY (domain_id) REFERENCES virtual_domains(id) ON DELETE CASCADE
+) ENGINE = InnoDB;
+
+
+-- The following view looks like a table with 2 columns: email, password;
+
+CREATE VIEW users1 AS
+SELECT CONCAT(virtual_users.user, '@', virtual_domains.name) AS
+email, virtual_users.password FROM virtual_users
+LEFT JOIN virtual_domains ON virtual_users.domain_id = virtual_domains.id;
+
+
+-- The following view looks like a table with 2 columns: email, destination;
+
+CREATE VIEW aliases1 AS
+SELECT CONCAT(virtual_aliases.source, '@', virtual_domains.name) AS
+email, destination FROM virtual_aliases
+LEFT JOIN virtual_domains ON virtual_aliases.domain_id = virtual_domains.id;
+
+-- This view is used by dovecot;
+
+CREATE VIEW users2 AS
+SELECT t1.user AS user, t1.password AS password, t2.name AS domain
+FROM virtual_users t1, virtual_domains t2
+WHERE t2.id = t1.domain_id;

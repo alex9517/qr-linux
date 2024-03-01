@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference / Installing OS and some useful software</title>
+<meta name="description" content="linux quick reference, installing mc, nmap, mplayer, maven, JDK, development tools, themes in Ubuntu" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<h1 class="part">Installing OS and some useful software</h1>
+
+<p class="date_center">Updated in March, 2020,<br>
+mostly applicable to Ubuntu Linux 19.04 desktop 64-bit</p>
+
+<div id="contents">
+<table class="menu">
+<tr>
+<td class="menu1"><a href="#os_install">OS Installation</a></td>
+<td class="menu2"><a href="#audio">Audio, video</a></td></tr>
+<tr>
+<td class="menu1"><a href="#tweaks">Tweaks, themes</a></td>
+<td class="menu2"><a href="#java">Java, JDK, JRE</a></td></tr>
+<tr>
+<td class="menu1"><a href="#maven">Maven</a></td>
+<td class="menu2"><a href="#node">Node.js</a></td></tr>
+<tr>
+<td class="menu1"><a href="#apc">APC UPS support</a></td>
+<td class="menu2"><a href="#misc">Miscellaneous</a></td></tr>
+</table>
+</div>
+
+
+<h4>
+<a name="os_install">OS installation</a></h4>
+<p>
+Ubuntu Linux ISO file can be downloaded from
+<a href="https://releases.ubuntu.com" target="_top">releases.ubuntu.com</a>.</p>
+<p>
+It would be reasonable to check the integrity of the downloaded ISO before
+installation, but, let's be honest: many people skip this step and go directly
+to <a href="live_usb.html">Live USB creation</a>. Anyway, think for yourself.</p>
+
+
+
+<h5>Checking the archive integrity</h5>
+<p>
+There are several methods to check the downloaded archive integrity.</p>
+<p>
+For Ubuntu 20.04.1 you can use the following script, unless you want to enter all
+that stuff manually (I've named it <samp>verify_ubuntu_20_04_1.sh</samp>):</p>
+<div class="file"><pre>
+#!/bin/bash
+# To verify the SHA256 checksum, run this cmd in your
+# terminal in the directory the *.iso was downloaded to:
+
+echo "b45165ed3cd437b9ffad02a2aad22a4ddc69162470e
+  2622982889ce5826f6e3d
+  *ubuntu-20.04.1-desktop-amd64.iso" | shasum -a 256 --check
+
+# You should get the following output:
+#     ubuntu-20.04.1-desktop-amd64.iso: OK
+</pre></div>
+<p>
+Note that <samp>echo "b45165... ... ...</samp> <b>must be one line</b>!</p>
+<p>
+The <code>shasum</code> is a PERL script. In my system (19.04) it was installed
+by default. Once again, make sure that the downloaded archive and the above BASH
+script are in the same directory, and archive's name/version in the script is
+correct. The hash (<samp>b45165..</samp>) is unique for each archive, look for it
+on the Ubuntu download site.</p>
+
+
+
+<h5>Checking the archive integrity (old-style?)</h5>
+<p>
+The classical approach is to download ISO and two additional files:</p>
+<ul class="tight">
+<li><samp>SHA256SUMS</samp></li>
+<li><samp>SHA256SUMS.gpg</samp></li>
+</ul>
+<p>
+You put all three files to the same directory, and exec following cmd
+(<code>sha256sum</code> is included in the <a href="coreutils.html">Coreutils</a>
+pkg which is always installed):</p>
+
+<p class="cmd">sha256sum -c SHA256SUMS 2&gt;&amp;1 | grep OK</p>
+<p>
+The output should be like:</p>
+<div class="term">
+<pre>
+ubuntu-19.04-desktop-amd64.iso: OK</pre>
+</div>
+<p>
+Of course, it will be 'OK' only if the calculated hash matches the hash
+from <samp>SHA256SUMS</samp> file.</p>
+<p>
+An <b>alternative method</b> (no need to download SHA* files):</p>
+
+<p class="cmd">sha256sum ubuntu-19.04-desktop-amd64.iso</p>
+<p>
+You are supposed to get a single line that looks like:</p>
+
+<p class="fmt"><samp>2da6f8b5c65b71b040c5c510311eae1798545b8ba801<br>
+c9b63e9e3fd3c0457cbe *ubuntu-19.04-desktop-amd64.iso</samp></p>
+<p>
+Compare this calculated hash with the corresponding hash in the
+<samp>SHA256SUMS</samp> file (you can open that file on the web-site).
+If it's exactly the same, then ISO is OK. Otherwise, you should probably
+try to download from another site/mirror.</p>
+
+<!--
+2da6f8b5c65b71b040c5c510311eae1798545b8ba801c9b63e9e3fd3c0457cbe *ubuntu-19.04-desktop-amd64.iso
+25d483341ccd0d522a6660b00db933787c86c47b42f1845bcf997127f4b61e9d *ubuntu-19.04-live-server-amd64.iso
+-->
+
+<p>
+The same approach can be used to check any downloaded files/archives
+(if, of course, developers provide the appropriate files). See, for example,
+<a href="#maven">Maven</a>.</p>
+
+
+
+<h5>I usually do this</h5>
+<p>
+The standard Ubuntu desktop installation procedure is quite simple if you
+stick to defaults. And in most cases you should, - save your time, leave
+non-standard stuff to experts with <i>special requirements</i>.</p>
+<p>
+When I install a new Linux version on SSD, the first thing I do after installation
+is a std set of <a href="storage.html#ssd">config modifications for the Solid
+State Drive</a>.</p>
+<p>
+Then, of course, the <b>latest updates</b>. See<code><a href="cmds_a.html#apt">
+apt upgrade</a></code>.</p>
+<p>
+And since my favorite file manager is <b>Midnight Commander</b>,</p>
+
+<p class="cmd">sudo apt install mc</p>
+<p>
+Also, I usually install:</p>
+
+<p class="cmdc">sudo apt install nmap</p>
+<p class="cmd">sudo apt install openssh-server</p>
+<p>
+However, if you don't know what is
+<code><a href="cmds_n.html#nmap">nmap</a></code>, you probably don't need it.
+And if you're not planning to connect to your system remotely using
+<code><a href="cmds_s.html#ssh">ssh</a></code>, then you don't need SSH server.</p>
+<div class="box1">
+<p>
+If you prefer the old stuff like<code><a href="cmds_i.html#ifconfig">
+ifconfig </a></code>and<code><a href="cmds_t.html#traceroute"> traceroute
+</a></code>(both are not installed by default in latest Linux versions),
+read (!) about<samp><a href="net.html#net-tools"> net-tools</a></samp>, try
+<code><a href="cmds_i.html#ip"> ip</a></code>,
+<code><a href="cmds_m.html#mtr"> mtr</a></code>,
+<code><a href="cmds_n.html#nmcli"> nmcli </a></code>and then, if you still
+want it:</p>
+
+<p class="cmdc">sudo apt install net-tools</p>
+<p class="cmd">sudo apt install traceroute</p>
+<!--
+<p class="cmd">sudo apt install iftop</p>
+<p class="cmd">sudo apt install iptraf iptraf-ng</p>
+-->
+</div>
+<p>
+Now comes the moment when I configure <a href="net.html#avahi">mDNS</a> and
+<a href="cmds_i.html#iptables">firewall</a>.</p>
+<p>
+Of course, if your computer is connected to a large corporate network, or if
+your computer is the only device in your home net (besides router providing
+Internet connection), then you most likely don't need mDNS.</p>
+<p>
+Linux <b>firewall</b> is the part of the kernel, you don't have to install it,
+it's already there. But you must configure it, and this is a separate story
+(see<code><a href="cmds_i.html#iptables"> iptables </a></code>unless you prefer
+some other tool). Without firewall properly configured I feel uncomfortable,
+though some people don't care about it at all, and nothing happened (so far).</p>
+<p>
+Next step is optional - development tools:</p>
+
+<p class="cmd">sudo apt install build-essential</p>
+<p>
+Not everybody needs this, but some people, including me, feel helpless
+without <code>gcc</code>, <code>make</code>, <a href="#java">JDK</a>
+(which is not included in the above package), <a href="#maven">Maven</a>
+(also not included).</p>
+
+
+
+<h5>Developers usually need git</h5>
+<p>
+In the past the pkt was <samp>git-core</samp>, but now it's just
+<samp>git</samp>:</p>
+
+<p class="cmd">sudo apt install git</p>
+<p>
+and try</p>
+
+<p class="cmd">git --version</p>
+<p>
+But this is not all, you should configure it:</p>
+
+<p class="cmdc">git config --global user.name "<kbd>username</kbd>"</p>
+<p class="cmd">git config --global user.email "<kbd>name</kbd>@<kbd>domain</kbd>"</p>
+<p>
+<samp>--global</samp> means that param is used for all your projects.
+To see current config:</p>
+
+<p class="cmd">git config --list</p>
+<p>
+To avoid merge commits for pulling:</p>
+
+<p class="cmd">git config --global branch.autosetuprebase always</p>
+<p>
+By default, Git uses the system default editor set by <samp>VISUAL</samp>
+or <samp>EDITOR</samp> env vars. If there is no system default, or you don't
+like it, set your own. The following example sets <code>vim</code>:</p>
+
+<p class="cmd">git config --global core.editor vim</p>
+<p>
+There are many other config params you can set.</p>
+
+
+
+<h5>
+<a name="sensors">Hardware monitoring / Sensors</a></h5>
+<p>
+I always install<code><a href="cmds_h.html#hddtemp"> hddtemp
+</a></code>(because I care about my SSDs and HDDs):</p>
+
+<p class="cmd">sudo apt install hddtemp</p>
+<p>
+Other sensors can be useful too:</p>
+
+<p class="cmd">sudo apt install lm-sensors psensor</p>
+
+
+
+<h5>
+<a name="audio">Audio, video, codecs</a></h5>
+<p>
+Last Ubuntu versions (since 18.xx?) can install codecs in the process of
+OS installation - just click the appropriate checkbox. If you missed that
+point:</p>
+
+<p class="cmd">sudo apt install ubuntu-restricted-extras</p>
+<p>
+It comes with Microsoft true-type fonts. If due to some strange reasons
+you don't want codeks, but want Microsoft TTF, do:</p>
+
+<p class="cmd">sudo apt install ttf-mscorefonts-installer</p>
+<p>
+Cmdline audio player <samp><a href="audio.html#cmdline">mpg123</a></samp> is
+good for use in scripts and to play music on the background, or to cut
+fragments from MP3 files:</p>
+
+<p class="cmd">sudo apt install mpg123</p>
+<p>
+My default MP3 player is <samp>audacious</samp>. Probably there are better
+alternatives, but I want to keep it simple:</p>
+
+<p class="cmd">sudo apt install audacious</p>
+<p>
+When I want to convert WAV files to MP3, I use
+<samp><a href="audio.html#wav2mp3">lame</a></samp>:</p>
+
+<p class="cmd">sudo apt install lame</p>
+<p>
+My favorite video player is <i>MPlayer</i>:</p>
+
+<p class="cmd">sudo apt install mplayer smplayer</p>
+<p>
+Many people prefer <i>VLC</i>:</p>
+
+<p class="cmd">sudo apt install vlc vlc-plugin-pulse mozilla-plugin-vlc</p>
+<p>
+When it comes to video editing, I use <i>FFmpeg</i>:</p>
+
+<p class="cmd">sudo apt install ffmpeg</p>
+<p>
+The above cmd installs release 4.1.3 (Ubuntu 19.04, 2019, Aug).
+Alternatively, you can download the latest statically built version
+of<samp> FFmpeg </samp>from
+<a href="https://www.johnvansickle.com/ffmpeg" target="_top">John Van Sickle
+site</a>. The installation procedure is simple: unpack archive to some empty
+dir and copy executable(s) to<samp> /home/bin </samp>(personal use) or to<samp>
+/usr/local/bin</samp>, check/adjust mode and ownership.</p>
+
+
+
+<h5>Video : graphics cards</h5>
+<p>
+If during system installation you checked that checkbox (codecs, third-party
+software, etc), then the proprietary driver for your nVidia graphics card
+(if you have one) was probably installed automatically. To check what graphics
+cards are installed in your computer, try this:</p>
+
+<p class="cmd">lspci -k | grep -A 2 -i "VGA"</p>
+<p>
+To detect card model, vendor, available drivers, recommended driver:</p>
+
+<p class="cmd">ubuntu-drivers devices</p>
+<p>
+To install drivers:</p>
+
+<p class="cmd">sudo ubuntu-drivers autoinstall</p>
+<p>
+To install a specific nVidia driver:</p>
+
+<p class="cmd">sudo apt install nvidia-driver-418</p>
+<p>
+There is also a useful GPU benchmarking app that estimates your system:</p>
+
+<p class="cmd">sudo apt install glmark2</p>
+<p>
+It takes several minutes to calculate your average score. On my
+[quite old] system with GeForce GTX 650, 4.6.0 NVIDIA 418.56 driver,
+it took  <samp>~8min</samp>, and glmark2 score was <samp>3240</samp>.</p>
+
+
+
+<h5>
+<a name="tweaks">Tweaks, gnome-extensions</a></h5>
+<p>
+Practically everybody nowdays installs Tweaks and Gnome-extensions:</p>
+
+<p class="cmdc">sudo apt install gnome-tweaks</p>
+<p class="cmdc">sudo apt install gnome-shell-extensions</p>
+<p class="cmd">sudo apt install chrome-gnome-shell</p>
+<p>
+(in the past <samp>gnome-tweaks</samp> was <samp>gnome-tweak-tools</samp>)</p>
+<p>
+The second cmd installs a subset of Gnome shell extensions, but unfortunately
+it does not install "Dash-to-dock" (as of Ubuntu 19.04). Some people say
+dash-to-dock is not compatible with Ubuntu 19.04. However, I've installed it
+somehow, after several attempts, with multiple warnings and error messages.
+And it works good.</p>
+<p>
+The third cmd installs "Gnome shell host connector". I'm not sure what this
+is, but probably it's important - even if you use Mozilla Firefox instead of
+Google Chrome.</p>
+<p>
+There is also another popular "tweak": if you want to minimize windows by
+clicking on their icons in the Ubuntu Dock, run the following cmd:</p>
+
+<p class="cmd">gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize'</p>
+
+
+
+<h5>
+<a name="themes">Themes</a></h5>
+<p>
+There are three types of themes:</p>
+<ul>
+<li>Icons themes - app icons.</li>
+<li>GTK themes - window, menus, buttons (better select GTK3 themes).</li>
+<li>Gnome Shell themes - top panel, activity overview, desktop notification,
+and other stuff.</li>
+</ul>
+<p>
+You can install themes using an appropriate <samp>*.deb</samp> pkg,
+or download archives from <a href="https://www.gnome-look.org" target="_top">GNOME Look</a>
+website.</p>
+<p>
+To use the themes of your choice, make sure you have 2 hidden subdirs in your
+home dir:</p>
+<ul>
+<li><samp>.icons</samp>  (for icon themes);</li>
+<li><samp>.themes</samp>  (for GTK and GNOME Shell themes);</li>
+</ul>
+<p>
+You can create these dirs with the following cmds:</p>
+
+<p class="cmdc">mkdir ~/.themes</p>
+<p class="cmd">mkdir ~/.icons</p>
+<p>
+But this is not enough. The next step: open <b>Tweaks -&gt; Extensions</b>
+and set <b>User themes</b> "ON". Now you can move themes in those hidden
+dirs and use <b>Tweaks -&gt; Appearance</b> to configure your unique
+"Look &amp; Feel" (assuming you've already downloaded something).</p>
+<p>
+When you download the archived version of GTK or GNOME Shell theme, unpack
+it and copy the extracted folder to <samp>.themes</samp>. If you download
+archived version of icon theme, unpack it and copy the extracted folder to
+<samp>.icons</samp>.</p>
+
+<p class="warn">Note!</p>
+<p class="indent">The downloaded archive can include multiple themes,
+and it's not enough to unpack it and move the whole unpacked dir to destination
+- you should copy/move each theme separatley. A typical <i>theme</i> installed
+in <samp>.themes</samp> includes subdirs like <samp>gtk-3.0</samp> or
+<samp>gnome-shell</samp>, while a typical <i>icon</i> theme installed in
+<samp>.icons</samp> includes subdirs like <samp>actions</samp>,
+<samp>animations</samp>, <samp>apps</samp>, etc.</p>
+
+
+
+<h5>Some interesting themes</h5>
+<p>
+I like latest <b>Mac OS</b> themes (e.g., 'McOS-MJV-Dark-mode-Gnome-3.30',
+'McOS-shell-Space-Grey') from
+<a href="https://www.gnome-look.org" target="_top">www.gnome-look.org</a>.</p>
+<p>
+<b>La Capitaine</b> is an icon pack designed
+to integrate with most desktop environments. The set of icons takes inspiration
+from the latest iterations of macOS and Google's Material Design through the
+use of visually pleasing gradients, shadowing, and simple icon geometry. Every
+image in this theme is a scalable vector graphic so it will look great at any
+size, on any screen. In my spare time, I work on adding new icons, updating old
+ones, and making this theme more complete. Since this theme is updated often,
+you should clone this git repository and pull regularly to make sure you're
+always up-to-date:</p>
+
+<p class="cmdc">sudo add-apt-repository ppa:dyatlov-igor/la-capitaine</p>
+<p class="cmdc">sudo apt update</p>
+<p class="cmdc">sudo apt install la-capitaine-icon-theme</p>
+
+<p class="or">or</p>
+
+<p class="cmdc">cd ~/.icons</p>
+<p class="cmd">git clone https://github.com/keeferrourke/la-capitaine-icon-theme.git</p>
+<p>
+<b>Flat Remix</b>:</p>
+
+<p class="cmdc">sudo add-apt-repository ppa:daniruiz/flat-remix</p>
+<p class="cmdc">sudo apt-get update</p>
+<p class="cmd">sudo apt-get install flat-remix-gnome</p>
+<p>
+Flat Remix / terminal inst:</p>
+
+<p class="cmd">cd /tmp &amp;&amp; rm -rf flat-remix-gnome-theme &amp;&amp;
+git clone https://github.com/daniruiz/flat-remix-gnome &amp;&amp;
+mkdir -p ~/.themes &amp;&amp; cp -r /tmp/flat-remix-gnome/Flat-Remix* ~/.themes &amp;&amp;
+gsettings set org.gnome.shell.extensions.user-theme name "Flat-Remix";</p>
+
+
+
+
+<h4>
+<a name="java">Java, JRE, JDK</a></h4>
+<p style="font-size:90%">
+<i>After Oracle Java licensing policy was changed in April of 2019,
+<a href="oldstuff.html#jdk">old-style Oracle Java installation</a> does not
+work anymore. You still can install and use Oracle Java, but there are many
+limitations, some things that were free, now must be paid for. So, many people
+decided to move to Open JDK. Technically, it's also Oracle Java, but so far
+it's free.</i></p>
+<p class="fmt">
+FYI:<br>
+Java 9, Java 10 are short-lived, transient versions.<br>
+Java 8, Java 11 are LTS (long-term support) versions.</p>
+<p>
+Ubuntu installation is simple. If you are not a Java developer, the following
+minimum pkg will be probably enough (unless your app is JavaFX, see below!):</p>
+
+<p class="cmd">sudo apt install default-jre</p>
+<p>
+For Java developers:</p>
+
+<p class="cmd">sudo apt install default-jdk</p>
+<p>
+<b>JDK includes JRE</b>, you don't have to install it specifically.
+<b>Default JDK</b> in case of Ubuntu 19.04 (and Ubuntu 18.xx?) is Java 11,
+and you can also install it with the following cmds:</p>
+
+<p class="cmdc">sudo apt install openjdk-11-jre</p>
+<p class="cmd">sudo apt install openjdk-11-jdk</p>
+<p>
+To make sure it works, try:</p>
+
+<p class="cmdc">java -version</p>
+<p class="cmd">javac -version</p>
+<p>
+When you install Open JDK in Ubuntu Linux, the procedure creates the
+appropriate symlinks in <samp>/usr/bin</samp>, so you don't have to modify
+your <samp>PATH</samp> to run <code>java</code> or <code>javac</code> (though
+you may need it for some other Java-related tools).</p>
+<p>
+If you specifically need Java 8:</p>
+
+<p class="cmdc">sudo apt install openjdk-8-jre</p>
+<p class="cmd">sudo apt install openjdk-8-jdk</p>
+<p>
+And here comes <b>the problem</b>. Unlike Oracle Java 8, Open JDK does not
+include JavaFX libraries, and any attempt to run JavaFX app ends with</p>
+
+<p class="fmt"><samp>Error: Could not find or load main class ...</samp></p>
+<p>
+Maybe it happened because I've installed <samp>openjdk-8-jdk-headless</samp>?
+Anyway, modularization of JDK is the current trend, so, don't waste your time
+on experiments. The best way to move forward is to install these libraries:</p>
+
+<p class="cmd">sudo apt install openjfx</p>
+<p>
+JavaFX version must correspond to Open JDK/JRE version, and in Ubuntu 19.04
+the above cmd installs JavaFX libs for Java 11. I've tried to find JavaFX for
+Open JDK 8 - no success (though I've heard it exists somewhere).</p>
+<p>
+The second important point: to start JavaFX app in this modular environment,
+you need more complicated cmdline. Here is a BASH script I use now to run my
+JavaFX app that was built with old Oracle Java 8:</p>
+<div class="file">
+<pre>
+#!/bin/bash
+
+# The old cmdline was:
+#    java -jar MyJavaFxApp.jar
+
+MODULE_PATH=/usr/share/openjfx/lib
+ADD_MODULES=javafx.base,javafx.controls,javafx.fxml
+
+# ADD_MODULES=javafx.base,
+#             javafx.controls,
+#             javafx.fxml,
+#             javafx.graphics,
+#             javafx.media,
+#             javafx.swing,
+#             javafx.web
+
+java --module-path $MODULE_PATH --add-modules=$ADD_MODULES
+      -jar MyJavaFxApp.jar</pre>
+</div>
+<p>
+(the <samp>java ...</samp> cmd must be a single line)</p>
+<p>
+It's assumed that this script is started in the directory where the JAR file
+resides. Also, other apps may require additional modules.</p>
+<p>
+The bad news for <b>Android</b> developers: <i>Android Studio</i> up to
+<samp>v3.4.x</samp> requires Java 8. But this is not a big problem,
+because <i>Android Studio</i> comes with its own Java! And this "special
+android" Java (Java 8, to be exact) does not interfere with Open JDK.</p>
+<p>
+The good news for <b>Spring</b> developers: <i>Spring Boot 2.1+</i> and
+<i>Spring Framework 5.1+</i> support Java 11. Of course, you will have to
+modify your <samp>pom.xml</samp> files, upgrade the Maven Compiler plugin to
+3.5+ version, etc.</p>
+<p>
+To switch Java versions, if you have several of them installed, run (one for
+JVM, one for JDK):</p>
+
+<p class="cmdc">sudo update-alternatives --config java</p>
+<p class="cmd">sudo update-alternatives --config javac</p>
+
+<a name="java_home"></a>
+<p>
+Some apps need <samp>JAVA_HOME</samp> env var. You can set it [system-wide]
+using the following cmd:</p>
+
+<p class="cmd">echo -e 'export JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"' | sudo tee /etc/profile.d/jdk11.sh</p>
+<p>
+or you can manually create the appropriate file in <samp>/etc/profile.d</samp>;
+it does not have to be <samp>jdk11.sh</samp>, but the name must be reasonable
+(I wouldn't call it "java.sh", however):</p>
+<div class="file">
+<pre>
+export JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"</pre>
+</div>
+<p>
+Note that it will be activated after you log out/in, or after system restart.</p>
+
+<!--
+<p class="cmd">echo -e 'export JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"\nexport PATH="$PATH:${JAVA_HOME}/bin"'
+| sudo tee /etc/profile.d/jdk11.sh</p>
+-->
+
+
+
+<h5>Installing third-party JAR libraries</h5>
+<p>
+To install [system-wide] a third-party Java lib (file<samp> jssc.jar</samp>
+is used here as an example):</p>
+<ul>
+<li>Download and unpack archive, find the library JAR;</li>
+<li>Copy<samp> jssc.jar </samp>to<samp>
+/usr/lib/jvm/java-<kbd>XXX</kbd>/jre/lib/ext/ </samp>;</li>
+<li>Check JAR's mode/ownership (usually<samp> 644 </samp>and<samp> root/root
+</samp>);</li>
+</ul>
+
+
+
+
+<h4 class="part2">
+<a name="maven">Apache Maven</a></h4>
+<p>
+(<b>note that version 3.6.1 is used here as example</b>)</p>
+<p>
+The installation of <b>Apache Maven</b> is a simple process of extracting
+the archive and adding the <samp>/usr/local/maven/bin</samp> to the
+<samp>PATH</samp> (it's assumed that JDK is already installed and
+<samp>JAVA_HOME</samp> is set). You should do the following:</p>
+<ul>
+<li>Download archive from
+<a href="https://maven.apache.org" target="_top">maven.apache.org</a>.</li>
+<li>Unpack archive to some empty dir.</li>
+<li>Create (as user <samp>root</samp>) a new dir named <samp>maven</samp> in
+<samp>/usr/local</samp>.</li>
+<li>Move unpacked files to <samp>/usr/local/maven</samp>.</li>
+<li>Check/set correct ownership (must be <samp>root.root</samp>).</li>
+<li>Make sure that <samp><a href="#java_home">JAVA_HOME</a></samp> is set
+correctly.</li>
+</ul>
+<p>
+Alternatively, you can move the whole unpacked dir
+<samp>apache-maven-3.6.1</samp> to <samp>/usr/local</samp> and create
+a symlink:</p>
+
+<p class="cmd">ln -s apache-maven-3.6.1 maven</p>
+<p>
+The last approach is good if you're going to keep several versions of Maven.</p>
+<p>
+After this you should add <samp>/usr/local/maven/bin</samp> to your
+<samp>PATH</samp> and try:</p>
+
+<p class="cmd">mvn --version</p>
+
+<p class="warn">Note!</p>
+<p class="indent">
+<i>It's a good practice to check the integrity of the downloaded archive before
+installtion!</i></p>
+<p>
+To make sure that you've downloaded exactly what you were intended to download,
+you must download three files:</p>
+<div class="file"><pre>
+apache-maven-3.6.1-bin.tar.gz
+apache-maven-3.6.1-bin.tar.gz.asc
+apache-maven-3.6.1-bin.tar.gz.sha512</pre></div>
+<p>
+Put all three files to the same directory, and exec following cmd:</p>
+
+<p class="cmd">sha512sum -c apache-maven-3.6.1-bin.tar.gz.sha512 2>&1 | grep OK</p>
+<p>
+The output must be:</p>
+<div class="term">
+<pre>
+apache-maven-3.6.1-bin.tar.gz: OK</pre>
+</div>
+<p>
+Note that in this case we use <code>sha512sum</code> because hash file is
+<samp>sha512</samp>.</p>
+
+
+
+
+<h4 class="part2">
+<a name="node">Node.js</a></h4>
+<p>
+To install LTS (long term support) stable release of <b>node.js</b>:</p>
+
+<p class="cmdc">sudo apt install nodejs</p>
+<p class="cmd">sudo apt install npm</p>
+<p>
+For Ubuntu 19.04 it's supposed to be <i>node.js</i> version 10.x.
+The newer version you can get from <i>node.js PPA</i>. Make sure
+you have <code>curl</code> (install it, if not):</p>
+
+<p class="cmd">sudo apt install curl</p>
+<p class="cmdc">curl -sL https://deb.nodesource.com/setup_11.x | sudo -E bash -</p>
+<p class="cmdc">sudo apt update</p>
+<p class="cmd">sudo apt install nodejs</p>
+<p>
+In this case the last cmd is supposed to install both <b>node</b> and <b>npm</b>.
+See details, doc, etc at
+<a href="https://nodejs.org/en/download" target="_top">nodejs.org/en/download</a>.</p>
+
+<div class="box1">
+<p>
+I've used the first approach and installed version 10.15.2. But an attempt to
+run <code>npm</code> caused a verbose warning starting with <i>"...npm does not
+support Node.js v10.15.2..."</i> (probably it was some temporary repository
+inconsistency). Experts' advice for this situation:</p>
+
+<p class="cmdc">npm -v</p>
+<p class="cmd">sudo npm install npm@latest -g</p>
+<p>
+then restart shell (close/open Gnome terminal) and make sure you really have
+newer version:</p>
+
+<p class="cmd">npm -v</p>
+<p>
+It worked for me (Ubuntu 19.04, 2020-Feb-27).</p>
+</div>
+
+
+
+
+<h4 class="part2">
+<a name="apc">APC UPS support</a></h4>
+<p>
+UPS software for those who has APC BackUPS, SmartUPS, etc:</p>
+
+<p class="cmd">sudo apt install apcupsd apcupsd-cgi</p>
+<p>
+Pay attention to the following settings in
+<samp>/etc/apcupsd/apcupsd.conf</samp>:</p>
+<div class="file">
+<pre>UPSNAME apc650
+UPSCABLE usb
+UPSTYPE usb
+# DEVICE /dev/ttyS0
+...
+# BATTERYLEVEL 5
+BATTERYLEVEL 20
+# MINUTES 3
+MINUTES 5
+# TIMEOUT 0
+TIMEOUT 300</pre>
+</div>
+<p>
+The <samp>apcupsd</samp>-related web-apps reside in
+<samp>/usr/lib/cgi-bin/apcupsd/</samp>. If you have Apache2 web-server
+correctly configured and running, you can access APC UPS status info
+(current line voltage, battery capacity, UPS load, etc) using the link
+<samp>http://localhost/cgi-bin/apcupsd/upsstats.cgi</samp>.</p>
+
+
+
+<h2>
+<a name="misc">Miscellaneous installation commands</a></h2>
+
+<p class="date_center">Probably, you won't need this.
+But it can be useful in some situations.</p>
+<p>
+<b>Codecs</b>:</p>
+
+<p class="cmd">apt-get install libavformat-extra-53 libavcodec-extra-53</p>
+<p>
+<b>Media players</b>:</p>
+
+<p class="cmdc">sudo apt-get install mplayer smplayer mencoder gnome-mplayer</p>
+<p class="cmdc">sudo apt-get install vlc vlc-plugin-pulse mozilla-plugin-vlc</p>
+<p class="cmdc">sudo apt-get install mpg321</p>
+<p class="cmd">sudo apt-get install audacious</p>
+<p>
+Most codecs you might need can be found in the
+<samp>ubuntu-restricted-extras</samp>, but if you want to play encrypted DVDs,
+you must install some packages from the Medibuntu repository. See
+<a href="#enc_dvd">Playing encrypted DVDs</a>.</p>
+<p>
+<b>JACK Audio Connection Kit</b>:</p>
+
+<p class="cmd">sudo apt-get install jack jackd jackeq</p>
+<p>
+<b>LMMS</b>, Linux MultiMedia Studio, DAW (Digital Audio Workstation)
+for music creation and recording:</p>
+
+<p class="cmd">sudo apt-get install lmms</p>
+<p>
+<b>Low Latency Kernel</b>. Do not install (!) it unless you really need it,
+the majority of people don't need it at all:</p>
+
+<p class="cmd">sudo apt-get install linux-lowlatency</p>
+<p>
+If you don't need it, you can remove it:</p>
+
+<p class="cmd">sudo apt-get remove linux-lowlatency</p>
+<p>
+<b>Adobe Flash plugin</b>:</p>
+
+<p class="cmd">sudo apt-get install flashplugin-installer</p>
+<p>
+<b>miniDLNA</b>, simple media server, can be used to watch on
+Smart TV (or other devices, like tablet or smartphone) movies (VOB, MP4, AVI)
+stored on this computer:</p>
+
+<p class="cmd">sudo apt install minidlna</p>
+
+
+<h5>
+<a name="dev_tools">Software development tools</a></h5>
+<p>
+The most important build tools (gcc, make, libc6-dev, etc):</p>
+
+<p class="cmd">sudo apt install build-essential checkinstall</p>
+<p>
+Note! <code>checkinstall</code> is only required if you want integrate into
+pkg manager a new pkg built from source.</p>
+<p>
+The following pkgs are required if you want to get source code from projects
+with no released version:</p>
+
+<p class="cmd">sudo apt install cvs subversion git-core mercurial</p>
+<p>
+If you want to build from source create <samp>/usr/local/src</samp> dir
+with the appropriate access rights for the main user (yourself).
+If you downloaded from source such as Git, SVN, or any other source
+repository then it is likely that the <code>./configure</code> files have
+not yet been generated. You may be able to run the command:</p>
+
+<p class="cmd">autogen.sh</p>
+<p>
+from within the downloaded files top directory. This cmd relies on
+<code>automake</code> and <code>autoconf</code> and will automatically
+build the configuration files and run  <code>./configure</code>.</p>
+<p>
+Note that:</p>
+
+<p class="cmd">sudo apt-get build-dep <span class="arg">pkg</span></p>
+<p>
+means "as root, install all dependencies for <kbd>pkg</kbd> required to build
+it".</p>
+<p>
+Other development tools and libraries (some pkgs may be already installed
+with <samp>build-essential</samp>):</p>
+
+<p class="cmdc">sudo apt-get install g++</p>
+<p class="cmdc">sudo apt-get install ia32-libs</p>
+<p class="cmdc">sudo apt-get install ldap-utils</p>
+<p class="cmdc">sudo apt-get install libldap*</p>
+<p class="cmdc">sudo apt-get install indent</p>
+<p class="cmdc">sudo apt-get install git-core</p>
+<p class="cmdc">sudo apt-get install libgtk2.0-dev</p>
+<p class="cmdc">sudo apt-get install libgtkmm-3.0-dev</p>
+<p class="cmdc">sudo apt-get install libgtkmm-2.4-dev</p>
+<p class="cmdc">sudo apt-get install lib3ds-dev</p>
+<p class="cmdc">sudo apt-get install cmake cmake-gui</p>
+<p class="cmd">sudo apt-get install libserial-dev</p>
+
+<p class="cmdc">sudo apt-get install libssl-dev</p>
+<p class="cmdc">sudo apt-get install liblzo2-dev</p>
+<p class="cmdc">sudo apt-get install libgstreamer*</p>
+<p class="cmdc">sudo apt-get install sqlite3</p>
+<p class="cmdc">sudo apt-get install libsqlite3-dev</p>
+<p class="cmdc">sudo apt-get install php5-sqlite3</p>
+<p class="fmtc"><code>sudo apt-get install postgresql postgresql-contrib</code> &nbsp; (PostgreSQL, server + client)</p>
+<p class="fmtc"><code>sudo apt-get install postgresql-client</code> &nbsp; (PostgreSQL, client only)</p>
+<p class="fmtc"><code>sudo apt-get install python-psycopg2</code> &nbsp; (PostgreSQL, python)</p>
+<p class="fmtc"><code>sudo apt-get install freetds-bin freetds-dev</code> &nbsp; (MS SQL Server, python)</p>
+<p class="fmtc"><code>sudo apt-get install python-dev python-pip</code> &nbsp; (MS SQL Server, python)</p>
+<p class="fmtc"><code>sudo pip install pymssql</code> &nbsp; (MS SQL Server, python)</p>
+<p class="fmt"><code>sudo apt-get install python-numpy</code> &nbsp; (python pkg for scientific computing)</p>
+
+
+<h5>Misc apps, tools and utilities</h5>
+
+<p class="cmdc">sudo apt-get install traceroute</p>
+<p class="cmdc">sudo apt-get install iftop</p>
+<p class="cmd">sudo apt-get install iptraf iptraf-ng</p>
+<p>
+Utilities <code>todos</code>, <code>fromdos</code> - Ubuntu replacement
+for classical <code>dos2unix</code>, <code>unix2dos</code>:</p>
+
+<p class="cmd">sudo apt-get install tofrodos</p>
+<p>
+Pandoc, a Haskell library for converting from
+one markup format to another, and an appropriate cmdline tool:</p>
+
+<p class="cmd">sudo sudo apt-get install pandoc</p>
+<p>
+Usage example, converting README.md to readme.html:</p>
+
+<p class="cmd">pandoc -o readme.html README.md</p>
+<p>
+Graphics packages:</p>
+
+<p class="cmdc">sudo apt-get install gimp</p>
+<p class="cmdc">sudo apt-get install inkscape</p>
+<p class="cmd">sudo apt-get install blender</p>
+<p>
+Scanner support:</p>
+
+<p class="cmd">sudo apt-get install xsane</p>
+<p>
+Compress/decompress tools:</p>
+
+<p class="cmd">sudo apt-get install p7zip-rar p7zip-full unace unrar zip unzip sharutils rar uudeview mpack arj cabextract file-roller</p>
+<p>
+Synaptic, a graphical package management program for apt.
+It provides the same features as the apt-get command line utility with
+a GUI front-end based on Gtk+:</p>
+
+<p class="cmd">sudo apt-get install synaptic</p>
+<p>
+Tor browser:</p>
+
+<p class="cmd">sudo apt install torbrowser-launcher</p>
+<p>
+If it complains about missing <samp>canberra-gtk-module</samp>:</p>
+
+<p class="cmd">sudo apt install libcanberra-gtk-module</p>
+<p>
+Note that Tor browser keeps some files (e.g., downloads) in the hidden dirs
+within <samp>$HOME/.local/share/...</samp>.</p>
+
+
+<h5>
+<a name="games">Games</a></h4>
+<p>
+Installing joystick:</p>
+
+<p class="cmdc">sudo apt install xboxdrv</p>
+<p class="cmdc">sudo apt install joystick</p>
+<p class="cmd">sudo apt install js-test-gtk</p>
+
+
+<h5>
+<a name="enc_dvd">Playing encrypted DVDs</a></h5>
+<p>
+If you want to play encrypted DVDs, you must install some packages from
+the Medibuntu repository. To enable this rep, enter this long cmd:</p>
+
+<p class="cmd">sudo -E wget --output-document=/etc/apt/sources.list.d/medibuntu.list http://www.medibuntu.org/sources.list.d/$(lsb_release -cs).list && sudo apt-get --quiet update && sudo apt-get --yes --quiet --allow-unauthenticated install medibuntu-keyring && sudo apt-get --quiet update</p>
+<p>
+Once Medibuntu is set up:</p>
+
+<p class="cmd">sudo apt install non-free-codecs libdvdcss</p>
+
+</div>
+
+</body></html>

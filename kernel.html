@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference / Kernel</title>
+<meta name="description" content="linux quick reference, linux kernel, ABI, KSM, KVM, POSIX, slabs" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<h1 class="part">Linux Kernel</h1>
+
+<p class="menu">
+<a href="#kernel">Intro</a>&nbsp;//
+<a href="#kernel_src">Kernel from src</a>
+</p>
+<p>
+See also <a href="howto.html#kernel_version">How to find kernel version</a>?</p>
+
+
+
+<h2 class="top">
+<a name="kernel">Intro</a></h2>
+<p>
+The Linux kernel is/has/supports:</p>
+<ul>
+<li>a <b>monolithic</b> kernel,</li>
+<li>true <b>preemptive multitasking</b> (both in user mode and, since v2.6,
+in kernel mode),</li>
+<li><b>virtual memory</b>,</li>
+<li><b>shared libraries</b>,</li>
+<li><b>demand loading</b>,</li>
+<li><b>shared copy-on-write executables</b> (via KSM, kernel same-page
+merging),</li>
+<li>memory management,</li>
+<li>the Internet protocol suite,</li>
+<li>multithreading;</li>
+</ul>
+<p>
+Here is a <i>very simplified</i> diagram of the Linux architecture:</p>
+
+<img class="centered" src="images/linux_arch_simple_1.jpg" />
+<p>
+Device drivers and kernel extensions run in kernel space (ring <samp>0</samp>
+in many CPU architectures), with full access to the hardware, although some
+exceptions run in user space, e.g., filesystems based on FUSE/CUSE, and parts
+of UIO. The graphics system most people use with Linux does not run within the
+kernel, in contrast to that found in Microsoft Windows. Unlike standard
+old-style monolithic kernels, Linux device drivers are easily configured as
+modules, and loaded or unloaded while the system is running. Also, unlike
+standard monolithic kernels, device drivers can be pre-empted under certain
+conditions; this feature was added to handle hardware interrupts correctly,
+and to better support symmetric multiprocessing. By choice, the Linux kernel
+has no binary kernel interface.</p>
+<p>
+The hardware is also incorporated into the file hierarchy. Device drivers
+interface to user apps via an entry in the <samp>/dev</samp> or
+<samp>/sys</samp>, process info is mapped to the filesystem through
+the <samp>/proc</samp> dir.</p>
+<p>
+See <a href="images/Linux_kernel_map.png">Linux kernel map</a> for more
+details.</p>
+<p>
+The following diagram shows how the Linux kernel was growing in size from
+version to version.</p>
+
+<img class="centered" src="images/linux_code_size.png" />
+<p>
+See <a href="images/linux_kernel_timeline.png">Linux kernel timeline</a> to
+find relation between years and versions.</p>
+
+
+<h5>KSM</h5>
+<p>
+<b>kernel same-page merging</b> (aka <b>kernel shared memory</b> and
+<b>memory merging</b>) is (since version 2.6.32) a kernel feature that
+allows a hypervisor system to share identical mem pages amongst different
+processes or virtualized guests. While not directly linked, Kernel-based
+Virtual Machine (KVM) can use KSM to merge memory pages occupied by virtual
+machines.</p>
+<p>
+KSM performs the memory sharing by scanning main memory and finding duplicate
+pages. Each detected duplicate pair is then merged into a single page, and
+mapped into both original locations. The page is also marked as COW
+(copy-on-write); kernel auto makes a copy of such page if a process tries to
+modify it.</p>
+
+
+<h5>Kernel-to-userspace API</h5>
+<p>
+Source code portability ensures that a C program written by conforming
+to a standard can be successfully compiled and run on any system that also
+conforms to the same standard. The relevant standards, aiming to achieve
+source code portability of programs, that the development of the Linux kernel,
+the GNU C Library, and associated utilities tries to adhere to, are
+<b>POSIX</b> and the <b>Single UNIX Specification</b>. However, as of
+February 2014, no Linux distributions are branded as "UNIX" by The Open Group,
+mainly because of the costs of the conformance testing.
+The <b>Linux kernel API</b> of the Linux kernel, representing the kernel's
+system call interface, is composed of the available system calls.</p>
+
+
+<h5>Kernel-to-userspace ABI</h5>
+<p>
+Binary portability shall guarantee that any program once compiled for a given
+hardware platform, can be run in its compiled form on any other hardware
+platform that conforms to the standard. Binary portability is an essential
+requirement for the commercial viability of independent software vendor (ISV)
+applications built for the operating systems based on the Linux kernel.
+Binary compatibility is much more demanding than source code portability;
+as of February 2014, the only standard concerning itself with binary
+compatibility is the <b>Linux Standard Base</b> (LSB).</p>
+
+
+<h5>In-kernel API</h5>
+<p>
+There are a couple of kernel internal APIs utilized between the different
+subsystems and subsystems of subsystems. Some of them have been kept stable
+over several releases, other have not. There are no guarantees regarding the
+in-kernel APIs. Maintainers and contributors are free to augment or change
+them at any time.</p>
+<p>
+Examples of in-kernel APIs include software frameworks/APIs for the following
+classes of device drivers:</p>
+<ul>
+<li><samp>Video4Linux</samp> - for video capture hardware;</li>
+<li><samp>Advanced Linux Sound Architecture</samp> - for sound cards;</li>
+<li><samp>New API</samp> - for network interface controllers;</li>
+<li><samp>Direct Rendering Manager</samp> - for graphics accelerators;</li>
+<li><samp>KMS driver</samp> - for display controllers;</li>
+<li><samp>mac80211</samp> - for wireless network interface controllers;</li>
+<li><samp>WEXT</samp> - for wireless network interface controllers (obsolete);</li>
+</ul>
+
+
+<h5>In-kernel ABI</h5>
+<p>
+Strong interests in defining and maintaining a stable in-kernel ABI over
+several releases have been voiced repeatedly over time by parties, e.g.
+hardware manufactures, writing proprietary kernel modules and distributing
+binary-only software, e.g. device drivers.</p>
+<p>
+By explicit choice the <i>Linux kernel does not maintain a stable in-kernel
+ABI</i>. The reasons are purely technical and not philosophical. Due to the
+absence of an in-kernel ABI that has to be kept stable over releases, the
+Linux kernel can keep a much higher rate of development.</p>
+<p>
+(see more in
+<a href="http://en.wikipedia.org/wiki/Linux_kernel" target="_top">Wikipedia</a>)</p>
+
+
+<h5>
+<a name="slab">Slabs</a></h5>
+<p>
+(since Linux Kernel 2.4)</p>
+<p>
+In Linux kernel frequently used objects (buffer heads, inodes, etc) have
+their own caches - slabs. <b>Slab</b> is a mem cache for identical objects
+that are uniform in size and are allocated and released many times during
+the life of the kernel.</p>
+<p>
+Technically, a slab is a set of one or more contiguous pages of memory set
+aside by the <b>slab allocator</b> for an individual cache. This memory is
+further divided into equal segments of the size of the object type that
+this cache is managing.</p>
+<p>
+To see what exactly is kept in those slabs, try:</p>
+
+<p class="cmdc">sudo cat /proc/slabinfo</p>
+<p class="or">or</p>
+<p class="cmd">sudo vmstat -m</p>
+<p>
+(the last cmd outputs less info, but easier to read)</p>
+<p>
+In the past these objects were created and released with
+<samp>kmalloc()</samp> and <samp>kfree()</samp> kernel calls. However, it was
+very inefficient solution, and since version 2.4 Linux kernel implements a
+caching memory allocator (<b>slab allocator</b>) which manages individual
+caches (slabs) of identical objects on behalf of kernel modules and drivers.</p>
+
+
+
+<h2>
+<a name="kernel_src">Kernel from source</a></h2>
+<p class="center">(<b>Outdated</b>)</p>
+<p>
+Assumptions: 2.6.x kernel and 2.6.x.x patches; user is <samp>root</samp>.
+Download kernel source and latest patch from the nearest mirror of
+<a href="http://www.kernel.org" target="_top">www.kernel.org</a>. Optionally,
+check the archive's digital signature:</p>
+
+<p class="cmd">gpgv linux-2.6.28.bz2.sign linux-2.6.28.bz2</p>
+<p>
+You must have the corresponding public key: download it from
+<a href="http://wwwkeys.pgp.net" target="_top">wwwkeys.pgp.net</a>, import (see
+<code>gpg --import</code>) and copy <samp>pubring.gpg</samp> to
+<samp>trustedkeys.gpg</samp>.
+Copy  archive to <samp>/usr/src/kernels</samp> (default location), unpack:</p>
+
+<p class="cmd">tar jxvf linux-2.6.28.tar.bz2</p>
+<p>
+Check ownership (must be <samp>root.root</samp>). Create a symlink:</p>
+
+<p class="cmd">ln -s linux-2.6.28 linux</p>
+<p>
+If you have a fresh patch, copy it to <samp>/usr/src/kernels</samp>:</p>
+
+<p class="cmdc">cd linux</p>
+<p class="cmdc">gzip –cd ../patch-2.6.28.5.gz | patch –p1</p>
+<p class="or">or</p>
+<p class="cmd">bzip2 –dc ../patch-2.6.28.5.bz2 | patch –p1</p>
+<p>
+Note that patches with 4-part version numbers (<samp>2.6.x.x</samp>) are
+cummulative, so you must have a basic kernel version (<samp>2.6.x</samp>)
+and the latest patch. The following cmd is required after patching only:</p>
+
+<p class="cmd">make mrproper</p>
+<p>
+(it cleans the kernel source dir and removes <samp>.config</samp>).
+Now, go to <samp>/usr/src/kernels/linux</samp> and do the most complicated
+part - kernel configuration. To save time, get some reliable config file
+from the latest (nearest) kernel available (search in <samp>/boot</samp>;
+or install the latest binary kernel for your distribution; alternatively,
+you can use your own old config). Copy it to
+<samp>/usr/src/kernels/linux</samp>, rename to <samp>.config</samp>,
+check mode / ownership (<samp>644/root.root</samp>), and upgrade:</p>
+
+<p class="cmd">make oldconfig</p>
+<p>
+Now, you can start kernel configuration:</p>
+<p class="fmt"><code>make menuconfig&nbsp;</code> (ncurses-based / text mode and X11)</p>
+<p class="fmt"><code>make xconfig&nbsp;</code> (QT-based / X11)</p>
+<p class="fmt"><code>make gconfig&nbsp;</code> (GTK-based / X11)</p>
+<p class="fmt"><code>make config&nbsp;</code> (old-style, inconvenient)</p>
+<p>
+When config is done, build new kernel:</p>
+
+<p class="cmd">make all</p>
+<p>
+It takes time and system resources. On success continue with:</p>
+
+<p class="cmd">make modules_install</p>
+<p>
+And, finally:</p>
+
+<p class="cmd">make install</p>
+<p>
+The last cmd installs a new kernel, makes changes to
+<samp>grub.conf</samp>, etc.
+If kernel is good, save <samp>.config</samp> for future use.
+
+</div>
+
+</body></html>

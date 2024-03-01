@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (pacmd, passwd, pgrep, ping, ps, pstree, pwck")</title>
+<meta name="description" content="linux quick reference, pacmd, passwd, pgrep, pidof, ping, pkill, postfix, printf, ps, pstree, pwck, pwconv" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<div id="topmenu">
+<p class="menu">
+<a href="#pacmd">pacmd</a>&nbsp;|
+<a href="#passwd">passwd</a>&nbsp;|
+<a href="#pgrep">pgrep</a>&nbsp;|
+<a href="#pidof">pidof</a>&nbsp;|
+<a href="#ping">ping</a>&nbsp;|
+<a href="#pgrep">pkill</a>&nbsp;|
+<a href="#postfix">postfix</a>&nbsp;|
+<a href="#printf">printf</a>&nbsp;|
+<a href="#ps">ps</a>&nbsp;|
+<a href="#pstree">pstree</a>&nbsp;|
+<a href="#pwck">pwck</a>&nbsp;|
+<a href="#pwconv">pwconv</a>&nbsp;|
+<a href="#pwd">pwd</a>
+</p>
+</div>
+
+<p class="cmdname"><a name="pacmd">pacmd</a></p>
+<p>
+can be used to introspect or reconfigure a running <b>PulseAudio</b> sound
+server during runtime. It connects to the sound server and offers a simple
+live shell that can be used to enter cmds that can also be stored in the
+<samp>default.pa</samp> config script.</p>
+<p>
+To exit the live shell, use <span class="keys">CTRL+D</span>. Note that the
+<samp>exit</samp> cmd inside the shell will tell the PulseAudio daemon itself
+to shutdown!</p>
+<p>
+If any arguments are passed on the cmdline, they will be passed into the live
+shell which will process the command and exit.
+
+<p class="cmdc">pacmd --help</p>
+<p class="cmd">pacmd --version</p>
+<p class="fmtc"><code>echo "suspend 1" | pacmd</code> &nbsp; &nbsp; suspend pulseaudio;</p>
+<p class="fmt"><code>echo "suspend 0" | pacmd</code> &nbsp; &nbsp; unsuspend pulseaudio;</p>
+<p>
+Other typical cmd examples (the "list" output is usually voluminous):</p>
+
+<p class="cmdc">pacmd list-sinks</p>
+<p class="cmdc">pacmd list-sink-inputs</p>
+<p class="cmdc">pacmd set-default-sink '1'</p>
+<p class="cmd">pacmd set-default-sink ladspa_out</p>
+
+
+
+
+
+<p class="cmdname"><a name="passwd">passwd</a></p>
+<p>
+changes user's password (updates user's authentication tokens).</p>
+
+<p class="fmt"><code>passwd&nbsp;</code>[<kbd>options</kbd>] [<kbd>username</kbd>]</p>
+<p>
+Though users can change their own passwords, some options are available
+to <samp>root</samp> only. Options <code>-i</code>, <code>-n</code>,
+<code>-w</code>, <code>-x</code> may not work, if user account is not
+properly configured.</p>
+
+<p class="cmdc">passwd</p>
+<p class="desc">change password for the current user;</p>
+
+<p class="cmdc">passwd alice</p>
+<p class="desc">change password for user <samp>alice</samp>;</p>
+
+<p class="cmdc">passwd -l alice</p>
+<p class="desc">lock account of user <samp>alice</samp>;</p>
+
+<p class="cmdc">passwd -u alice</p>
+<p class="desc">unlock account of user <samp>alice</samp>;</p>
+
+<p class="cmdc">passwd -S alice</p>
+<p class="desc">show status info about <samp>alice</samp>'s password;
+the output</p>
+
+<p class="desc" style="padding-top:2px;padding-bottom:2px"><samp>alice P 05/08/10 0 300 0 0</samp></p>
+
+<p class="desc">means: password valid, changed at May 8, 2010, can be changed
+any time, expires after 300 days, no warning, no disable;</p>
+
+<p class="cmdc">passwd -w14 -i14 alice</p>
+<p class="desc">set warning 14 days before the date of expiration,
+and make account inactive in 14 days after that date;</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-?</code> &nbsp;&nbsp; <code>--help</code>
+&nbsp;&nbsp; <code>--usage</code></p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-d</code></td>
+<td class="opt_desc">delete user’s password (disables user's account
+until the passwd is changed by the superuser);</td></tr>
+<tr>
+<td class="opt_name"><code>-i</code> <kbd>n</kbd></td>
+<td class="opt_desc">set the grace period (the num of days before
+the expired passwd is disabled);</td></tr>
+<tr>
+<td class="opt_name"><code>-l</code></td>
+<td class="opt_desc">lock (disable) the specified account;</td></tr>
+<tr>
+<td class="opt_name"><code>-n</code> <kbd>n</kbd></td>
+<td class="opt_desc">set the min passwd life time (days);</td></tr>
+<tr>
+<td class="opt_name"><code>-S</code></td>
+<td class="opt_desc">show the passwd status info;</td></tr>
+<tr>
+<td class="opt_name"><code>-u</code></td>
+<td class="opt_desc">unlock (enable) the specified account;</td></tr>
+<tr>
+<td class="opt_name"><code>-w</code> <kbd>n</kbd></td>
+<td class="opt_desc">set the numr of days before passwd expiration,
+when the user receives warning msgs;</td></tr>
+<tr>
+<td class="opt_name"><code>-x</code> <kbd>n</kbd></td>
+<td class="opt_desc">set the max passwd life time (days);</td></tr>
+</table>
+
+<p class="fmtc"><code>--stdin</code></p>
+<p class="desc">read new passwd from stdin (which can be pipe);</p>
+
+
+
+
+
+<p class="cmdname"><a name="pgrep">pgrep, pkill</a></p>
+<p>
+<code>pgrep</code> looks up (<code>pkill</code> signals) processes
+matching the selection criteria (usually proc name, or part of it, or regexp
+with proc name).</p>
+
+<p class="cmdc">pgrep firefox</p>
+<p class="desc">show PID of the specified app;</p>
+
+<p class="cmdc">pgrep -l fire</p>
+<p class="desc">show the process name and PID of the specified app;</p>
+
+<p class="fmt"><code>pgrep&nbsp;</code>[<kbd>options</kbd>] [<kbd>pattern</kbd>]</p>
+<p class="fmt"><code>pkill&nbsp;</code>[<kbd>options</kbd>] [<kbd>pattern</kbd>]</p>
+<p>
+<kbd>pattern</kbd> is an ERE for matching against the process names or
+cmd lines. <code>pgrep</code> looks through the currently running processes
+and lists the PIDs of those matching the <kbd>pattern</kbd>;
+<code>pkill</code> sends to the matching processes the specified signal
+(by default <samp>SIGTERM</samp>).</p>
+
+<p class="cmdc">pgrep -u root named</p>
+<p class="desc">find the PID of the <samp>named</samp> daemon;</p>
+
+<p class="cmdc">ps -fp $(pgrep -d, -x xterm)</p>
+<p class="desc">give the detailed info on all <samp>xterm</samp> processes;</p>
+
+<p class="cmdc">pkill -HUP syslogd</p>
+<p class="desc">force <samp>syslog</samp> to re-read its config file (<samp>/etc/syslog.conf</samp>);</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmtc"><code>-d</code> <kbd>delim</kbd></p>
+<p class="desc">sets the string used to delimit each PID in the output
+(by default it is a newline) (<code>pgrep</code>);</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-f</code></td>
+<td class="opt_desc">match the pattern against the full cmd line
+(by default the pattern is matched against the process name limited
+to 15 chars present in the output of <samp>/proc/pid/stat</samp>);</td></tr>
+</table>
+
+<p class="fmtc"><code>-g</code> <kbd>pgrp</kbd></p>
+<p class="desc">only match processes in the process group IDs listed;
+<kbd>pgrp</kbd> = 0 is translated into <code>pgrep</code>'s /
+<code>pkill</code>'s own process grp;</p>
+
+<p class="fmtc"><code>-G</code> <kbd>gid</kbd></p>
+<p class="desc">only match processes whose real group ID is listed;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-l</code></td>
+<td class="opt_desc">list the process name and the process ID (<code>pgrep</code>);</td></tr>
+<tr>
+<td class="opt_name"><code>-n</code></td>
+<td class="opt_desc">select only the most recently started of the matching proc;</td></tr>
+<tr>
+<td class="opt_name"><code>-o</code></td>
+<td class="opt_desc">select only the oldest of the matching processes;</td></tr>
+</table>
+
+<p class="fmtc"><code>-P <span class="arg">ppid</span>,<span class="arg">...</span></code></p>
+<p class="desc">only match processes whose parent PID is listed;</p>
+
+<p class="fmtc"><code>-s <span class="arg">sid</span>,<span class="arg">...</span></code></p>
+<p class="desc">only match processes whose process session ID is listed;
+<kbd>sid</kbd> = 0 is translated into <code>pgrep</code>'s /
+<code>pkill</code>'s own SID;</p>
+
+<p class="fmtc"><code>-t <span class="arg">term</span>,<span class="arg">...</span></code></p>
+<p class="desc">only match processes whose controlling terminal is listed
+(<kbd>term</kbd> should be specified without <samp>/dev/</samp> prefix);</p>
+
+<p class="fmtc"><code>-u <span class="arg">euid</span>,<span class="arg">...</span></code></p>
+<p class="desc">only match processes whose effective user ID is listed;</p>
+
+<p class="fmtc"><code>-U <span class="arg">uid</span>,<span class="arg">...</span></code></p>
+<p class="desc">only match processes whose real user ID is listed;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-V</code></td>
+<td class="opt_desc">version;</td></tr>
+<tr>
+<td class="opt_name"><code>-v</code></td>
+<td class="opt_desc">negates the matching;</td></tr>
+<tr>
+<td class="opt_name"><code>-x</code></td>
+<td class="opt_desc">only match processes whose name (or cmd line when
+<code>-f</code> is specified) exactly matches the pattern;</td></tr>
+</table>
+
+<p class="fmtc"><code>-<span class="arg">sig</span></code></p>
+<p class="desc">defines the signal to send to each matched process
+(<code>pkill</code>);</p>
+<p>
+<kbd>uid</kbd>, <kbd>gid</kbd>, <kbd>euid</kbd>, <kbd>sig</kbd> can be
+numerical or symbolical.</p>
+
+<table class="exit">
+<caption>Exit status</caption>
+<tr>
+<td class="exit_code">0</td>
+<td class="code_desc">One or more processes matched the criteria;</td></tr>
+<tr>
+<td class="exit_code">1</td>
+<td class="code_desc">No processes matched;</td></tr>
+<tr>
+<td class="exit_code">2</td>
+<td class="code_desc">Syntax error in the command line;</td></tr>
+<tr>
+<td class="exit_code">3</td>
+<td class="code_desc">Fatal error: out of memory, etc;</td></tr>
+</table>
+
+
+
+
+<p class="cmdname"><a name="pidof">pidof</a></p>
+<p>
+finds the process IDs of the specified [running] programs.</p>
+
+<p class="fmt"><code>pidof&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;program&nbsp;</kbd>[<kbd>program ...</kbd>]</p>
+<p>
+It is mostly for scripts. To be sure, specify the full pathname of the
+program, otherwise, you can get a pid of another prog with the similar
+name. Actually, <code>pidof</code> is a symlink to the <code>killall5</code>
+(System V version of <a href="cmds_k.html#killall"><code>killall</code></a>
+that is used in SysV <samp>rc</samp> scripts only).</p>
+
+<p class="cmdc">pidof bash</p>
+<p class="desc">return PIDs of all running <samp>bash</samp> processes;</p>
+
+
+
+<h5>Options</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-s</code></td>
+<td class="opt_desc">return one PID only (single shot);</td></tr>
+<tr>
+<td class="opt_name"><code>-c</code></td>
+<td class="opt_desc">return pids that are running with the same root
+dir (does not make sense for non-root users, as they cannot check the
+current root dir of processes they do not own);</td></tr>
+<tr>
+<td class="opt_name"><code>-x</code></td>
+<td class="opt_desc">return pids of shells running the named script;</td></tr>
+</table>
+
+<p class="fmtc"><code>-o</code> <kbd>pid</kbd></p>
+<p class="desc">omit processes with the specified process ID; you can use
+<code>-o %PPID</code> to exclude the parent process of <code>~</code>;</p>
+
+
+
+
+
+<p class="cmdname"><a name="ping">ping</a></p>
+<p class="dep">Deprecated ?</p>
+<p>
+sends <samp>ICMP ECHO_REQUEST</samp> datagrams to a network host to find whether it is up and running; <code>~</code> runs
+continuously (unless <code>-c</code> or <code>-w</code>), and can be stopped with <span class="keys">CTRL+C</span>.</p>
+<p>
+Actually, there are better progs to probe network hosts, e.g. <code>nmap</code>. However, the official replacement is probably
+<code><a href="cmds_m.html#mtr">mtr</a></code>.</p>
+
+<p class="cmdc">ping www.microsift.com</p>
+<p class="desc">ping <samp>www.microsoft.com</samp> using default parameters;</p>
+
+<p class="cmdc">ping -i 10 192.168.0.8</p>
+<p class="desc">ping host <samp>192.168.0.8</samp> sending one packet every <samp>10 sec</samp>;</p>
+
+<p class="cmdc">ping -p ff 192.168.0.12</p>
+<p class="desc">ping host <samp>192.168.0.12</samp> sending packets filled
+with <samp>1</samp>'s (binary presentation of hex <samp>0xff</samp>);</p>
+
+<p class="cmdc">ping -I eth0 ws10</p>
+<p class="desc">ping host <samp>ws10</samp> sending packets through the
+network card <samp>eth0</samp>;</p>
+
+<p class="cmdc">ping -I 192.168.0.2 srv5</p>
+<p class="desc">ping host <samp>srv5</samp> sending packets through the
+network card with IP address <samp>192.168.0.2</samp>;</p>
+
+<p class="fmt"><code>ping&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;host</kbd></p>
+
+
+
+<h5>Options</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-h</code></td>
+<td class="opt_desc">help;</td></tr>
+<tr>
+<td class="opt_name"><code>-V</code></td>
+<td class="opt_desc">version;</td></tr>
+<tr>
+<td class="opt_name"><code>-v</code></td>
+<td class="opt_desc">verbose;</td></tr>
+<tr>
+<td class="opt_name"><code>-a</code></td>
+<td class="opt_desc">audible ping;</td></tr>
+<tr>
+<td class="opt_name"><code>-A</code></td>
+<td class="opt_desc">adapt inter packet interval to round-trip time;</td></tr>
+<tr>
+<td class="opt_name"><code>-b</code></td>
+<td class="opt_desc">allow pinging a broadcast address;</td></tr>
+<tr>
+<td class="opt_name"><code>-B</code></td>
+<td class="opt_desc">do not allow ping to change source address of probes;</td></tr>
+<tr>
+<td class="opt_name"><code>-c</code> <kbd>n</kbd></td>
+<td class="opt_desc">stop after sending <kbd>n</kbd> <samp>ECHO_REQUEST</samp>
+pkts;</td></tr>
+<tr>
+<td class="opt_name"><code>-f</code></td>
+<td class="opt_desc">flood ping; interval is set to <samp>0</samp>
+unless specified explicitly;</td></tr>
+<tr>
+<td class="opt_name"><code>-i</code> <kbd>n</kbd></td>
+<td class="opt_desc">send pkts with an interval <kbd>n</kbd> seconds;</td></tr>
+</table>
+
+<p class="fmtc"><code>-I</code> <kbd>iface</kbd> <kbd>addr</kbd></p>
+<p class="desc">set source address to specified inteface;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-l</code> <kbd>n</kbd></td>
+<td class="opt_desc">send <kbd>n</kbd> pkts not waiting for reply;
+only <samp>root</samp> can use values more than <samp>3</samp>;</td></tr>
+<tr>
+<td class="opt_name"><code>-L</code></td>
+<td class="opt_desc">suppress loopback of multicast packets;</td></tr>
+<tr>
+<td class="opt_name"><code>-n</code></td>
+<td class="opt_desc">use numeric output, do not resolve symbolic names;</td></tr>
+</table>
+
+<p class="fmtc"><code>-p</code> <kbd>pattern</kbd></p>
+<p class="desc">send pkts filled with a specified pattern
+(up to 16 bytes); useful for data-related problem diagnostic;</p>
+
+<p class="fmtc"><code>-Q</code> <kbd>tos</kbd></p>
+<p class="desc">set quality or service-related bits in ICMP datagrams
+(bits 1-4 for TOS, bits 5-7 for precedence); TOS can be: <samp>0x02</samp>
+(minimal cost), <samp>0x04</samp> (reliability), <samp>0x08</samp>
+(throughput), <samp>0x10</samp> (low delay); precedence range from priority
+(<samp>0x20</samp>) to net control (<samp>0xE0</samp>);</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-q</code></td>
+<td class="opt_desc">quiet output (nothing, except summary at
+the start/finish);</td></tr>
+<tr>
+<td class="opt_name"><code>-R</code></td>
+<td class="opt_desc">include <samp>RECORD_ROUTE</samp> option in the
+<samp>ECHO_REQUEST</samp> pkt and display the route buffer on returned
+pkts; many hosts ignore (discard) this option;</td></tr>
+<tr>
+<td class="opt_name"><code>-r</code></td>
+<td class="opt_desc">bypass the normal routing tables and send directly to
+a host on an attached interface; unless the host is on a directly attached
+network, error is returned;</td></tr>
+</table>
+
+<p class="fmtc"><code>-s</code> <kbd>size</kbd></p>
+<p class="desc">set the number of data bytes to be sent;
+default is 56 (plus 8 bytes ICMP header);</p>
+
+<p class="fmtc"><code>-t</code> <kbd>ttl</kbd></p>
+<p class="desc">set IP time to live;</p>
+
+<p class="fmtc"><code>-T</code> <kbd>timestamp</kbd></p>
+<p class="desc">set special IP timestamp options:</p>
+
+<p class="desc_ex"><code>tsonly</code> &nbsp; &nbsp; timestamps only;</p>
+<p class="desc_ex"><code>tsandaddr</code> &nbsp; &nbsp; timestamps and addresses;</p>
+<p class="desc_ex"><code>tsprespec</code> <kbd>host1</kbd> [<kbd>host2</kbd> [<kbd>host3</kbd> [<kbd>host4</kbd>]]]<br> &nbsp; &nbsp;
+timestamp prespecified hops;</p>
+
+<p class="fmtc"><code>-w</code> <kbd>deadline</kbd></p>
+<p class="desc">set timeout in seconds before <code>~</code>
+exits regardless of how many pkts have been sent or received;</p>
+
+<p class="fmtc"><code>-W</code> <kbd>time</kbd></p>
+<p class="desc">time to wait for response in seconds;</p>
+
+
+
+
+
+<p class="cmdname"><a name="postfix">postfix</a></p>
+<p>
+There is <b>Postfix MTA</b> (Mail Transfer Agent, SMTP server) and <code>postfix</code> utility (described here) which can be used
+to control mail service. Actually, there is a whole bunch of utilities related to Postfix mail service:</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>master</code></td>
+<td class="opt_desc">Postfix master daemon;</td></tr>
+<tr>
+<td class="opt_name"><code>mailq</code></td>
+<td class="opt_desc">lists mail queue (Sendmail compatibility interface);</td></tr>
+<tr>
+<td class="opt_name"><code>newaliases</code></td>
+<td class="opt_desc"> initializes the alias database (Sendmail compatibility interface);</td></tr>
+<tr>
+<td class="opt_name"><code>postalias</code></td>
+<td class="opt_desc">create/update/query alias database;</td></tr>
+<tr>
+<td class="opt_name"><code>postcat</code></td>
+<td class="opt_desc">examine Postfix queue file;</td></tr>
+<tr>
+<td class="opt_name"><code>postconf</code></td>
+<td class="opt_desc">Postfix configuration utility;</td></tr>
+<tr>
+<td class="opt_name"><code>postfix</code></td>
+<td class="opt_desc">controls the operation of the Postfix mail system;</td></tr>
+<tr>
+<td class="opt_name"><code>postkick</code></td>
+<td class="opt_desc">trigger Postfix daemon;</td></tr>
+<tr>
+<td class="opt_name"><code>postlock</code></td>
+<td class="opt_desc">Postfix-compatible locking;</td></tr>
+<tr>
+<td class="opt_name"><code>postlog</code></td>
+<td class="opt_desc">Postfix-compatible logging;</td></tr>
+<tr>
+<td class="opt_name"><code>postmap</code></td>
+<td class="opt_desc">Postfix lookup table manager;</td></tr>
+<tr>
+<td class="opt_name"><code>postmulti</code></td>
+<td class="opt_desc">Postfix multi-instance manager;</td></tr>
+<tr>
+<td class="opt_name"><code>postqueue</code></td>
+<td class="opt_desc">Postfix mail queue control;</td></tr>
+<tr>
+<td class="opt_name"><code>postsuper</code> &nbsp;</td>
+<td class="opt_desc">Postfix superintendent (maintains jobs on the Postfix queue);</td></tr>
+<tr>
+<td class="opt_name"><code>sendmail</code></td>
+<td class="opt_desc">Postfix to Sendmail compatibility interface;</td></tr>
+</table>
+<p>
+The main Postfix process (daemon) is <code>master</code> (config file <samp>/etc/postfix/master.cf</samp>). The main config for the
+service is <samp>/etc/postfix/main.cf</samp>. To re-read configuration without restarting the service, use:</p>
+
+<p class="cmd">posrfix reload</p>
+<p>
+The general format of <code>postfix</code> (control program) is:</p>
+
+<p class="fmt"><code>postfix</code> [<code>-Dv</code>] [<code>-c</code> <kbd>config_dir</kbd>]<kbd> cmd</kbd></p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmtc"><code>-c</code> <kbd>config_dir</kbd></p>
+<p class="desc">read the <samp>main.cf</samp> and <samp>master.cf</samp>
+config files in the specified dir (by default <samp>/etc/postfix</samp>);</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-D</code></td>
+<td class="opt_desc">run each Postfix daemon under control of debugger
+(use with <code>postfix start</code> only);</td></tr>
+<tr>
+<td class="opt_name"><code>-v</code></td>
+<td class="opt_desc">verbose;</td></tr>
+</table>
+
+
+
+<h5>Commands</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>check</code></td>
+<td class="opt_desc">check/validate mail system configuration;</td></tr>
+<tr>
+<td class="opt_name"><code>start</code></td>
+<td class="opt_desc">start the Postfix mail system (also runs check);</td></tr>
+<tr>
+<td class="opt_name"><code>stop</code></td>
+<td class="opt_desc">stop the Postfix mail system in orderly fashion;</td></tr>
+<tr>
+<td class="opt_name"><code>abort</code></td>
+<td class="opt_desc">stop the Postfix mail system abruptly;</td></tr>
+<tr>
+<td class="opt_name"><code>flush</code></td>
+<td class="opt_desc">force delivery of every mesg in the deferred mail queue;</td></tr>
+<tr>
+<td class="opt_name"><code>reload</code> &nbsp;</td>
+<td class="opt_desc">re-read config files;</td></tr>
+</table>
+
+
+
+<h5>Mail queue management</h5>
+<p>
+There are <samp>incoming</samp>, <samp>active</samp>, <samp>deferred</samp>
+and <samp>hold</samp> queue dirs with mail files, and <samp>bounce</samp>,
+<samp>defer</samp>, <samp>flush</samp> dirs with log files. By default
+<code>postsuper</code> operates on all queue dirs.</p>
+
+<p class="fmtc"><code>postsuper -d</code> <kbd>msg_id</kbd></p>
+<p class="desc">delete from queue the message specified by <kbd>msg_id</kbd>;</p>
+
+<p class="fmtc"><code>postsuper -d - &lt;</code> <kbd>file_with_msg_ids</kbd></p>
+<p class="desc">delete from queue multiple messages listed in file;</p>
+
+<p class="cmd">postsuper -d ALL deferred</p>
+<p class="desc">delete all messages from the <samp>deferred</samp> queue;</p>
+
+<p class="fmtc"><code>postsuper -h</code> <kbd>msg_id</kbd></p>
+<p class="desc">put the specified message "on hold";</p>
+
+<p class="fmtc"><code>postsuper -h ALL</code></p>
+<p class="desc">put all messages "on hold";</p>
+
+<p class="fmtc"><code>postsuper -H</code> <kbd>msg_id</kbd></p>
+<p class="desc">release the specified msg from "hold";</p>
+
+<p class="fmtc"><code>postsuper -H ALL</code></p>
+<p class="desc">release all messages from "hold";</p>
+
+<p class="fmtc"><code>postsuper -p</code></p>
+<p class="desc">purge old temp files after system crash;</p>
+
+
+
+<h5>Configuration</h5>
+
+<p class="fmtc"><code>postconf mail_version</code></p>
+<p class="desc">show postfix version;</p>
+
+<p class="fmtc"><code>postconf alias_map</code></p>
+<p class="desc">show alias database location;</p>
+
+<p class="fmtc"><code>postconf -d</code></p>
+<p class="desc">show default param settings instead of actual;</p>
+
+<p class="fmtc"><code>postconf -e</code></p>
+<p class="desc">edit <samp>main.cf</samp> config file;</p>
+
+<p class="fmtc"><code>postconf -n</code></p>
+<p class="desc">show non-default param settings only;</p>
+
+<p class="fmtc"><code>postmap hash:sasl_passwd</code></p>
+<p class="desc">create lookup table <samp>sasl_passwd.db</samp>
+using plain text file <samp>sasl_passwd</samp> as source;</p>
+<p>
+See more examples of <code>postconf</code> usage in
+<a href="postfix-dovecot.html">Mail service (postfix + dovecot)</a>
+
+
+
+
+
+
+<p class="cmdname"><a name="printf">printf</a></p>
+<p>
+formats and prints data (like C function of the same name).
+<code>~</code> is used mostly in bash scripts.</p>
+
+<p class="cmdc">printf "PI\t%e\nE\t%e\n" 3.14159 2.71828</p>
+<p class="desc">print the values of "<samp>pi</samp>" and "<samp>e</samp>"
+in exponential form;</p>
+
+<p class="fmt"><code>printf </code><kbd>format </kbd>[<kbd>arg</kbd>]<kbd> ...</kbd></p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+
+
+<h5>Interpreted sequences</h5>
+
+<table class="options">
+<tr><td class="opt_name"><code>\"</code></td>
+<td class="opt_desc">double quote;</td></tr>
+</table>
+
+<p class="fmtc"><code>\</code><kbd>NNN</kbd></p>
+<p class="desc">char with octal value <kbd>NNN</kbd> (1..3 digits);</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>\\</code></td>
+<td class="opt_desc">backslash;</td></tr>
+<tr>
+<td class="opt_name"><code>\a</code></td>
+<td class="opt_desc">alert (BEL);</td></tr>
+<tr>
+<td class="opt_name"><code>\b</code></td>
+<td class="opt_desc">backspace;</td></tr>
+<tr>
+<td class="opt_name"><code>\c</code></td>
+<td class="opt_desc">produce no further output;</td></tr>
+<tr>
+<td class="opt_name"><code>\f</code></td>
+<td class="opt_desc">form feed;</td></tr>
+<tr>
+<td class="opt_name"><code>\n</code></td>
+<td class="opt_desc">new line;</td></tr>
+<tr>
+<td class="opt_name"><code>\r</code></td>
+<td class="opt_desc">carriage return;</td></tr>
+<tr>
+<td class="opt_name"><code>\t</code></td>
+<td class="opt_desc">tab (horizontal);</td></tr>
+<tr>
+<td class="opt_name"><code>\v</code></td>
+<td class="opt_desc">vertical tab;</td></tr>
+</table>
+
+<p class="fmtc"><code>\x</code><kbd>NN</kbd></p>
+<p class="desc">byte with hexadecimal value <kbd>NN</kbd> (1..2 digits);</p>
+
+<p class="fmtc"><code>\u</code><kbd>NNNN</kbd></p>
+<p class="desc">char with hexadecimal value <kbd>NNNN</kbd> (4 digits);</p>
+
+<p class="fmtc"><code>\U</code><kbd>NNNNNNNN</kbd></p>
+<p class="desc">char with hex value <kbd>NNNNNNNN</kbd> (8 digits);</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>%%</code></td>
+<td class="opt_desc">a single <code>%</code>;</td></tr>
+<tr>
+<td class="opt_name"><code>%b</code></td>
+<td class="opt_desc">arg as a string with '<code>\</code>' escapes
+interpreted, except that octal escapes are of the form <code>\O</code> or
+<code>\O</code><kbd>NNN</kbd>;</td></tr>
+</table>
+<p>
+All C format specs (<code>diouxXfeEgGcs</code>) are also supported.</p>
+
+<p class="warn">Note!</p>
+<p class="indent">Your shell may have its own version of <code>printf</code>!</p>
+
+
+
+
+
+<p class="cmdname"><a name="ps">ps</a></p>
+<p>
+gives a snapshot of the current processes.</p>
+
+<p class="fmt"><code>ps&nbsp;</code>[<kbd>options</kbd>]</p>
+<p>
+Process <samp>0</samp> (PID = <samp>0</samp>) is smth special. It is kernel's
+runnable process known as <samp>init_task</samp>, <samp>sched</samp>,
+<samp>swapper</samp>, <samp>idle</samp>. The program <samp>init</samp>
+is spawned by <samp>init_task</samp> and has PID = <samp>1</samp>,
+PPID = <samp>0</samp>. Usually <samp>kthreadd</samp>, kernel thread daemon,
+has PID = <samp>2</samp>, PPID = <samp>0</samp>.</p>
+<p>
+Current version of <code>~</code> accepts 3 kinds of options:</p>
+<ul style="margin-left:2%">
+<li><samp>Unix</samp> (may be grouped and must be preceeded by a dash);</li>
+<li><samp>BSD</samp> (may be grouped and must not be used with a dash);</li>
+<li><samp>GNU long</samp> (are preceeded by 2 dashes);</li>
+</ul>
+<p>
+Options of different types may be freely mixed.</p>
+
+<p class="cmdc">ps -A</p>
+<p class="desc">show all processes (compact format);</p>
+
+<p class="cmdc">ps -Al</p>
+<p class="desc">show all processes (long format);</p>
+
+<p class="cmdc">ps -AlF</p>
+<p class="desc">show all processes (long format including cmdline args);</p>
+
+<p class="cmdc">ps -AlFH</p>
+<p class="desc">show all processes (long format ...) and threads;</p>
+
+<p class="cmdc">ps ax</p>
+<p class="desc">show every process on the system using BSD syntax;</p>
+
+<p class="cmdc">ps aux</p>
+<p class="desc">like previous, but shows more columns;</p>
+
+<p class="cmdc">ps axZ</p>
+<p class="desc">show all processes with security context (SELinux);</p>
+
+<p class="cmdc">ps -e</p>
+<p class="desc">show every process on the system using standard syntax;</p>
+
+<p class="cmdc">ps -el --headers</p>
+<p class="desc">show every process on the system using standard syntax,
+long format, add column headers to each page;</p>
+
+<p class="cmdc">ps U $USER</p>
+<p class="desc">show all processes owned by the current user;</p>
+
+<p class="cmdc">ps U oracle</p>
+<p class="desc">show all processes owned by <samp>oracle</samp>;</p>
+
+<p class="cmdc">ps -U root -u root -N</p>
+<p class="desc">show every process except those running as <samp>root</samp>
+(real or effective ID);</p>
+
+<p class="cmdc">ps -eo pid,tt,user,fname,tmout,f,wchan</p>
+<p class="desc">show every process with a user-defined format;</p>
+
+<p class="cmdc">ps -axo pid,cmd,etime | grep firefox</p>
+<p class="desc">how long <i>firefox browser</i> is already running?
+(time format is <samp>dd-hh:mm:ss</samp>, i.e., num of days, hours, minutes,
+seconds); NOTE that this is not the same as CPU time, this is the total time
+since the proc was started;</p>
+
+<p class="cmdc">ps -eo pid,lstart,cmd | grep firefox</p>
+<p class="desc">another way to find when the process was started;</p>
+
+<p class="cmdc">ps axZ</p>
+<p class="desc">display all processes with security context (SELinux);</p>
+
+<p class="cmdc">ps -eM</p>
+<p class="cmdc">ps -eo euser,ruser,suser,fuser,f,comm,label</p>
+<p class="desc">display processes' security info;</p>
+
+
+
+<h5>General options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp;
+<code>-V</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmt"><code>--info</code> &nbsp; show debugging info;</p>
+
+
+
+<h5>Process selection</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-A</code></td>
+<td class="opt_desc">select all processes;</td></tr>
+<tr>
+<td class="opt_name"><code>-a</code></td>
+<td class="opt_desc">select all processes with a <samp>tty</samp>
+except session leaders;</td></tr>
+<tr>
+<td class="opt_name"><code>-d</code></td>
+<td class="opt_desc">select all, but omit session leaders;</td></tr>
+<tr>
+<td class="opt_name"><code>-e</code></td>
+<td class="opt_desc">select all processes;</td></tr>
+<tr>
+<td class="opt_name"><code>-N</code></td>
+<td class="opt_desc">negate selection;</td></tr>
+<tr>
+<td class="opt_name"><code>&nbsp;a</code></td>
+<td class="opt_desc">select all proc on a terminal, including those of other users;</td></tr>
+<tr>
+<td class="opt_name"><code>&nbsp;r</code></td>
+<td class="opt_desc">restrict output to running processes;</td></tr>
+<tr>
+<td class="opt_name"><code>&nbsp;T</code></td>
+<td class="opt_desc">select all processes on this terminal;</td></tr>
+<tr>
+<td class="opt_name"><code>&nbsp;x</code></td>
+<td class="opt_desc">select processes without controlling <samp>tty</samp>s;</td></tr>
+</table>
+
+
+
+<h5>Process selection by list</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-C</code></td>
+<td class="opt_desc">select by command name;</td></tr>
+<tr>
+<td class="opt_name"><code>-G</code></td>
+<td class="opt_desc">select by RGID;</td></tr>
+<tr>
+<td class="opt_name"><code>-g</code></td>
+<td class="opt_desc">select by session leader or by group name;</td></tr>
+<tr>
+<td class="opt_name"><code>-p</code></td>
+<td class="opt_desc">select by PID;</td></tr>
+<tr>
+<td class="opt_name"><code>-s</code></td>
+<td class="opt_desc">select processes belonging to the sessions given;</td></tr>
+<tr>
+<td class="opt_name"><code>-t</code></td>
+<td class="opt_desc">select by tty;</td></tr>
+<tr>
+<td class="opt_name"><code>-U</code></td>
+<td class="opt_desc">select by RUID;</td></tr>
+<tr>
+<td class="opt_name"><code>-u</code></td>
+<td class="opt_desc">select by effective user ID;</td></tr>
+<tr>
+<td class="opt_name"><code>&nbsp;U</code></td>
+<td class="opt_desc">select processes for the specified users;</td></tr>
+</table>
+
+
+
+<h5>Output format control</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-f</code></td>
+<td class="opt_desc">full listing;</td></tr>
+<tr>
+<td class="opt_name"><code>-F</code></td>
+<td class="opt_desc">extra full format;</td></tr>
+<tr>
+<td class="opt_name"><code>-j</code></td>
+<td class="opt_desc">jobs format;</td></tr>
+<tr>
+<td class="opt_name"><code>-l</code></td>
+<td class="opt_desc">long format;</td></tr>
+<tr>
+<td class="opt_name"><code>-o</code></td>
+<td class="opt_desc">user-defined format;</td></tr>
+<tr>
+<td class="opt_name"><code>-y</code></td>
+<td class="opt_desc">do not show flags; show rss in place of addr;</td></tr>
+<tr>
+<td class="opt_name"><code>-Z</code></td>
+<td class="opt_desc">security context format;</td></tr>
+<tr>
+<td class="opt_name"><code>&nbsp;s</code></td>
+<td class="opt_desc">signal format;</td></tr>
+<tr>
+<td class="opt_name"><code>&nbsp;u</code></td>
+<td class="opt_desc">user-oriented format;</td></tr>
+<tr>
+<td class="opt_name"><code>&nbsp;v</code></td>
+<td class="opt_desc">virtual memory format;</td></tr>
+</table>
+
+
+
+<h5>Output modifiers</h5>
+
+<table class="options">
+<tr><td class="opt_name"><code>-H</code></td>
+<td class="opt_desc">show process hierarchy (forest);</td></tr>
+</table>
+
+<p class="fmtc"><code>-n</code> <kbd>lst</kbd>,
+<code>N</code> <kbd>lst</kbd></p>
+<p class="desc">set name list file;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-w</code></td>
+<td class="opt_desc">wide output;</td></tr>
+<tr>
+<td class="opt_name"><code>&nbsp;C</code></td>
+<td class="opt_desc">use raw CPU time instead of decaying average;</td></tr>
+<tr>
+<td class="opt_name"><code>&nbsp;c</code></td>
+<td class="opt_desc">show true command name;</td></tr>
+<tr>
+<td class="opt_name"><code>&nbsp;e</code></td>
+<td class="opt_desc">show environment after command;</td></tr>
+<tr>
+<td class="opt_name"><code>&nbsp;f</code></td>
+<td class="opt_desc">show ASCII-art process hierarchy (forest);</td></tr>
+</table>
+
+<p class="fmtc"><code>--cols</code>,
+<code>--columns</code></p>
+<p class="desc">set screen width;</p>
+
+<p class="fmtc"><code>--forest</code></p>
+<p class="desc">show ASCII-art process tree;</p>
+
+<p class="fmtc"><code>--headers</code></p>
+<p class="desc">repeat header lines on each output page;</p>
+
+<p class="fmtc"><code>--no-headers</code></p>
+<p class="desc">print no header line at all;</p>
+
+<p class="fmtc"><code>--rows</code>,
+<code>--lines</code></p>
+<p class="desc">set screen height;</p>
+
+<p class="fmtc"><code>--sort</code></p>
+<p class="desc">specify sorting order;</p>
+
+
+
+<h5>Thread info</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-L</code></td>
+<td class="opt_desc">show threads, possibly with LWP and NLWP columns;</td></tr>
+<tr>
+<td class="opt_name"><code>-m</code></td>
+<td class="opt_desc">show threads after processes;</td></tr>
+<tr>
+<td class="opt_name"><code>-T</code></td>
+<td class="opt_desc">show threads, possibly with SPID column;</td></tr>
+<tr>
+<td class="opt_name"><code>&nbsp;H</code></td>
+<td class="opt_desc">show threads as if they were processes;</td></tr>
+</table>
+
+
+<table class="grid">
+<caption>Some format specifiers</caption>
+<tr>
+<th>Column</th><th>Spec</th><th>Desciption</th></tr>
+<tr>
+<td class="grid_2"><samp>%CPU</samp></td>
+<td class="grid_2"><samp>%cpu</samp></td>
+<td class="grid_2">CPU usage, %;</td></tr>
+<tr>
+<td class="grid_2"><samp>%MEM</samp></td>
+<td class="grid_2"><samp>%mem</samp></td>
+<td class="grid_2">task’s current share of the available physical memory, %;</td></tr>
+<tr>
+<td class="grid_2"><samp>C</samp></td>
+<td class="grid_2"><samp>c</samp></td>
+<td class="grid_2">priority of the process used by scheduler;</td></tr>
+<tr>
+<td class="grid_2"><samp>CMD</samp></td>
+<td class="grid_2"><samp>args,cmd,<br>command</samp></td>
+<td class="grid_2">full cmd line of the process;</td></tr>
+<tr>
+<td class="grid_2"><samp>COMMAND</samp></td>
+<td class="grid_2"><samp>fname</samp></td>
+<td class="grid_2">simple name of executable;</td></tr>
+<tr>
+<td class="grid_2"><samp>F</samp></td>
+<td class="grid_2"><samp>f</samp></td>
+<td class="grid_2">task’s current scheduling flags in hex;</td></tr>
+<tr>
+<td class="grid_2"><samp>GROUP</samp></td>
+<td class="grid_2"><samp>group</samp></td>
+<td class="grid_2">group name;</td></tr>
+<tr>
+<td class="grid_2"><samp>NI</samp></td>
+<td class="grid_2"><samp>ni,nice</samp></td>
+<td class="grid_2">the nice value of the task; negative means higher pri,
+positive means lower; zero means that priority will not be ajusted in
+determinig a task’s dispatchability;</td></tr>
+<tr>
+<td class="grid_2"><samp>PID</samp></td>
+<td class="grid_2"><samp>pid</samp></td>
+<td class="grid_2">process ID;</td></tr>
+<tr>
+<td class="grid_2"><samp>PPID</samp></td>
+<td class="grid_2"><samp>ppid</samp></td>
+<td class="grid_2">parent process ID;</td></tr>
+<tr>
+<td class="grid_2"><samp>PRI</samp></td>
+<td class="grid_2"><samp>pri</samp></td>
+<td class="grid_2">kernel scheduling priority of the task;</td></tr>
+<tr>
+<td class="grid_2"><samp>RSS</samp></td>
+<td class="grid_2"><samp>rss</samp></td>
+<td class="grid_2">resident set size;</td></tr>
+<tr>
+<td class="grid_2"><samp>RUSER</samp></td>
+<td class="grid_2"><samp>ruser</samp></td>
+<td class="grid_2">real user name;</td></tr>
+<tr>
+<td class="grid_2"><samp>S</samp></td>
+<td class="grid_2"><samp>s,state</samp></td>
+<td class="grid_2">the process status;</td></tr>
+<tr>
+<td class="grid_2"><samp>SESS</samp></td>
+<td class="grid_2"><samp>sess</samp></td>
+<td class="grid_2">session ID;</td></tr>
+<tr>
+<td class="grid_2"><samp>STIME</samp></td>
+<td class="grid_2"><samp>stime</samp></td>
+<td class="grid_2">the time when the process was started;</td></tr>
+<tr>
+<td class="grid_2"><samp>SZ</samp></td>
+<td class="grid_2"><samp>sz</samp></td>
+<td class="grid_2">memory size in Kb;</td></tr>
+<tr>
+<td class="grid_2"><samp>TIME</samp></td>
+<td class="grid_2"><samp>time</samp></td>
+<td class="grid_2">total cpu time the task has used since it started;</td></tr>
+<tr>
+<td class="grid_2"><samp>TTY</samp></td>
+<td class="grid_2"><samp>tty8</samp></td>
+<td class="grid_2">controlling tty; this is usually the device (serial port,
+pty, etc) from which the proc was started;</td></tr>
+<tr>
+<td class="grid_2"><samp>UID</samp></td>
+<td class="grid_2"><samp>uid</samp></td>
+<td class="grid_2">user ID;</td></tr>
+<tr>
+<td class="grid_2"><samp>USER</samp></td>
+<td class="grid_2"><samp>user,uname</samp></td>
+<td class="grid_2">user name;</td></tr>
+<tr>
+<td class="grid_2"><samp>VSZ</samp></td>
+<td class="grid_2"><samp>vsz,vsize</samp></td>
+<td class="grid_2">total virtual memory size in Kb;</td></tr>
+<tr>
+<td class="grid_2"><samp>WCHAN</samp></td>
+<td class="grid_2"><samp>wchan</samp></td>
+<td class="grid_2">depending on the availability of the kernel link map
+(<samp>System.map</samp>), this field will show the name or the addr of the
+kernel function in which the task is currently sleeping;</td></tr>
+</table>
+
+
+<table class="exit">
+<caption>Process state codes</caption>
+<tr>
+<td class="exit_code">D</td>
+<td class="code_desc">uninterruptible sleep (usually I/O);</td></tr>
+<tr>
+<td class="exit_code">R</td>
+<td class="code_desc">runnable (on run que);</td></tr>
+<tr>
+<td class="exit_code">S</td>
+<td class="code_desc">sleeping;</td></tr>
+<tr>
+<td class="exit_code">T</td>
+<td class="code_desc">traced or stopped;</td></tr>
+<tr>
+<td class="exit_code">W</td>
+<td class="code_desc">paging;</td></tr>
+<tr>
+<td class="exit_code">X</td>
+<td class="code_desc">dead;</td></tr>
+<tr>
+<td class="exit_code">Z</td>
+<td class="code_desc">defunct (zombie);</td></tr>
+</table>
+
+<table class="exit">
+<caption>Additional process state codes (BSD)</caption>
+<tr>
+<td class="exit_code">W</td>
+<td class="code_desc">has no resident pages;</td></tr>
+<tr>
+<td class="exit_code">&lt;</td>
+<td class="code_desc">high-priority process;</td></tr>
+<tr>
+<td class="exit_code">N</td>
+<td class="code_desc">low-priority task;</td></tr>
+<tr>
+<td class="exit_code">L</td>
+<td class="code_desc">has pages locked into memory (real-time and custom I/O);</td></tr>
+</table>
+
+
+
+
+
+<p class="cmdname"><a name="pstree">pstree</a></p>
+<p>
+shows running processes as a tree rooted at the specified <kbd>pid</kbd> or
+init if there are neither <kbd>pid</kbd> nor <kbd>user</kbd>. If user is
+specified, all process trees rooted at processes owned by that user are
+displayed.</p>
+
+<p class="fmt"><code>pstree&nbsp;</code>[<kbd>options</kbd>] [<kbd>pid</kbd> | <kbd>user</kbd>]</p>
+<p>
+To make the view compact <code>~</code> visually merges identical branches
+by placing them in square brackets and prefixing with the repetition count.</p>
+
+<p class="cmdc">pstree -Gap</p>
+<p class="desc">show all processes as a tree with PIDs and cmd lines using
+VT100 line drawing (may have sense if you connect from the remote host using
+terminal emulation);</p>
+
+<p class="cmdc">pstree -a zorg</p>
+<p class="desc">show processes of user <samp>zorg</samp>;</p>
+
+<p class="cmdc">pstree -a 1239</p>
+<p class="desc">show ancestors of the process 1239;</p>
+
+
+
+<h5>Options</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-a</code></td>
+<td class="opt_desc">show command line arguments;</td></tr>
+<tr>
+<td class="opt_name"><code>-c</code></td>
+<td class="opt_desc">disable compaction of identical subtrees;</td></tr>
+<tr>
+<td class="opt_name"><code>-G</code></td>
+<td class="opt_desc">use VT100 line drawing characters;</td></tr>
+<tr>
+<td class="opt_name"><code>-h</code></td>
+<td class="opt_desc">highlight the current process and its ancestors;</td></tr>
+</table>
+
+<p class="fmtc"><code>-H</code> <kbd>pid</kbd></p>
+<p class="desc">highlight the specified process and its ancestors;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-l</code></td>
+<td class="opt_desc">display long lines (by default lines are truncated);</td></tr>
+<tr>
+<td class="opt_name"><code>-n</code></td>
+<td class="opt_desc">sort processes with the same ancestor by PID;</td></tr>
+<tr>
+<td class="opt_name"><code>-p</code></td>
+<td class="opt_desc">show PIDs (as decimal numbers after process names);</td></tr>
+<tr>
+<td class="opt_name"><code>-u</code></td>
+<td class="opt_desc">show UID transitions; if the process UID differs from UID of its parent, the new UID is shown after the process name;</td></tr>
+<tr>
+<td class="opt_name"><code>-U</code></td>
+<td class="opt_desc">use UTF-8 line drawing characters;</td></tr>
+<tr>
+<td class="opt_name"><code>-V</code></td>
+<td class="opt_desc">version;</td></tr>
+<tr>
+<td class="opt_name"><code>-Z</code></td>
+<td class="opt_desc">show security context for each process (SELinux);</td></tr>
+</table>
+
+
+
+
+
+<p class="cmdname"><a name="pwck">pwck</a></p>
+<p>
+verifies the integrity of the system authentication information.</p>
+
+<p class="fmt"><code>pwck&nbsp;</code>[<kbd>options</kbd>] [<kbd>passwd shadow</kbd>]</p>
+<p>
+<code>~</code> checks that all entries in <samp>/etc/passwd</samp> and
+<samp>/etc/shadow</samp> have the proper format and contain valid data.
+The user is prompted to delete entries that are improperly formatted or have
+other uncorrectable errors. Checks are made to verify that each entry has:</p>
+
+<ul>
+<li>the correct number of fields (fatal)</li>
+<li>a unique user name (fatal)</li>
+<li>a valid user and group identifier (warning)</li>
+<li>a valid primary group (warning)</li>
+<li>a valid home directory (warning)</li>
+<li>a valid login shell (warning)</li>
+</ul>
+<p>
+Shadow checks are enabled when a second file param is specified or when
+<samp>/etc/shadow</samp> exists on the system. These checks are:</p>
+<ul>
+<li>every passwd entry has a matching shadow entry, and every shadow
+entry has a matching passwd entry</li>
+<li>passwords are specified in the shadowed file</li>
+<li>shadow entries have the correct number of fields</li>
+<li>shadow entries are unique in shadow</li>
+<li>the last password changes are not in the future</li>
+</ul>
+<p>
+The outcome of the procedure:</p>
+<ol style="margin-left:0.5em">
+<li>An entry with the <i>wrong number of fields</i> (fatal error)
+is prompted for deletion. If user does not answer affirmatively, all
+further checks are bypassed.</li>
+<li>An entry with a <i>duplicated user name</i> (fatal error) is also
+prompted for deletion, and if user does not answer affirmatively, the
+remaining checks will still be made.</li>
+<li>All other errors are <i>warnings</i> and user is encouraged to correct
+them with <code><a href="cmds_u.html#usermod">usermod</a></code>.</li>
+</ol>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-h</code> &nbsp;&nbsp; <code>--help</code></p>
+<table class="options">
+<tr>
+<td class="opt_name"><code>-q</code></td>
+<td class="opt_desc">report errors only (<code>--quiet</code>);</td></tr>
+<tr>
+<td class="opt_name"><code>-r</code></td>
+<td class="opt_desc">execute <code>~</code> in read-only mode (<code>--read-only</code>);</td></tr>
+</table>
+
+<p class="fmtc"><code>-R </code><kbd>chroot_dir</kbd>,
+<code> --root </code><kbd>chroot_dir</kbd></p>
+<p class="desc">apply changes in the <kbd>chroot_dir</kbd> directory
+and use the config files from the <kbd>chroot_dir</kbd>;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-s</code></td>
+<td class="opt_desc">sort entries in <samp>/etc/passwd</samp>,
+<samp>/etc/shadow</samp> by UID (<code>--sort</code>);</td></tr>
+</table>
+
+
+<table class="exit">
+<caption>Exit codes</caption>
+<tr>
+<td class="exit_code">1</td>
+<td class="code_desc">invalid command syntax;</td></tr>
+<tr>
+<td class="exit_code">2</td>
+<td class="code_desc">one or more bad password entries;</td></tr>
+<tr>
+<td class="exit_code">3</td>
+<td class="code_desc">can't open password files;</td></tr>
+<tr>
+<td class="exit_code">4</td>
+<td class="code_desc">can't lock password files;</td></tr>
+<tr>
+<td class="exit_code">5</td>
+<td class="code_desc">can't update password files;</td></tr>
+</table>
+
+
+
+
+
+<p class="cmdname"><a name="pwconv">pwconv, pwunconv,<br>
+grpconv, grpunconv</a></p>
+<p>
+convert to/from shadow passwords and groups.</p>
+
+<p class="cmdc">pwconv</p>
+<p class="desc">creates <samp>/etc/shadow</samp> from <samp>/etc/passwd</samp>
+and an optionally existing <samp>/etc/shadow</samp>;</p>
+
+<p class="cmdc">pwunconv</p>
+<p class="desc">creates <samp>/etc/passwd</samp> from <samp>/etc/passwd</samp>
+and <samp>/etc/shadow</samp> and then removes <samp>/etc/shadow</samp>;</p>
+
+<p class="cmdc">grpconv</p>
+<p class="desc">creates <samp>/etc/gshadow</samp> from <samp>/etc/group</samp>
+and an optionally existing <samp>/etc/gshadow</samp>;</p>
+
+<p class="cmdc">grpunconv</p>
+<p class="desc">creates <samp>/etc/group</samp> from <samp>/etc/group</samp>
+and <samp>/etc/gshadow</samp> and then removes <samp>/etc/gshadow</samp>;</p>
+<p>
+There are no args. The programs operate on the normal
+and shadow password and group files:</p>
+
+<p class="fmtc"><samp>/etc/passwd</samp></p>
+<p class="fmtc"><samp>/etc/group</samp></p>
+<p class="fmtc"><samp>/etc/shadow</samp></p>
+<p class="fmt"><samp>/etc/gshadow</samp></p>
+
+<p class="warn">Warning!</p>
+<p class="indent">
+Run <code><a href="#pwck">pwck</a></code></a> and <code>grpck</code>
+before converting, because errors in password or group files may cause
+these programs to loop forever or fail.</p>
+
+
+
+
+
+<p class="cmdname"><a name="pwd"></a>pwd</p>
+<p>
+<b>Print working directory</b> outputs your current working dir. The current
+working directory is a dir where you are now. You are always in some dir. Usually,
+the current working dir path is displayed in the shell prompt.</p>
+
+<p class="cmdc">pwd</p>
+<p class="fmt"><code>pwd </code>[<kbd>options</kbd>]</p>
+<p>
+There are two versions of this cmds: a Shell built-in cmd, and a system utility.
+Shell version usually prevails. If you are not sure, try:</p>
+
+<p class="cmdc">pwd --version</p>
+<p class="cmd">pwd --help</p>
+<p>
+Shell version does not support these options. The other two options are common:</p>
+<table class="options">
+<tr>
+<td class="opt_name"><code>-L</code></td>
+<td class="opt_desc">is used to show the logical path of the current working
+dir with the name of the symlink if any;</td></tr>
+<tr>
+<td class="opt_name"><code>-R</code></td>
+<td class="opt_desc">is used to show the physical path of the current working
+dir without the name of the symlink if any;</td></tr>
+</table>
+
+
+</div>
+
+</body></html>

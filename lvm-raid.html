@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference</title>
+<meta name="description" content="linux quick reference, raid, logical volume manager, mdadm, pvcreate, pvdisplay, vgcreate, vgdisplay, lvcreate, pvscan, lvscan, vgscan, physical volume" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<h1 class="part">
+<a name="lvm">LVM &amp; RAID</a></h1>
+
+<p class="center">(<b>Outdated!</b>)</p>
+<p>
+<b>LVM</b> - Logical Volume Manager;<br>
+<b>RAID</b> - Redundant Array of Independent (old: Inexpensive) Disks;</p>
+<p>
+There is no strong correlation between LVM and RAID, i.e., each technology
+can be used independently. However, striped LVM usually requires RAID1.
+In the following examples, LVM means in fact LVM2, and RAID is assumed to be
+Linux Software RAID. Hardware RAID is less complicated, but (!) do not mix
+real (heavy | expensive | server) hardware RAID with pseudo (fake) RAID
+integrated on typical PC motherboard. In last case Linux Software RAID is
+preferred.</p>
+
+
+<h4>RAID + Striped LVM</h4>
+<p>
+To create LVM with striping, at least 4 disks are required. First, we create
+partitions <samp>Linux raid autodetect</samp> (1 disk = 1 partition). Then,
+assuming disks are <samp>sd</samp>[<samp>c</samp>-<samp>f</samp>], two RAID1
+are created:</p>
+
+<p class="cmd">mdadm –-create /dev/md0 –-level=raid1<br>
+–-raid-devices=2 /dev/sd[cd]1</p>
+
+<p class="cmd">mdadm –-create /dev/md1 –-level=raid1<br>
+–-raid-devices=2 /dev/sd[ef]1</p>
+<p>
+RAID config is kept in <samp>/etc/mdadm.conf</samp>. However,
+<code>mdadm</code> can handle array without this config file.
+Now, we create physical volumes:</p>
+
+<p class="cmdc">pvcreate /dev/md0</p>
+<p class="cmd">pvcreate /dev/md1</p>
+<p>
+In case of hardware RAID, <code>mdadm</code> is not used, and physical
+volumes are created as shown below:</p>
+
+<p class="cmdc">pvcreate /dev/sdb</p>
+<p class="cmd">pvcreate /dev/sdc</p>
+<p>
+After this, we create a volume group (name can be selected):</p>
+
+<p class="cmdc">vgcreate VolGroup01 /dev/md0 /dev/md1</p>
+<p class="or">or (for HW RAID)</p>
+<p class="cmd">vgcreate VolGroup01 /dev/sdb /dev/sdc</p>
+<p>
+The following commands create two logical volumes distributed accross two
+arrays, the stripe size is <samp>256K</samp>, the volume sizes are
+<samp>136GB</samp>:</p>
+
+<p class="cmdc">lvcreate -i2 -I256 -L136G -nLogVol00 VolGroup01</p>
+<p class="cmd">lvcreate -i2 -I256 -L136G -nLogVol01 VolGroup01</p>
+<p>
+And finally, file systems are created</p>
+
+<p class="cmdc">mke2fs -c -j -T news /dev/VolGroup01/LogVol00</p>
+<p class="cmd">mke2fs -c -j -T news /dev/VolGroup01/LogVol01</p>
+<p>
+and mounted like follows:</p>
+
+<p class="cmdc">mount /dev/VolGroup01/LogVol00 /u02</p>
+<p class="cmd">mount /dev/VolGroup01/LogVol01 /u03</p>
+
+
+
+<h5>Other useful commands</h5>
+
+<p class="fmtc"><code>pvdisplay</code></p>
+<p class="desc">displays attributes of a physical volume;</p>
+
+<p class="fmtc"><code>vgdisplay</code></p>
+<p class="desc">displays attributes of volume group;</p>
+
+<p class="fmtc"><code>lvdisplay</code></p>
+<p class="desc">displays attributes of a logical volume;</p>
+
+<p class="fmtc"><code>pvscan</code></p>
+<p class="desc">scans all disks for physical volumes;</p>
+
+<p class="fmtc"><code>vgscan</code></p>
+<p class="desc">scans all disks for volume groups and rebuilds caches;</p>
+
+<p class="fmtc"><code>lvscan</code></p>
+<p class="desc">scans all disks for logical volumes;</p>
+
+<p class="fmtc"><code>lvremove /dev/VolGroup01/LogVol01</code></p>
+<p class="desc">removes LV;</p>
+
+<p class="fmtc"><code>vgchange -a n VolGroup01</code></p>
+<p class="desc">deactivates a volume group;</p>
+
+<p class="fmtc"><code>vgremove VolGroup01</code></p>
+<p class="desc">removes a volume group;</p>
+
+
+
+<h4>LVM without RAID (single disk)</h4>
+<p>
+There is no place here to discuss all advantages of LVM on a system with
+one or two disks. During Linux installation you may be prompted to use LVM,
+and if you choose, all config is done by setup program. The problems may
+arise when disk fails and you must manually recreate the whole structure
+(partitions, groups, volumes, etc). Let's assume that we're going to restore
+a system disk (filesystem dumps are available). First we create primary
+Linux partition for <samp>/boot</samp> and Linux <samp>swap</samp> partition.
+The rest goes to PV:</p>
+
+<p class="cmd">pvcreate /dev/sda3</p>
+<p>
+After this we create volume group and logical volumes:</p>
+
+<p class="cmdc">vgcreate VolGroup00 /dev/sda3</p>
+<p class="cmdc">lvcreate -L16G –-LogVol00 VolGroup00</p>
+<p class="cmdc">lvcreate -L8G –-LogVol01 VolGroup00</p>
+<p class="cmdc">lvcreate -L64G –-LogVol02 VolGroup00</p>
+<p class="cmd">...</p>
+<p>
+The next stage:</p>
+
+<p class="cmdc">mke2fs -c -j -T news /dev/VolGroup00/LogVol00</p>
+<p class="cmd">...</p>
+
+
+
+<h4>How to access the striped volumes<br>when the system is broken</h4>
+<p>
+Let's assume, that the system [disk] [with all config files] has gone,
+but Software RAID array with striped LVM contains some useful data.
+We can reassemble it in two steps: 1) RAID; 2) LVM. With hardware RAID
+there'll be the last step only.</p>
+<p>
+To perform this task, we must load Linux OS using some appropriate
+Restore / Repair / Live CD supporting <samp>multipath devices</samp> and
+<samp>LVM2</samp>. First of all, you must re-create <samp>mdadm.conf</samp>:</p>
+
+<p class="cmdc">echo "DEVICE partitions" &gt; /etc/mdadm.conf</p>
+<p class="cmdc">echo "MAILADDR root" &gt;&gt; /etc/mdadm.conf</p>
+<p class="cmd">mdadm –-examine –-scan /dev/sdc1 /dev/sdd1<br>
+/dev/sde1 /dev/sdf1 &gt;&gt; /etc/mdadm.conf</p>
+<p>
+Then, try to assemble RAID:</p>
+
+<p class="cmdc">mdadm –A -s</p>
+<p class="cmd">cat /proc/mdstat</p>
+<p>
+The last command is optional (just to be sure). If RAID is O.K.,
+the following cmds should be executed in the specified sequence:</p>
+
+<p class="cmdc">vgscan</p>
+<p class="cmdc">pvscan</p>
+<p class="cmdc">vgchange -a y</p>
+<p class="cmd">lvscan</p>
+<p>
+The last cmd must display that all logical volumes are <samp>ACTIVE</samp>.
+Now volume can be mounted on some empty directory:</p>
+
+<p class="cmd">mount -o ro /dev/VolGroup01/LogVol00 /mnt</p>
+
+</div>
+
+</body></html>

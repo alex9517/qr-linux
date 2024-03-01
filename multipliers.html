@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference / multipliers</title>
+<meta name="description" content="linux quick reference, multipliers, byte, kilobyte, megabyte, gigabyte, terabyte, petabyte" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body class="toc">
+
+<div id="main" style="font-size:110%">
+
+<h1 class="part">Multipliers</h1>
+
+<p class="menu" style="margin-bottom:0.5em">
+<a href="#kibibyte">Main table</a>&nbsp;//
+<a href="#powers_of_2">Powers of 2</a>
+</p>
+<p>
+The International System of Units (SI) defines</p>
+<pre>
+  kilo &#8594; 10<sup>3</sup>
+  mega &#8594; 10<sup>6</sup>
+  giga &#8594; 10<sup>9</sup>
+  tera &#8594; 10<sup>12</sup>
+  peta &#8594; 10<sup>15</sup>
+  ...</pre>
+<p>
+So, strictly speaking, <samp>1 KB</samp> must be <samp>1,000 Bytes</samp>,
+<samp>1 MB</samp> must be <samp>1,000,000 Bytes</samp>, ... but we accustomed
+to think that <samp>1 KB</samp> is <samp>1,024 Bytes</samp>.</p>
+<p>
+In 1998 the <b>IEC</b> (International Electrotechnical Commission) published
+standards for binary prefixes, requiring that the <b>kilobyte</b> strictly
+denote <samp>1000</samp> bytes, and if you want it to be <samp>1024</samp>
+bytes, call it <b>kibibyte</b>. By the end of 2007, the IEC Standard had been
+adopted by the IEEE, EU, and NIST, and in 2009 it was incorporated in the
+International System of Quantities.</p>
+<p>
+So, keep in mind and try to apply the following table.</p>
+
+<a name="kibibyte"></a>
+<table style="margin-left:auto;margin-right:auto">
+<tr>
+<td style="padding-right:1em">
+
+<table class="grid_2_cen">
+<caption>Decimal</caption>
+<tr>
+<th class="gridcen">Value,<br>bytes</th>
+<th class="gridcen">Metric</th>
+<th class="gridcen">Name</th></tr>
+<tr>
+<td class="grid_2"><samp>1000</samp></td>
+<td class="grid_2_cen"><samp>kB</samp></td>
+<td class="grid_2">kilobyte</td></tr>
+<tr>
+<td class="grid_2"><samp>1000<sup>2</sup></samp></td>
+<td class="grid_2_cen"><samp>MB</samp></td>
+<td class="grid_2">megabyte</td></tr>
+<tr>
+<td class="grid_2"><samp>1000<sup>3</sup></samp></td>
+<td class="grid_2_cen"><samp>GB</samp></td>
+<td class="grid_2">gigabyte</td></tr>
+<tr>
+<td class="grid_2"><samp>1000<sup>4</sup></samp></td>
+<td class="grid_2_cen"><samp>TB</samp></td>
+<td class="grid_2">terabyte</td></tr>
+<tr>
+<td class="grid_2"><samp>1000<sup>5</sup></samp></td>
+<td class="grid_2_cen"><samp>PB</samp></td>
+<td class="grid_2">petabyte</td></tr>
+<tr>
+<td class="grid_2"><samp>1000<sup>6</sup></samp></td>
+<td class="grid_2_cen"><samp>EB</samp></td>
+<td class="grid_2">exabyte</td></tr>
+<tr>
+<td class="grid_2"><samp>1000<sup>7</sup></samp></td>
+<td class="grid_2_cen"><samp>ZB</samp></td>
+<td class="grid_2">zettabyte</td></tr>
+<tr>
+<td class="grid_2"><samp>1000<sup>8</sup></samp></td>
+<td class="grid_2_cen"><samp>YB</samp></td>
+<td class="grid_2">yottabyte</td></tr>
+</table>
+
+<td><td>
+
+<table class="grid_2_cen">
+<caption>Binary</caption>
+<tr>
+<th class="gridcen" colspan="2">Value,<br>bytes</th>
+<th class="gridcen" colspan="2">IEC</th>
+<th class="gridcen" colspan="2">JEDEC</th></tr>
+<tr>
+<td class="grid_2"><samp>1024</samp></td>
+<td class="grid_2"><samp>2<sup>10</sup></samp></td>
+<td class="grid_2_cen"><samp>KiB</samp></td>
+<td class="grid_2">kibibyte</td>
+<td class="grid_2_cen"><samp>KB</samp></td>
+<td class="grid_2">kilobyte</td></tr>
+<tr>
+<td class="grid_2"><samp>1024<sup>2</sup></samp></td>
+<td class="grid_2"><samp>2<sup>20</sup></samp></td>
+<td class="grid_2_cen"><samp>MiB</samp></td>
+<td class="grid_2">mebibyte</td>
+<td class="grid_2_cen"><samp>MB</samp></td>
+<td class="grid_2">megabyte</td></tr>
+<tr>
+<td class="grid_2"><samp>1024<sup>3</sup></samp></td>
+<td class="grid_2"><samp>2<sup>30</sup></samp></td>
+<td class="grid_2_cen"><samp>GiB</samp></td>
+<td class="grid_2">gibibyte</td>
+<td class="grid_2_cen"><samp>GB</samp></td>
+<td class="grid_2">gigabyte</td></tr>
+<tr>
+<td class="grid_2"><samp>1024<sup>4</sup></samp></td>
+<td class="grid_2"><samp>2<sup>40</sup></samp></td>
+<td class="grid_2_cen"><samp>TiB</samp></td>
+<td class="grid_2">tebibyte</td>
+<td class="grid_2_cen"><samp>TB</samp></td>
+<td class="grid_2">terabyte</td></tr>
+<tr>
+<td class="grid_2"><samp>1024<sup>5</sup></samp></td>
+<td class="grid_2"><samp>2<sup>50</sup></samp></td>
+<td class="grid_2_cen"><samp>PiB</samp></td>
+<td class="grid_2">pebibyte</td>
+<td class="grid_2_cen"><samp>PB</samp></td>
+<td class="grid_2">petabyte</td></tr>
+<tr>
+<td class="grid_2"><samp>1024<sup>6</sup></samp></td>
+<td class="grid_2"><samp>2<sup>60</sup></samp></td>
+<td class="grid_2_cen"><samp>EiB</samp></td>
+<td class="grid_2">exbibyte</td>
+<td class="grid_2_cen"><samp>EB</samp></td>
+<td class="grid_2">exabyte</td></tr>
+<tr>
+<td class="grid_2"><samp>1024<sup>7</sup></samp></td>
+<td class="grid_2"><samp>2<sup>70</sup></samp></td>
+<td class="grid_2_cen"><samp>ZiB</samp></td>
+<td class="grid_2">zebibyte</td>
+<td class="grid_2_cen"><samp>ZB</samp></td>
+<td class="grid_2">zettabyte</td></tr>
+<tr>
+<td class="grid_2"><samp>1024<sup>8</sup></samp></td>
+<td class="grid_2"><samp>2<sup>80</sup></samp></td>
+<td class="grid_2_cen"><samp>YiB</samp></td>
+<td class="grid_2">yobibyte</td>
+<td class="grid_2_cen"><samp>YB</samp></td>
+<td class="grid_2">yottabyte</td></tr>
+</table>
+</td></tr></table>
+<p>
+<i>Just FYI:</i>
+The JEDEC memory standards are the specifications for semiconductor memory
+circuits and similar storage devices promulgated by the <b>JEDEC</b> (Joint
+Electron Device Engineering Council) Solid State Technology Association, a
+semiconductor trade and engineering standardization organization.</p>
+
+
+<h5 style="text-align:center">
+<a name="powers_of_2">Powers of 2</a></h5>
+
+<table style="margin-left:auto;margin-right:auto">
+<tr>
+<td style="padding-right:2em">
+<table class="grid_2_cen">
+<tr>
+<td class="grid_2"><samp>2<sup>0</sup></samp></td>
+<td class="grid_2_right" style="width:5em"><samp>1</samp></td></tr>
+<tr>
+<td class="grid_2"><samp>2<sup>1</sup></samp></td>
+<td class="grid_2_right"><samp>2</samp></td></tr>
+<tr>
+<td class="grid_2"><samp>2<sup>2</sup></samp></td>
+<td class="grid_2_right"><samp>4</samp></td></tr>
+<tr>
+<td class="grid_2"><samp>2<sup>3</sup></samp></td>
+<td class="grid_2_right"><samp>8</samp></td></tr>
+<tr>
+<td class="grid_2"><samp>2<sup>4</sup></samp></td>
+<td class="grid_2_right"><samp>16</samp></td></tr>
+<tr>
+<td class="grid_2"><samp>2<sup>5</sup></samp></td>
+<td class="grid_2_right"><samp>32</samp></td></tr>
+<tr>
+<td class="grid_2"><samp>2<sup>6</sup></samp></td>
+<td class="grid_2_right"><samp>64</samp></td></tr>
+<tr>
+<td class="grid_2"><samp>2<sup>7</sup></samp></td>
+<td class="grid_2_right"><samp>128</samp></td></tr>
+<tr>
+<td class="grid_2"><samp>2<sup>8</sup></samp></td>
+<td class="grid_2_right"><samp>256</samp></td></tr>
+<tr>
+<td class="grid_2"><samp>2<sup>9</sup></samp></td>
+<td class="grid_2_right"><samp>512</samp></td></tr>
+<tr>
+<td class="grid_2"><samp>2<sup>10</sup></samp></td>
+<td class="grid_2_right"><samp>1024</samp></td></tr>
+<tr>
+<td class="grid_2"><samp>2<sup>11</sup></samp></td>
+<td class="grid_2_right"><samp>2048</samp></td></tr>
+<tr>
+<td class="grid_2"><samp>2<sup>12</sup></samp></td>
+<td class="grid_2_right"><samp>4096</samp></td></tr>
+<tr>
+<td class="grid_2"><samp>2<sup>13</sup></samp></td>
+<td class="grid_2_right"><samp>8192</samp></td></tr>
+<tr>
+<td class="grid_2"><samp>2<sup>14</sup></samp></td>
+<td class="grid_2_right"><samp>16,384</samp></td></tr>
+<tr>
+<td class="grid_2"><samp>2<sup>15</sup></samp></td>
+<td class="grid_2_right"><samp>32,768</samp></td></tr>
+<tr>
+<td class="grid_2"><samp>2<sup>16</sup></samp></td>
+<td class="grid_2_right"><samp>65,536</samp></td></tr>
+</table>
+
+</td><td>
+
+<table class="grid_2_cen">
+<tr>
+<td class="grid_2"><samp>2<sup>17</sup></samp></td>
+<td class="grid_2_right" style="width:8.5em"><samp>131,072</samp></td></tr>
+<tr>
+<td class="grid_2"><samp>2<sup>18</sup></samp></td>
+<td class="grid_2_right"><samp>262,144</samp></td></tr>
+<tr>
+<td class="grid_2"><samp>2<sup>19</sup></samp></td>
+<td class="grid_2_right"><samp>524,288</samp></td></tr>
+<tr>
+<td class="grid_2"><samp>2<sup>20</sup></samp></td>
+<td class="grid_2_right"><samp>1,048,576</samp></td></tr>
+<tr>
+<td class="grid_2"><samp>2<sup>21</sup></samp></td>
+<td class="grid_2_right"><samp>2,097,152</samp></td></tr>
+<tr>
+<td class="grid_2"><samp>2<sup>22</sup></samp></td>
+<td class="grid_2_right"><samp>4,194,304</samp></td></tr>
+<tr>
+<td class="grid_2"><samp>2<sup>23</sup></samp></td>
+<td class="grid_2_right"><samp>8,388,608</samp></td></tr>
+<tr>
+<td class="grid_2"><samp>2<sup>24</sup></samp></td>
+<td class="grid_2_right"><samp>16,777,216</samp></td></tr>
+<tr>
+<td class="grid_2"><samp>2<sup>25</sup></samp></td>
+<td class="grid_2_right"><samp>33,554,432</samp></td></tr>
+<tr>
+<td class="grid_2"><samp>2<sup>26</sup></samp></td>
+<td class="grid_2_right"><samp>67,108,864</samp></td></tr>
+<tr>
+<td class="grid_2"><samp>2<sup>27</sup></samp></td>
+<td class="grid_2_right"><samp>134,217,728</samp></td></tr>
+<tr>
+<td class="grid_2"><samp>2<sup>28</sup></samp></td>
+<td class="grid_2_right"><samp>268,435,456</samp></td></tr>
+<tr>
+<td class="grid_2"><samp>2<sup>29</sup></samp></td>
+<td class="grid_2_right"><samp>536,870,912</samp></td></tr>
+<tr>
+<td class="grid_2"><samp>2<sup>30</sup></samp></td>
+<td class="grid_2_right"><samp>1,073,741,824</samp></td></tr>
+<tr>
+<td class="grid_2"><samp>2<sup>31</sup></samp></td>
+<td class="grid_2_right"><samp>2,147,483,648</samp></td></tr>
+<tr>
+<td class="grid_2"><samp>2<sup>32</sup></samp></td>
+<td class="grid_2_right"><samp>4,294,967,296</samp></td></tr>
+<tr>
+<td class="grid_2"><samp>2<sup>33</sup></samp></td>
+<td class="grid_2_right"><samp>&nbsp;&nbsp;8,589,934,592</samp></td></tr>
+</table>
+</td></tr></table>
+
+</div>
+
+</body></html>

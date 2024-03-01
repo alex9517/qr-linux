@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference / Boot procedure</title>
+<meta name="description" content="linux quick reference, boot, loader, init, system initialization, systemd, bios, uefi, grub, kernel, reboot, rescue mode, upstart, sysvinit, udev, runlevel" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<h1 class="part">
+<a name="boot">Boot procedure</a></h1>
+<p class="center">
+can be roughly divided into the following four steps:</p>
+<table style="margin-left:auto;margin-right:auto">
+<tr><td>
+<p class="menu" style="text-align:left">
+<a href="#hw_boot">1) Hardware Boot (BIOS, UEFI)</a><br>
+<a href="#loader">2) OS Loader (boot loader, grub)</a><br>
+<a href="#kernel">3) Kernel Startup (udev, init)</a><br>
+<a href="#init">4) System Initialization (systemd)</a></p>
+</td></tr></table>
+
+
+
+
+<h2>
+<a name="hw_boot">Hardware boot</a></h2>
+<p>
+After power-on, control is given to a program stored in BIOS. This program
+performs basic <b>POST</b> (Power-On Self-Tests), then reads params from CMOS.
+As a minimum, it needs to know what is the <b>boot device</b>, or which devices
+to probe as possible boot devices. If boot device is found, the program tries
+to load the <b>OS Loader</b>, which is located on a fixed position on the boot
+device, and, in case of success, transfers control to it
+(see <a href="mbr_and_gpt.html">MBR</a>).</p>
+
+<table class="grid_2" style="margin-left:0;margin-right:auto">
+<caption>Keys that can be used during Hardware Boot</caption>
+<tr>
+<th class="grid_2">Key</th>
+<th class="grid_2">Action</th></tr>
+<tr>
+<td class="grid_2"><span class="keys">Del</span></td>
+<td class="grid_2">BIOS setup (some computers)</td></tr>
+<tr>
+<td class="grid_2"><span class="keys">F2</span></td>
+<td class="grid_2">BIOS setup (some computers)</td></tr>
+<tr>
+<td class="grid_2"><span class="keys">Fn+F2</span></td>
+<td class="grid_2">BIOS setup (some notebooks)</td></tr>
+<tr>
+<td class="grid_2"><span class="keys">F8</span></td>
+<td class="grid_2">Boot device select (some desktops with <a href="boot.html#uefi">UEFI</a>)</td></tr>
+<tr>
+<td class="grid_2"><span class="keys">F8</span></td>
+<td class="grid_2">MS Windows safe mode (if Windows is installed); press and hold after POST (Power-On Self-Test)</td></tr>
+<tr>
+<td class="grid_2"><span class="keys">F9</span></td>
+<td class="grid_2">System recovery (if manufacturer/supplier provided it)</td></tr>
+<tr>
+<td class="grid_2"><span class="keys">Fn+F9</span></td>
+<td class="grid_2">Boot device select (some notebooks with UEFI)</td></tr>
+<tr>
+<td class="grid_2"><span class="keys">F11</span></td>
+<td class="grid_2">Boot device select (some servers with UEFI)</td></tr>
+<tr>
+<td class="grid_2"><span class="keys">Tab</span></td>
+<td class="grid_2">Boot info (some computers / at splash screen)</td></tr>
+</table>
+<p>
+The successful completion of the hardware boot stage is usually signaled by
+<b>one short beep</b>. More than one beep means that POST failed due to some
+hardware problem:</p>
+
+<table class="grid_2" style="margin-left:0;margin-right:auto">
+<caption>AWARD BIOS Beep Codes</caption>
+<tr>
+<th class="grid_2">Beeps</th>
+<th class="grid_2">Meaning</th></tr>
+<tr>
+<td class="grid_2"><samp>1 short</samp></td>
+<td class="grid_2">Success! Everything is OK!</td></tr>
+<tr>
+<td class="grid_2"><samp>2 short</samp></td>
+<td class="grid_2">CMOS setting error</td></tr>
+<tr>
+<td class="grid_2"><samp>1 long 1 short</samp></td>
+<td class="grid_2">DRAM or motherboard error</td></tr>
+<tr>
+<td class="grid_2"><samp>1 long 2 short</samp></td>
+<td class="grid_2">Display or display (video) card error</td></tr>
+<tr>
+<td class="grid_2"><samp>1 long 3 short</samp></td>
+<td class="grid_2">Keyboard error</td></tr>
+<tr>
+<td class="grid_2"><samp>1 long 9 short</samp></td>
+<td class="grid_2">BIOS ROM error</td></tr>
+<tr>
+<td class="grid_2"><samp>Continuous long beeps</samp></td>
+<td class="grid_2">DRAM error</td></tr>
+<tr>
+<td class="grid_2"><samp>Continuous short beeps &nbsp;</samp></td>
+<td class="grid_2">Power error</td></tr>
+</table>
+
+
+<table class="grid_2" style="margin-left:0;margin-right:auto">
+<caption>AMI BIOS Beep Codes</caption>
+<tr>
+<th class="grid_2">Beeps</th>
+<th class="grid_2">Meaning</th></tr>
+<tr>
+<td class="grid_2"><samp>1 short</samp></td>
+<td class="grid_2">Success! Everything is OK!</td></tr>
+<tr>
+<td class="grid_2"><samp>1 long</samp></td>
+<td class="grid_2">Refresh failure (DRAM)</td></tr>
+<tr>
+<td class="grid_2"><samp>2 beeps</samp></td>
+<td class="grid_2">Parity error (DRAM)</td></tr>
+<tr>
+<td class="grid_2"><samp>3 beeps</samp></td>
+<td class="grid_2">Base 64K memory failure</td></tr>
+<tr>
+<td class="grid_2"><samp>4 beeps</samp></td>
+<td class="grid_2">Timer not operational</td></tr>
+<tr>
+<td class="grid_2"><samp>5 beeps</samp></td>
+<td class="grid_2">Processor error</td></tr>
+<tr>
+<td class="grid_2"><samp>6 beeps</samp></td>
+<td class="grid_2">8042-gate A20 failure</td></tr>
+<tr>
+<td class="grid_2"><samp>7 beeps</samp></td>
+<td class="grid_2">Processor exception interrupt error</td></tr>
+<tr>
+<td class="grid_2"><samp>8 beeps</samp></td>
+<td class="grid_2">Display memory read/write failure</td></tr>
+<tr>
+<td class="grid_2"><samp>9 beeps</samp></td>
+<td class="grid_2">ROM checksum error</td></tr>
+<tr>
+<td class="grid_2"><samp>10 beeps</samp></td>
+<td class="grid_2">CMOS shutdown register read/write error</td></tr>
+<tr>
+<td class="grid_2"><samp>11 beeps &nbsp;</samp></td>
+<td class="grid_2">Cache memory bad</td></tr>
+</table>
+
+
+<h4 class="part3">
+<a name="uefi">UEFI</a></h4>
+<p>
+<a href="mbr_and_gpt.html#gpt">UEFI</a>
+(Unified Extensible Firmware Interface) is a new "advanced BIOS" more
+sutable for modern hardware and modern 64-bit operating systems.</p>
+<p>
+<a href="mbr_and_gpt.html#gpt">EFI</a> (Extensible Firmware Interface)
+is the Intel's original name of the project.</p>
+<p>
+The Hardware Boot step and OS Loader step in systems with classical BIOS
+firmware and in systems with UEFI firmware are not exactly the same, but those
+differences are not essential ... until you face some boot problem. And then you
+will find that <a href="mbr_and_gpt.html#gpt">GPT</a> is far more complicated
+than good old <a href="mbr_and_gpt.html#mbr">MBR</a>.</p>
+<p>
+A typical PC with UEFI firmware usually supports two boot modes:</p>
+<ul>
+<li>Legacy boot mode (old-style, classical BIOS);</li>
+<li>EFI boot mode (new, advanced);</li>
+</ul>
+<p>
+If your PC has a UEFI firmware, it does not mean that Linux must be installed
+to use EFI boot mode (though it's usually a better choice). However, if you plan
+dual boot (e.g., Linux + Windows), EFI boot mode may be the only option. Also,
+if your HDD already has GPT or you plan to have GPT, then EFI mode is the only
+choice.</p>
+<p>
+EFI boot requires a special <b>EFI partition</b>. It's assumed to be shared
+by all bootable OSs (if you're going to use more than on), and in ideal case
+Ubuntu Linux (since 12.04) can use EFI partition created by Windows 7/8 setup.
+However, in non-trivial cases (like manual Ubuntu installation) you may need
+to create this partition manually (<code>GParted</code> is one of the
+appropriate tools). An EFI partition must comply to the following
+requirements:</p>
+<ul>
+<li>Mount point: <samp>/boot/efi</samp> (no need to set this mount point
+when using the manual partitioning, the Ubuntu installer will detect it
+automatically);</li>
+<li>Size: 100MB .. 250MB;</li>
+<li>Type: FAT32;</li>
+<li>Must be located at the start of a GPT disk, and must have
+a "boot" flag;</li>
+</ul>
+
+
+
+<h2>
+<a name="loader">OS Loader (boot loader)</a></h2>
+
+<p class="menu" style="font-size:120%">
+<a href="#grub_menu">GRUB&nbsp;menu</a>&nbsp;//
+<a href="#grub_shell">GRUB&nbsp;shell&nbsp;cmds</a>&nbsp;//
+<a href="#single_user">Recovery&nbsp;mode</a>&nbsp;//
+<a href="#rescue">Rescue&nbsp;mode</a>&nbsp;//
+<a href="#grub_restore">GRUB&nbsp;restore</a>&nbsp;//
+<a href="#grub_legacy">GRUB&nbsp;legacy&nbsp;restore</a>
+</p>
+<p>
+The OS loader (aka Boot Loader) is located in the
+<a href="mbr_and_gpt.html#mbr">first sector of the boot device</a>
+(MBR, cylinder <samp>0</samp>, head <samp>0</samp>, sector <samp>1</samp>).
+This primary loader is limited due to the size of MBR (<samp>446</samp> bytes;
+the rest is occupied by <a href="mbr_and_gpt.html#pt">partition table</a>),
+therefore, it usually calls a <b>secondary OS loader</b> which may be located
+on a specified disk partition. The main job of the OS loader is to locate,
+load and run the kernel. The most popular Linux OS loaders are
+<code>lilo</code> (Linux Loader, old) and <code>grub</code> (Grand Unified
+Bootloader). Most distros nowdays use <code>grub</code>. Currently, there are
+two branches: <code>grub 0.9x</code> (aka GRUB Legacy) and
+<code>grub 1.xx</code> (GRUB2). To find your version (this cmd requires
+<samp>root</samp> priv):</p>
+
+<p class="cmd">grub-install -v</p>
+<p>
+GRUB Legacy main config file is <samp>/boot/grub/menu.lst</samp>
+(usually linked to <samp>/boot/grub/grub.conf</samp>) that looks like:</p>
+
+<div class="file">
+<pre>default=0
+timeout=5
+splashimage=(hd0,0)/grub/splash.xpm.gz
+hiddenmenu
+title Linux Fedora Core (2.6.17.11)
+  root (hd0,0)
+  kernel /vmlinuz-2.6.17.11 ro root=LABEL=/ rhgb quiet
+  initrd /initrd-2.6.17.11.img
+...
+title Other
+  rootnoverify (hd0,1)
+  chainloader +1</pre>
+</div>
+<p>
+where <samp>default=0</samp> means that the first kernel in the list will be
+loaded by default, <samp>timeout=5</samp> sets the timeout in seconds (if you
+do nothing during this timeout, GRUB waits for 5 sec, then loads default
+kernel; to cut timeout, press <span class="keys">ENTER</span>).</p>
+<p>
+GRUB2 uses following files/dirs:</p>
+
+<p class="fmtc"><samp>/boot/grub/grub.cfg</samp></p>
+<p class="desc">main config (DO NOT EDIT!);</p>
+
+<p class="fmtc"><samp>/etc/grub.d/</samp></p>
+<p class="desc">this dir contains GRUB scripts, building blocks from which
+the <samp>grub.cfg</samp> file is built;</li>
+
+<p class="fmtc"><samp>/etc/default/grub</samp></p>
+<p class="desc">the customization part of GRUB (like old <samp>menu.lst</samp>,
+except the actual boot entries; it includes options similar to "default",
+"timeout", etc);</li>
+<p>
+Some useful (editable) options in <samp>/etc/default/grub</samp> are:</p>
+
+<div class="file">
+<pre>GRUB_DEFAULT=0
+#GRUB_HIDDEN_TIMEOUT=0
+GRUB_HIDDEN_TIMEOUT_QUIET=true
+GRUB_TIMEOUT="3"</pre>
+</div>
+<p>
+Note, that <samp>GRUB_DEFAULT=saved</samp> sets the default menu entry with
+whatever was selected last. Custom entries to GRUB menu can be added by
+editing <samp>/etc/grub.d/40_custom</samp> file. To activate changes in
+these and other files, you should run <code>update-grub</code> (it looks
+for new kernels, operating systems and re-creates <samp>grub.cfg</samp>).
+If you install or remove kernels using <code>rpm</code> or
+<code>apt-get</code>, GRUB menu is edited automatically.</p>
+
+
+
+<h4 class="part3">
+<a name="grub_menu">GRUB menu</a></h4>
+<p>
+<b>GRUB menu</b> allows you to load different versions of kernel, to run
+memtest, etc. By default it's usually configured not to be displayed if there
+is only one OS installed. Still you can get it by pressing and holding the
+<span class="keys">SHIFT</span> key (or <span class="keys">ESC</span> in
+systems with old GRUB) when BIOS outputs misc info about devices.
+When menu appears, press
+<span class="keys">&#8595;</span> or <span class="keys">&#8593;</span>
+(Down/Up arrow keys) to select option, then <span class="keys">ENTER</span>
+to continue the boot process.</p>
+<p>
+To force GRUB menu always to be displayed, edit
+<samp>/etc/default/grub</samp> (the <samp>root</samp> priv is required!):</p>
+
+<div class="file">
+<pre>...
+#GRUB_HIDDEN_TIMEOUT=0
+...
+GRUB_TIMEOUT=7</pre>
+</div>
+<p>
+By default Ubuntu starts quite silently. If you want to see the boot process
+details, edit <samp>/etc/default/grub</samp>:</p>
+
+<div class="file">
+<pre>GRUB_CMDLINE_LINUX_DEFAULT=""</pre>
+</div>
+<p>
+To run Ubuntu in <b>text mode</b>, set:</p>
+
+<div class="file">
+<pre>GRUB_CMDLINE_LINUX_DEFAULT="quiet splash text"</pre>
+</div>
+<p>
+If you need the text mode just to solve some system problems, then may be
+you should select a <b>recovery</b> boot option in the GRUB menu!</p>
+<p>
+<b>Note that GRUB config changes are ineffective until you run</b></p>
+
+<p class="cmd">sudo update-grub</p>
+<p>
+<b>Also note that if you do something wrong, reboot may fail</b>.
+You can then try <b>recovery</b>, or boot from USB or CD (whichever
+suits better), but in first case, root fs would be mounted read-only (i.e.,
+you cannot edit config), in second case, <code>update-grub</code> cmd is not
+as simple as shown above. All these problems can be solved, but it requires
+some knowledge and manual work.</p>
+<p>
+To run <b>custom tasks</b> at the end of the system start sequence,
+add your code to</p>
+
+<p class="fmt"><samp>/etc/rc.local</samp></p>
+<p>
+There are also some options in <samp>/etc/default/rcS</samp>, e.g.:</p>
+
+<div class="file">
+<pre>TMPTIME=0
+...
+VERBOSE=no</pre>
+</div>
+<p>
+The first option requires <samp>/tmp</samp> dir to be cleaned at each
+reboot, non-zero values set the number of days to keep stuff (except
+<samp>-1</samp> which means "never clean"). The second option requires to
+minimize the output during startup (see <code>man 5 rcS</code> for details).</p>
+
+
+
+<h4 class="part3">
+<a name="grub_shell">Some GRUB shell cmds</a></h4>
+<p>
+(when GRUB menu is displayed, press '<span class="keys">c</span>')</p>
+
+<p class="cmdc">boot</p>
+<p class="desc">boot OS or chain-loader;</p>
+
+<p class="fmtc"><code>chainloader</code> <kbd>file</kbd></p>
+<p class="desc">prepare to boot other bootloader;</p>
+
+<p class="fmtc"><code>configfile</code> <kbd>file</kbd></p>
+<p class="desc">load an alternative  config file;</p>
+
+<p class="cmdc">halt</p>
+<p class="desc">shutdown computer;</p>
+
+<p class="fmtc"><code>help</code> [<kbd>cmd</kbd>]</p>
+<p class="desc">show help;</p>
+
+<p class="fmtc"><code>initrd</code> <kbd>file</kbd></p>
+<p class="desc">load the specified initramfs;</p>
+
+<p class="fmtc"><code>insmod</code> <kbd>file</kbd></p>
+<p class="desc">insert (load) <samp>grub2</samp> module (GRUB2);</p>
+
+<p class="fmtc"><code>kernel</code> <kbd>file</kbd> [<kbd>args</kbd>]</p>
+<p class="desc">load a kernel (GRUB Legacy);</p>
+
+<p class="fmtc"><code>linux</code> <kbd>file</kbd> [<kbd>args</kbd>]</p>
+<p class="desc">load a kernel (GRUB2);</p>
+
+<p class="fmtc"><code>ls</code> [<code>-alh</code>] [<kbd>file</kbd>]</p>
+<p class="desc">list files (all, long, human-readable) (GRUB2);</p>
+
+<p class="cmdc">lsmod</p>
+<p class="desc">show loaded modules (GRUB2);</p>
+
+<p class="cmdc">quit</p>
+<p class="desc">exit from GRUB shell (GRUB Legacy);</p>
+
+<p class="cmdc">reboot</p>
+<p class="desc">reboot computer;</p>
+
+<p class="cmdc">root</p>
+<p class="desc">set GRUB's root device (GRUB Legacy);</p>
+</table>
+
+<p class="fmtc"><code>set</code> [<kbd>var</kbd><code>=</code><kbd>value</kbd>]</p>
+<p class="desc">set/show env variables (GRUB2);</p>
+
+<p class="warn">Note!</p>
+<p class="indent">
+GRUB Legacy uses partition notation that starts with <samp>0</samp>;
+GRUB2 uses partition notation that starts with <samp>1</samp>; devices
+are still numbered from <samp>0</samp>, so <samp>/dev/sda1</samp> is now
+<samp> (hd0,1)</samp>, NOT <samp>(hd0,0)</samp> as before!</p>
+
+
+
+<h4 class="part3">
+<a name="single_user">Recovery mode (single user mode)</a></h4>
+<ul>
+<li>Select kernel and press '<span class="keys">e</span>';</li>
+<li>Go to the EOL, remove <samp>quiet</samp> and/or <samp>splash</samp>,
+type <samp>single</samp> (be sure there is a space before <samp>single</samp>),
+press <span class="keys">ENTER</span>;</li>
+<li>Back at the GRUB menu press '<span class="keys">b</span>';</li>
+</ul>
+<p>
+Some systems have recovery mode menu item added as the part of the new
+kernel installation procedure. <b>Recovery mode</b> is not the same
+as <b>rescue mode</b>.</p>
+
+
+
+<h4 class="part3">
+<a name="rescue">Rescue mode</a></h4>
+<p>
+GRUB's functionality is provided by loadable modules residing in
+<samp>/boot/grub</samp>. If there are some problems with disks, partitions,
+files, several kinds of GRUB prompt may pop up. Normal GRUB prompt instead
+of menu means that there are config problems (like <samp>grub.cfg</samp> is
+bad or missing). In worse cases (bad partition/filesystem/files) you may fall
+back to the rescue prompt (<span class="prom">grub rescue&gt;</span>). This usually means
+that GRUB cannot load the required modules and only a limited subset of the
+normal GRUB cmds is available (<code>ls</code>, <code>insmod</code>,
+<code>set</code>, <code>unset</code>). The first move in rescue mode is to
+try to load the appropriate modules and become normal GRUB shell (rescue
+shell cannot even load a kernel). Assuming that GRUB resides in a separate
+boot partition <samp>/dev/sda1</samp> (otherwise use <samp>/boot/grub</samp>
+instead of just <samp>/grub</samp>):</p>
+
+<p class="fmtc"><span class="prom">grub rescue&gt;</span> <code>set prefix=(hd0,1)/grub</code></p>
+<p class="fmtc"><span class="prom">grub rescue&gt;</span> <code>insmod (hd0,1)/grub/normal.mod</code></p>
+<p class="fmt"><span class="prom">rescue:grub&gt;</span> <code>normal</code></p>
+<p>
+If the above fails, try:</p>
+
+<p class="fmtc"><span class="prom">grub rescue&gt;</span> <code>set prefix=(hd0,1)/grub</code></p>
+<p class="fmtc"><span class="prom">grub rescue&gt;</span> <code>insmod (hd0,1)/grub/linux.mod</code></p>
+<p class="fmtc"><span class="prom">grub&gt;</span> <code>set root=(hd0,2)</code></p>
+<p class="fmtc"><span class="prom">grub&gt;</span> <code>linux /vmlinuz-2.6.31 root=/dev/sda2 ro</code></p>
+<p class="fmtc"><span class="prom">grub&gt;</span> <code>initrd /initrd-2.6.31.img</code></p>
+<p class="fmt"><span class="prom">grub&gt;</span> <code>boot</code></p>
+<p>
+Note, that you can use <code>ls</code>
+to see known devices and partitions:</p>
+
+<p class="cmdc">ls -al</p>
+<p class="desc">show all devices available;</p>
+
+<p class="cmdc">ls -alh (hd0,1)/boot/</p>
+<p class="desc">show files in <samp>(hd0,1)/boot</samp> dir;</p>
+<p>
+If all attempts have failured, or if there are no GRUB prompt at all,
+reinstall GRUB. Total disapperance of GRUB may be the signal of a wide-scale
+disaster. However, in some cases this may be just the result of Windows
+installation procedure.</p>
+
+
+
+<h4 class="part3">
+<a name="grub_restore">How to restore (reinstall) GRUB2</a></h4>
+<p>
+Some modern Linux distro DVDs can function as LiveCD, or have some kind
+of rescue mode. The best way to reinstall GRUB is to use the same distro DVD
+you used to install Linux. However, if it doesn't provide the required
+function (or is not available), use some other LiveCDs (except old stuff).
+Alternatively, you can create a special USB flash drive with GRUB software
+(stored files won't be erased or damaged).</p>
+<p>
+One of possible algorithms:</p>
+<ul>
+<li>Boot system from LiveCD (distro DVD);</li>
+<li>Open a terminal;</li>
+<li>Mount boot partition:</li>
+<p class="cmd">mount /dev/sda1 /mnt/boot</p>
+
+<p class="warn">Note!</p>
+<p class="indent">If there is no separate boot partition, mount system
+partition containing <samp>/boot</samp> directory like this:</p>
+
+<p class="cmd">mount /dev/sda1 /mnt</p>
+
+<li>Reinstall GRUB2:</li>
+<p class="cmd">grub-install --root-directory=/mnt /dev/sda</p>
+<li>Unmount device:</li>
+<p class="cmd">umount /dev/sda1</p>
+<li>Reboot.</li>
+</ul>
+
+
+
+<h4 class="part3">
+<a name="grub_legacy">How to restore GRUB Legacy</a></h4>
+<p>
+This is a variation of the above procedure: LiveCD is only used to get GRUB
+prompt, then the existing system is loaded from HDD. Note, that some commands
+and device notation are slightly different:</p>
+
+<p class="fmtc"><span class="prom">grub&gt;</span> <code>root (hd0,0)</code></p>
+<p class="fmtc"><span class="prom">grub&gt;</span> <code>kernel /vmlinuz-2.6.17.11 ro root=LABEL=/ rhgb quiet</code></p>
+<p class="fmtc"><span class="prom">grub&gt;</span> <code>initrd /initrd-2.6.17.11.img</code></p>
+<p class="fmt"><span class="prom">grub&gt;</span> <code>boot</code></p>
+<p>
+When the system is loaded, there are two methods to reinstall GRUB.
+The first method is considered a little bit dangerous:</p>
+
+<p class="cmdc">cd /</p>
+<p class="cmd">grub-install /dev/sda</p>
+<p>
+Second method gives you more control.</p>
+
+<p class="cmdc">grub</p>
+<p class="fmtc"><span class="prom">grub&gt;</span> <code>find /grub/stage1</code></p>
+<p class="or">or</p>
+<p class="fmt"><span class="prom">grub&gt;</span> <code>find /boot/grub/stage1</code></p>
+<p>
+This is not required, but helps to find root device as GRUB understands
+it in the current situation. Most likely it is <samp>(hd0,0)</samp> which
+means first partition on Primary IDE Master or SATA0 or SCSI 0.</p>
+<p class="fmtc"><span class="prom">grub&gt;</span> <code>root (hd0,0)</code></p>
+<p class="fmtc"><span class="prom">grub&gt;</span> <code>setup (hd0)</code></p>
+<p class="fmt"><span class="prom">grub&gt;</span> <code>quit</code></p>
+<p>
+Note, that similar cmd <code>setup (hd0,0)</code> installs GRUB into
+the boot sector of the first partition (most likely you don't need this).</p>
+<p>
+See also "How to..":</p>
+<p class="center">
+<a href="mbr_and_gpt.html#winmbr">restore DOS MBR</a> &nbsp; &nbsp; &nbsp; &nbsp;
+<a href="mbr_and_gpt.html#grub_floppy">create GRUB boot floppy</a></p>
+
+
+
+<h2>
+<a name="kernel">Kernel startup</a></h2>
+<p>
+When the kernel is loaded, it initializes the devices (via their drivers),
+starts the swapper (kernel process <code>kswapd</code>), and mounts the root
+file system. Then it creates first user land process <code>init</code>
+(<code>/sbin/init</code>; <samp>pid = 1</samp>), passing to it any params
+that weren’t handled by the kernel already.</p>
+<p>
+In the old Linux (Unix) systems there was a <samp>/dev</samp> dir with
+a static set of device nodes (special files). It was large, because for
+every device, that might possibly appear in the system, there was a device
+node created beforehand. However, since Linux kernel 2.6.13 (?) device
+manager <samp>udev</samp> dynamically creates only the nodes for the devices
+actually present on a system. <samp>udev</samp> runs as a daemon and listens
+to <samp>uevents</samp> the kernel sends out via <samp>netlink</samp> socket
+when a new device is initialized or a device is removed from the system.
+The main components of <samp>udev</samp> are:</p>
+<ul>
+<li><samp>libudev</samp>, library (provides access to device info);</li>
+<li><code>udevd</code>, user space daemon (manages virtual <samp>/dev</samp>);</li>
+<li><code>udevadm</code>, admin utility (provides info and diagnostics);</li>
+</ul>
+<p>
+For some device classes (e.g., storage devices) <samp>udev</samp> supports
+persistent device naming, that does not depend on the order in which devices
+are plugged into the system. You can affect the process of device node
+creation by adding (modifying) rule files in <samp>/etc/udev/rules.d</samp></p>
+<p>
+<samp>sysfs</samp> is a filesystem managed by the kernel and mounted at
+<samp>/sys</samp> dir. It exports basic info about the devices currently
+plugged into your system. <samp>udev</samp> can use this info to create
+device nodes corresponding to your hardware.</p>
+
+
+
+<h2>
+<a name="init">System Initialization</a></h2>
+
+<p class="menu" style="font-size:120%">
+<a href="#systemd_cmds">Cmds</a>&nbsp;//
+<a href="#system_startup">Startup</a>&nbsp;//
+<a href="#timers">Timers</a>&nbsp;//
+<a href="#unit_files">Unit&nbsp;files</a>&nbsp;//
+<a href="#unit_struct">Unit&nbsp;file&nbsp;struct</a>&nbsp;//
+<a href="#unit_types">Unit&nbsp;types</a>&nbsp;//
+<a href="#user_services">User services</a>
+</p>
+<p>
+Since 2015 (approx) <b>systemd</b> is the standard Linux OS initializer in
+the main Linux distributions. It tries to make system startup faster using
+fewer scripts and running tasks in parallel when possible.</p>
+<p>
+Technically, <b>systemd</b> is a <i>software suite</i> that provides important
+system components for Linux OS. Its purpose was/is to unify service config and
+behavior across misc Linux distributions. The primary component is a <b>system
+and service manager</b> - a new <b>init</b> system used to bootstrap user space
+and manage user processes. It also provides replacements for some classical
+daemons and utilities that were used in the past to manage devices, login proc,
+network connections, event logging.</p>
+
+<div class="box1">
+<p>
+To be sure your system uses <i>systemd</i>, try</p>
+
+<p class="cmdc">systemctl --version</p>
+<p class="or">or</p>
+<p class="cmd">pidof systemd</p>
+<p style="padding-bottom:0">
+Old initializers like <a href="sysinit.html">SysV</a> and
+<a href="sysinit.html">Upstart</a> are still supported for
+backward compatibility; classical dirs like</p>
+<ul class="tight">
+<li><samp>/etc/rc.d/</samp></li>
+<li><samp>/etc/init.d/</samp></li>
+<li><samp>/etc/init/</samp></li>
+</ul>
+<p>
+are still present, and may be used by some software.</p>
+</div>
+<p style="padding-bottom:0">
+The term <b>systemd</b> can denote</p>
+<ul class="tight">
+<li><i>init system</i> as a whole,</li>
+<li>Linux daemon <code>systemd</code> (<samp>/lib/systemd/systemd</samp>,
+linked to <samp>/usr/lib/systemd</samp>),</li>
+<li><i>software package</i> containing the above
+daemon and other daemons, utilities, libs, files, e.g.
+<ul class="tight">
+<li><a href="cmds_s.html#systemctl"><code>systemctl</code></a> - frontend
+utility, the central management tool for <i>systemd</i>;</li>
+<li><code>journald</code> - log manager (daemon), a replacement of classical
+Unix log infrastructure;</li>
+<li><code>journalctl</code> - frontend utility for log management;</li>
+<li>multiple executables like<code> systemd-analyze</code>,<code>
+systemd-run</code>,<code> systemd-mount</code>, etc</li>
+</ul></li>
+</ul>
+<p style="padding-bottom:0">
+Systemd-related directories:</p>
+<ul class="tight">
+<li><samp>/etc/systemd</samp> - global config;</li>
+<li><samp>/etc/systemd/system</samp> - user-created unit files;</li>
+<li><samp>/usr/lib/systemd/system</samp> - unit files supplied by package maintainer;</li>
+<li><samp>/run/systemd/system</samp> - runtime units;</li>
+</ul>
+<p>
+<b>Note!</b> If you want to modify one of the default unit files in
+<samp>/usr/lib/systemd/system</samp>, leave it as is, and put your own file
+(same name) in <samp>/etc/systemd/system</samp> dir which has higher priority.
+Your file will shadow the original one.</p>
+<p>
+Some systemd concepts:</p>
+<ul class="tight">
+<li><a href="#unit_types">Unit</a> - a resource managed by
+<i>systemd</i>; units represent different types of resources (12 types);
+the units are defined in files known as <a href="#unit_file">unit files</a>.</li>
+
+<li><a href="#target">Target</a> - a unit configuration file with
+<samp>.target</samp> extension which encodes info about a target unit of
+systemd, and is used for grouping units and as well-known synchronization
+points during startup.</p>
+</ul>
+
+
+
+<h4 class="part3">
+<a name="system_startup">Startup</a></h4>
+<p>
+<code>systemd</code> is the <b>first process to start</b> when Linux boots up, and it controls everything that runs on your
+computer. The <i>systemd's model for starting processes</i> (units) is <b>lazy dependency-based</b>.</p>
+<p>
+That is, a unit will only start if and when some other starting unit depends on it. During boot,<code> systemd </code>starts a
+<i>root unit</i> (<samp>default.target</samp>, can be overridden in <samp>grub</samp> config), which then transitively expands
+and starts its dependencies. If you want to see all those sequencies and relations, try</p>
+
+<p class="cmd">pstree -p</p>
+<p>
+You can find some details about the boot process with following cmds:</p>
+
+<p class="cmdc">systemd-analize</p>
+<p class="desc">some details and total duration of the boot process;</p>
+
+<p class="cmdc">systemd-analize blame</p>
+<p class="desc">what takes so much time during boot?</p>
+
+<p class="cmdc">systemd-analize critical-chain</p>
+<p class="desc">show the list of the critical chain of tasks during the boot process;</p>
+
+<p class="cmdc">systemd-analize critical-chain firewalld.service</p>
+<p class="desc">show the critical chain for a particular service;</p>
+
+
+
+
+<h4 class="part3">
+<a name="unit_files">Unit files</a></h4>
+<p>
+Unit files are config files used by <b>systemd</b> to perform its job.
+Technically, they are short text files following some rules. There are two
+types of unit files that can be interesting to users and admins:</p>
+<p class="fmtc">
+<samp>*.service</samp></p>
+<p class="desc">
+files are used by<code> systemd </code>to handle misc services. Note that
+"service file" is not the <a href="howto.html#service">service</a> itself.
+Service can be something big and complicated and not related to <i>systemd</i>
+at all, like, for example, Apache Web-Server or PostgreSQL.</p>
+<p class="fmtc">
+<samp>*.timer</samp></p>
+<p class="desc">
+files are used by<code> systemd </code>to run scheduled tasks (see
+<a href="#timers">timers</a>).</p>
+<p>
+A new service which is not activated through sockets, D-BUS, or in a similar
+way, but wants to be auto started during boot, must become a dependency of an
+existing boot target which is usually <samp>multi-user.target</samp>. Here's
+an example of a simple service file:</p>
+<div class="file">
+<pre>
+[Unit]
+Description=Some useful service doing this and that
+After=systemd-user-sessions.service
+[Service]
+Type=forking
+ExecStart=/usr/local/bin/my_svc</pre>
+</div>
+<p>
+It's supposed that <samp>my_svc</samp> is some Linux daemon.
+See explanation in <a href="#unit_struct">Unit file structure</a>.</p>
+<p>
+To start this service:</p>
+
+<p class="cmd">systemctl start my_svc</p>
+<p>
+If service is good, it starts to run in the background, and all output is
+intercepted by<code> journald </code>daemon (which is also the part of the
+<i>Systemd</i> pkg). You can find what's going on with your service using</p>
+
+<p class="cmd">systemctl status my_svc</p>
+<p>
+It shows the last few log lines and info about the processes running.
+If you need more, you can view the entire log:</p>
+
+<p class="cmd">journalctl -u my_svc -e</p>
+<p>
+The<code> -u </code>option specifies the unit to show the output of, and
+the<code> -e </code>means "start from the end of the file and move backwards".</p>
+<p>
+Most distros still send the output from <i>systemd</i> services to
+<samp>/var/log/syslog</samp>, but this is an option rather than a feature,
+and it may disappear (?) in the future, i.e.<code> journalctl </code>dominates,
+old logfiles should be considered <i>deprecated</i>.</p>
+<p>
+Note that by default <b>journald</b> stores its logs in<samp>
+/run/log/journal </samp>dir [which disappears after a reboot]. See below
+<a href="#log_storage">How to provide a permanent log storage</a>.</p>
+
+
+
+
+
+<h4 class="part3">
+<a name="timers">Systemd Timers</a></h4>
+<p>
+<b>Scheduled tasks</b> are those we want to run periodically, or once at the
+specified point in time. In the past there were<code> crond </code>and<code>
+atd </code>for this job, but now it looks like <i>systemd</i> is going to
+replace both.</p>
+<p>
+There are two types of timers:</p>
+<ul>
+<li><b>Realtime timers</b> activate on a calendar event, i.e. at the specified
+date and time; they all have<samp> OnCalendar </samp>option;</li>
+<li><b>Monotonic timers</b> activate after a time span relative to some starting
+point; they usually have an option like<samp> OnBootSec </samp>or<samp> OnActiveSec
+</samp>or similar, and they stop if the computer is temporarily suspended or shut
+down;</li>
+</ul>
+<p>
+To view all started timers,</p>
+
+<p class="cmd">systemctl list-timers</p>
+<p>
+To list all timers (including inactive),</p>
+
+<p class="cmd">systemctl list-timers --all</p>
+<p>
+The status of a service started by a timer is usually<samp> inactive </samp>unless
+it is currently being triggered. If a timer gets out of sync, it may help to delete
+its<samp> stamp-* </samp>file in<samp> /var/lib/systemd/timers </samp>(or<samp>
+~/.local/share/systemd/ </samp>in case of user timers).</p>
+<p>
+To schedule a task you need two files:</p>
+<ul>
+<li><samp><span class="arg">task_name</span>.service</samp> -
+service config file specifying program/utility/application to be run;</li>
+<li><samp><span class="arg">task_name</span>.timer</samp> -
+timer config file specifying schedule details;</li>
+<!--
+<li><samp><span class="arg">task_name</span>.slice</samp> -
+an <b>optional config file</b> specifying resource limits, in case the scheduled
+task may consume too much;</li>
+-->
+</ul>
+<p>
+Each<samp> .timer </samp>file requires a matching<samp> .service </samp>file.
+The <i>timer</i> activates and controls the <i>service</i>.
+The service file does not require an<samp> [Install] </samp>section. It's possible
+to control a differently-named unit using the<samp> Unit= </samp>option in the
+timer's<samp> [Timer] </samp>section. Below you can see service and timer files
+that are supposed to run some task once a day.</p>
+<p>
+This is<samp> proj_bkp.service </samp>file:</p>
+<div class="file">
+<pre>[Unit]
+Description=This service archives my current project
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/arc02.sh
+
+[Install]
+WantedBy=multi-user.target</pre>
+</div>
+<p>
+And this is<samp> proj_bkp.timer </samp>file:</p>
+<div class="file">
+<pre>[Unit]
+Description=Runs proj_bkp every day at midnight
+
+[Timer]
+OnCalendar=*-*-* 00:00:00
+Unit=proj_bkp.service
+
+[Install]
+WantedBy=timers.target</pre>
+</div>
+<p>
+Both files can be created in<samp> /usr/lib/systemd/system </samp>or<samp>
+/etc/systemd/system </samp>directory. Of course, it requires <i>superuser</i>
+priv.</p>
+
+
+
+<h5>About date/time specification</h5>
+<p>
+The<samp> OnCalendar </samp>param in<samp> .timer </samp>file has the
+following format:</p>
+
+<p class="fmt"><samp><i>DayOfWeek Year-Month-Day Hour</i>:<i>Minute</i>:<i>Second</i></samp></p>
+<p>
+Some typical examples:</p>
+
+<table class="grid">
+<tr>
+<th class="grid" style="width:10em">Minimal form</th>
+<th class="grid" style="width:14.5em">Normalized form</th>
+<th class="grid">Meaning</th></tr>
+<tr>
+<td class="grid_2"><samp>hourly</samp></td>
+<td class="grid_2"><samp>*-*-* *:00:00</samp></td>
+<td class="grid_2">every hour</td></tr>
+<tr>
+<td class="grid_2"><samp>daily</samp></td>
+<td class="grid_2"><samp>*-*-* 00:00:00</samp></td>
+<td class="grid_2">every day</td></tr>
+<tr>
+<td class="grid_2"><samp>weekly</samp></td>
+<td class="grid_2"><samp>Mon *-*-* 00:00:00</samp></td>
+<td class="grid_2">every week</td></tr>
+<tr>
+<td class="grid_2"><samp>monthly</samp></td>
+<td class="grid_2"><samp>*-*-01 00:00:00</samp></td>
+<td class="grid_2">every month</td></tr>
+<tr>
+<td class="grid_2"><samp>2024-02-29</samp></td>
+<td class="grid_2"><samp>2024-02-29 00:00:00</samp></td>
+<td class="grid_2">once at Feb 29, 2024</td></tr>
+<tr>
+<td class="grid_2"><samp>05:40</samp></td>
+<td class="grid_2"><samp>*-*-* 05:40:00</samp></td>
+<td class="grid_2">every day at 5 hours 40 minutes</td></tr>
+<tr>
+<td class="grid_2"><samp>08:05:40</samp></td>
+<td class="grid_2"><samp>*-*-* 08:05:40</samp></td>
+<td class="grid_2">every day at 8 hours 5 min 40 sec</td></tr>
+<tr>
+<td class="grid_2"><samp>03-05 08:05:40</samp></td>
+<td class="grid_2"><samp>*-03-05 08:05:40</samp></td>
+<td class="grid_2">every year on March 5 at 8:05:40</td></tr>
+<tr>
+<td class="grid_2"><samp>Fri, 17:55</samp></td>
+<td class="grid_2"><samp>Fri *-*-* 17:55:00</samp></td>
+<td class="grid_2">every friday at 17:55</td></tr>
+<tr>
+<td class="grid_2"><samp>Mon-Fri, 9:5</samp></td>
+<td class="grid_2"><samp>Mon-Fri *-*-* 09:05:00</samp></td>
+<td class="grid_2">on work days at 9:05</td></tr>
+<tr>
+<td class="grid_2"><samp>Mon..Fri 9:5</samp></td>
+<td class="grid_2"><samp>Mon..Fri *-*-* 09:05:00</samp></td>
+<td class="grid_2">on work days at 9:05</td></tr>
+<tr>
+<td class="grid_2"><samp>Sat -1..7 18:0</samp></td>
+<td class="grid_2"><samp>Sat *-*-1..7 18:00:00</samp></td>
+<td class="grid_2">on the first Saturday of every month at 18:00</td></tr>
+</table>
+<p>
+You can verify the correctness of the date/time spec using one of the
+following cmds:</p>
+
+<p class="cmdc">systemd-analize calendar weekly</p>
+<p class="cmdc">systemd-analize calendar "2024-02-29"</p>
+<p class="cmd">systemd-analize calendar "Mon-Fri 9:5"</p>
+<p>
+If several relatively heavy tasks have exactly the same start time, you
+should add the<samp> RandomizedDelaySec </samp>option in the<samp> [Timer]
+</samp>sections of these tasks to avoid an essential surge of resource
+consumption:</p>
+<div class="file">
+<pre>...
+[Timer]
+OnCalendar=daily
+RandomizedDelaySec=5m
+Persistant=true</pre>
+</div>
+<p>
+The<samp> Persistant=true </samp>triggers the service immediately if it missed
+the last start time due to some reasons, e.g. the system was powered off.</p>
+<p>
+By default the accuracy of the time spec is <samp>1</samp> minute. If you need
+better, then add<samp> AccuracySec=1us </samp>option to the<samp> [Timer]
+</samp>section.</p>
+<p>
+Here is an example of a <b>monotonic timer</b> which triggers<samp><i> N
+</i></samp>hours or minutes after some event. In this case it is 15 min after system
+boot, and then each week at the same time:</p>
+<div class="file">
+<pre>[Unit]
+Description=Copy some log files after boot and then weekly
+
+[Timer]
+OnBootSec=15min
+OnUnitActiveSec=1w
+
+[Install]
+WantedBy=timers.target</pre>
+</div>
+<p>
+Time options for monotonic timers:</p>
+<table class="grid">
+<tr>
+<th class="grid" style="width:11em">Keyword</th>
+<th class="grid">Meaning</th></tr>
+<tr>
+<td class="grid_2"><samp>OnActiveSec</samp></td>
+<td class="grid_2">Schedule the task relatively to the time when the timer
+unit itself is activated</td></tr>
+<tr>
+<td class="grid_2"><samp>OnBootSec</samp></td>
+<td class="grid_2">Schedule task relatively to the system boot time</td></tr>
+<tr>
+<td class="grid_2"><samp>OnStartupSec</samp></td>
+<td class="grid_2">Schedule the task relatively to the time when Systemd
+started</td></tr>
+<tr>
+<td class="grid_2"><samp>OnUnitActiveSec</samp></td>
+<td class="grid_2">Schedule the task relatively to the last time the service
+unit was active</td></tr>
+<tr>
+<td class="grid_2"><samp>OnUnitInactiveSec</samp></td>
+<td class="grid_2">Schedule the task relatively to the last time the service
+unit was inactive</td></tr>
+</table>
+<p>
+Numbers are assumed to be <i>seconds</i>, i.e.</p>
+
+<p class="fmt"><samp>OnUnitActiveSec=30</samp></p>
+<p>
+means<samp> 30s </samp>after ... Other units must be specified
+explicitly, e.g. <samp> 20m </samp>(minutes),<samp> 4h </samp>(hours).</p>
+
+
+<h5>Transient timer units</h5>
+<p>
+It is possible to create a <b>transient timer unit</b> using<code>
+systemd-run</code>. <i>Transient</i> in this case means that you can schedule
+a command to run at a specified time without creating<samp> .timer </samp>file.
+For example, the following cmd allows you to "touch" the specified file
+after <samp>30</samp> sec:</p>
+
+<p class="cmd">systemd-run --on-active=30 /bin/touch /tmp/last.txt</p>
+<p>
+You can also schedule execution of an existing service file that does not have
+the corresponding<samp> .timer </samp>file. Let's suppose there is a service
+file named<samp> my_proj_backup.service</samp>, and it should be executed in
+6 hours 30 minutes from now:</p>
+
+<p class="cmd">systemd-run --on-active="6h 30m" --unit my_proj_backup.service</p>
+
+
+
+
+
+<h4 class="part3">
+<a name="systemd_cmds">Miscell Systemd commands</a></h4>
+<p>
+To get the list of the critical chain for a particular target
+(e.g., <samp>basic.target</samp>):</p>
+
+<p class="cmd">systemd-analize critical-chain basic.target | grep target</p>
+<p>
+To get the list of the dependencies, type:</p>
+
+<p class="cmd">systemctl list-dependencies</p>
+<p>
+To get the list of dependencies for a particular service
+(e.g., <samp>sshd</samp>):</p>
+
+<p class="cmd">systemctl list-dependencies sshd.service</p>
+<p>
+To get the list of dependencies for a particular target
+(e.g., <samp>graphical.target</samp>):</p>
+
+<p class="cmd">systemctl list-dependencies graphical.target | grep target</p>
+<p>
+To get the list of targets that need a particular target
+(e.g., <samp>multi-user.target</samp>):</p>
+
+<p class="cmd">systemctl list-dependencies --reverse multi-user.target</p>
+<p>
+Also, you can get other info about dependencies using following cmds:</p>
+
+<p class="cmdc">systemctl show sshd | grep Requires</p>
+<p class="cmd">systemctl show sshd | grep Wants</p>
+<p>
+To get the content of the <i>Systemd</i> journal:</p>
+
+<p class="cmd">journalctl</p>
+<p>
+To get all the events related to the <code>crond</code> process in the
+journal:</p>
+
+<p class="cmdc">journalctl /sbin/crond</p>
+<p class="or">or</p>
+<p class="cmd">journalctl `which crond`</p>
+<p>
+All events related to a specific service:</p>
+
+<p class="cmd">journalctl --unit=<span class="arg">service_name</span></p>
+<p>
+All the events since the last boot:</p>
+
+<p class="cmd">journalctl -b</p>
+<p>
+All events that appeared today:</p>
+
+<p class="cmd">journalctl --since=today</p>
+<p>
+All events with a <samp>syslog</samp> priority of <samp>err</samp>:</p>
+
+<p class="cmd">journalctl -p err</p>
+<p>
+All events concerning the kernel:</p>
+
+<p class="cmd">journalctl -k</p>
+<p>
+The lass 10 events, continously (like <code>tail -f /var/log/messages</code>):</p>
+
+<p class="cmd">journalctl -f</p>
+<p>
+<a name="log_storage">To provide a permanent log storage:</p>
+
+<p class="cmdc">mkdir /var/log/journal</p>
+<p class="cmdc">systemd-tmpfiles --create --prefix /var/log/journal</p>
+<p class="cmdc">echo "SystemMaxUse=50M" >> /etc/systemd/journald.conf</p>
+<p class="cmd">systemctl restart systemd-journald</p>
+<p>
+The <code>systemd-tmpfiles</code> is required to correctly set up permissions
+on the <samp>/var/log/journal</samp> dir. <samp>SystemMaxUse</samp> variable
+is important because otherwise 10% of the filesystem containing
+<samp>/var/log/journal</samp> will be used (at maximum), and this can be too
+much (or vice-versa). Besides, big journal slows down the boot process and
+probably the whole system (the size of the journal can be especially critical
+for small VMs). Note that starting with Systemd v219, the filesystem with
+journal dir requires ACL support.</p>
+
+<p>
+The disk space used by Journald:</p>
+
+<p class="cmd">journalctl --disk-usage</p>
+<p>
+Systemd v.219 added two options:</p>
+<p class="fmtc"><code>--vacuum-size=<span class="arg">n</span>M</code>
+&nbsp; &nbsp;
+reduce the space used by <b>archived</b> journal files to
+<span class="arg">n</span> MB;</p>
+<p class="fmtc"><code>--vacuum-time=<span class="arg">n</span></code>
+&nbsp; &nbsp;
+reduce the space used by <b>archived</b> journal files to
+<span class="arg">n</span> hours;</p>
+
+
+
+<h4 class="part3">
+<a name="unit_types">Unit types</h4>
+<p>
+Unit is a standardized representation of a system resource that can
+be managed and manipulated by <b>Systemd</b>'s daemons and utilities.</p>
+<p>
+Units are categorized according to the type of resource they describe.</p>
+<ul>
+<li><samp>*.service</samp> file belongs to a unit describing how to manage
+a service or an app on the server, i.e., how to start/stop the service, when
+it should be auto started, etc;</li>
+
+<li><samp>*.socket</samp> file belongs to a unit describing a network or IPC
+socket, or a FIFO buffer that <i>systemd</i> uses for socket-based activation.
+Such unit always has an associated <samp>.service</samp> file that will be
+started when activity is seen on the socket.</li>
+
+<li><samp>*.device</samp> file belongs to a unit describing a device that
+needs <i>systemd</i> management by <samp>udev</samp> or <samp>sysfs</samp>.</li>
+
+<li><samp>*.mount</samp> file belongs to a unit defining a mountpoint on the
+system to be managed by <i>systemd</i>. This file must be named like the mount
+path with slashes changed to dashes. Entries within <samp>/etc/fstab</samp> can
+have units created automatically.</li>
+
+<li><samp>*.automount</samp> file belongs to a unit configuring a mountpoint
+that will be auto mounted. This file must be named like the mount point it
+refers to, and must have a matching <samp>.mount</samp> unit defining the
+specifics of the mount.</li>
+
+<li><samp>*.swap</samp> file belongs to a unit describing system swap space.
+The name of this unit must reflect the device or file path of the swap
+space.</li>
+
+<li><samp>*.target</samp> file belongs to a target unit used to provide
+synchronization points for other units during boot or state change. It can also
+be used to bring the system to a new state.</li>
+
+<li><samp>*.path</samp> file belongs to a unit defining a path that can be used
+for path-based activation. By default, a <samp>.service</samp> unit of the same
+name will be started when the path reaches the specified state,
+<samp>inotify</samp> is used to monitor the path changes.</li>
+
+<li><samp>*.timer</samp> file belongs to a unit defining a timer managed by
+<i>systemd</i> (it's like a <samp>cron</samp> job for delayed or scheduled
+activation). A matching unit will be started when the timer is reached.</li>
+
+<li><samp>*.snapshot</samp> file belongs to a unit created auto by the
+<code>systemctl</code> snapshot cmd. It allows to restore the system's
+current state if changes go wrong. Snapshots exist within a session only
+and are used to roll back temporary states.</li>
+
+<li><samp>*.slice</samp> files belong to units associated with Linux Control
+Group nodes, allowing resources to be restricted or assigned to any processes
+associated with the slice. The name reflects its hierarchical position within
+the <samp>cgroup</samp> tree. Units are placed in certain slices by default
+depending on their type.</li>
+
+<li><samp>*.scope</samp> files belongs to units created auto by <i>systemd</i>
+from info received from its bus interfaces. These are used to manage sets of
+system processes that are created externally.</li>
+</ul>
+
+
+
+
+<h4 class="part3">
+<a name="unit_struct">Unit file structure</h4>
+<p>
+In general unit file looks like this:</p>
+<div class="file"><pre>
+[Unit]
+Description=Job that runs the <span class="arg">service_name</span> daemon
+Documentation=man:<span class="arg">service_name</span>(1)
+After=<span class="arg">some_target</span>
+
+[Service]
+Type=<span class="arg">service_type</span>
+ExecStart=<span class="arg">command</span>
+PIDFile=/var/run/<span class="arg">service_name</span>.pid
+
+[Install]
+WantedBy=<span class="arg">some_other_target</span>
+</pre></div>
+<ul>
+<li><samp>[Unit]</samp> contains description of the service and its
+dependency declarations.
+
+<ul>
+<li><samp>Description</samp> can be anything you want (meaning: make it short
+and useful).</li>
+
+<li><samp>After</samp> line tells <i>systemd</i> when to start this service.
+For example, we can declare that systemd must not attempt to start the service
+until the network is not running on the host:
+
+<p class="fmt"><samp>After=network.target</samp></p>
+</li>
+</ul></li>
+
+<li><samp>[Service]</samp>
+<ul>
+<li><samp>Type</samp> tells <i>systemd</i> what kind of service this is:
+<ul>
+<li><samp>simple</samp> (default) means that an app will continue to run
+in the session it was started, i.e., in the foreground, and it is not going
+to break its communication with terminal.</li>
+
+<li><samp>forking</samp> means that an app is a daemon, and it's going to call
+<samp>fork()</samp> as part of its start-up; the parent process is expected to
+exit when start-up is complete, the child process continues to run as the main
+daemon process without communication with stdin/stdout; in this case it's
+recommended to use the <samp>PIDFile=</samp>, so that <code>systemd</code> can
+identify the main process of the daemon; <code>systemd</code> will proceed
+with starting follow-up units as soon as the parent process exits.</li>
+
+<li><samp>oneshot</samp> means that unit executes a one-time action without
+keeping active processes (e.g., filesystem check or cleanup); it's expected
+that the main process of the service (the one specified by
+<samp>ExecStart</samp>) will exit before <code>systemd</code> starts follow-up
+units. However, if <samp>RemainAfterExit=true</samp> is set, <i>systemd</i>
+will consider the service active even after the main process had exited. You
+may want to specify the pair <samp>ExecStop</samp> wrapper so systemd knows
+how to perform a clean shutdown of the process.</li>
+
+<li><samp>dbus</samp> is used by services that acquire a name on the DBus
+system bus. These services should not fork (daemonize).</li>
+
+<li><samp>notify</samp> assumes that daemon supports <i>systemd</i>'s notification
+protocol and sends readiness notification to <code>systemd</code>. Until this
+notification <i>systemd</i> considers the unit to be in the "starting" state
+(initializing), and if notification has not arrived during a certain timeout
+(option <samp>TimeoutStartSec</samp>) <i>systemd</i> kills the service.</li>
+
+<li><samp>idle</samp> is similar to <samp>simple</samp>; however, actual
+execution of the service binary is delayed until all jobs are dispatched.</li>
+</ul></li>
+
+<li><samp>ExecStart</samp> specifies the command (the executable file) to run.</li>
+
+<li><samp>Environment</samp> can be used to declare environment variables:
+
+<p class="fmt"><samp>Environment="JAVA_HOME=/opt/java"</samp></p>
+</li>
+</ul></li>
+
+<li><samp>[Install]</samp> section
+<ul>
+<li><samp>WantedBy</samp> specifies how a unit should be enabled:
+
+<p class="fmt"><samp>WantedBy=multi-user.target</samp></p>
+</li>
+
+<li><samp>RequiredBy</samp> is similar to <samp>WantedBy</samp>, but instead
+specifies a required dependency that will cause the activation to fail if not
+met; when enabled, a unit with this directive will create a directory ending
+with <samp>.requires</samp>.</li>
+
+<li><samp>Alias</samp> allows the unit to be enabled under another name as
+well; among other uses, this allows multiple providers of a function to be
+available, so that related units can look for any provider of the common
+aliased name.</li>
+
+<li><samp>Also</samp> allows units to be enabled or disabled as a set.
+Supporting units that should always be available when this unit is active can
+be listed here. They will be managed as a group for installation tasks.</li>
+
+<li><samp>DefaultInstance</samp> is for template units which can produce unit
+instances with unpredictable names, this can be used as a fallback value for
+the name if an appropriate name is not provided.</li>
+</ul>
+</li>
+
+</ul>
+
+
+
+
+<h4>
+<a name="user_services">User services</a></h4>
+<p>
+Regular services are usually found at <samp>/etc/systemd/system/</samp> and
+managed with the root privileges. Once enabled, they start at system boot and
+stop at system shutdown.</p>
+<p>
+But there is another type of <i>systemd</i> service: the one designed to be run
+by unprivileged users for their own purposes. If we drop a <i>systemd</i> service
+in <samp>$HOME/.config/systemd/user</samp> dir, it will be picked up by
+<i>systemd</i> as a <b>user service</b>. The good thing is that the user (owner)
+can manage it without superuser privilege. It must, however, specify the
+<samp>--user</samp> flag:</p>
+
+<p class="cmdc">systemctl --user enable myuser.service</p>
+<p class="cmdc">systemctl --user daemon-reload</p>
+<p class="cmd">systemctl --user start myuser.service</p>
+<p>
+You can also put that service into <samp>/etc/systemd/user/</samp> or
+<samp>/usr/lib/systemd/user/</samp> location, to make it available to all
+users.</p>
+<p>
+But what is the real reason for having user services? Here it is: if you enable
+a user service, it <b>starts on user login</b>, and runs as long as there is a
+session open for that user. Once the last session dies, the service stops.</p>
+
+
+
+<h5>
+<a name="run_user_svc">How to run your app as a Linux daemon/service</a></h5>
+<p>
+Let's assume that the app is a RESTful web service, it works good when started
+in a terminal window. But you want it to be auto started, to run on the
+background, and to be managed with <code>systemctl</code>.</p>
+<p>
+First of all, you must create the appropriate <b>unit file</b>. Assuming that
+app's name (and executable file name) is <samp>pstore</samp>, let's make the
+unit file <samp>pstore.service</samp>:</p>
+<div class="file"><pre>
+[Unit]
+Description=RESTful web service
+ConditionPathExists=/home/alex/bin/pstore/pstore
+After=network.target
+
+[Service]
+Type=simple
+LimitNOFILE=1024
+Restart=on-failure
+RestartSec=10
+startLimitIntervalSec=60
+WorkingDirectory=/home/alex/bin/pstore
+ExecStart=/home/alex/bin/pstore/pstore
+# make sure log directory exists and owned by syslog
+PermissionsStartOnly=true
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=pstore-svc
+
+[Install]
+WantedBy=multi-user.target
+</pre></div>
+<p>
+This file must be good if this service is supposed to be run as a user service,
+or, to be more specific, a service for one user, the owner of this home dir.
+We move it in <samp>$HOME/.config/systemd</samp>.</p>
+<p>
+However, if this service must be available to many/all users, then we should move
+that unit file to <samp>/etc/systemd/system</samp> dir and slightly modify it:</p>
+<div class="file"><pre>
+...
+[Service]
+Type=simple
+User=alex
+Group=alex
+...
+ExecStartPre=/usr/bin/mkdir -p /var/log/pstore-svc
+ExecStartPre=/usr/bin/chown syslog:adm /var/log/pstore-svc
+ExecStartPre=/usr/bin/chmod 755 /var/log/pstore-svc
+...</pre></div>
+<p>
+On the other hand, you can move it to <samp>/usr/local/...</samp> and change
+user/group.</p>
+<p>
+In the first case (single user service), you can enable and start it like this:</p>
+
+<p class="cmdc">systemctl --user enable pstore.service</p>
+<p class="cmd">systemctl --user start pstore.service</p>
+
+
+
+
+
+<p class="center">To be continued..</p>
+
+</div>
+
+</body></html>

@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference / bash commands</title>
+<meta name="description" content="linux quick reference, bash, shell, pwd, dirs, alias, eval, exec, kill, exit, history, jobs, popd, pushd, break, continue, bind" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<h2>BASH / Some built-in commands</h2>
+
+<p class="fmtc"><code>:</code> [<kbd>args</kbd>]</p>
+<p class="desc">does nothing beyond expanding args and performing
+any specified redirections; returns <samp>0</samp>;</p>
+
+<p class="fmtc"><code>.</code> <kbd>file</kbd> [<kbd>args</kbd>]</p>
+<p class="fmtc"><code>source</code> <kbd>file</kbd> [<kbd>args</kbd>]</p>
+<p class="desc">read and execute cmds from the specified file in the
+current shell env; if <kbd>file</kbd> does not contain a slash,
+<samp>PATH</samp> is used to find the dir containing <kbd>file</kbd>
+(which need not be executable in this case); when <code>~</code> is not
+in posix mode, the current dir is searched if <kbd>file</kbd> was not found
+in <samp>PATH</samp>; if <code>sourcepath</code> option to built-in
+<code>shopt</code> cmd is turned off, the <samp>PATH</samp> is not searched;
+any args supplied become positional params; the return status is the status
+of the last cmd executed, <samp>0</samp> if no cmds are executed,
+<samp>false</samp> if <kbd>file</kbd> not found or cannot be read;</p>
+
+<p class="fmtc"><code>alias</code> [<kbd>name</kbd>[<code>=</code><kbd>value</kbd>]<kbd>...</kbd>]</p>
+<p class="desc">without args outputs the list of aliases
+(<kbd>name</kbd><code>=</code><kbd>value</kbd>); when args are supplied,
+an alias is defined for each name whose value is given; a trailing space
+in value causes the next word to be checked for alias substitution when
+the alias is expanded; for each name in the arg list for which no value
+is supplied, name and value of the alias are printed; <code>alias</code>
+returns <samp>true</samp> unless a name is given for which no alias has
+been defined;</p>
+
+<p class="fmtc"><code>bg</code> [<kbd>jobspec</kbd>]</p>
+<p class="desc">resume the specified suspended job in the background,
+as if it had been started with &amp;; if none specified, the shell's
+notion of the current job is used;</p>
+
+<p class="fmtc"><code>bind</code> [<kbd>options</kbd>]</p>
+<p class="desc">display current <code>readline</code> key and function
+bindings, bind a key sequence to a <code>readline</code> function or macro,
+set a <code>readline</code> variable; each non-option arg is a cmd as
+it would appear in <samp>.inputrc</samp>, but each binding or cmd must
+be passed as a separate arg; options are:</p>
+
+<table class="opts" style="margin-left:8%">
+<tr><td class="opt_desc">
+
+<p class="fmtc"><code>-m</code> <kbd>keymap</kbd></p>
+<p class="desc">use <kbd>keymap</kbd> as the keymap to be affected
+by the subsequent bindings; acceptable names are: <samp>emacs</samp>
+(also, <samp>emacs-standard</samp>), <samp>emacs-meta</samp>,
+<samp>emacs-ctlx</samp>, <samp>vi</samp> (also, <samp>vi-command</samp>),
+<samp>vi-move</samp>, <samp>vi-insert</samp>;</p>
+
+<table class="opts" style="margin-left:1.7%">
+<tr>
+<td class="opt_name"><code>-l</code></td>
+<td class="opt_desc">list the names of all <code>readline</code> functions;</td></tr>
+<tr>
+<td class="opt_name"><code>-p</code></td>
+<td class="opt_desc">display <code>readline</code> func names and bindings
+in such a way that they can be re-read;</td></tr>
+<tr>
+<td class="opt_name"><code>-P</code></td>
+<td class="opt_desc">list current <code>readline</code> func names and
+bindings;</td></tr>
+<tr>
+<td class="opt_name"><code>-v</code></td>
+<td class="opt_desc">display <code>readline</code> variable names and
+values in such a way that they can be re-read;</td></tr>
+<tr>
+<td class="opt_name"><code>-V</code></td>
+<td class="opt_desc">list current <code>readline</code> variable names
+and values;</td></tr>
+<tr>
+<td class="opt_name"><code>-s</code></td>
+<td class="opt_desc">display <code>readline</code> key sequences bound to
+macros and the strings they output in such a way that they can be re-read;</td></tr>
+<tr>
+<td class="opt_name"><code>-S</code></td>
+<td class="opt_desc">display <code>readline</code> key sequences bound
+to macros and the strings they output;</td></tr>
+</table>
+
+<p class="fmtc"><code>-f</code> <kbd>file</kbd></p>
+<p class="desc">read key bindings from the specified file;</p>
+
+<p class="fmtc"><code>-q</code> <kbd>func</kbd></p>
+<p class="desc">query which keys invoke the named function;</p>
+
+<p class="fmtc"><code>-u</code> <kbd>func</kbd></p>
+<p class="desc">unbind all keys bound to the named function;</p>
+
+<p class="fmtc"><code>-r</code> <kbd>keyseq</kbd></p>
+<p class="desc">remove any current binding for <kbd>keyseq</kbd>;</p>
+
+<p class="fmtc"><code>-x</code> <kbd>keyseq<code>:</code>shell-cmd</kbd></p>
+<p class="desc">cause the specified shell cmd to be executed any time
+<kbd>keyseq</kbd> is entered;</p>
+
+</td></tr></table>
+
+<p class="desc">The return value is <samp>0</samp> unless bad option or
+error occurred;</p>
+
+<p class="fmtc"><code>break</code> [<kbd>n</kbd>]</p>
+<p class="desc">exit from within <code>for</code>, <code>while</code>,
+<code>until</code>, <code>select</code> loop; if <kbd>n</kbd> is specified,
+break <kbd>n</kbd> levels; the return value is <samp>0</samp> unless called
+outside any loop;</p>
+
+<p class="fmtc"><code>cd</code> [<code>-L</code> | <code>-P</code>][<kbd>dir</kbd>]</p>
+<p class="desc">change current dir; the default dir is set by env var
+<samp>HOME</samp>, while env var <samp>CDPATH</samp> defines the search path
+for the dir containing <kbd>dir</kbd>; if <kbd>dir</kbd> begins with
+'<samp>/</samp>' <samp>CDPATH</samp> is not used; <code>-L</code> requires
+to follow symlinks, <code>-P</code> causes to stick to the physical dir
+struct; arg '<code>–</code>' is equivalent to <code>$OLDPWD</code>;</p>
+
+<p class="fmtc"><code>continue</code> [<kbd>n</kbd>]</p>
+<p class="desc">skip the remaining statements of the enclosing
+<code>for</code>, <code>while</code>, <code>until</code>, <code>select</code>
+loop and begin next iteration; <kbd>n</kbd> causes to resume at
+the<kbd> n</kbd>th enclosing loop; the return value is <samp>0</samp> unless
+called outside any loop;</p>
+
+<p class="fmtc"><code>dirs</code> [<kbd>options</kbd>][<code>+</code><kbd>m</kbd> | <code>-</code><kbd>m</kbd>]</p>
+<p class="desc">displays the list of currently remembered dirs;
+<code>+</code><kbd>m</kbd> | <code>-</code><kbd>m</kbd> shows <kbd>m</kbd>-th
+entry from left / right of the list; options are:</p>
+
+<table class="opts" style="margin-left:10%">
+<tr>
+<td class="opt_name"><code>-c</code></td>
+<td class="opt_desc">clear the dir stack;</td></tr>
+<tr>
+<td class="opt_name"><code>-l</code></td>
+<td class="opt_desc">produce a long listing;</td></tr>
+<tr>
+<td class="opt_name"><code>-p</code></td>
+<td class="opt_desc">print dir stack one entry per line;</td></tr>
+<tr>
+<td class="opt_name"><code>-v</code></td>
+<td class="opt_desc">print dir stack one entry per line with index;</td></tr>
+</table>
+
+<p class="desc">The return value is <samp>0</samp> unless bad option is
+supplied or index (<code>+</code><kbd>m</kbd>|<code>-</code><kbd>m</kbd>)
+beyond the end of the dir stack;</p>
+
+<p class="fmtc"><code>echo</code> [<code>-neE</code>][<kbd>arg ...</kbd>]</p>
+<p class="desc">output args separated by spaces, followed by a newline; the
+return status is always <samp>0</samp>; <code>-n</code> is used to suppress
+the trailing newlines; <code>-e</code> enables interpretation of the following
+backslash-escaped chars; <code>-E</code> disables the interpretaion
+of these escape chars;</p>
+
+<p class="desc">
+Backslash-escaped characters:</p>
+
+<table class="opts" style="margin-left:10%">
+<tr>
+<td class="opt_name"><samp>\a</samp></td><td class="opt_desc">alert (bell);</td></tr>
+<tr>
+<td class="opt_name"><samp>\b</samp></td><td class="opt_desc">backspace;</td></tr>
+<tr>
+<td class="opt_name"><samp>\c</samp></td><td class="opt_desc">suppress trailing newline;</td></tr>
+<tr>
+<td class="opt_name"><samp>\e</samp></td><td class="opt_desc">an escape char;</td></tr>
+<tr>
+<td class="opt_name"><samp>\f</samp></td><td class="opt_desc">form feed;</td></tr>
+<tr>
+<td class="opt_name"><samp>\n</samp></td><td class="opt_desc">new line;</td></tr>
+<tr>
+<td class="opt_name"><samp>\r</samp></td><td class="opt_desc">carriadge return;</td></tr>
+<tr>
+<td class="opt_name"><samp>\t</samp></td><td class="opt_desc">horizontal tab;</td></tr>
+<tr>
+<td class="opt_name"><samp>\v</samp></td><td class="opt_desc">vertical tab;</td></tr>
+<tr>
+<td class="opt_name"><samp>\\</samp></td><td class="opt_desc">backslash;</td></tr>
+<tr>
+<td class="opt_name"><samp>\0</samp><kbd>nnn&nbsp;</kbd></td>
+<td class="opt_desc">8-bit char with octal value <kbd>nnn</kbd>;</td></tr>
+<tr>
+<td class="opt_name"><samp>\</samp><kbd>nnn</kbd></td>
+<td class="opt_desc">8-bit char with octal value <kbd>nnn</kbd>;</td></tr>
+<tr>
+<td class="opt_name"><samp>\x</samp><kbd>HH</kbd></td>
+<td class="opt_desc">8-bit char with hex value <kbd>HH</kbd>;</td></tr>
+</table>
+
+<p class="fmtc"><code>eval</code> [<kbd>arg ...</kbd>]</p>
+<p class="desc">the args are read and concatenated together into a single
+cmd, which is then read and executed by the shell; its exit status is
+returned as the value of the <code>eval</code> cmd; if there are no args,
+or only null args, <samp>0</samp> is returned;</p>
+
+<p class="fmtc"><code>exec</code> [<code>-cl</code>][<code>-a</code> <kbd>name</kbd>][<kbd>cmd</kbd> [<kbd>args</kbd>]]</p>
+<p class="desc">if cmd is specified, it replaces the shell; no new process
+is created; args become the arguments to cmd; if <code>-l</code> is given,
+shell places a dash at the beginning of 0th arg passed to cmd (like
+<samp>login(1)</samp>); <code>-c</code> causes cmd to be executed with an
+empty env; <code>-a</code> causes shell to pass name as 0th arg to the
+executed cmd; if cmd cannot be executed for some reason, a non-interactive
+shell exits, unless shell option <samp>execfail</samp> is enabled, in which
+case it returns failure; an interactive shell returns failure if the file
+cannot be executed; if cmd is not specified, any redirections take effect
+in the current shell, and the return status is <samp>0</samp>; if there is
+redirection error, the return status is <samp>1</samp>;</p>
+
+<p class="fmtc"><code>exit</code> [<kbd>n</kbd>]</p>
+<p class="desc">cause the shell to exit with a status of <kbd>n</kbd>;
+if <kbd>n</kbd> is omitted, the exit status is that of the last cmd executed;</p>
+
+<p class="fmtc"><code>export</code> [<code>-f</code><kbd>n</kbd>][<kbd>name</kbd>[<code>=</code><kbd>word</kbd>]] <kbd>...</kbd></p>
+<p class="desc">the supplied names are marked for automatic export to the env
+of subsequently executed cmds; with <code>-f</code> names refer to functions;
+if names are missing or <code>-p</code> is given, a list of all names that are
+exported in this shell is printed; <code>-n</code> option causes the export
+property to be removed from the named variables; return value is <samp>0</samp>
+unless an invalid option is given, one of the names is not a valid shell var
+name, or name supplied with <code>–f</code> is not a function name;</p>
+
+<p class="fmtc"><code>export</code> [<code>-p</code>]</p>
+<p class="desc">print all names that are exported in this shell;</p>
+
+<p class="fmtc"><code>fg</code> [<kbd>jobspec</kbd>]</p>
+<p class="desc">moves the specified job to the foreground, and makes it
+the current job; if <kbd>jobspec</kbd> is not present, the shell's notion
+of the current job is used;</p>
+
+<p class="fmtc"><code>help</code> [<code>-s</code>][<kbd>pattern</kbd>]</p>
+<p class="desc">display info about built-in cmds; if <kbd>pattern</kbd> is
+specified, <code>help</code> gives detailed help on all cmds matching
+<kbd>pattern</kbd>; otherwise a list of built-ins is printed;
+<code>-s</code> - short usage synonpsis;</p>
+
+<p class="fmtc"><code>history</code> [<kbd>n</kbd>][<kbd>options</kbd>]</p>
+<p class="desc">without options displays the cmd history list with line
+numbers; <kbd>n</kbd> causes to show only last <kbd>n</kbd> lines;
+options are:</p>
+
+<table class="opts" style="margin-left:10%">
+<tr>
+<td class="opt_name"><code>-c</code></td>
+<td class="opt_desc">clear the history list;</td></tr>
+<tr>
+<td class="opt_name"><code>-d</code> <kbd>n&nbsp;</kbd></td>
+<td class="opt_desc">delete the history entry at position <kbd>n</kbd>;</td></tr>
+</table>
+
+<p class="desc">
+Other options are used mainly for operations with non-default history file
+(default is defined by <samp>HISTFILE</samp> env variable);</p>
+
+<p class="fmtc"><code>jobs</code> [<code>-lnprs</code>][<kbd>jobspec ...</kbd>]</p>
+<p class="fmtc"><code>jobs -x</code> <kbd>cmd</kbd> [<kbd>args ...</kbd>]</p>
+<p class="desc">the first form lists active jobs; <code>-l</code> lists PIDs
+in addition to the normal info, <code>-p</code> lists only PID of the job's
+process group leader, <code>-n</code> displays only jobs that have changed
+status since the user was last notified of their status, <code>-r</code>
+restricts output to running jobs, <code>-s</code> .. to stopped jobs; if
+<kbd>jobspec</kbd> is given, output is restricted to info about that job;
+if <code>-x</code> is supplied, jobs replaces any <kbd>jobspec</kbd> found
+in cmd or args with the corresponding process group ID, and executes cmd
+passing it args, returning its exit status;</p>
+
+<p class="fmtc"><code>kill</code> [<code>-s</code> <kbd>sigspec</kbd> | <code>-</code><kbd>sigspec</kbd>][<kbd>pid</kbd> | <kbd>jobspec</kbd>] <kbd>...</kbd></p>
+<p class="fmtc"><code>kill -l</code> [<kbd>signum</kbd>]</p>
+<p class="desc">send the signal named by <kbd>sigspec</kbd> to the processes
+named by <kbd>pid</kbd> or <kbd>jobspec</kbd>. <kbd>sigspec</kbd> is either a
+signal name such as <samp>SIGKILL</samp> or a number; signal names are case
+insensitive and may be given with or without <samp>SIG</samp> prefix; if
+<kbd>sigspec</kbd> is missing, then <samp>SIGTERM</samp> is assumed;
+<code>-l</code> lists the signal names; if any args are supplied with
+<code>-l</code>, the names of the specified signals are listed, and the
+return status is <samp>0</samp>; <code>kill</code> returns <samp>true</samp>
+if at least one signal was successfully sent, or <samp>false</samp> if an
+error occurs or an illegal option is encountered;</p>
+
+<p class="fmtc"><code>let</code> <kbd>arg</kbd> [<kbd>arg ...</kbd>]</p>
+<p class="desc">each arg is an arithmetic expression to be evaluated;
+if last arg evaluates to <samp>0</samp>, <code>let</code> returns
+<samp>1</samp>, otherwise <code>let</code> returns <samp>0</samp>;</p>
+
+<p class="fmtc"><code>local</code></p>
+<p class="desc">creates a local variable (must be used within function);</p>
+
+<p class="fmtc"><code>logout</code></p>
+<p class="desc">exit a login shell;</p>
+
+<p class="fmtc"><code>popd</code> [<code>-n</code>][<code>+</code><kbd>m</kbd> | <code>-</code><kbd>m</kbd>]</p>
+<p class="desc">removes entries from the dir stack; without args removes
+top dir from stack and <code>cd</code> to the new top dir; <code>-n</code>
+supresses <code>cd</code> when removing dirs from stack;
+<code>+</code><kbd>m</kbd>, <code>-</code><kbd>m</kbd> removes
+<kbd>m</kbd>-th dir from left / right of the list returned by
+<code>dirs</code> (count starts from <samp>0</samp>);</p>
+
+<p class="fmtc"><code>printf</code> <kbd>format</kbd> <kbd>args</kbd></p>
+<p class="desc">write args to stdout formatted as specified by
+<kbd>format</kbd>; format string takes 3 types of objects: plain char
+(copied to stdout as is), char escape sequence (converted and copied to
+stdout), format spec (each applied to a corresponding arg); in addition
+to std C <code>printf</code> formats, <samp>%b</samp> expands backslash
+esc seq in corresponding arg (except that <samp>\c</samp> terminates output,
+'<samp>\</samp>' in <samp>\’</samp>, <samp>\"</samp>, <samp>\?</samp> are
+not removed, and octal esc starting with <samp>\0</samp> may contain up to
+4 digits) and <samp>%q</samp> outputs arg in a format that can be reused
+as shell input; the return is zero on success, non-zero on failure;</p>
+
+<p class="fmtc"><code>pushd </code><kbd>dir</kbd></p>
+<p class="desc">adds a dir to the top of the dir stack;</p>
+
+<p class="fmtc"><code>pushd</code> [<code>-n</code>][<code>+</code><kbd>m</kbd> | <code>-</code><kbd>m</kbd>]</p>
+<p class="desc">rotate dir stack making new top of the stack curr work dir;
+without args exchanges the top two dirs and returns <samp>0</samp> unless the
+stack is empty; <code>-n</code> cancels <code>cd</code> when adding dir;
+<code>+</code><kbd>m</kbd> | <code>-</code><kbd>m</kbd> rotates the stack
+so that <kbd>m</kbd>-th dir from left / right becomes the top;</p>
+
+<p class="fmtc"><code>pwd</code> [<code>-LP</code>]</p>
+<p class="desc">print the absolute pathname of the current working dir;
+with <code>-L</code> pathname can contain symlinks, if <code>-P</code> is
+specified pathname does not contain symlinks;</p>
+
+<p class="fmtc"><code>read</code> [<kbd>options</kbd>][<kbd>name ...</kbd>]</p>
+<p class="desc">one line is read from the stdin, and the first word is
+assigned to the first <kbd>name</kbd>, 2nd word to the second <kbd>name</kbd>,
+and so on, with left-over words assigned to the last <kbd>name</kbd>; if there
+are fewer words then names, the remaining names are assigned empty values;
+only chars in <samp>IFS</samp> are recognized as word delimiters; if names are
+not supplied, the line <samp>read</samp> is assigned to var <samp>REPLY</samp>;
+options:</p>
+
+<table class="opts" style="margin-left:8%">
+<tr><td class="opt_desc">
+
+<p class="fmtc"><code>-a</code> <kbd>name</kbd></p>
+<p class="desc">words are assigned to sequential indices of the array variable
+<kbd>name</kbd>, starting at <samp>0</samp>; other name args are ignored;</p>
+
+<p class="fmtc"><code>-d</code> <kbd>delim</kbd></p>
+<p class="desc">the first char of <kbd>delim</kbd> is used to terminate the
+input line, rather than newline;</p>
+
+<table class="opts" style="margin-left:1.7%">
+<tr>
+<td class="opt_name"><code>-e</code></td>
+<td class="opt_desc">if stdin is coming from terminal, use <code>readline</code>;</td></tr>
+</table>
+
+<p class="fmtc"><code>-n</code> <kbd>m</kbd></p>
+<p class="desc">return after reading <kbd>m</kbd> chars;</p>
+
+<p class="fmtc"><code>-p</code> <kbd>prompt</kbd></p>
+<p class="desc">display <kbd>prompt</kbd> on stderr without a trailing
+newline before attempting to read input; the prompt is displayed only if
+input is coming from terminal;</p>
+
+<table class="opts" style="margin-left:1.7%">
+<tr>
+<td class="opt_name"><code>-r</code></td>
+<td class="opt_desc">consider backslash to be part of the line, do not
+interpret it as an escape char or line continuation;</td></tr>
+<tr>
+<td class="opt_name"><code>-s</code></td>
+<td class="opt_desc">silent mode, chars are not echoed (assuming input
+comes from a terminal);</td></tr>
+</table>
+
+<p class="fmtc"><code>-t </code><kbd>m</kbd></p>
+<p class="desc">time out and return failure if a complete line of input is not
+read within <kbd>m</kbd> sec; works only when input comes from terminal or pipe;</p>
+
+<p class="fmtc"><code>-u </code><kbd>m</kbd></p>
+<p class="desc">read input from file descriptor <kbd>m</kbd>;</p>
+
+</td></tr></table>
+
+<p class="desc">
+The return value is <samp>0</samp> unless timeout, bad file descriptor
+(with <code>–u</code> option) or <samp>EOF</samp> is encountered;</p>
+
+<p class="fmtc"><code>readonly</code> [<code>-apf</code>][<kbd>name</kbd>[<code>=</code><kbd>word</kbd>] <kbd>...</kbd>]</p>
+<p class="desc">make given names read-only (possibly combining it with
+assignment); <code>-a</code> restricts scope to arrays, <code>-f</code>
+widens to functions, <code>-p</code> causes the list of all readonly names
+to be printed; the return status is <samp>0</samp> unless an invalid option,
+or one of the names is not a valid shell variable, <code>-f</code> is used
+with non-function name;</p>
+
+<p class="fmtc"><code>return</code> [<kbd>n</kbd>]</p>
+<p class="desc">exit [function] with the return value of <kbd>n</kbd>
+(if not specified, <kbd>n</kbd> = exit status of the last cmd in the func
+body); if used outside function, the return status is <samp>false</samp>,
+except when script was started by <code>.</code> (<code>source</code>) cmd:
+in this case it causes shell to stop exec and return <kbd>n</kbd> (or exit
+status of the last cmd executed within the script) as the exit status of
+the script;</p>
+
+<p class="fmtc"><code>set</code> [<code>-abefhkmnptuvxBCHP</code>]
+[<code>-o</code> <kbd>option</kbd>][<kbd>arg</kbd> <kbd>...</kbd>]</p>
+<p class="desc">without options displays <kbd>name</kbd>=<kbd>value</kbd>
+of each shell variable in a format that can be reused for input; options set
+or unset shell attribs, any args remaining after options are treated as values
+for positional params and are assigned to <samp>$1</samp>, <samp>$2</samp>,
+etc;</p>
+
+<p class="fmtc"><code>shift</code> [<kbd>n</kbd>]</p>
+<p class="desc">the positional params from <kbd>n</kbd><samp>+1 ...</samp>
+are renamed to <samp>$1 ...</samp>; params represented by numbers
+<samp>$#</samp> down to <samp>$#-<span class="arg">n</span>+1</samp> are unset;
+if <kbd>n</kbd> is <samp>0</samp>, no params are changed; if <kbd>n</kbd>
+is not given, it is assumed to be <samp>1</samp>; <kbd>n</kbd> must be
+a non-negative number less than or equal to <samp>$#</samp>; the return
+status is greater than <samp>0</samp> if <kbd>n</kbd> is greater than
+<samp>$#</samp> or less than <samp>0</samp>, otherwise <samp>0</samp>;</p>
+
+<p class="fmtc"><code>shopt</code> [<code>-pqsu</code>][<code>-o</code>][<kbd>optname</kbd> <kbd>...</kbd>]</p>
+<p class="desc">toggle values of variables controlling shell behaviour;
+without options a list of all settable options is displayed; <code>-p</code>
+does the same, but output can be reused for input; other options are:</p>
+
+<table class="opts" style="margin-left:10%">
+<tr>
+<td class="opt_name"><code>-s</code></td>
+<td class="opt_desc">set each <kbd>optname</kbd>;</td></tr>
+<tr>
+<td class="opt_name"><code>-u</code></td>
+<td class="opt_desc">unset each <kbd>optname</kbd>;</td></tr>
+<tr>
+<td class="opt_name"><code>-q</code></td>
+<td class="opt_desc">quiet mode (suppress normal output);</td></tr>
+<tr>
+<td class="opt_name"><code>-o</code></td>
+<td class="opt_desc">restrict the values of <kbd>optname</kbd> to those of <code>set</code>;</td></tr>
+</table>
+
+<p class="fmtc"><code>suspend</code> [<code>-f</code>]</p>
+<p class="desc">suspend execution of this shell until it receives
+<samp>SIGCONT</samp>; <code>-f</code> says not to complain if this is
+a login shell; <code>test </code><kbd>expr</kbd> returns <samp>0</samp>
+or <samp>1</samp> depending on the evaluation of the conditional exppression;</p>
+
+<p class="fmtc"><code>times</code></p>
+<p class="desc">print the accumulated user and system times for the shell
+and for processes run from this shell; the return status is <samp>0</samp>;</p>
+
+<p class="fmtc"><code>trap</code> [<code>-lp</code>][[<kbd>arg</kbd>] <kbd>sigspec</kbd> <kbd>...</kbd>]</p>
+<p class="desc">cmd arg is to be read and executed when shell receives the
+specified signal; <kbd>sigspec</kbd> is signal number or name
+(see <samp>&lt;signal.h&gt;</samp>); signal names are case insensitive, <samp>SIG</samp>
+prefix is optional; if <code>-p</code> and <kbd>sigspec</kbd> are present,
+but arg is missing, then <code>trap</code> cmds associated with each
+<kbd>sigspec</kbd> are printed; if nothing or <code>-p</code> only, the list
+of cmds associated with each signal is printed; <code>-l</code> causes the
+list of signal names and nums to be output; if <kbd>sigspec</kbd> is
+<samp>0</samp> (<samp>EXIT</samp>) arg is executed on exit from the shell;</p>
+
+<p class="fmtc"><code>ulimit</code> [<kbd>options</kbd> [<kbd>limit</kbd>]]</p>
+<p class="desc">set limit on resource available to the shell and processes
+started by the shell; <code>-H</code>, <code>-S</code> set hard / soft limits
+(hard limit cannot be increased, soft limit can be increased up to the hard
+limit); if neither is specified both are set; <kbd>limit</kbd> is either
+num or special value like <samp>hard</samp>, <samp>soft</samp>
+(current hard / soft limit) and <samp>unlimited</samp>; if <kbd>limit</kbd>
+is omitted, the current value of the soft limit (or hard, if <code>-H</code>)
+for this resource is printed; options are:</p>
+
+<table class="opts" style="margin-left:10%">
+<tr>
+<td class="opt_name"><code>-a</code></td>
+<td class="opt_desc">show all current limits;</td></tr>
+<tr>
+<td class="opt_name"><code>-c</code></td>
+<td class="opt_desc">max size of core files created;</td></tr>
+<tr>
+<td class="opt_name"><code>-d</code></td>
+<td class="opt_desc">max size of a process's data segment;</td></tr>
+<tr>
+<td class="opt_name"><code>-f</code></td>
+<td class="opt_desc">max size of files created by shell (default);</td></tr>
+<tr>
+<td class="opt_name"><code>-l</code></td>
+<td class="opt_desc">max size that may be locked into memory;</td></tr>
+<tr>
+<td class="opt_name"><code>-m</code></td>
+<td class="opt_desc">max resident set size;</td></tr>
+<tr>
+<td class="opt_name"><code>-n</code></td>
+<td class="opt_desc">max number of open file descriptors;</td></tr>
+<tr>
+<td class="opt_name"><code>-p</code></td>
+<td class="opt_desc">pipe size in 512-byte blocks (may not be set);</td></tr>
+<tr>
+<td class="opt_name"><code>-s</code></td>
+<td class="opt_desc">max stack size;</td></tr>
+<tr>
+<td class="opt_name"><code>-t</code></td>
+<td class="opt_desc">max amount of cpu time in seconds;</td></tr>
+<tr>
+<td class="opt_name"><code>-u</code></td>
+<td class="opt_desc">max num of processes available to a single user;</td></tr>
+<tr>
+<td class="opt_name"><code>-v</code></td>
+<td class="opt_desc">max amount of virtual mem available to the shell;</td></tr>
+</table>
+
+<p class="desc">
+The return value is <samp>0</samp> unless an invalid option / arg was given
+or error occurred while setting new limit;</p>
+
+<a name="umask">
+<p class="fmtc"><code>umask</code> [<code>-p</code>][<code>-S</code>][<kbd>mode</kbd>]</p></a>
+<p class="desc">set user file-creation mask; <kbd>mode</kbd> is octal
+if begins with a digit, otherwise a symbolic mode mask
+(see <a href="cmds_c.html#chmod"><code>chmod</code></a>);
+without <kbd>mode</kbd> current value of the mask is printed in octal or
+in symbolic form (<code>-S</code>) or in form that may be reused as input
+(<code>-p</code>); ret value is <samp>0</samp> if mask was changed or not
+specified, otherwise ret is <samp>false</samp>;</p>
+
+<p class="fmtc"><code>unalias</code> [<code>-a</code>][<kbd>name</kbd> <kbd>...</kbd>]</p>
+<p class="desc">remove the specified aliases; with <code>-a</code> removes all
+alias definitions; return value is <samp>true</samp> unless wrong name is given;</p>
+
+<p class="fmtc"><code>unset</code> [<code>-fv</code>][<kbd>name</kbd> <kbd>...</kbd>]</p>
+<p class="desc">remove specified variables (<code>-v</code>, default)
+or functions (<code>-f</code>); read-only variables may not be unset;
+exit status is <samp>true</samp> unless variable is read-only;</p>
+
+<p class="fmtc"><code>wait</code> [<kbd>n</kbd>]</p>
+<p class="desc">wait for the specified process and return its termination
+status; <kbd>n</kbd> is pid or job spec; in latter case all processes in that
+job’s pipeline are waited for; without <kbd>n</kbd> all currently active
+child proc are waited for and return status is <samp>0</samp>;
+if non-existent proc / job is specified, return status is <samp>127</samp>;
+otherwise, the return status is the exit status of the last process / job
+waited for;</p>
+
+</div>
+
+</body></html>

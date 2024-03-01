@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference / bash</title>
+<meta name="description" content="linux quick reference, bash, shell, profile, script, stdin, stdout, stderr, path, env, fg, bg, jobs" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<h1 class="part">
+<a name="bash">BASH</a></h1>
+
+<div id="contents" style="margin-top:0px">
+<table class="menu">
+<tr>
+<td class="menu1"><a href="#shell">Shell</a></td>
+<td class="menu2"><a href="#fg_bg">Fg / Bg jobs</a></td></tr>
+<tr>
+<td class="menu1"><a href="#redir">Stdin / stdout</a></td>
+<td class="menu2"><a href="#spec_params">Special params</a></td></tr>
+<tr>
+<td class="menu1"><a href="#var_set">Vars set by shell</a></td>
+<td class="menu2"><a href="#var_use">Vars used by shell</a></td></tr>
+<tr>
+<td class="menu1"><a href="bash_cmds.html">Some built-in cmds</a></td>
+<td class="menu2"><a href="#operators">Operators</a></td></tr>
+<tr>
+<td class="menu1"><a href="#file_checks">File checks</a></td>
+<td class="menu2"><a href="#script_examples">Script examples</a></td></tr>
+</table>
+</div>
+<p>
+<a name="shell">
+There</a> are:</p>
+<ul>
+<li>GUI (Graphical User Interface);</li>
+<li>CLI (Command Line Interface) aka shell;</li>
+</ul>
+<p>
+Shell is just a program that receives user's input from the keyboard, tries
+to define if that sequence of characters is some kind of command, and if so,
+sends the appropriate system calls to the kernel.</p>
+<p>
+Bourne Again SHell (GNU version of old Bourne shell), is a cmd language
+interpreter that execs cmds from <samp>stdin</samp> or from a file. Usually,
+but not always, <samp>stdin</samp> means keyboard.</p>
+<p>
+To exec shell cmds in GUI env we need a terminal emulator - GUI app that
+looks like an old-style text terminal but runs in a window. The classic
+term emulator is <samp>xterm</samp>, but nowdays the most popular is probably
+<samp>gnome-terminal</samp>. Also, within Gnome env you can use
+<span class="keys">Alt + F2</span> to call a console that accepts and execs
+shell cmds.</p>
+<p>
+When <code>~</code> is invoked as an interactive login shell (i.e., nearly
+always) or non-interactive with <code>--login</code> option, it first executes
+cmds from:</p>
+<p class="fmt"><samp>/etc/profile</samp></p>
+<p>
+Then it looks for:</p>
+
+<p class="fmtc"><samp>~/.bash_profile</samp></p>
+<p class="fmtc"><samp>~/.bash_login</samp></p>
+<p class="fmt"><samp>~/.profile</samp></p>
+<p>
+(in that order), and executes cmds from the first one that exists and is
+readable. When a login shell exits (e.g., when you logout), <code>~</code>
+executes cmds from:</p>
+<p class="fmt"><samp>~/.bash_logout</samp></p>
+<p>
+(if it exists).</p>
+<p>
+To start a standalone shell:</p>
+
+<p class="fmt"><code>bash&nbsp;</code>[<kbd>options</kbd>] [<kbd>file</kbd>]</p>
+<p>
+BASH does not recognize regexp, but performs "globbing", i.e., wildcard
+expansion in filenames (<samp>*</samp>, <samp>?</samp>, or char seq in square
+brackets, <samp>^</samp> for negating). Note that strings containing
+<samp>*</samp> will not match filenames that start with a dot. To cancel
+expansion use escape char "<samp>\</samp>".</p>
+
+
+
+<h5>Some options:</h5>
+<p>
+Multi-character options must appear on the command line before single-character options to be recognized.</p>
+
+<p class="fmt"><code>--help --version --verbose</code></p>
+
+<p class="fmtc"><code>-c</code> <kbd>str</kbd></p>
+<p class="desc">read cmds from <kbd>str</kbd>; everything after <kbd>str</kbd>
+is assigned to the positional parameters strating with <samp>$0</samp>;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-D</code></td>
+<td class="opt_desc">print on the stdout a list of all double-quoted strings
+preceded by <samp>$</samp>; this implies <code>-n</code> option, no cmds will
+be executed (<code>--dump-strings</code>);</td></tr>
+
+<tr><td class="opt_name"><code>-e</code></td>
+<td class="opt_desc">exit immediately if a cmd exits with a non-zero status;</td></tr>
+
+<tr><td class="opt_name"><code>-f</code></td>
+<td class="opt_desc">disable file name generation (globbing);</td></tr>
+
+<tr><td class="opt_name"><code>-i</code></td>
+<td class="opt_desc">run shell as interactive;</td></tr>
+
+<tr><td class="opt_name"><code>-l</code></td>
+<td class="opt_desc">run shell as login shell (<code>--login</code>);</td></tr>
+
+<tr><td class="opt_name"><code>-n</code></td>
+<td class="opt_desc">read cmds but do not execute them;</td></tr>
+
+<tr><td class="opt_name"><code>-r</code></td>
+<td class="opt_desc">run shell as restricted shell (<code>--restricted</code>);</td></tr>
+
+<tr><td class="opt_name"><code>-s</code></td>
+<td class="opt_desc">if no args remain after option processing,
+read cmds from the stdin; this allows the positional params to be set when
+invoking an interactive shell;</td></tr>
+
+<tr><td class="opt_name"><code>--</code></td>
+<td class="opt_desc">signals the end of options and disables further
+opt processing; the remaining args are treated as filenames and args;</td></tr>
+</table>
+
+<p class="fmtc"><code>--init-file</code> <kbd>file</kbd>,
+<code>--rcfile</code> <kbd>file</kbd></p>
+<p class="desc">exec cmds from <kbd>file</kbd> instead of
+<samp>~/.bashrc</samp>, if shell is interactive;</p>
+
+<p class="fmtc"><code>--noediting</code></p>
+<p class="desc">don't use <samp>GNU readline</samp> lib to read cmd
+lines when shell is interactive;</p>
+
+<p class="fmtc"><code>--noprofile</code></p>
+<p class="desc">don't read neither system-wide, nor personal startup
+(profile) files (<samp>~/.bash_profile</samp>, <samp>~/.bash_login</samp>,
+etc); by default <code>~</code> reads these files when it is invoked as
+a login shell;</p>
+
+<p class="fmtc"><code>--norc</code></p>
+<p class="desc">don't read/execute the personal ini file
+(<samp>~/.bashrc</samp>); this is default when the shell is invoked as
+<code>sh</code>;</p>
+
+
+
+<h4 class="part2">
+<a name="fg_bg">Foreground / background jobs:</a></h4>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>bg</code></td>
+<td class="opt_desc">continue suspended process in the background;</td></tr>
+<tr>
+<td class="opt_name"><code>bg %4</code></td>
+<td class="opt_desc">continue suspended process # 4 in the background;</td></tr>
+<tr>
+<td class="opt_name"><code>fg</code></td>
+<td class="opt_desc">continue suspended process;</td></tr>
+<tr>
+<td class="opt_name"><code>fg %ce</code></td>
+<td class="opt_desc">continue suspended job <samp>ce</samp>;</td></tr>
+<tr>
+<td class="opt_name"><code>fg %2</code></td>
+<td class="opt_desc">continue suspended job # 2 (use <code>jobs</code>
+to see all started tasks, the current one is marked with '<samp>+</samp>');</td></tr>
+<tr>
+<td class="opt_name"><code>jobs -l</code></td>
+<td class="opt_desc">list jobs and show their proc ID;</td></tr>
+<tr>
+<td class="opt_name"><code>jobs -r</code></td>
+<td class="opt_desc">list running jobs;</td></tr>
+<tr>
+<td class="opt_name"><code>jobs -s</code></td>
+<td class="opt_desc">list stopped jobs;</td></tr>
+</table>
+
+
+
+<h4 class="part2">
+<a name="redir">Standard input / output and redirections:</a></h4>
+
+<p class="fmtc"><samp>stdin</samp></p>
+<p class="desc">standard input, usually keyboard (file descriptor = 0);</p>
+
+<p class="fmtc"><samp>stdout</samp></p>
+<p class="desc">standard output, usually display (fd = 1);</p>
+
+<p class="fmtc"><samp>stderr &nbsp;</samp></p>
+<p class="desc">standard output for error msgs, usually display (fd = 2);</p>
+
+<p class="cmdc">echo "#!/bin/bash" &gt; test.sh</p>
+<p class="desc">redirect <samp>stdout</samp> to a file;</p>
+
+<p class="cmdc">echo "# This is a shell script" &gt;&gt; test.sh</p>
+<p class="desc">redirect and append <samp>stdout</samp> to a file;</p>
+
+<p class="cmdc">2&gt;&amp;1</p>
+<p class="desc">redirect <samp>stderr</samp> to <samp>stdout</samp>;</p>
+
+<p class="cmdc">1&gt;&amp;2</p>
+<p class="desc">redirect <samp>stdout</samp> to <samp>stderr</samp>;</p>
+
+<p class="cmdc">2&gt;errors</p>
+<p class="desc">redirect <samp>stderr</samp> to a file named
+<samp>errors</samp>;</p>
+
+<p class="cmdc">echo "#!/bin/bash" &gt; ex1.sh 2&gt;&amp;1</p>
+<p class="desc">redirect <samp>stdout</samp> and <samp>stderr</samp> to a file;</p>
+
+<p class="cmdc">echo "#!/bin/bash" &amp;&gt; ex1.sh</p>
+<p class="desc">redirect <samp>stdout</samp> and <samp>stderr</samp> to a file (like previous);</p>
+
+
+
+<h4 class="part2">
+<a name="spec_params">Special parameters:</a></h4>
+
+<p class="cmdc">echo $?</p>
+<p class="desc">show exit status of the last process;</p>
+
+<p class="cmdc">echo $$</p>
+<p class="desc">show PID of the currently running script;</p>
+
+<p class="cmdc">echo $0</p>
+<p class="desc">show the name of the currently running script;</p>
+
+<p class="cmdc">echo $-</p>
+<p class="desc">show current shell options;</p>
+<p>
+These params may only be referenced, assignment is not allowed:</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>*</code></td>
+<td class="opt_desc">expands to the positional params, starting from one;
+when the expansion occurs within double quotes, it expands to a single word
+with the value of each param separated by the first char of the
+<samp>IFS</samp> special variable; if <samp>IFS</samp> is unset, the params
+are separated by spaces; if <samp>IFS</samp> is null, the params are joined
+without intervening separators;</td></tr>
+
+<tr><td class="opt_name"><code>@</code></td>
+<td class="opt_desc">expands to the positional params, starting from one;
+when the expansion occurs within double quotes, each param expands as
+a separate word; when there are no positional params, <code>"$@"</code>
+and <code>$@</code> expand to nothing (removed);</td></tr>
+
+<tr><td class="opt_name"><code>#</code></td>
+<td class="opt_desc">expands to the number of positional params in decimal;</td></tr>
+
+<tr><td class="opt_name"><code>?</code></td>
+<td class="opt_desc">expands to the status of the most recently executed
+foreground pipeline;</td></tr>
+
+<tr><td class="opt_name"><code>-</code></td>
+<td class="opt_desc">expands to the current option flags as specified upon
+invocation by the <code>set</code> built-in cmd or those set by the shell
+itself;</td></tr>
+
+<tr><td class="opt_name"><code>$</code></td>
+<td class="opt_desc">expands to the PID of the shell; in a <code>()</code>
+subshell, it expands to the PID of the current shell, not the subshell;</td></tr>
+
+<tr><td class="opt_name"><code>!</code></td>
+<td class="opt_desc">expands to the PID of the most recently executed
+background (async) cmd;</td></tr>
+
+<tr><td class="opt_name"><code>0</code></td>
+<td class="opt_desc">is set at shell init; if <code>~</code>
+is invoked with a file of cmds, <code>$0</code> is set to the name of that
+file; if <code>~</code> is started with <code>-c</code> option, then
+<code>$0</code> is set to the first arg after the string to be executed,
+if one is present; otherwise, it is set to the filename used to invoke
+<code>~</code>, as given by arg zero;</td></tr>
+
+<tr><td class="opt_name"><code>_</code></td>
+<td class="opt_desc">(underscore) at  shell startup, set to the absolute
+file name of the shell or shell script being executed as passed in the
+arg list; subsequently, expands to the last arg to the previous cmd, after
+expansion; also set to the full pathname of each cmd executed and placed
+in the env exported to that cmd; when checking mail, this param holds the
+name of the mail file currently being checked;</td></tr>
+</table>
+
+
+
+<h4 class="part2">
+<a name="var_set">Some variables set by the shell:</a></h4>
+
+<p class="fmtc"><samp>BASH</samp></p>
+<p class="desc">expands to the full filename used to invoke this
+instance of <code>~</code>;</p>
+
+<p class="fmtc"><samp>BASH_VERSION</samp></p>
+<p class="desc">expands to the string describing the version of this
+instance of <code>~</code>;</p>
+
+<p class="fmtc"><samp>EUID</samp></p>
+<p class="desc">expands to the effective user ID of the current user;</p>
+
+<p class="fmtc"><samp>GROUPS</samp></p>
+<p class="desc">an array variable containing the list of groups of which
+the current user is a member;</p>
+
+<p class="fmtc"><samp>HOSTNAME</samp></p>
+<p class="desc">auto set to the name of the current host;</p>
+
+<p class="fmtc"><samp>HOSTTYPE</samp></p>
+<p class="desc">auto set to a string that uniquely describes the type
+of the machine on which <code>~</code> is executing;</p>
+
+<p class="fmtc"><samp>MASHTYPE</samp></p>
+<p class="desc">auto set to a string that fully describes the system type
+on which <code>~</code> is executing (in the standard GNU cpu-company-system
+format);</p>
+
+<p class="fmtc"><samp>OLDPWD</samp></p>
+<p class="desc">prev working dir as set by <code>cd</code> cmd;</p>
+
+<p class="fmtc"><samp>OSTYPE</samp></p>
+<p class="desc">auto set to a string that describes OS on which
+<code>~</code> is executing; the default is system-dependent;</p>
+
+<p class="fmtc"><samp>PPID</samp></p>
+<p class="desc">the PID of the shell's parent;</p>
+
+<p class="fmtc"><samp>PWD</samp></p>
+<p class="desc">the current working dir as set by <code>cd</code> cmd;</p>
+
+<p class="fmtc"><samp>RANDOM</samp></p>
+<p class="desc">generates a random integer (0..32767) when referenced;
+seq may be initialized by assigning a value to <samp>RANDOM</samp>;</p>
+
+<p class="fmtc"><samp>REPLY</samp></p>
+<p class="desc">set to the line of input read by the <code>read</code>
+built-in cmd when no args are supplied;</p>
+
+<p class="fmtc"><samp>SECONDS</samp></p>
+<p class="desc">each time this param is referenced, the number of seconds
+since the shell invocation is returned;</p>
+
+<p class="fmtc"><samp>SHELLOPTS</samp></p>
+<p class="desc">a colon-separated list of enabled shell options;</p>
+
+<p class="fmtc"><samp>SHLVL</samp></p>
+<p class="desc">incremented by 1 each time an instance of <code>~</code>
+is started;</p>
+
+<p class="fmtc"><samp>UID</samp></p>
+<p class="desc">expands to the user ID of the current user;</p>
+<p>
+Options <samp>EUID</samp>, <samp>UID</samp> are initialized at shell
+statrtup and are readonly;</p>
+
+
+
+<h4 class="part2">
+<a name="var_use">Some variables used by the shell:</a></h4>
+<p>
+In some cases, <code>~</code> assigns a default value to a variable:</p>
+
+<p class="fmtc"><samp>BASH_ENV</samp></p>
+<p class="desc">if this param is set when <code>~</code> is executing
+a shell script, its value is interpreted as a filename containing cmds
+to initialize shell (as in <samp>~/.bashrc</samp>); the value of
+<samp>BASH_ENV</samp> is subjected to param expansion, cmd subst, and
+arithmetic expansion before being interpreted as a pathname;
+<samp>PATH</samp> is not used to search for the resultant pathname;</p>
+
+<p class="fmtc"><samp>CDPATH</samp></p>
+<p class="desc">the search path for <code>cd</code> cmd
+(a colon-separated list of dirs in which the shell looks for dest dirs
+specified by <code>cd</code>);</p>
+
+<p class="fmtc"><samp>FIGNORE</samp></p>
+<p class="desc">a colon-separated list of suffixes to ignore when
+performing filename completion; a filename whose suffix matches one
+of the entries in <samp>FIGNORE</samp> is excluded from the list of
+matched filenames; a sample value is <samp>.o:~</samp>;</p>
+
+<p class="fmtc"><samp>GLOBIGNORE</samp></p>
+<p class="desc">a colon-separated list of patterns defining the set
+of filenames to be ignored by pathname expansion; if a filename matched
+by pathname expansion pattern also matches one of the patterns in
+<samp>GLOBIGNORE</samp>, it is removed from the list of matches;</p>
+
+<p class="fmtc"><samp>HISTCONTROL</samp></p>
+<p class="desc">if set to <samp>ignorespace</samp>, lines which begin with
+a space are not entered on the history list; if set to <samp>ignoredups</samp>,
+lines matching the last history line are not entered; <samp>ignoreboth</samp>
+combines the two options; if unset, or if set to any other value than those
+above, all lines read by the parser are saved on the history list;</p>
+
+<p class="fmtc"><samp>HISTFILE</samp></p>
+<p class="desc">the name of the file in which cmd history is saved
+(default is <samp>~/.bash_history</samp>);</p>
+
+<p class="fmtc"><samp>HISTFILESIZE</samp></p>
+<p class="desc">the max num of lines in hist file (default is 500);</p>
+
+<p class="fmtc"><samp>HISTSIZE</samp></p>
+<p class="desc">the number of cmds to remember (default is 500);</p>
+
+<p class="fmtc"><samp>HOME</samp></p>
+<p class="desc">the home dir of the current user;</p>
+
+<p class="fmtc"><samp>IFS</samp></p>
+<p class="desc">Internal Field Separator that is used for word splitting
+after expansion and to split lines into words with the <code>read</code>
+built-in cmd; default is <samp>space</samp>, <samp>tab</samp>,
+<samp>newline</samp>;</p>
+
+<p class="fmtc"><samp>IGNOREEOF</samp></p>
+<p class="desc">controls the action of an interactive shell on receipt
+of an <samp>EOF</samp> char as the sole input; if set, the value is the
+number of consecutive <samp>EOF</samp> chars which must be typed as the
+first chars on an input line before bash exits; if the variable exists
+but does not have a numeric value, or has no value, the default is 10;
+if it doesn't exist, <samp>EOF</samp> signifies end of input to shell;</p>
+
+<p class="fmtc"><samp>INPUTRC</samp></p>
+<p class="desc">the filename for the <samp>readline</samp> startup file,
+overriding the default of <samp>~/.inputrc</samp>;</p>
+
+<p class="fmtc"><samp>LANG</samp></p>
+<p class="desc">used to determine the locale category for any category
+not specifically selected with a variable <samp>LC_*</samp>;</p>
+
+<p class="fmtc"><samp>LC_ALL</samp></p>
+<p class="desc">overrides the value of <samp>LANG</samp> and any
+<samp>LC_*</samp>;</p>
+
+<p class="fmtc"><samp>LC_COLLATE</samp></p>
+<p class="desc">determines the collation order used when sorting the results
+of pathname expansion; determines the behaviour of range expressions,
+equivalence classes and collating sequences within patname expansion and
+pattern matching;</p>
+
+<p class="fmtc"><samp>LC_CTYPE</samp></p>
+<p class="desc">determines interpretation of chars and behaviour
+of char classes within pathname expansion and pattern matching;</p>
+
+<p class="fmtc"><samp>LC_MESSAGES</samp></p>
+<p class="desc">determines the locale used to translate double-quoted
+strings preceded by <samp>$</samp>;</p>
+
+<p class="fmtc"><samp>LC_NUMERIC</samp></p>
+<p class="desc">determines the locale category used for number formatting;</p>
+
+<p class="fmtc"><samp>MAIL</samp></p>
+<p class="desc">if this param is set to a filename and <samp>MAILPATH</samp>
+is not set, <code>~</code> informs user of the arrival of mail in the
+specified file;</p>
+
+<p class="fmtc"><samp>MAILCHECK</samp></p>
+<p class="desc">specifies how often (in seconds) <code>~</code> checks
+for mail (default is 60 sec); when it is time to check, shell does so before
+displaying the primary prompt; if unset or set incorrectly, mail checking
+is disabled;</p>
+
+<p class="fmtc"><samp>MAILPATH</samp></p>
+<p class="desc">a colon-separated list of pathnames to be checked for mail;
+<code>~</code> supplies a default value, but location of user mail files is
+system dependent (<samp>/usr/spool/mail/$USER</samp>);</p>
+
+<p class="fmtc"><samp>PATH</samp></p>
+<p class="desc">the search path for cmds (a colon-separated list of dirs
+in which the shell looks for cmds);</p>
+
+<p class="fmtc"><samp>PS1</samp></p>
+<p class="desc">the value of this param is expanded and used
+as the primary prompt string; the default is <samp>'\s-\v\$'</samp>;</p>
+
+<p class="fmtc"><samp>PS2</samp></p>
+<p class="desc">the value of this param is expanded and used as the secondary
+prompt string; the default is <samp>'>'</samp>);</p>
+
+<p class="fmtc"><samp>TMOUT</samp></p>
+<p class="desc">if set to a value greater than zero, it is treated as
+the default timeout for built-in <code>read</code>; the <code>select</code>
+cmd terminates, if input does not arrive <samp>TMOUT</samp> sec when input is
+coming from terminal; in an interactive shell, the value is interpreted as the
+num of seconds to wait for input after issuing the primary prompt;
+<code>~</code> terminates after waiting for that num of seconds if input
+does not arrive;</p>
+
+
+
+<h4 class="part2">
+<a name="operators">Operators and precedence:</a></h4>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>- +</code></td>
+<td class="opt_desc">unary minus and plus (max precedence);</td></tr>
+<tr>
+<td class="opt_name"><code>! ~</code></td>
+<td class="opt_desc">logical and bitwise negation;</td></tr>
+<tr>
+<td class="opt_name"><code>* / %&nbsp;</code></td>
+<td class="opt_desc">multiplication, division, remainder;</td></tr>
+<tr>
+<td class="opt_name"><code>+ -</code></td>
+<td class="opt_desc">addition, subtraction;</td></tr>
+<tr>
+<td class="opt_name"><code>&lt;&lt; &gt;&gt;</code></td>
+<td class="opt_desc">left and right bitwise shifts;</td></tr>
+<tr>
+<td class="opt_name"><code>&lt;= &gt;= &lt; &gt;&nbsp;</code></td>
+<td class="opt_desc">comparison;</td></tr>
+<tr>
+<td class="opt_name"><code>== !=</code></td>
+<td class="opt_desc">equality and inequality;</td></tr>
+<tr>
+<td class="opt_name"><code>&amp;</code></td>
+<td class="opt_desc">bitwise AND;</td></tr>
+<tr>
+<td class="opt_name"><code>^</code></td>
+<td class="opt_desc">bitwise exclusive OR;</td></tr>
+<tr>
+<td class="opt_name"><code>|</code></td>
+<td class="opt_desc">bitwise OR;</td></tr>
+<tr>
+<td class="opt_name"><code>&amp;&amp;</code></td>
+<td class="opt_desc">logical AND;</td></tr>
+<tr>
+<td class="opt_name"><code>||</code></td>
+<td class="opt_desc">logical OR;</td></tr>
+</table>
+
+<p class="fmtc"><code>= *= /= %= += -= &lt;&lt;= &gt;&gt;= &amp;= ^= |=</code>
+&nbsp; &nbsp; assignment;</p>
+
+
+
+<h4 class="part2">
+<a name="file_checks">File checks:</a></h4>
+
+<p class="fmtc"><code>-b</code> <kbd>file</kbd></p>
+<p class="desc">true, if <kbd>file</kbd> exists and is a block special;</p>
+
+<p class="fmtc"><code>-c</code> <kbd>file</kbd></p>
+<p class="desc">true, if <kbd>file</kbd> exists and is a char special;</p>
+
+<p class="fmtc"><code>-d</code> <kbd>file</kbd></p>
+<p class="desc">true, if <kbd>file</kbd> exists and is a dir;</p>
+
+<p class="fmtc"><code>-e</code> <kbd>file</kbd></p>
+<p class="desc">true, if <kbd>file</kbd> exists;</p>
+
+<p class="fmtc"><code>-f</code> <kbd>file</kbd></p>
+<p class="desc">true, if <kbd>file</kbd> exists and is a regular file;</p>
+
+<p class="fmtc"><code>-L</code> <kbd>file</kbd></p>
+<p class="desc">true, if <kbd>file</kbd> exists and is a symbolic link;</p>
+
+<p class="fmtc"><code>-r</code> <kbd>file</kbd></p>
+<p class="desc">true, if <kbd>file</kbd> exists and is readable;</p>
+
+<p class="fmtc"><code>-s</code> <kbd>file</kbd></p>
+<p class="desc">true, if <kbd>file</kbd> exists and has a size greater
+than zero;</p>
+
+<p class="fmtc"><code>-S</code> <kbd>file</kbd></p>
+<p class="desc">true, if <kbd>file</kbd> exists and is a socket;</p>
+
+<p class="fmtc"><code>-w</code> <kbd>file</kbd></p>
+<p class="desc">true, if <kbd>file</kbd> exists and is writable;</p>
+
+<p class="fmtc"><code>-x</code> <kbd>file</kbd></p>
+<p class="desc">true, if <kbd>file</kbd> exists and is executable;</p>
+
+<p class="fmtc"><kbd>file1 <code>-nt</code> file2</kbd></p>
+<p class="desc">true, if <kbd>file1</kbd> is newer than <kbd>file2</kbd>;</p>
+
+<p class="fmtc"><kbd>file1 <code>-ot</code> file2</kbd></p>
+<p class="desc">true, if <kbd>file1</kbd> is older than <kbd>file2</kbd>;</p>
+
+<p class="fmtc"><kbd>file1 <code>-ef</code> file2</kbd></p>
+<p class="desc">true, if <kbd>file1</kbd> and <kbd>file2</kbd>
+have the same device and inode;</p>
+
+<p class="fmtc"><code>-z</code> <kbd>string</kbd></p>
+<p class="desc">true, if the length of <kbd>string</kbd> is zero;</p>
+
+<p class="fmtc"><code>-n</code> <kbd>string</kbd></p>
+<p class="desc">true, if the length of <kbd>string</kbd> is non-zero;</p>
+
+<p class="fmtc"><kbd>string1 <code>=</code> string2</kbd></p>
+<p class="desc">true, if the strings are equal;</p>
+
+<p class="fmtc"><kbd>string1 <code>!=</code> string2</kbd></p>
+<p class="desc">true, if the strings are not equal;</p>
+
+<p class="fmtc"><code>!</code> <kbd>expr</kbd></p>
+<p class="desc">true, if <kbd>expr</kbd> is false;</p>
+
+<p class="fmtc"><kbd>expr1 <code>-a</code> expr2</kbd></p>
+<p class="desc">true, if both <kbd>expr1</kbd> and <kbd>expr2</kbd> are true;</p>
+
+<p class="fmtc"><kbd>expr1 <code>-o</code> expr2</kbd></p>
+<p class="desc">true, if either <kbd>expr1</kbd> or <kbd>expr2</kbd> is true;</p>
+
+<p class="fmtc"><kbd>arg1 <code>-eq</code> arg2</kbd></p>
+<p class="desc">true, if <kbd>arg1</kbd> is equal to <kbd>arg2</kbd>;</p>
+
+<p class="fmtc"><kbd>arg1 <code>-ne</code> arg2</kbd></p>
+<p class="desc">true, if <kbd>arg1</kbd> is not equal to <kbd>arg2</kbd>;</p>
+
+<p class="fmtc"><kbd>arg1 <code>-lt</code> arg2</kbd></p>
+<p class="desc">true, if <kbd>arg1</kbd> is less than <kbd>arg2</kbd>;</p>
+
+<p class="fmtc"><kbd>arg1 <code>-le</code> arg2</kbd></p>
+<p class="desc">true, if <kbd>arg1</kbd> is less than or equal
+to <kbd>arg2</kbd>;</p>
+
+<p class="fmtc"><kbd>arg1 <code>-gt</code> arg2</kbd></p>
+<p class="desc">true, if <kbd>arg1</kbd> is greater than <kbd>arg2</kbd>;</p>
+
+<p class="fmtc"><kbd>arg1 <code>-ge</code> arg2</kbd></p>
+<p class="desc">true, if <kbd>arg1</kbd> is greater than or equal
+to <kbd>arg2</kbd>;</p>
+<p>
+<kbd>arg1</kbd> and <kbd>arg2</kbd> may be positive / negative integers,
+or special expr <code>-l</code> <kbd>str</kbd>, which evaluates to the length
+of <kbd>str</kbd>;</p>
+
+
+
+<h4 class="part2">
+<a name="script_examples">Simple scripts:</a></h4>
+<p>
+Example # 1 (local variables):</p>
+
+<div class="file">
+<pre>
+#!/bin/bash
+MSG="Hello, World!"
+
+function show_msg {
+  local MSG="This is show_msg function."
+  echo $MSG
+}
+
+echo "Example # 1:"
+show_msg
+echo $MSG</pre>
+</div>
+<p>
+Example # 2 (cycle "while"):</p>
+
+<div class="file">
+<pre>
+#!/bin/bash
+COUNT=3
+
+function do_main_job {
+  echo "Function is not implemented yet."
+}
+
+while [ $COUNT -gt 0 ]; do
+  read -p "Do you want to start?(Y/N): " ANS
+  if [ "$ANS" == "Y" ] || [ "$ANS" == "y" ];
+  then
+    do_main_job
+    exit 0
+  else
+    if [ "$ANS" == "N" ] || [ "$ANS" == "n" ];
+    then
+      exit 0
+    else
+      echo "Type Y or N."
+    fi
+  fi
+  let COUNT-=1
+done
+exit 1</pre>
+</div>
+<p>
+Example # 3 (cycle "for")</p>
+
+<div class="file">
+<pre>
+#!/bin/bash
+
+for i in `seq 1 10`;
+do
+  echo $i
+done</pre>
+</div>
+<p>
+Example # 4 (if, for, if-else):</p>
+
+<div class="file">
+<pre>
+#!/bin/bash
+
+work_dir=/u02/tmp
+cd $work_dir
+
+if [ $? != 0 ]; then
+  echo "Cannot change to $work_dir..."
+  exit 1
+fi
+
+for i in $(ls | grep -v '.*log'); do
+  if [-d $i]; then
+    rmdir $i
+  else
+    rm --force $i
+  fi
+done
+
+for i in $(ls); do
+  fsize = $(ls -lF $I | tr -s ' ' | cut -d ' ' -f 5)
+
+  if [$fsize -gt 1000000]; then
+    cp $i $i."old"; &gt; $i
+  fi
+done</pre>
+</div>
+<p>
+Example # 5 (incremental backup, everyday except sunday):</p>
+
+<div class="file">
+<pre>
+#!/bin/bash
+ARCDIR=/u02/sysbkp/inc
+LOGFILE=$ARCDIR/backup_inc.LOG
+
+if [ `date +%u` = 7 ]; then
+  exit
+fi
+
+echo "Backup started at " &gt; $LOGFILE
+echo `date` &gt;&gt; $LOGFILE
+LVL="-$(date +%u)u"
+dump $LVL -f $ARCDIR/fs_root.$(date +%u) /
+dump $LVL -f $ARCDIR/fs_home.$(date +%u) /home
+dump $LVL -f $ARCDIR/fs_var.$(date +%u) /var
+echo "Backup was finished at " &gt;&gt; $LOGFILE
+echo `date` &gt;&gt; $LOGFILE</pre>
+</div>
+<p>
+Example # 6 (trivial script that simplifies mencoder cmd line editing):</p>
+
+<div class="file">
+<pre>
+#!/bin/bash
+# Two-pass MPEG4 encoding;
+
+LOGFILE='coding.log'
+TARGET='movie.avi'
+SOURCE='/dev/hda'
+TITLE=1
+AID=128
+BITRATE=-2000000
+CROPSIZE='704:544:4:16'
+
+echo "Task has started $(date)" &gt; $LOGFILE
+
+mencoder -oac copy -ovc xvid
+  -xvidencopts pass=1:vhq=2:bvhq=1:
+  chroma_opt:quant_type=mpeg
+  -vf crop=$CROPSIZE -o /dev/null
+  dvd://$TITLE -aid $AID -dvd-device $SOURCE
+
+mencoder -oac copy -ovc xvid
+  -xvidencopts pass=2:bitrate=$BITRATE:vhq=2:
+  bvhq=1:chroma_opt:quant_type=mpeg
+  -vf crop=$CROPSIZE -o $TARGET dvd://$TITLE
+  -aid $AID -dvd-device $SOURCE
+
+echo "Task has finished $(date)" &gt;&gt; $LOGFILE</pre>
+</div>
+
+</div>
+
+</body></html>

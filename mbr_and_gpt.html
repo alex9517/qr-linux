@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference / MBR, GPT, UEFI</title>
+<meta name="description" content="linux quick reference, master boot record, partition table, mbr, gpt, uefi, efi, hdd, cylinder, sector" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<h2>
+<a name="mbr">Master Boot Record</a></h2>
+<p>
+MBR can designate:</p>
+<ul>
+<li>the whole contents of a disk's first sector (CHS 0,0,1);</li>
+<li>the boot loader occupying the first 446 bytes of that sector;</li>
+<li>the classical partitioning format with 4 partitions max (e.g.,
+3 primary partitions + 1 extended partition);</li>
+</ul>
+
+
+<h4 class="part3">MBR (cylinder 0, head 0, sector 1)</h4>
+<p>
+The first part of this sector (first 446 bytes) is occupied by the
+Boot Loader code (some people call it MBR or MBR code). If this part
+is damaged, OS cannot be loaded from this HDD in usual manner. However,
+it does not mean that it cannot be loaded at all. There are ways to start
+a boot loader from other media (like USB-flash) or to write the appropriate
+code to this part of HDD. Anyway, these first 446 bytes are less important
+than remaining 66 bytes containing partition table. That is, there are std
+tools that can help you to restore the boot loader, but the partition table is
+unique: to be able to restore it, you should first make an appropriate backup
+of it (see <a href="cmds_d.html#dd">one of methods</a>).</p>
+
+
+<h4 class="part3">
+<a name="pt">Partition table</a></h4>
+<p>
+The second part of the sector is occupied by the Partition Table.
+The Partition Table conforms to a standard layout that is independent of
+the OS. Each entry is 16 bytes long, making a maximum of 4 entries
+available. Each entry starts at a predetermined offset from the beginning
+of the sector, as follows:</p>
+
+<p class="fmtc"><samp>Partition 1 0x01BE (446)</samp></p>
+<p class="fmtc"><samp>Partition 2 0x01CE (462)</samp></p>
+<p class="fmtc"><samp>Partition 3 0x01DE (478)</samp></p>
+<p class="fmt"><samp>Partition 4 0x01EE (494)</samp></p>
+<p>
+The last 2 bytes in the sector are a signature word for the sector and
+are always <samp>0x55AA</samp>. When there are fewer than 4 partitions,
+the remaining fields are all zeros.</p>
+
+<table class="grid" style="margin-bottom:12px">
+<caption>Partition Table Fields</caption>
+<tr>
+<th class="grid">Offset</th>
+<th class="grid">Len</th>
+<th class="grid">Sample value</th>
+<th class="grid">Description</th></tr>
+<tr>
+<td class="gridcen"><samp>00</samp></td>
+<td class="gridright"><samp>8</samp></td>
+<td class="gridright"><samp>0x80</samp></td>
+<td class="grid">Boot Indicator. Shows whether the partition
+is the system partition. Legal values:
+<p class="fmt"><samp>00</samp> = Do not use for booting;</p>
+<p class="fmt"><samp>80</samp> = System partition;</p>
+</td></tr>
+<tr>
+<td class="gridcen"><samp>01</samp></td>
+<td class="gridright"><samp>8</samp></td>
+<td class="gridright"><samp>0x01</samp></td>
+<td class="grid">Starting Head;</td></tr>
+<tr>
+<td class="gridcen"><samp>02</samp></td>
+<td class="gridright"><samp>6</samp></td>
+<td class="gridright"><samp>0x01</samp></td>
+<td class="grid">Starting Sector. Only bits 0-5 are used.
+Bits 6-7 are the upper two bits for the starting cyl field;</td></tr>
+<tr>
+<td class="gridcen"><samp>03</samp></td>
+<td class="gridright"><samp>10</samp></td>
+<td class="gridright"><samp>0x00</samp></td>
+<td class="grid">Starting Cylinder. This field contains the lower 8 bits
+of the cyl value. Starting cyl is thus a 10-bit number, with a max value
+of 1023;</td></tr>
+<tr>
+<td class="gridcen"><samp>04</samp></td>
+<td class="gridright"><samp>8</samp></td>
+<td class="gridright"><samp>0x06</samp></td>
+<td class="grid">System ID. This byte defines the volume type;</td></tr>
+<tr>
+<td class="gridcen"><samp>05</samp></td>
+<td class="gridright"><samp>8</samp></td>
+<td class="gridright"><samp>0x0F</samp></td>
+<td class="grid">Ending Head;</td></tr>
+<tr>
+<td class="gridcen"><samp>06</samp></td>
+<td class="gridright"><samp>6</samp></td>
+<td class="gridright"><samp>0x3F</samp></td>
+<td class="grid">Ending Sector. Only bits 0-5 are used. Bits 6-7 are
+the upper two bits for the ending cyl field;</td></tr>
+<tr>
+<td class="gridcen"><samp>07</samp></td>
+<td class="gridright"><samp>10</samp></td>
+<td class="gridright"><samp>0x196</samp></td>
+<td class="grid">Ending Cylinder. This field contains the lower 8 bits
+of the cylinder value. Ending cyl is thus a 10-bit num, with a max value
+of 1023;</td></tr>
+<tr>
+<td class="gridcen"><samp>08</samp></td>
+<td class="gridright"><samp>32</samp></td>
+<td class="gridright"><samp>3F&nbsp;00&nbsp;00&nbsp;00</samp></td>
+<td class="grid">Relative Sector;</td></tr>
+<tr>
+<td class="gridcen"><samp>12</samp></td>
+<td class="gridright"><samp>32</samp></td>
+<td class="gridright"><samp>51&nbsp;42&nbsp;06&nbsp;00</samp></td>
+<td class="grid">Total Sectors;</td></tr>
+</table>
+
+<table class="grid">
+<caption>The values for the System ID field:</caption>
+<tr>
+<th class="grid">Value</th>
+<th class="grid">Meaning</th></tr>
+<tr>
+<td class="gridright"><samp>0x01</samp></td>
+<td class="grid">12-bit FAT partition or logical drive.
+The number of sectors in the volume is fewer than 32680;</td></tr>
+<tr>
+<td class="gridright"><samp>0x04</samp></td>
+<td class="grid">16-bit FAT partition or logical drive.
+The number of sectors is between 32680 and 65535;</td></tr>
+<tr>
+<td class="gridright"><samp>0x05</samp></td>
+<td class="grid">Extended partition;</td></tr>
+<tr>
+<td class="gridright"><samp>0x06</samp></td>
+<td class="grid">BIGDOS FAT partition or logical drive;</td></tr>
+<tr>
+<td class="gridright"><samp>0x07</samp></td>
+<td class="grid">NTFS partition or logical drive;</td></tr>
+</table>
+
+
+
+<h4 class="part3">
+<a name="winmbr">How to restore MBR</h4></a>
+<p>
+An old solution was to boot DOS from floppy disk and execute:</p>
+
+<p class="cmd">FDISK /MBR</p>
+<p>
+Since floppy drives and diskettes are rare now, you have to find some other
+way. Luckily, moderm Linux distros usually come with MBR image hidden in
+<samp>/usr/lib/syslinux</samp> or <samp>/usr/lib/syslinux/mbr</samp>. Thus,
+you can start your system using Live CD/USB (e.g., Ubuntu Live CD or Ubuntu
+Live USB, which are actually regular Ubuntu distros for OS installation),
+then you just put MBR to the right place of the target disk
+(<samp>/dev/sda</samp> is specified in the following cmd as an example):</p>
+
+<p class="cmd">dd if=/usr/lib/syslinux/mbr/mbr.bin of=/dev/sda</p>
+<p>
+Some LiveCDs (like <strong>RIPLinux</strong>, <strong>Knoppix</strong>)
+include a utility named <code>TestDisk</code> that also can restore DOS MBR.</p>
+
+<p class="warn">Note!</p>
+<p class="indent">
+<i>Programs that erase or rewrite MBR do not (or, at least, should not)
+change HDD's partition table!</i></p>
+
+
+
+<h4 class="part3">
+<a name="grub_floppy">How to create GRUB boot floppy</a></h4>
+<p>
+This is really obsolete. Get a floppy diskette
+and a Linux-computer with a diskette drive:</p>
+
+<p class="cmdc">cd /usr/share/grub/i386-redhat</p>
+<p class="or">(in other systems <samp>/usr/share/grub/i386-pc</samp>)</p>
+<p class="cmdc">dd if=stage1 of=/dev/fd0 bs=512 count=1</p>
+<p class="cmd">dd if=stage2 of=/dev/fd0 bs=512 seek=1</p>
+
+
+
+<h2>
+<a name="gpt">GPT, UEFI, EFI</a></h2>
+<p>
+<b>GPT</b> (GUID Partition Table) is a standard for the layout of the
+partition table on a physical hard disk. Since 2010 it is a subset of UEFI.</p>
+<p>
+The original <a name="efi"><b>EFI</b></a> (Extensible Firmware Interface)
+specification was developed by Intel Corp. between 1998..2005. In the middle
+of 2005 Intel stopped spec development (last version 1.10), and contributed it
+to Unified EFI Forum. UEFI version 2.1 was released in 2007.</p>
+<p>
+<b>UEFI</b> (Unified Extensible Firmware Interface) is a specification
+that defines a software interface between OS and platform firmware. UEFI is
+a more advanced and secure replacement for IBM PC BIOS firmware interface.
+UEFI is not restricted to any specific processor architecture and can run on
+top of (or instead of) older BIOS implementations.</p>
+<p>
+<b>ESP</b> (EFI System Partition) is a data storage device partition that
+is used in computers adhering to the UEFI spec. Accessed by the UEFI firmware
+when a computer is powered up, it stores UEFI apps and the files these apps
+need to run, e.g., OS kernel. Supported partition table schemes include MBR,
+GPT, and <i>El Torito</i> volumes on optical disks. UEFI defines a <b>specific
+version (!) of the FAT</b> file system independently from the original FAT
+spec. This specific version encompasses a variant of the FAT32 on ESPs, and
+FAT16/FAT12 on removable media. ESP also provides space for a boot sector for
+backward BIOS compatibility.</p>
+
+
+
+<h4 class="part3">Some features</h4>
+<p>
+MBR-based partition table schemes insert the partitioning info in the
+MBR. In a GPT, partition table info is stored in the GPT header, but to
+maintain compatibility, GPT retains the MBR entry as the first sector on
+the disk followed by a primary partition table header, the actual beginning
+of a GPT.</p>
+<p>
+Like modern MBRs, GPTs use logical block addressing (LBA) in place of the
+historical cylinder-head-sector (CHS) addressing. Legacy MBR info is contained
+in LBA 0, the GPT header is in LBA 1, and the partition table itself follows.
+64-bit Windows systems reserve 16,384 bytes (32 sectors) for the GPT, leaving
+LBA 34 as the first usable sector on the disk.</p>
+
+<table class="grid">
+<caption>GUID Partition Table</caption>
+<tr>
+<th class="grid">Location in the HDD</th>
+<th class="grid">Purpose</th></tr>
+<tr>
+<td class="grid">First logical sector of the disk (or first 512 bytes)</td>
+<td class="grid"><a href="#legacy_mbr"><b>Protective MBR</b></a> -
+Same as a normal MBR but the 64-byte area contains a single <samp>0xEE</samp>
+type Primary partition entry defined over the entire size of the disk or in
+case of &gt;2 TiB, upto a partition size of 2 TiB;</td></tr>
+<tr>
+<td class="grid">Second logical sector of the disk (or next 512 bytes)</td>
+<td class="grid"><a href="#gpt_header"><b>Primary GPT Header</b></a> -
+Contains the Unique Disk GUID, Location of the Primary Partition Table,
+Number of possible entries in partition table, CRC32 checksums of itself
+and the Primary Partition Table, Location of the Secondary (or Backup) GPT
+Header;</td></tr>
+<tr>
+<td class="grid">16 KiB (by default) following the second logical sector
+of the disk</td>
+<td class="grid"><a href="#gpt_entry"><b>Primary GPT Table</b></a> -
+128 <a href="#gpt_entry_format">Partition entries</a> (by default, can be
+higher), each with an entry of size 128 bytes (hence total of 16 KiB for 128
+partition entries). Sector numbers are stored as 64-bit LBA and each
+partition has a Partition Type GUID and a Unique Partition GUID;</td></tr>
+<tr>
+<td class="grid">16 KiB (by default) before the last logical sector of
+the disk</td>
+<td class="grid"><a href="#gpt_entry"><b>Secondary GPT table</b></a> -
+It is byte-for-byte identical to the Primary table. Used mainly for recovery
+in case the primary partition table is damaged.</td></tr>
+<tr>
+<td class="grid">Last logical sector of the disk (or last 512 bytes)</td>
+<td class="grid"><a href="#gpt_header"><b>Secondary GPT Header</b></a> -
+Contains the Unique Disk GUID, Location of the Secondary Partition Table,
+Number of possible entries in the partition table, CRC32 checksums of itself
+and the Secondary Partition Table, Location of the Primary GPT Header.
+This header can be used to recover GPT info in case the primary header is
+corrupted.</td></tr>
+</table>
+<p class="warn">Note!</p>
+<p class="indent"><i>The copies of a partition table
+(secondary GPT table) and header (secondary GPT header) are kept at the
+end of the disk. Thus, GPT provides redundancy, writing the GPT header and
+partition table both at the beginning and at the end of the disk.</i></p>
+
+
+
+<h4 class="part3">
+<a name="legacy_mbr">Protective MBR (Legacy MBR), LBA 0</a></h4>
+<p>
+A conventional GPT disk contains a <b>protective MBR</b> with a single
+partition, of type <samp>0xEE</samp> (EFI GPT), defined. This partition
+spans the entire size of the disk or 2 TiB, whichever is smaller.
+The intent is to keep GPT-unaware OSes and utilities from trying to modify
+the disk.</p>
+<p>
+A <b>hybrid MBR</b> is a variant on the normal protective MBR. A hybrid MBR
+contains a type-<samp>0xEE</samp> partition, but it also contains up to three
+additional primary partitions, which point to the same space that's marked out
+by up to three GPT partitions. Hybrid MBRs are normally needed only on
+BIOS-based computers, and should be avoided, when this is possible.</p>
+<p>
+If the disk exceeds 2 TiB (the maximum partition size supported by the 32-bit
+LBAs of the legacy MBR, assuming a 512 byte block size), the size of this
+partition is marked as 2 TiB, ignoring the rest of disk.</p>
+<p>
+Apple's Boot Camp Intel based Apple macs software creates a hybrid partition
+table to allow the booting of Windows (which at the time of Boot Camp's
+creation did not support GPT or EFI). In this system the protective partition
+is reduced in size to cover from sector 1 to the sector before the first
+regular partition included in the hybrid MBR. Additional MBR partitions are
+then defined to correspond to the next three GPT partitions.</p>
+
+
+
+<h4 class="part3">
+<a name="gpt_header">Partition table header (LBA 1)</a></h4>
+<p>
+The partition table header defines the usable blocks on the disk. It also
+defines the number and size of the partition entries that make up the
+partition table. On 64-bit Windows Server 2003 machines, 128 partitions can
+be created. There are 128 partition entries reserved, each 128 bytes long.
+The EFI spec requires that a minimum of 16,384 bytes be reserved
+for the partition table, so this gives space for 128 partition entries.</p>
+<p>
+The header contains the disk GUID (Globally Unique Identifier). It records
+its own size and location (always LBA 1) and the size and location of the
+secondary GPT header and table (always the last sectors on the disk).
+Importantly, it also contains a CRC32 checksum for itself and for the
+partition table, which may be verified by the firmware, bootloader and/or
+operating system on boot. Because of this, <b>hex editors should not be used
+to modify the contents of the GPT</b>. Such modification would render the
+checksum invalid. In this case, the primary GPT may be overwritten with
+the secondary one by disk recovery software. If both GPTs contain invalid
+checksums, the disk would be unusable.</p>
+
+<table class="grid">
+<caption>Primary and secondary GPT header</caption>
+<tr>
+<th class="grid">Offset,<br>byte</th>
+<th class="grid">Len,<br>byte</th>
+<th class="grid">Contents</th></tr>
+<tr>
+<td class="gridright"><samp>0</samp></td><td class="gridright"><samp>8</samp></td><td class="grid">Signature ("EFI PART", 45 46 49 20 50 41 52 54)</td></tr>
+<tr>
+<td class="gridright"><samp>8</samp></td><td class="gridright"><samp>4</samp></td><td class="grid">Revision; for GPT version 1.0 (through at least UEFI version 2.3.1), the value is 00 00 01 00</td></tr>
+<tr>
+<td class="gridright"><samp>12</samp></td><td class="gridright"><samp>4</samp></td><td class="grid">Header size in little endian (in bytes, usually 5C 00 00 00 meaning 92 bytes)</td></tr>
+<tr>
+<td class="gridright"><samp>16</samp></td><td class="gridright"><samp>4</samp></td><td class="grid">CRC32 of header (0 to header size), with this field zeroed during calculation</td></tr>
+<tr>
+<td class="gridright"><samp>20</samp></td><td class="gridright"><samp>4</samp></td><td class="grid">Reserved; must be zero</td></tr>
+<tr>
+<td class="gridright"><samp>24</samp></td><td class="gridright"><samp>8</samp></td><td class="grid">Current LBA (location of this header copy)</td></tr>
+<tr>
+<td class="gridright"><samp>32</samp></td><td class="gridright"><samp>8</samp></td><td class="grid">Backup LBA (location of the other header copy)</td></tr>
+<tr>
+<td class="gridright"><samp>40</samp></td><td class="gridright"><samp>8</samp></td><td class="grid">First usable LBA for partitions (primary partition table last LBA + 1)</td></tr>
+<tr>
+<td class="gridright"><samp>48</samp></td><td class="gridright"><samp>8</samp></td><td class="grid">Last usable LBA (secondary partition table first LBA - 1)</td></tr>
+<tr>
+<td class="gridright"><samp>56</samp></td><td class="gridright"><samp>16</samp></td><td class="grid">Disk GUID (also referred as UUID on UNIXes)</td></tr>
+<tr>
+<td class="gridright"><samp>72</samp></td><td class="gridright"><samp>8</samp></td><td class="grid">Partition entries starting LBA (always 2 in primary copy)</td></tr>
+<tr>
+<td class="gridright"><samp>80</samp></td><td class="gridright"><samp>4</samp></td><td class="grid">Number of partition entries</td></tr>
+<tr>
+<td class="gridright"><samp>84</samp></td><td class="gridright"><samp>4</samp></td><td class="grid">Size of a partition entry (usually 128)</td></tr>
+<tr>
+<td class="gridright"><samp>88</samp></td><td class="gridright"><samp>4</samp></td><td class="grid">CRC32 of partition array</td></tr>
+<tr>
+<td class="gridright"><samp>92</samp></td><td class="gridright">*</td><td class="grid">Reserved; must be zeroes for the rest of the block (420 bytes for a 512-byte LBA)</td></tr>
+</table>
+<p class="warn">Note!</p>
+<p class="indent">
+<i><b>Primary</b> and <b>secondary</b> headers are not identical! For example,
+<b>current</b> and <b>backup</b> LBAs are different, CRCs may be different,
+etc. The values for current and backup LBAs of the primary header should be
+the second sector of the disk (1) and the last sector of the disk
+respectively. The secondary header at the end of the disk identifies its own
+table of partition entries (located just before that header).</i></p>
+
+
+
+<h4 class="part3">
+<a name="gpt_entry">Partition table entries (LBA 2–33)</a></h4>
+<p>
+The first 16 bytes designate the partition type GUID (see below).
+The second 16 bytes contain a GUID unique to the partition. Starting and
+ending 64-bit LBAs are also recorded here, and space is allocated for
+partition names and attributes. As is the nature and purpose of GUIDs,
+no central registry is needed to ensure the uniqueness of the GUID partition
+type designators.</p>
+<a name="gpt_entry_format">
+<table class="grid"></a>
+<caption>GUID partition entry format</caption>
+<tr>
+<th class="grid">Offset</th>
+<th class="grid">Len</th>
+<th class="grid">Contents</th></tr>
+<tr>
+<td class="gridright"><samp>0</samp></td><td class="gridright"><samp>16</samp></td><td class="grid">Partition type GUID</td></tr>
+<tr>
+<td class="gridright"><samp>16</samp></td><td class="gridright"><samp>16</samp></td><td class="grid">Unique partition GUID</td></tr>
+<tr>
+<td class="gridright"><samp>32</samp></td><td class="gridright"><samp>8</samp></td><td class="grid">First LBA (little-endian)</td></tr>
+<tr>
+<td class="gridright"><samp>40</samp></td><td class="gridright"><samp>8</samp></td><td class="grid">Last LBA (inclusive, usually odd)</td></tr>
+<tr>
+<td class="gridright"><samp>48</samp></td><td class="gridright"><samp>8</samp></td><td class="grid">Attribute flags (e.g. bit 60 denotes read-only)</td></tr>
+<tr>
+<td class="gridright"><samp>56</samp></td><td class="gridright"><samp>72</samp></td><td class="grid">Partition name (36 UTF-16LE code units)</td></tr>
+<tr>
+<th class="gridright">128</th><th class="gridcen" colspan="2">Total</th></tr>
+</table>
+<p>
+According to Microsoft TechNet, attributes are divided into two halves:
+the lower 4 bytes representing partition independent attributes, and the
+upper 4 bytes are partition type dependent. Microsoft uses the following
+bits in general:</p>
+
+<table class="grid">
+<caption>Partition attributes</caption>
+<tr>
+<th>Bit</th><th>Content</th></tr>
+<tr>
+<td class="gridright"><samp>0</samp></td><td class="grid">System partition (disk partitioning utilities must reserve the partition as is)</td></tr>
+<tr>
+<td class="gridright"><samp>2</samp></td><td class="grid">Legacy BIOS Bootable (equivalent to MBR 80h Active flag)</td></tr>
+<tr>
+<td class="gridright"><samp>60</samp></td><td class="grid">Read-only</td></tr>
+<tr>
+<td class="gridright"><samp>62</samp></td><td class="grid">Hidden</td></tr>
+<tr>
+<td class="gridright"><samp>63</samp></td><td class="grid">Do not automount (i.e., do not assign drive letter)</td></tr>
+</table>
+<p>
+Microsoft does not support EFI on 32-bit platforms, and by extension, does not
+allow booting from GPT partitions. Some versions, however, support GPT data
+disks with hybrid MBR.</p>
+<p>
+Microsoft supports booting from GPT on EFI for following 64-bit IA-32
+(aka x86-64, EM64T, x64) Windows versions:</p>
+<ul>
+<li>Windows Server 2008 (64-bit)</li>
+<li>Windows Vista SP1 (64-bit)</li>
+<li>Windows 7 (64-bit)</li>
+<li>Windows Server 2008 R2 (64-bit)</li>
+</ul>
+<p>
+Other 64-bit versions support GPT data disks with hybrid MBR.</p>
+<p>
+Linux (x86 / x86-64; since Fedora 8, Ubuntu 8.04),
+Mac OS X (x86 / x86-64; since 10.4.0), FreeBSD (x86 / x86-64; since 7.0)
+support booting from GPT on PC/BIOS and booting from GPT on EFI.
+Data disks are supported in most cases.</p>
+
+<table class="grid">
+<caption>Partition type GUIDs (not all)</caption>
+<tr>
+<th>OS</th><th>Par. type</th><th>Globally unique identifier</th></tr>
+<tr>
+<td class="grid">None</td><td class="grid">Unused entry</td><td class="grid"><samp>00000000-0000-<br>0000-0000-000000000000</samp></td></tr>
+<tr>
+<td class="grid">None</td><td class="grid">MBR partition scheme</td><td class="grid"><samp>024DEE41-33E7-<br>11D3-9D69-0008C781F39F</samp></td></tr>
+<tr>
+<td class="grid">None</td><td class="grid">EFI System partition</td><td class="grid"><samp>C12A7328-F81F-<br>11D2-BA4B-00A0C93EC93B</samp></td></tr>
+<tr>
+<td class="grid">None</td><td class="grid">BIOS Boot partition</td><td class="grid"><samp>21686148-6449-<br>6E6F-744E-656564454649</samp></td></tr>
+<tr>
+<td class="grid">Windows</td><td class="grid">Microsoft Reserved Partition</td><td class="grid"><samp>E3C9E316-0B5C-<br>4DB8-817D-F92DF00215AE</samp></td></tr>
+<tr>
+<td class="grid">Windows</td><td class="grid">Basic data partition</td><td class="grid"><samp>EBD0A0A2-B9E5-<br>4433-87C0-68B6B72699C7</samp></td></tr>
+<tr>
+<td class="grid">Windows</td><td class="grid">Logical Disk Manager metadata partition</td><td class="grid"><samp>5808C8AA-7E8F-<br>42E0-85D2-E1E90434CFB3</samp></td></tr>
+<tr>
+<td class="grid">Windows</td><td class="grid">Logical Disk Manager data partition</td><td class="grid"><samp>AF9B60A0-1431-<br>4F62-BC68-3311714A69AD</samp></td></tr>
+<tr>
+<td class="grid">Windows</td><td class="grid">Windows Recovery Environment</td><td class="grid"><samp>DE94BBA4-06D1-<br>4D40-A16A-BFD50179D6AC</samp></td></tr>
+<tr>
+<td class="grid">Windows</td><td class="grid">IBM General Parallel File System (GPFS) par</td><td class="grid"><samp>37AFFC90-EF7D-<br>4E96-91C3-2D7AE055B174</samp></td></tr>
+<tr>
+<td class="grid">Linux</td><td class="grid">Linux filesystem data</td><td class="grid"><samp>0FC63DAF-8483-<br>4772-8E79-3D69D8477DE4</samp></td></tr>
+<tr>
+<td class="grid">Linux</td><td class="grid">RAID partition</td><td class="grid"><samp>A19D880F-05FC-<br>4D3B-A006-743F0F84911E</samp></td></tr>
+<tr>
+<td class="grid">Linux</td><td class="grid">Swap partition</td><td class="grid"><samp>0657FD6D-A4AB-<br>43C4-84E5-0933C84B4F4F</samp></td></tr>
+<tr>
+<td class="grid">Linux</td><td class="grid">Logical Volume Manager (LVM) par</td><td class="grid"><samp>E6D6D379-F507-<br>44C2-A23C-238F2A3DF928</samp></td></tr>
+<tr>
+<td class="grid">Linux</td><td class="grid">Reserved</td><td class="grid"><samp>8DA63339-0007-<br>60C0-C436-083AC8230908</samp></td></tr>
+</table>
+<p>
+The GUIDs in this table use a little-endian byte order.</p>
+<p>
+Initially Linux did not have a separate partition type for its data
+partitions, and used the same GUID for the data partitions as Windows.
+This created problems when dual-booting Linux / Windows in UEFI-GPT setup.
+The new GUID (Linux filesystem data) was defined jointly by <b>GPT fdisk</b>
+and <b>GNU Parted</b> developers. GPT fdisk (<code>gdisk</code>) identifies
+it as type <samp>8300</samp>.</p>
+
+</div>
+
+</body></html>

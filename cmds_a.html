@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (addgroup, adduser, apropos, apt, arp, at)</title>
+<meta name="description" content="linux quick reference, addgroup, adduser, apropos, apt, arp, atq, atrm" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<div id="topmenu">
+<p class="menu">
+<a href="#adduser">adduser</a>&nbsp;|
+<a href="#apropos">apropos</a>&nbsp;|
+<a href="#apt">apt</a>&nbsp;|
+<a href="#apt-get">apt-get</a>&nbsp;|
+<a href="#arp">arp</a>&nbsp;|
+<a href="#at">at</a></p>
+</div>
+
+<p class="cmdname"><a name="addgroup">addgroup</a></p>
+<p>
+is a front end for <code><a href="cmds_g.html#groupadd">groupadd</a></code>
+and <code><a href="cmds_g.html#groupmod">groupmod</a></code>. For more info
+see <code><a href="cmds_a.html#adduser">adduser</a></code>.</p>
+
+
+
+<p class="cmdname"><a name="adduser">adduser</a></p>
+<p>
+is a front end for <code><a href="cmds_u.html#useradd">useradd</a></code>
+and <code><a href="cmds_u.html#usermod">usermod</a></code>.</p>
+<p>
+<code>adduser</code> and <code>addgroup</code> together have five (5) modes:</p>
+<ul class="indented">
+<li>add a normal user;</li>
+<li>add a system user;</li>
+<li>add a user group;</li>
+<li>add a system group;</li>
+<li>add an existing user to an existing group;</li>
+</ul>
+<p>
+Some examples (you must have <samp>root</samp> priv):</p>
+
+<p class="cmdc">adduser mozart audio</p>
+<p class="desc">add an existing user <samp>mozart</samp> to an existing group
+<samp>audio</samp>;</p>
+
+<p class="cmdc">adduser bamboo</p>
+<p class="desc">create a new [normal, regular] user with typical defaults
+like home dir of the same name, group of the same name (will be auto created);
+this cmd also prompts you for password and additional info; you can force the
+assignment of specific UID with <code>--uid </code><kbd>nn</kbd>, but cmd
+fails if this UID is already taken;</p>
+
+<p class="cmdc">adduser --system terminator</p>
+<p class="desc">create a system account, i.e., a user with UID in the range
+<samp>FIRST_SYSTEM_UID .. LAST_SYSTEM_UID</samp>; by default, system users are
+placed in the <samp>nogroup</samp> (can be overridden with <code>--gid</code>);
+a home dir is created by the same rules as for normal users (can be cancelled
+with <code>--no-create-home</code>); the new system user will have the
+<samp>/bin/false</samp> shell (unless overridden with <code>--shell</code>),
+and have logins disabled; skeletal config files are not copied;</p>
+
+
+
+<p class="cmdname"><a name="apropos">apropos</a></p>
+<p>
+searches man database (manual pages) for instances of <kbd>keyword</kbd>.
+The database is updated by <code>mandb</code> program (usually runs as
+dayly / weekly <code>cron</code> job, see <samp>/etc/cron.dayly</samp>).
+Some installations do not configure it to be run auto; in this case you can
+either start it manually (each time when new app was installed) or configure
+auto execution.</p>
+
+<p class="fmt"><code>apropos&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;keyword ...</kbd></p>
+<p class="cmdc">apropos stream</p>
+<p class="cmdc">apropos datagram portmap</p>
+<p class="cmdc">apropos -w job*</p>
+<p class="cmd">apropos -e printf</p>
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-h</code> &nbsp;&nbsp; <code>--help</code> &nbsp;&nbsp;
+<code>-v</code> &nbsp;&nbsp; <code>--verbose</code> &nbsp;&nbsp;
+<code>-V</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>-a</code>, <code>--and</code></p>
+<p class="desc">show only those items that match all specified keywords;</p>
+
+<p class="fmtc"><code>-C</code> <kbd>file</kbd>, <code>--config-file=</code><kbd>file</kbd></p>
+<p class="desc">use the specified user config file instead of <samp>~/.manpath</samp>;</p>
+
+<p class="fmtc"><code>-e</code>, <code>--exact</code></p>
+<p class="desc">search each keyword for exact match;</p>
+
+<p class="fmtc"><code>-L</code> <kbd>str</kbd>, <code>--locale=</code><kbd>str</kbd></p>
+<p class="desc">temporarily override current locale with the specified locale string;</p>
+
+<p class="fmtc"><code>-l</code>, <code>--long</code></p>
+<p class="desc">do not truncate the output to the terminal width;</p>
+
+<p class="fmtc"><code>-M</code> <kbd>path</kbd>, <code>--manpath=</code><kbd>path</kbd></p>
+<p class="desc">set search path for manual pages to <kbd>path</kbd>;</p>
+
+<p class="fmtc"><code>-m</code> <kbd>system</kbd>, <code>--system=</code><kbd>system</kbd></p>
+<p class="desc">use manual pages from other systems;</p>
+
+<p class="fmtc"><code>-r</code>, <code>--regex</code></p>
+<p class="desc">interpret each keyword as a regular expression (default);</p>
+
+<p class="fmtc"><code>-s</code> <kbd>n</kbd>, <code>--section</code> <kbd>n</kbd></p>
+<p class="desc">search only the specified
+<a href="cmds_m.html#man_sections">man section</a>;</p>
+
+<p class="fmtc"><code>-w</code>, <code>--wildcard</code></p>
+<p class="desc">interpret each keyword as a pattern containing shell-style wildcards;</p>
+
+<table class="exit">
+<caption>Exit codes</caption>
+<tr>
+<td class="exit_code">0</td>
+<td class="code_desc">Success</td></tr>
+<tr>
+<td class="exit_code">1</td>
+<td class="code_desc">Usage, syntax or configuration file error</td></tr>
+<tr>
+<td class="exit_code">2</td>
+<td class="code_desc">Operational error</td></tr>
+<tr>
+<td class="exit_code">16</td>
+<td class="code_desc">Nothing was found that matched the criteria specified</td></tr>
+</table>
+
+
+<p class="cmdname"><a name="apt">apt</a></p>
+<p>
+Do not confuse <code>apt</code> with <a name="pkg_tool"><b>APT</b>, Advanced
+Packaging Tool</a>, which includes a library and a set of cmdline programs like
+<code>apt</code>, <code>apt-get</code>, <code>apt-cache</code>, etc.</p>
+<p>
+Technically, APT is a free-software user interface that works with core
+libraries to handle the installation and removal of software on Debian-based
+distributions. Also, it can be considered as a front-end to <code>dpkg</code>.</p>
+<p>
+<code>apt</code> was introduced in Ubuntu 16.04 (?) as an attempt to improve
+and simplify software management by merging the best features of
+<code>apt-get</code> and <code>apt-cache</code>.</p>
+<p>
+You should prepend <code>apt</code> with <code>sudo</code>, unless you
+are <samp>root</samp>. And before you start upgrading or installing pkgs,
+you should run the following cmd to refresh your pkg database with the latest
+"news" from the repositories:</p>
+
+<p class="cmdc">apt update</p>
+<p class="desc">reads info from repositories and updates the local
+package database; during pkg info retreival it marks each line either with
+<samp>Hit</samp> (nothing new), or <samp>Ign</samp> (ignored because of some
+error, or because it's too recent to update), or <samp>Get</samp> (new version
+is available); <i><span class="warn">Note!</span> This cmd does not install
+anything!</i></p>
+
+<p class="cmdc">apt upgrade</p>
+<p class="desc">upgrades all installed packages (it shows you the list of
+packages to be upgraded and asks if you want to do this);</p>
+
+<p class="cmdc">apt full-upgrade</p>
+<p class="desc">like prev, but also removes installed pkgs if it's necessary
+for the correct upgrade;</p>
+
+<p class="cmdc">apt update &amp;&amp; sudo apt upgrade -y</p>
+<p class="desc">updates pkg database, and immediately starts to update
+(upgrade) eligible pkgs; <code>-y</code> means "assume <i>yes</i> as answer
+to all prompts and run non-interactively";</p>
+
+<p class="cmdc">apt install postgresql postgresql-contrib</p>
+<p class="desc">installs PostgreSQL and related stuff; if it is already
+installed, it will be upgraded, but only if [according to package database]
+a new version is available (and that's why the package database  must be
+updated at the beginning of each upgrade/install session); by default,
+<code>~</code> installs the latest version available; however, if you
+explicitly specify version number, a command like:</p>
+
+<p class="cmdc">apt install <span class="arg">pkg_name</span>=<span class="arg">version</span></p>
+<p class="desc">installs earlier version of the package; usually it's not
+good, but sometimes it's a satisfactory temporary solution;</p>
+
+<p class="cmdc">apt install audacious --no-upgrade</p>
+<p class="desc">install <samp>audacious</samp>; but if it's already
+installed, do not upgrade it to a newer version!</p>
+
+<p class="cmdc">apt install mplayer --only-upgrade</p>
+<p class="desc">upgrade <samp>mplayer</samp> if it's present in the system;
+but do not install it, if it was not installed earlier!</p>
+
+<p class="cmdc">apt remove gnome-tweak-tool</p>
+<p class="desc">removes the specified package; to be exact, this cmd removes
+binary files and leaves behind config files related to a package; if you want
+to remove everything, use <samp>purge</samp>:</p>
+
+<p class="cmdc">apt purge gnome-tweak-tool</p>
+<p class="desc">this cmd removes everything related to the specified package;
+it's good in two cases: (1) if you want to perform a clean reinstall, and (2)
+if you're not going to use this package in the foreseeable future;</p>
+
+<p class="cmdc">apt search <span class="arg">word_to_look_for</span></p>
+<p class="desc">lists all pkgs containing the specified word (choose your
+search pattern carefully: unique library name is good, common words not);
+
+<p class="cmdc">apt show <span class="arg">pkg_name</span></p>
+<p class="desc">shows info about the specified pkg (dependencies, download
+size, installation size, sources the pkg is available from, content
+description, etc); this cmd is applicable to all pkgs, installed and not
+installed;</p>
+
+<p class="cmdc">apt list --upgradeable</p>
+<p class="desc">lists all pkgs that have a newer versions and can/should be
+upgraded;</p>
+
+<p class="cmdc">apt list --installed</p>
+<p class="desc">lists all installed packages;</p>
+
+<p class="cmdc">apt list --all-versions</p>
+<p class="desc">lists all available packages for your system;</p>
+
+<p class="cmdc">apt purge autoremove</p>
+<p class="desc">removes useless libs and pkgs that were auto installed to
+satisfy dependencies and left behind after the depending packages were removed;
+<code>apt</code> does not support <samp>clean</samp> or <samp>autoclean</samp>;</p>
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-h</code> &nbsp;&nbsp; <code>--help</code> &nbsp;&nbsp;
+<code>-v</code> &nbsp;&nbsp; <code>--version</code></p>
+
+
+
+<p class="cmdname"><a name="apt-get">apt-get</a></p>
+<p>
+Probably, you should use <code><a href="#apt">apt</a></code> - it's newer,
+simpler, and more convenient. The only reason to use <code>apt-get</code> is
+the necessity to do something that <code>apt</code> does not allow.</p>
+<p>
+The <code>apt-get</code> handles installation and removal of software
+on the Ubuntu, Debian, and other Debian-like Linux systems. It automates
+retrieval, configuration, installation of software pkgs from binary files
+or source code. All pkgs containing dependencies required by the package(s)
+specified for the installation are auto retrieved and installed.
+<code>~</code> was originally designed as a front-end for <code>dpkg</code>
+to work with <samp>.deb</samp> pkgs, but now it also supports RPM (via
+<code>apt-rpm</code>). <i>Synaptic Package Manager</i>, <i>Ubuntu Software
+Center</i> are GUI front-ends to <a href="#pkg_tool">APT</a>. Non-root users
+should prepend <code>~</code> with
+<a href="cmds_s.html#sudo"><code>sudo</code></a>.</p>
+
+<p class="cmdc">apt-get update</p>
+<p class="desc">update the package index, i.e., sync your local database
+of pkgs available from repositories (<samp>/etc/apt/sources.lst</samp>)
+with the appropriate servers; usually this is done at the session start);</p>
+
+<p class="cmdc">apt-get upgrade</p>
+<p class="desc">
+upgrade any pkgs on your system with new versions available;</p>
+
+<p class="cmdc">apt-get dist-upgrade</p>
+<p class="desc">
+upgrade your whole distribution to the newest release
+(it's a serious operation, think twice, make backup, etc);</p>
+
+<p class="cmdc">apt-get install mplayer smplayer</p>
+<p class="desc">
+install packages <samp>mplayer</samp> and <samp>smplayer</samp>;</p>
+
+<p class="cmdc">apt-get remove unison-gtk</p>
+<p class="desc">
+remove package <samp>unison-gtk</samp>; if other pkgs depend on the one
+being removed, <code>~</code> prompts you with what pkgs will be affected;
+
+<p class="cmdc">apt-get remove --purge unison-gtk</p>
+<p class="desc">
+remove <samp>unison-gtk</samp> and related config files;</p>
+
+<p class="cmdc">apt-get remove --purge linux-image-2.6.35-24-generic-pae</p>
+<p class="cmdc">apt-get remove --purge linux-headers-2.6.35-24</p>
+<p class="desc">
+remove outdated linux kernel and related files;</p>
+
+<p class="cmdc">apt-get autoremove</p>
+<p class="desc">
+remove miscellaneous old packages;</p>
+
+<p class="cmdc">apt-get source mpg321</p>
+<p class="desc">
+download the source code for the package <samp>mpg321</samp>;</p>
+
+<p class="cmdc">apt-get build-dep mpg321</p>
+<p class="desc">
+download and install all dependencies required to build <code>mpg321</code>
+from the source downloaded in the previous example;</p>
+
+<p class="cmdc">apt-get clean && apt-get autoclean</p>
+<p class="desc">
+clean out the local archive; <code>autoclean</code> removes only pkg
+files that are no longer available; <code>clean</code> removes everything
+except the lock file;</p>
+
+<p class="cmdc">apt-get check</p>
+<p class="desc">verify dependencies;</p>
+
+<p class="cmdc">apt-cache policy python-numpy</p>
+<p class="desc">
+check availablity of the specified pkg (<samp>python-numpy</samp>):
+is it installed already, or can it be downloaded, etc;</p>
+
+<p class="cmdc">dpkg-reconfigure gdm</p>
+<p class="desc">repair a damaged package <samp>gdm</samp>;</p>
+
+<p class="cmdc">dpkg-reconfigure tzdata</p>
+<p class="desc">adjust the time zone;</p>
+
+<p class="cmdc">dpkg-reconfigure postfix</p>
+<p class="desc">create new config files for <samp>postfix</samp>;</p>
+
+<p class="cmdc">dpkg-query -l | more</p>
+<p class="desc">show all packages installed in the system;</p>
+
+<p class="cmdc">dpkg -l | wc -l</p>
+<p class="desc">how many packages are installed here?</p>
+
+<p class="cmdc">dpkg -l <span class="arg">pkg</span></p>
+<p class="desc">show info on the installed software package;</p>
+
+<p class="cmdc">dpkg -L <span class="arg">pkg</span></p>
+<p class="desc">list all files installed by the software package;</p>
+
+<p class="cmdc">dpkg -i <span class="arg">file</span></p>
+<p class="desc">install a local (<samp>.deb</samp>) file to your system;</p>
+
+<p class="cmdc">dpkg -S <span class="arg">file</span></p>
+<p class="desc">show info about the software pkg owning <kbd>file</kbd>;</p>
+
+
+<h5>Release upgrade for Ubuntu servers</h5>
+<p>
+Make sure that you have a good backup of your data, and copies of some
+modified config files from <samp>/etc</samp>.</p>
+
+<p class="cmdc">apt-get update</p>
+<p class="cmdc">apt-get install screen</p>
+<p class="cmd">screen</p>
+<p>
+Now if you get disconnected from your server, you can log back in and issue
+the following command to resume your screen session:</p>
+
+<p class="cmd">screen -Dr</p>
+<p>
+Install the latest version of key system utilities:</p>
+
+<p class="cmd">apt-get install update-manager-core</p>
+<p>
+Upgrade:</p>
+
+<p class="cmd">do-release-upgrade</p>
+<p>
+When it's done, you may check the version:</p>
+
+<p class="cmd">cat /etc/lsb-release</p>
+
+
+<h5>Files</h5>
+
+<p class="fmtc"><samp>/etc/apt/sources.list</samp></p>
+<p class="desc">locations to fetch pkgs from;</p>
+
+<p class="fmtc"><samp>/etc/apt/sources.list.d/</samp></p>
+<p class="desc"> additional src list fragments;</p>
+
+<p class="fmtc"><samp>/etc/apt/apt.conf</samp></p>
+<p class="desc">APT config file;</p>
+
+<p class="fmtc"><samp>/etc/apt/apt.conf.d/</samp></p>
+<p class="desc">APT config file fragments;</p>
+
+<p class="fmtc"><samp>/etc/apt/preferences</samp></p>
+<p class="desc">version preferences file;</p>
+
+<p class="fmtc"><samp>/var/cache/apt/archives/</samp></p>
+<p class="desc">storage area for the retrieved package files;</p>
+
+<p class="fmtc"><samp>/var/cache/apt/archives/partial/</samp></p>
+<p class="desc">storage area for the package files in transit;</p>
+
+<p class="fmtc"><samp>/var/lib/apt/lists/</samp></p>
+<p class="desc">storage area for the state information for each package
+resource specified in sources.list;</p>
+
+<p class="fmtc"><samp>/var/lib/apt/lists/partial/</samp></p>
+<p class="desc">storage area for the state information in transit;</p>
+
+
+
+<p class="cmdname_dep"><a name="arp">arp</a></p>
+<p class="dep">Deprecated</p>
+<p>
+manipulates or displays the kernel's ARP (Address Resolution Protocol)
+cache (<samp>/proc/net/arp</samp>).
+ARP is used to find the media access control (MAC) address of a network
+neighbour for a given IPv4 address. Complete entries in the ARP cache are
+marked with <samp>C</samp>, permanent entries with <samp>M</samp>,
+published entries with <samp>P</samp>.</p>
+<p>
+Since <code>arp</code> is <b>deprecated</b>, you should probably use
+<code><a href="cmds_i.html#ip">ip</code></a>, i.e.</p>
+
+<p class="cmdc">ip n</p>
+<p class="cmdc">ip neigh</p>
+<p class="cmd">ip neighbour</p>
+<div class="box1">
+Remember that ARP proto is used in IPv4 networks only. In IPv6 the same
+functionality is provided by NDP - the Neighbor Discovery Protocol. Note that
+<code>ip n</code> handles both: IPv4 and IPv6.</div>
+
+<p class="cmdc">arp</p>
+<p class="desc">show the current content of the ARP table;</p>
+
+<p class="cmdc">arp -a</p>
+<p class="desc">same as previous, but output in BSD format;</p>
+
+<p class="cmdc">arp srv2</p>
+<p class="desc">show entry for host <samp>srv2</samp>;</p>
+
+<p class="cmdc">arp 192.168.0.254</p>
+<p class="desc">show entry for host with IP <samp>192.168.0.254</samp>;</p>
+
+<p class="cmdc">arp -e -p inet</p>
+<p class="desc">show all Internet (inet protocol family) entries in default format;</p>
+
+<p class="cmdc">arp -i eth0 -d 192.168.0.4</p>
+<p class="desc">delete from ARP cache an entry for <samp>192.168.0.4</samp>;</p>
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-h</code> &nbsp;&nbsp; <code>--help</code> &nbsp;&nbsp;
+<code>-V</code> &nbsp;&nbsp; <code>--version</code> &nbsp;&nbsp;
+<code>-v</code> &nbsp;&nbsp; <code>--verbose</code></p>
+
+<p class="fmtc"><code>-a</code> [<kbd>host</kbd>],
+<code>--display</code>[<code>=</code><kbd>host</kbd>]</p>
+<p class="desc">show arp cache entries in alternate (BSD) format;
+<kbd>host</kbd> can be either hostname or IP; if <kbd>host</kbd>
+is not specified, show all;</p>
+
+<p class="fmtc"><code>-d</code> <kbd>host</kbd>, <code>--delete=</code><kbd>host</kbd></p>
+<p class="desc">delete a ARP table entry for <kbd>host</kbd> (IP or hostname);</p>
+
+<p class="fmtc"><code>-D</code> <kbd>hw_addr</kbd>,
+<code>--use-device=</code><kbd>hw_addr</kbd></p>
+<p class="desc">show only info related to the interface specified by the hardware address;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-e</code></td>
+<td class="opt_desc">show arp cache entries in default (Linux) format;</td></tr>
+</table>
+
+<p class="fmtc"><code>-f</code> <kbd>file</kbd>,
+<code>--file=</code><kbd>file</kbd></p>
+<p class="desc">like <code>-s</code>, but entry info is taken from <kbd>file</kbd>;</p>
+
+<p class="fmtc"><code>-H</code> <kbd>type</kbd>,
+<code>--hw-type</code> <kbd>type</kbd></p>
+<p class="desc">the class (type) of entries to check for; <samp>ether</samp>
+(<samp>0x01</samp>) is default; other available options are <samp>arcnet</samp>,
+<samp>pronet</samp>, <samp>ax25</samp>, <samp>netrom</samp>;</p>
+
+<p class="fmtc"><code>-i</code> <kbd>iface</kbd>,
+<code>--device=</code><kbd>iface</kbd></p>
+<p class="desc">show only info related to the specified network interface;</p>
+
+<p class="fmtc"><code>-n</code>, <code>--numeric</code></p>
+<p class="desc">show numerical addresses;</p>
+
+<p class="fmtc"><code>-p</code> <kbd>prot</kbd>,
+<code>--protocol=</code><kbd>prot</kbd></p>
+<p class="desc">show only info related to the specified protocol family;</p>
+
+<p class="fmtc"><code>-s</code> <kbd>host hw_addr</kbd></p>
+<p class="desc">create an arp address mapping entry;</p>
+
+
+
+<p class="cmdname"><a name="at">at, atq, atrm, batch</a></p>
+<p>
+To schedule some job to be executed at 20:00 today, type</p>
+<p class="cmd">at 20:00</p>
+<p>
+and press <span class="keys">ENTER</span>. When prompt
+(<span class="prom">at&gt;</span>) appears, type cmd(s) to be executed
+(use <span class="keys">ENTER</span> for multiline input) and finish
+this procedure by pressing <span class="keys">ENTER</span> followed by
+<span class="keys">CTRL+D</span>.</p>
+
+<p class="fmtc"><code>at&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;time</kbd></p>
+<p class="desc">execute cmds at a specified time;</p>
+
+<p class="fmtc"><code>atq&nbsp;</code>[<code>-q</code> <kbd>queue</kbd>]</p>
+<p class="desc">list pending jobs of the current user (<samp>root</samp> gets
+everybody's jobs);</p>
+
+<p class="fmtc"><code>atrm&nbsp;</code><kbd>job ...</kbd></p>
+<p class="desc">remove job(s);</p>
+
+<p class="fmtc"><code>batch&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;time</kbd></p>
+<p class="desc">do job when the system load is relatively low;</p>
+<p>
+Time: HH:MM[am|pm], midnight, noon, teatime (4pm);<br>
+Date: month day [year] (Jun 29 2008), MMDDYY, MM.DD.YY, MM/DD/YY,
+now, today, tomorrow, monday, tuesday, wednesday, thursday, friday,
+saturday, sunday;</p>
+
+<p class="cmdc">at 4:55pm Sep 5 &lt; cmd.lst</p>
+<p class="desc">execute commands from file <code>cmd.lst</code> at 4:55pm, Sep 5;</p>
+
+<p class="cmdc">at 10:30am &lt; cmd.lst</p>
+<p class="desc">exec cmds from file <code>cmd.lst</code> at 10:30 today;</p>
+
+<p class="cmdc">at -f cmds.txt 8:30 tomorrow</p>
+<p class="desc">exec cmds from <code>cmds.txt</code> at 8:30 tomorrow;</p>
+
+<p class="cmdc">at -f cmds.txt now + 15 minutes</p>
+<p class="desc">exec cmds from <code>cmds.txt</code> in 15 minutes;</p>
+
+<p class="cmdc">at -f cmds.txt 9:15am + 7 days</p>
+<p class="desc">exec cmds  ...  at 9:15am, 7 days from now;</p>
+
+<p class="cmdc">echo "shutdown -r now" | at now + 1 hour</p>
+<p class="desc">initiate system reboot in one hour from now;</p>
+
+<p class="cmdc">batch -f cmds.txt now + 8 hours</p>
+<p class="desc">exec cmds  ...  in 8 hours (approx) from now;</p>
+
+<table class="options"><tr>
+<td class="opt_name"><code>atq</code></td>
+<td class="opt_desc">list jobs in queue (also: <code>at -l</code>);</td></tr>
+</table>
+<p class="fmt"><code>atrm 18 23</code> &nbsp; cancel jobs #18 and #23;</p>
+
+
+<h5>Options</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-V</code></td>
+<td class="opt_desc">version;</td></tr>
+<tr>
+<td class="opt_name"><code>-c</code></td>
+<td class="opt_desc">cat the jobs listed on the cmd line to stdout;</td></tr>
+</table>
+
+<p class="fmtc"><code>-d</code> <kbd>job</kbd></p>
+<p class="desc">remove <kbd>job</kbd> from queue (alias for <code>atrm</code>);</p>
+
+<p class="fmtc"><code>-f</code> <kbd>file</kbd></p>
+<p class="desc">read job from the specified file;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-l</code></td>
+<td class="opt_desc">list user's pending jobs (alias for <code>atq</code>);</td></tr>
+<tr>
+<td class="opt_name"><code>-m</code></td>
+<td class="opt_desc">send mail to user, when job has completed;</td></tr>
+</table>
+
+<p class="fmtc"><code>-q</code> <kbd>queue</kbd></p>
+<p class="desc">use the specified queue (a-z, A-Z); <samp>a</samp> is default
+for <code>at</code>, <samp>b</samp> is default for <code>batch</code>);</p>
+
+<p class="fmtc"><code>-t</code> <kbd>time</kbd></p>
+<p class="desc">submit the job to be run at the specified time,
+which must have the same format as specified for the
+<a href="cmds_t.html#touch"><code>touch</code></a> utility’s
+<code>-t</code> option ([[CC]YY]MMDDhhmm);</p>
+
+<table class="options"><tr>
+<td class="opt_name"><code>-v</code></td>
+<td class="opt_desc">show the time when the job will be executed;</td></tr>
+</table>
+
+
+<h5>Files</h5>
+
+<p class="fmtc"><samp>/etc/at.allow</samp></p>
+<p class="fmtc"><samp>/etc/at.deny</samp></p>
+<p class="fmtc"><samp>/var/spool/at</samp></p>
+<p class="fmtc"><samp>/var/spool/at/spool</samp></p>
+
+</div>
+
+</body></html>

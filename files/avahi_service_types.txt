@@ -1,0 +1,44 @@
+Some well-known Avahi service types:
+------------------------------------
+  _adisk._tcp:Apple TimeMachine
+  _afpovertcp._tcp:Apple File Sharing
+  _airport._tcp:Apple AirPort
+  _apt._tcp:APT Package Repository
+  _daap._tcp:iTunes Audio Access
+  _dacp._tcp:iTunes Remote Control
+  _domain._udp:DNS Server
+  _dpap._tcp:Digital Photo Sharing
+  _ftp._tcp:FTP File Transfer
+  _https._tcp:Secure Web Site
+  _http._tcp:Web Site
+  _imap._tcp:IMAP Mail Access
+  _ipps._tcp:Secure Internet Printer
+  _ipp._tcp:Internet Printer
+  _ldap._tcp:LDAP Directory Server
+  _mpd._tcp:Music Player Daemon
+  _nfs._tcp:Network File System
+  _ntp._udp:NTP Time Server
+  _odisk._tcp:DVD or CD Sharing
+  _pdl-datastream._tcp:PDL Printer
+  _pop3._tcp:POP3 Mail Access
+  _postgresql._tcp:PostgreSQL Server
+  _printer._tcp:UNIX Printer
+  _pulse-server._tcp:PulseAudio Sound Server
+  _pulse-sink._tcp:PulseAudio Sound Sink
+  _pulse-source._tcp:PulseAudio Sound Source
+  _raop._tcp:AirTunes Remote Audio
+  _realplayfavs._tcp:RealPlayer Shared Favorites
+  _remote-jukebox._tcp:Remote Jukebox
+  _rfb._tcp:VNC Remote Access
+  _rtp._udp:RTP Realtime Streaming Server
+  _rtsp._tcp:RTSP Realtime Streaming Server
+  _sftp-ssh._tcp:SFTP File Transfer
+  _skype._tcp:Skype VoIP
+  _smb._tcp:Microsoft Windows Network
+  _ssh._tcp:SSH Remote Terminal
+  _telnet._tcp:Telnet Remote Terminal
+  _tftp._udp:TFTP Trivial File Transfer
+  _timbuktu._tcp:Timbuktu Remote Desktop Control
+  _vlc-http._tcp:VLC Streaming
+  _workstation._tcp:Workstation
+------------------------------------

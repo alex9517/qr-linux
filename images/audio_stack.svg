@@ -1,0 +1,72 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+    "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+
+
+<svg width="440" height="185" version="1.1" xmlns="http://www.w3.org/2000/svg">
+
+<!-- Main box -->
+
+<rect x="1" y="1" width="438" height="184" style="fill:rgb(224,255,255); stroke-width:1; stroke:rgb(0,128,128)"/>
+
+<!-- Line over "Full ALSA Userspace API" -->
+
+<path d="M1 120 L438 120" style="stroke:teal;stroke-width:1"/>
+
+<!-- Vertical line to the right of "BlueZ" -->
+
+<path d="M72 120 L72 184" style="stroke:teal;stroke-width:1"/>
+
+<!-- Line over "ALSA Kernel Drivers" -->
+
+<path d="M72 152 L438 152" style="stroke:teal;stroke-width:1"/>
+
+<!-- Vertical line to the left of "Professional Audio ..." -->
+
+<path d="M300 1 L300 120" style="stroke:teal;stroke-width:1"/>
+
+<!-- Box "JACK" -->
+
+<path d="M320 120 L320 75" style="stroke:teal;stroke-width:1"/>
+<path d="M320 76 L420 76" style="stroke:teal;stroke-width:1"/>
+<path d="M420 75 L420 120" style="stroke:teal;stroke-width:1"/>
+
+<!-- Line over "Pulse Audio" -->
+
+<path d="M1 84 L300 84" style="stroke:teal;stroke-width:1"/>
+
+<!-- 5 boxes: "GStreamer, etc -->
+
+<path d="M1 34 L280 34" style="stroke:teal;stroke-width:1"/>
+<path d="M280 34 L280 84" style="stroke:teal;stroke-width:1"/>
+<path d="M56 34 L56 84" style="stroke:teal;stroke-width:1"/>
+<path d="M112 34 L112 84" style="stroke:teal;stroke-width:1"/>
+<path d="M172 34 L172 84" style="stroke:teal;stroke-width:1"/>
+<path d="M214 34 L214 84" style="stroke:teal;stroke-width:1"/>
+
+<g font-family="Arial" font-size="10">
+
+<text x="150" y="20" fill="teal" style="text-anchor: middle">Applications</text>
+<text x="369" y="20" fill="teal" style="text-anchor: middle">Professional</text>
+<text x="369" y="30" fill="teal" style="text-anchor: middle">Audio Production</text>
+<text x="369" y="40" fill="teal" style="text-anchor: middle">Applications</text>
+
+<text x="28" y="62" fill="teal" style="text-anchor: middle">GStreamer</text>
+<text x="84" y="48" fill="teal" style="text-anchor: middle">Safe ALSA</text>
+<text x="84" y="62" fill="teal" style="text-anchor: middle">Userspace</text>
+<text x="84" y="76" fill="teal" style="text-anchor: middle">API</text>
+<text x="142" y="62" fill="teal" style="text-anchor: middle">libcanberra</text>
+<text x="193" y="62" fill="teal" style="text-anchor: middle">SDL</text>
+<text x="247" y="48" fill="teal" style="text-anchor: middle">Limited</text>
+<text x="247" y="62" fill="teal" style="text-anchor: middle">OSS API</text>
+<text x="247" y="76" fill="teal" style="text-anchor: middle">compatibility</text>
+
+<text x="150" y="104" fill="teal" style="text-anchor: middle">PulseAudio</text>
+<text x="370" y="100" fill="teal" style="text-anchor: middle">JACK</text>
+
+<text x="36" y="154" fill="teal" style="text-anchor: middle">BlueZ</text>
+<text x="255" y="140" fill="teal" style="text-anchor: middle">Full ALSA Userspace API</text>
+<text x="255" y="172" fill="teal" style="text-anchor: middle">ALSA Kernel Drivers</text>
+</g>
+
+</svg>

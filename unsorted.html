@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference</title>
+<meta name="description" content="linux quick reference, ssd, trim, vmware esxi, virtualbox" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<h3>Miscellaneous unsorted stuff</h3>
+
+
+<a name="xorg_reinst">
+<h4 class="part2">Ubuntu Linux / reinstall Xorg</h4></a>
+<p>
+Each Ubuntu DE has its own pkg name. Reinstalling Xorg:</p>
+
+<p class="cmd">sudo apt-get purge xorg-* xserver-xorg;
+sudo apt-get install xorg xserver-xorg;
+sudo dpkg-reconfigure xorg</p>
+<p>
+Reinstalling desktop env Unity:</p>
+
+<p class="cmd">sudo apt-get purge ubuntu-desktop;
+sudo apt-get install ubuntu-desktop</p>
+<p>
+Reinstalling desktop env Gnome:</p>
+
+<p class="cmd">sudo apt-get purge ubuntu-gnome-desktop
+gnome-desktop-environment; sudo apt-get install ubuntu-gnome-desktop</p>
+<p>
+Reinstalling desktop env Mate:</p>
+
+<p class="cmd">sudo apt-get purge ubuntu-mate-desktop mate-desktop-environment;
+sudo apt-get install ubuntu-mate-desktop</p>
+
+
+
+<a name="ssd_1404">
+<h4 class="part2">SSD / Ubuntu 14.04</h4></a>
+<p>
+Typical SSD root (home,..) partition record in <samp>/etc/fstab</samp>:</p>
+
+<p class="fmt"><samp>UUID=f0a...5d  /  ext4 noatime,errors=remount-ro  0 1</samp></p>
+<p>
+The above should not be used for <b>swap</b> and <b>efi</b> partitions.</p>
+
+
+<h5>An example of /etc/fstab</h5>
+<p>
+using <samp>tmpfs</samp> for logs and spools:</p>
+
+<pre>tmpfs /tmp       tmpfs defaults,noatime,mode=1777  0 0
+tmpfs /var/spool tmpfs defaults,noatime,mode=1777  0 0
+# tmpfs /var/tmp   tmpfs defaults,noatime,mode=1777  0 0
+tmpfs /var/log   tmpfs defaults,noatime,mode=1777  0 0</pre>
+
+
+<h5>Trimming</h5>
+<p>
+Remove trimming from <b>cron</b> (check <samp>cron.weekly</samp>)
+and set trimming at system boot. Edit <samp>/etc/rc.local</samp> according
+to your partitioning schema:</p>
+<div class="file">
+<p class="fmt">fstrim -v /</p>
+<p class="fmt">fstrim -v /home</p>
+<p class="fmt">exit 0</p>
+</div>
+<p>
+Also, check <samp>/etc/sysctl.conf</samp>, there must be:</p>
+<div class="file">
+<p class="fmt"># Sharply reduce swap inclination</p>
+<p class="fmt">vm.swappiness=1</p>
+<p class="fmt"># Improve cache management</p>
+<p class="fmt">vm.vfs_cache_pressure=50</p>
+</div>
+
+
+<h5>Limit the write actions of Firefox</h5>
+<p>
+You can disable anti-phishing features (system will be less secure).</p>
+<p>
+Either use
+<b>Edit</b> / <b>Preferences</b> / <b>Security</b>:</p>
+<ul>
+<li>Block reported attack sites</li>
+<li>Block reported web forgeries</li>
+</ul>
+<p>
+or use <samp>about:config</samp> page and set to <samp>false</samp>:</p>
+<ul>
+<li><samp>browser.safebrowsing.enabled</samp></li>
+<li><samp>browser.safebrowsing.malware.enabled</samp></li>
+</ul>
+<p>
+Now you must close Firefox and delete all files beginning with
+<samp>urlclassifier</samp> in your profile folder
+<samp>~/.mozilla/firefox/<kbd>xxxxxxxx</kbd>.default</samp>:</p>
+
+<p class="cmd">rm -i ~/.mozilla/firefox/*.default/urlclassifier*</p>
+<p>
+Some of those files will be recreated by FF, but they won't grow any
+larger than their initial size.</p>
+<p>
+To relocate FF cache to RAM, check FF settings (<samp>about:config</samp>):</p>
+<ul>
+<li><samp>browser.cache.disk.enable</samp> set to <samp>false</samp></li>
+<li><samp>browser.cache.memory.enable</samp> set to <samp>true</samp></li>
+<li><samp>browser.cache.memory.capacity</samp> set to <samp>-1</samp></li>
+</ul>
+<p>
+Mem capacity = -1 means "unlimited". May be you'll want to set a reasonable
+limit.</p>
+
+
+<h5>Limit the write actions of Firefox (old)</h5>
+<p>
+Set the cache to 0.</p>
+<p>
+Firefox menu button (with the three dashes on it):</p>
+<p class="fmt"><b>Preferences</b> / <b>Advanced</b> /  <b>Network</b>,
+section "Cached Web Content": tick
+"Override automatic cache management" and set the cache to <samp>0</samp> MB.</p>
+
+
+<h5>Limit the write actions of the Java plugin</h5>
+<p>
+If you have installed Oracle Java:</p>
+<p class="fmt">Launch the Java Control Panel - Tab General:</p>
+<p class="fmt">Temporary Internet Files - Settings...</p>
+<p class="fmt">Remove the tick for: Keep temporary files on my computer.</p>
+
+
+<a name="vmware">
+<h4 class="part2">Vmware / ESXi 5/6</h4></a>
+<p>
+If you cannot connect using <code>ssh</code>, check
+<samp>/etc/ssh/sshd_config</samp>, see/edit line
+<samp>PermitRootLogin = yes</samp> ("no" forbids ssh).
+To get info about VMs:</p>
+
+<p class="cmd">vim-cmd vmsvc/getallvms</p>
+<p>
+The first column of the output shows the <b>vmid</b>. To check the power
+state of the VM (vmid = 2):</p>
+
+<p class="cmd">vim-cmd vmsvc/power.getstate 2</p>
+<p>
+To start (to power on) VM (vmid = 2):</p>
+
+<p class="cmd">vim-cmd vmsvc/power.on 2</p>
+<p>
+To shutdown VM:</p>
+
+<p class="cmd">vim-cmd vmsvc/power.shutdown 2</p>
+<p>
+If the above cmd does not work, use:</p>
+
+<p class="cmd">vim-cmd vmsvc/power.off 2</p>
+
+
+<h5>Sending signals on ESXi to power off the virtual machine</h5>
+<p>
+A virtual machine can be halted from the cmd line by sending signals to
+the process. This procedure is potentially hazardous to the ESXi host: if
+you kill the wrong process, it may have unexpected results.</p>
+<p>
+Determine if the virtual machine process is running on the ESXi host:</p>
+
+<p class="cmd">ps | grep vmx</p>
+<p>
+The output looks like this:</p>
+
+<p class="fmtc"><samp>7662 7662 vmx /bin/vmx</samp></p>
+<p class="fmtc"><samp>7667 7662 vmx /bin/vmx</samp></p>
+<p class="fmtc"><samp>7668 7662 mks:VirtualMachineName /bin/vmx</samp></p>
+<p class="fmtc"><samp>7669 7662 vcpu-0:VirtualMachineName /bin/vmx</samp></p>
+<p>
+Several rows are returned, one for each vmx process. Identify the
+<b>parent vmx process</b> for the target VM. The first column contains
+the PID, and the second contains the PPID. Ensure you <b>terminate
+only the parent process</b>.
+
+<p class="cmd">kill 7662</p>
+<p>
+Wait 30s and check. If the proc is still running, use:</p>
+
+<p class="cmd">kill -9 7662</p>
+<p>
+There is also <code>esxcli</code> cmd that can be used locally or remotely
+to power off a virtual machine running on ESXi 5.x or later.</p>
+<p>
+To get a list of running VMs, identified by World ID, UUID, Display Name,
+and path to the <samp>.vmx</samp> config file:</p>
+
+<p class="cmd">esxcli vm process list</p>
+<p>
+To power off a running VM:</p>
+
+<p class="cmd">esxcli vm process kill --type=soft
+--world-id=<kbd>id</kbd></p>
+<p>
+Note that besides <code>soft</code> (the most graceful), there are also
+<code>hard</code> (performs an immediate shutdown), and <code>force</code>
+(bad; should only be used as the last resort). You can use <code>-t</code>
+instead of <code>--type</code>, and <code>-w</code> instead of
+<code>--world-id</code>, e.g.:</p>
+
+<p class="cmd">esxcli vm process kill -t soft -w <kbd>id</kbd></p>
+
+
+<h5>VM log file</h5>
+<p>
+To review the <samp>vmware.log</samp> for a virtual machine:</p>
+
+<p class="cmd">less /vmfs/volumes/<kbd>datastore</kbd>/<kbd>VM_dir</kbd>/vmware.log</p>
+
+
+
+<a name="vbox">
+<h4 class="part2">Virtual Box</h4></a>
+<p>
+Some useful cmds:</p>
+
+<p class="cmd">vboxmanage list vms</p>
+<p class="cmd">vboxmanage list runningvms</p>
+<p class="cmd">vboxmanage controlvm 'Windows XP' savestate</p>
+
+<p class="fmt"><code>vboxmanage controlvm </code><kbd>vm</kbd>
+{<code>pause</code>|<code>resume</code>|<code>reset</code>|<code>poweroff</code>|<code>savestate</code>}</p>
+<p>
+Note that <samp>reset</samp> and <samp>poweroff</samp> do not provide correct
+shutdown, <samp>savestate</samp> saves the current state of the VM to disk and
+then stops the VM.</p>
+
+
+
+<h5>VM start/stop</h5>
+(as in <samp>/etc/init.d/openmediavault-virtualbox</samp> script)</p>
+
+<p class="cmd">su - vbox -c VBoxManage startvm $UUID --type headless</p>
+
+<p class="cmd">su - vbox -c VBoxManage controlvm $UUID savestate</p>
+<p>
+The script actually uses <samp>$OMV_VBOX_USER</samp> variable, which is
+<samp>vbox</samp>:</p>
+
+<p class="cmd">su - $OMV_VBOX_USER -c VBoxManage controlvm $UUID savestate</p>
+
+
+
+<h5>VM export/import</h5>
+<p>
+<b>OVF</b> (Open Virtualization Format) spec provides means of describing the
+properties of a virtual system. It is XML based and describes a single
+VM or virtual appliance. It can contain info about the format of a virtual
+disk image file, a description of the virtual hardware that should be
+emulated to run the OS and application contained on that disk image.</p>
+<p>
+<b>OVA</b> (Open Virtual Appliance) is an OVF file packaged together with all
+supporting files (disk images, etc.). Usually, "OVF" actually means "OVA".</p>
+<p>
+Disk image formats:</p>
+<ul>
+<li><b>VDI</b> - VirtualBox's internal default disk image format.</li>
+<li><b>VMDK</b> - one of the most common formats. VMWare's products use
+various versions and variations of VMDK disk images, so it's important
+to understand which one you're working with and where it can be used.</li>
+<li><b>VHD</b> - mostly used by Microsoft (e.g. for Microsoft Virtual PC).</li>
+<li><b>raw</b> (.img, .raw, etc.) - uncompressed disk image; it can be very
+large, but sometimes is used in certain scenarios for better performance.</li>
+</ul>
+<p>
+<b>Stop VM</b> (poweroff / see above <samp>savestate</samp>)
+before export! This also applies to cloning HD. However, it's
+not necessary to detach the hard drive you are cloning from the VM.
+The export cmd looks like this:</p>
+
+<p class="cmd">VBoxManage export MyServer1 --output MyServer1.ovf</p>
+<p>
+The name of VM is "MyServer1" of course. The export procedure creates
+3 files:</p>
+<ul>
+<li><samp>MyServer1.ovf</samp> contains VM config (XML file);</li>
+<li><samp>MyServer1.mf</samp> contains the UUIDs of VM and the virtual drive;</li>
+<li><samp>MyServer1.vmdk</samp> is a compressed virtual hard drive image; note
+that the name of this file is derived from the actual name of the virtual
+drive, not the name you specified with <code>--output</code> option);</li>
+</ul>
+<p>
+Keep all these files in one directory during import!</p>
+<p>
+Before doing import, you should perform dry-run, and may be add some options
+for real import:</p>
+
+<p class="cmd">VBoxManage import -n MyServer1.ovf</p>
+<p class="ind">or</p>
+<p class="cmd">VBoxManage import --dry-run MyServer1.ovf</p>
+<p>
+Let's, for example, change VM name:</p>
+
+<p class="cmd">VBoxManage import MyServer1.ovf --vsys 0 --vmname MyServer2</p>
+<p>
+The other way to export/import VM is to create a new VM beforehand and then
+to clone the hard drive of the initial VM:</p>
+
+<p class="cmd">VBoxManage clonehd MyServer1.vdi MyServer2.vdi --format VDI --remember</p>
+<p>
+The <code>--remember</code> option auto registers the cloned HD. Run the
+following cmd to be sure:</p>
+
+<p class="cmd">VBoxManage list hdds</p>
+<p>
+You should also attach the cloned drive to a new VM.</p>
+<p>
+After export/import you have to deal with misc minor problems like
+changing hostname, net config, etc. Another problem is that you don't
+have the full control over naming of your virtual hardware.</p>
+
+
+
+<h5>Step 0 - Install VirtualBox on HOST</h5>
+
+<p class="cmd">sudo apt-get install build-essential dkms module-assistant linux-headers-$(uname -r)</p>
+<p class="cmd">sudo apt-get install virtualbox virtualbox-dkms virtualbox-qt</p>
+<p>
+Virtualbox kernel modules are built via Dynamic Kernel Module Support (DKMS).
+After installing the Virtual Box pkgs the vbox modules should be auto-built
+and auto-loaded ...</p>
+
+<p class="cmd">lsmod | grep vbox</p>
+<pre> vboxpci     19066  0
+ vboxnetadp  13155  0
+ vboxnetflt  23571  0
+ vboxdrv    190057  4 vboxnetflt,vboxnetadp,vboxpci</pre>
+<p>
+I add my USERNAME to the <samp>vboxusers</samp> group...</p>
+
+<p class="cmd">sudo adduser <kbd>your_username</kbd> vboxusers</p>
+
+
+<h5>Step 1 - Create the Ubuntu GUEST</h5>
+<p>
+The Default Machine Folder where VM images are stored is</p>
+
+<p class="fmt"><samp>$HOME/Virtualbox VMs</samp></p>
+<p>
+(this can be modified in <b>File - Preferences - General</b>).</p>
+
+
+<h5>Step 2 - Guest Additions</h5>
+<p>
+Guest Additions provide extra features such as the ability to tweak display
+settings and add a shared folder that can accessed by both HOST and GUEST
+machines.</p>
+<p>
+On the new Ubuntu GUEST run...</p>
+
+<p class="cmd">sudo apt-get install build-essential module-assistant linux-headers-$(uname -r) dkms
+<p class="cmd">sudo apt-get install virtualbox-guest-dkms virtualbox-guest-utils virtualbox-guest-x11
+<p class="cmd">sudo m-a prepare
+<p class="cmd">sudo adduser <kbd>your_username</kbd> vboxsf</p>
+<p>
+If the virtualbox modules need to be rebuilt for the running kernel...</p>
+
+<p class="cmd">uname -r | sudo xargs -n1 /usr/lib/dkms/dkms_autoinstaller start</p>
+<p>
+Reboot Ubuntu GUEST and vbox drivers should now be loaded...</p>
+
+<p class="cmd">lsmod | grep vbox</p>
+<pre> vboxguest
+ vboxsf
+ vboxvideo</pre>
+
+
+<h5>Virtualbox Repository Added Support For Ubuntu 14.04</h5>
+<p>
+Here’s how to add the official Virtual Box repository and keep it up-to-date
+in Ubuntu 14.04. Edit <samp>/etc/apt/sources.list</samp>, add the following
+line to the EOF and save the file:</p>
+
+<p class="fmt"><samp>deb http://download.virtualbox.org/virtualbox/debian trusty contrib</smap></p>
+<p>
+Then run cmd to download and import key:</p>
+
+<p class="cmd">wget -q http://download.virtualbox.org/virtualbox/debian/oracle_vbox.asc -O- | sudo apt-key add -</p>
+<p>
+Now you can receive updates of vbox via Software Updater.</p>
+
+
+
+<a name="break_in">
+<h4 class="part2">Hacking your own system</h4></a>
+<p>
+You forgot your password. What are you going to do?</p>
+<ol>
+<li>Reboot and pause GRUB (<span class="keys">Shift</span> or
+<span class="keys">Esc</span>. See <a href="boot.html">Boot</a>).</li>
+<li>Select and edit kernel line (<span class="keys">e</span>):
+replace <samp> ro quiet splash</samp>, etc with
+<samp>rw&nbsp;init=/bin/bash</samp></li>
+<li>Press <span class="keys">b</span> key to boot.</li>
+<li>When the system is ready, change the pass (<code>passwd <kbd>name</kbd></code>).</li>
+<li>Reboot (<code>sync; reboot -f</code>).</li>
+</ol>
+<p>
+Also, you can boot in <a href="boot.html#single_user">single user mode</a>
+(pass is not required). If root fs is mounted read-only (and in this case it
+usually is), remount it with:</p>
+
+<p class="cmd">mount -o remount,rw /</p>
+
+
+
+<a name="hack_win">
+<h4 class="part2">Hacking MS Windows</h4></a>
+<p>
+The Windows SAM database is usually in the
+<samp>.../Windows/System32/config</samp>. You can use some Linux Live CD/USB
+with <code>chntpw</code> (or you can download/install it).</p>
+
+<p class="cmd">chntpw -l SAM</p>
+<p>
+outputs a list of usernames on the system. Choose the name and type:</p>
+
+chntpw -u <kbd>username</kbd> SAM</p>
+<p>
+This cmd allows you to clear or change pass (the last may not work with Win 7/8).</p>
+<p>
+With Kali Linux <code>ophcrack</code> application you can try to crack
+a pass, but it may be waste of time if pass is good.</p>
+
+
+
+<a name="git">
+<h4 class="part2">GIT</h4></a>
+<p>
+Adding git repo to an existing project:</p>
+
+<p class="cmd">cd projects/app02</p>
+<p class="cmd">git init</p>
+<p class="cmd">git add *</p>
+<p class="cmd">git commit -m "Initial commit message."</p>
+<p>
+To see the history:</p>
+
+<p class="cmd">git log</p>
+<p>
+To see an older version of a file (curr ver - 4):</p>
+
+<p class="cmd">git show HEAD~4:src/main.cpp</p>
+<p>
+To revert a current file to the last committed version:</p>
+
+<p class="cmd">git checkout HEAD main.cpp</p>
+<p>
+To replace the current file with an earlier version:</p>
+
+<p class="cmd">git checkout <kbd>commit_hash</kbd> app.cpp</p>
+<p>
+Rollback the current file to a -5 version (5 commits back):</p>
+
+<p class="cmd">git checkout master~5 app.h</p>
+
+<p class="ind">or</p>
+
+<p class="cmd"><p class="cmd">git checkout HEAD~5 -- app.h</p>
+<p>
+To return the whole proj to some prev version:</p>
+
+<p class="cmd">git checkout <kbd>commit_hash</kbd></p>
+
+
+
+<a name="x86-64">
+<h4 class="part2">32-bit on 64-bit</h4></a>
+<p>
+To find if 64-bit Linux supports 32-bit apps:</p>
+
+<p class="cmd">dpkg --print-foreign-architectures</p>
+<p>
+Installing 32-bit support, old-syle (does not work since Ubuntu 13.10):</p>
+
+<p class="cmd">apt-get install ia32-libs</p>
+
+
+<h5>Installing 32-bit support (64-bit Ubuntu 14.04)</h5>
+<p>
+Add architecture:</p>
+
+<p class="cmd">sudo dpkg --add-architecture i386</p>
+<p>
+Add libs:</p>
+
+<p class="cmd">apt-get clean</p>
+<p class="cmd">apt-get update</p>
+<p class="cmd">apt-get install libc6:i386 libncurses5:i386 libstdc++6:i386</p>
+
+<p class="ind">or (?)</p>
+
+<p class="cmd">apt-get install lib32z1 lib32ncurses5 lib32bz2-1.0</p>
+
+<p class="ind">or</p>
+
+<p class="cmd">apt-get install lib32z1 lib32ncurses5 lib32bz2-1.0 lib32stdc++6</p>
+<p>
+Some libs (main) can also be installed with
+(this is the closest replacement for ia32-libs):</p>
+
+<p class="cmd">apt-get install gcc-multilib</p>
+
+<p class="ind">or</p>
+
+<p class="cmd">apt-get install g++-multilib</p>
+<p>
+Some additional stuff (?):</p>
+
+<p class="cmd">apt-get install libgl1-mesa-dri:i386 libgl1-mesa-glx:i386 libc6-i386</p>
+<p class="cmd">apt-get install libxcursor1:i386 libxrandr2:i386 libpulse0:i386</p>
+
+
+<h5>Compiling 32 on 64</h5>
+
+<p class="cmd">apt-get install gcc-multilib</p>
+
+<p class="ind">or</p>
+
+<p class="cmd">apt-get install g++-multilib libc6-dev-i386</p>
+<p class="cmd">...</p>
+<p class="cmd">...</p>
+<p class="cmd">gcc -m32 -pedantic-errors -std=c89 -Wall hello.c</p>
+<p>
+To see the version of a library installed (32 or 64):</p>
+
+<p class="cmd">dpkg -l libbz2-1.0</p>
+<p>
+Processor info:</p>
+
+<p class="cmd">grep --color=always -iw lm /proc/cpuinfo</p>
+
+
+
+<a name="fonts">
+<h4 class="part2">Fonts</h4>
+
+<p>
+<b>Times New Roman:</b></p>
+<p class="fmt" style="font-family:Times New Roman">QWERTY qwerty ЙЦУКЕН йцукен 0123456789</p>
+
+<p>
+<b>Times (just Times):</b></p>
+<p class="fmt" style="font-family:Times">QWERTY qwerty ЙЦУКЕН йцукен 0123456789</p>
+
+<p>
+<b>Georgia:</b></p>
+<p class="fmt" style="font-family:Georgia">QWERTY qwerty ЙЦУКЕН йцукен 0123456789</p>
+
+<p>
+<b>Serif:</b></p>
+<p class="fmt" style="font-family:serif">QWERTY qwerty ЙЦУКЕН йцукен 0123456789</p>
+
+<p>
+<b>Droid Sans Mono:</b></p>
+<p class="fmt" style="font-family:DroidSansMono">QWERTY qwerty ЙЦУКЕН йцукен 0123456789</p>
+
+<p>
+<b>Monospace:</b></p>
+<p class="fmt" style="font-family:Monospace">QWERTY qwerty ЙЦУКЕН йцукен 0123456789</p>
+
+<p>
+<b>Courier:</b></p>
+<p class="fmt" style="font-family:Courier">QWERTY qwerty ЙЦУКЕН йцукен 0123456789</p>
+
+<p>
+<b>Sans-serif:</b></p>
+<p class="fmt" style="font-family:sans-serif">QWERTY qwerty ЙЦУКЕН йцукен 0123456789</p>
+
+<p>
+<b>Arial:</b></p>
+<p class="fmt" style="font-family:Arial">QWERTY qwerty ЙЦУКЕН йцукен 0123456789</p>
+
+<p>
+<b>Open Sans:</b></p>
+<p class="fmt" style="font-family:Open-Sans">QWERTY qwerty ЙЦУКЕН йцукен 0123456789</p>
+
+<p>
+<b>Verdana:</b></p>
+<p class="fmt" style="font-family:Verdana">QWERTY qwerty ЙЦУКЕН йцукен 0123456789</p>
+
+</div>
+
+</body></html>

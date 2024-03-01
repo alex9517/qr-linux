@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference / PostgreSQL</title>
+<meta name="description" content="linux quick reference, sql, PostgreSQL, psql" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<h1 class="part">PostgreSQL</h1>
+
+<p class="menu">
+<a href="#adminpack">Adminpack</a>&nbsp;//
+<a href="#auth">Auth/Access</a>&nbsp;//
+<a href="#backup">Backup/Restore</a>&nbsp;//
+<a href="#concepts">Concepts</a>&nbsp;//
+<a href="#connect">Connect</a>&nbsp;//
+<a href="#data_types">Data&nbsp;types</a>&nbsp;//
+<a href="#install">Install</a>&nbsp;//
+<a href="#psql_lin_apps">Linux&nbsp;apps</a>&nbsp;//
+<a href="#move_db_files">Move&nbsp;database</a>&nbsp;//
+<a href="#psql">psql</a>&nbsp;//
+<a href="#sql_examples">SQL&nbsp;examples</a>&nbsp;//
+<a href="#startup">Startup/shutdown</a>&nbsp;//
+<a href="#users">Users/Roles</a>
+</p>
+
+<p class="date_center" style="padding-bottom:0.7em">
+Ubuntu 20.04 installs PostgreSQL 12 (latest stable release 13.1 / November, 2020)</p>
+<p>
+PostgreSQL is a <i>relational database management system</i> (RDBMS),
+usually available on <samp>5432/tcp</samp> (if it's installed and
+started). To find if PostgreSQL service is installed, try</p>
+
+<p class="cmdc">systemctl status postgresql</p>
+<p class="or">or</p>
+<p class="cmd">/etc/init.d/postgresql status</p>
+<p>
+If there is no service, there still could be a PostgreSQL client, try</p>
+
+<p class="cmdc">psql</p>
+<p class="or">or</p>
+<p class="cmd">man psql</p>
+<p>
+You can get a useful info about running server with
+<code><a href="cmds_s.html#ss">ss</a></code> (socket statistics):</p>
+
+<p class="cmd">ss -nlt</p>
+<p>
+It shows the listening TCP sockets, and if PostgreSQL server is running,
+you will find a line like</p>
+<div class="term">
+<pre>
+LISTEN     0    128     127.0.0.1:5432      *:*</pre></div>
+<p>
+To be exact, <samp>127.0.0.1:5432</samp> means that server accepts requests
+from the local users only, i.e., from apps running on the same computer and
+connecting through the local loop-back interface (<samp>127.0.0.1</samp>),
+no access from the network. It's a default setting after installation due to
+safety reasons. See below <a href="#auth">how to make database available
+through the net</a>.</p>
+
+
+
+<h4>
+<a name="install">Installation</a></h4>
+<p>
+First of all, run</p>
+
+<p class="cmd">sudo apt update</p>
+<p>
+to update your local package index.</p>
+<p>
+As usually with SQL databases, there is a <b>server</b> part and
+a <b>client</b> part. The following cmd installs everything (i.e., the
+latest version available in your Ubuntu repository, common add-ons, etc):</p>
+
+<p class="cmd">sudo apt install postgresql postgresql-contrib</p>
+<p>
+The installation procedurte creates <samp>postgres</samp> Linux account.
+Note that <samp>postgres</samp> is also default database name and main database
+user.</p>
+<p>
+The basic PostgreSQL client (and admin) app is <code>psql</code>
+(<i>PostgreSQL interactive terminal</i>, aka <i>PostgreSQL front-end</i>).
+It's a cmdline app. If you only want to connect to external servers, you don't
+have to install the server part - the client package would be enough:</p>
+
+<p class="cmd">sudo apt install postgresql-client</p>
+<p>
+The main config file is
+<samp>/etc/postgresql/<span class="arg">X.X</span>/main/postgresql.conf</samp>
+(<kbd>X.X</kbd> - version numbers). Among other things, this config file sets
+the location of the database files.</p>
+
+
+
+<h4>
+<a name="startup">Startup/Shutdown</a></h4>
+<p>
+There is a "simple" way and an "expert" way to startup and shutdown PostgreSQL
+database server (or call it "service" - the difference is unessential in this
+context).</p>
+<p>
+Here is the "simple" way. In systems with <samp>systemd</samp>, you can use
+the following cmds (in mosts cases with <code>sudo</code>):</p>
+
+<p class="cmdc">systemctl start postgresql</p>
+<p class="cmdc">systemctl stop postgresql</p>
+<p class="cmdc">systemctl restart postgresql</p>
+<p class="cmdc">systemctl status postgresql</p>
+<p class="cmdc">systemctl disable postgresql</p>
+<p class="cmd">systemctl enable postgresql</p>
+<p>
+The last two cmds control boot policy: to start or not the PostgreSQL service
+at system boot.</p>
+<p>
+You can also handle server using its init script:</p>
+
+<p class="cmdc">/etc/init.d/postgresql start</p>
+<p class="cmdc">/etc/init.d/postgresql stop</p>
+<p class="cmdc">/etc/init.d/postgresql restart</p>
+<p class="cmdc">/etc/init.d/postgresql reload</p>
+<p class="cmdc">/etc/init.d/postgresql force-reload</p>
+<p class="cmd">/etc/init.d/postgresql status</p>
+<p>
+The "expert" and subtle way to handle PostgreSQL assumes the use of
+<code>pg_ctl</code> utility. In fact, it can become the preferential
+way if you have to manage multiple server instances, clusters, and
+other non-trivial database configurations. See manual for details:</p>
+
+<p class="cmd">man pg_ctl</p>
+
+
+
+<h4>
+<a name="connect">Connecting</a></h4>
+<p>
+To switch from your regular Linux account to <samp>postgres</samp> Linux
+account and to connect the database [local, on the same computer] as
+<samp>postgres</samp> (a privileged database user),</p>
+
+<p class="cmd">sudo -u postgres psql postgres</p>
+<p>
+When <code>psql</code> successfully connects to the database server you will
+see the prompt:</p>
+
+<p class="fmt"><span class="prom">postgres=#</span></p>
+<p>
+The <code>psql</code> prompt includes the name of the currently connected
+database and a special indicator: <samp>#</samp> means that you are a database
+superuser and you are not subject to access controls; <samp>&gt;</samp> means
+you are a regular database user.</p>
+<p>
+In general, to connect to a database you should use something like this:</p>
+
+<p class="cmd">psql -h <span class="arg">hostname</span>
+-p <span class="arg">port</span>
+-U <span class="arg">username dbname</span></p>
+<p class="cmd">psql -h <span class="arg">server.domain database user</span></p>
+<p class="cmd">sudo -u postgres psql -h localhost -U appuser testdb</p>
+<p>
+If you omit the <code>-h</code>, client connects via a Unix-domain socket to
+a server on the local host (or via TCP/IP to <samp>localhost</samp> on the
+machines without Unix-domain sockets). The default port is <samp>5432</samp>,
+and the <kbd>username</kbd> is actually a role name; by default, it's OS
+username (user's Linux account name).</p>
+<p>
+Every connection to a database server is made using the name of a particular
+role which defines the initial access privs for cmds issued in that connection.
+The role name for a particular db connection is specified by the client
+initiating a connection request in an application-specific fashion, e.g.,
+<code>psql</code> uses <code>-U</code> option.</p>
+
+
+
+<h4>
+<a name="users">Users, roles, groups</a></h4>
+<p>
+Before PostgreSQL 8.1, users and groups were distinct kinds of entities,
+but now there are <b>only roles</b> which are used to manage database access
+permissions. Roles can own db objects and assign privs on those objects to
+other roles. It's also possible to grant membership in a role to another
+role.</p>
+<p>
+Database roles are completely separate from OS users, though sometimes it may
+be reasonable to maintain a correspondence. Database <b>roles are global</b>
+across a <a href="#concepts">database cluster</a>.</p>
+
+<p class="cmdc">CREATE ROLE <span class="arg">name</span>;</p>
+<p class="cmd">DROP ROLE <span class="arg">name</span>;</p>
+<p>
+Note that Linux cmdline apps <code>createuser</code> and <code>dropuser</code>
+are just wrappers around those SQL cmds.</p>
+<p>
+A freshly initialized database system always contains one predefined role:
+<i>superuser</i>. By default it has the same name as the OS user that
+initialized the <a href="#concepts">database cluster</a>, usually it's
+<samp>postgres</samp>. To create other roles you first have to connect as
+this initial role.</p>
+<p>
+Only roles created with <samp>LOGIN</samp> attrib can be used as the initial
+role (username) for a database connection. In fact, such role is a "database
+user" in old sense. The following two cmds are equivalent:</p>
+
+<p class="cmdc">CREATE ROLE <span class="arg">name</span> LOGIN;</p>
+<p class="cmd">CREATE USER <span class="arg">name</span>;</p>
+<p>
+Other examples:</p>
+
+<p class="cmdc">CREATE ROLE <span class="arg">name</span> CREATEDB;</p>
+<p class="cmdc">CREATE ROLE <span class="arg">name</span> CREATEROLE;</p>
+<p class="cmdc">CREATE ROLE <span class="arg">name</span> REPLICATION LOGIN;</p>
+<p class="cmd">CREATE ROLE <span class="arg">name</span> PASSWORD '<span class="arg">string</span>';</p>
+<p>
+The following permissions and attributes can be used with
+<samp>CREATE ROLE</samp>:</p>
+<ul>
+<li><b>SUPERUSER</b> bypasses all permission checks, except the right to log
+in; this dangerous priv should be used in special cases only, not for
+common tasks;</li>
+<li><b>CREATEDB</b> allows a role to create databases;</li>
+<li><b>CREATEROLE</b> allows a role to create other roles (except for
+superusers); this priv also allows alter/drop other roles, grant/revoke
+membership;</li>
+<li><b>REPLICATION</b> allows to initiate streaming replication; a role used
+for streaming replication must also have <samp>LOGIN</samp> permission;</li>
+<li><b>PASSWORD</b> specifies role's password;</li>
+</ul>
+
+
+
+<h4>
+<a name="psql">Using psql</a></h4>
+<p>
+Besides the standard SQL, you can use special (internal, meta-) cmds.
+The following list includes most popular special cmds:</p>
+
+<p class="cmdc">\q</p>
+<p class="desc">close db connection (i.e., exit <code>psql</code>);</p>
+
+<p class="cmdc">\?</p>
+<p class="desc">list all available command;</p>
+
+<p class="cmdc">\c <span class="arg">dbname</span></p>
+<p class="desc">connect to a specified database;</p>
+
+<p class="cmdc">\cd <span class="arg">dir</span></p>
+<p class="desc">change current working dir;</p>
+
+<p class="cmdc">\conninfo</p>
+<p class="desc">describe the current database connection;</p>
+
+<p class="cmdc">\d</p>
+<p class="desc">list tables in database;</p>
+
+<p class="cmdc">\d <span class="arg">tablename</span></p>
+<p class="desc">describe the specified table;</p>
+
+<p class="cmdc">\d+</p>
+<p class="desc">list all tables in database with some additional info;</p>
+
+<p class="cmdc">\d+ <span class="arg">tablename</span></p>
+<p class="desc">describe the specified table with additional info;</p>
+
+<p class="cmdc">\dn</p>
+<p class="desc">list all schemas;</p>
+
+<p class="cmdc">\dn+</p>
+<p class="desc">list all schemas with additional info;</p>
+
+<p class="cmdc">\dp <span class="arg">table</span></p>
+<p class="desc">show info about existing privs for the specified table;</p>
+
+<p class="cmdc">\du</p>
+<p class="desc">list existing roles;</p>
+
+<p class="cmdc">\dx</p>
+<p class="desc">list installed PostgreSQL extensions;</p>
+
+<p class="cmdc">\e</p>
+<p class="desc">start text editor inside psql;</p>
+
+<p class="cmdc">\encoding <span class="arg">encoding</span></p>
+<p class="desc">set the client character set encoding;</p>
+
+<p class="cmdc">\i <span class="arg">filename</span>.sql</p>
+<p class="desc">read and execute statements from the specified file;</p>
+
+<p class="cmdc">\h</p>
+<p class="desc">list all cmds for which syntax help is available;</p>
+
+<p class="cmdc">\help <span class="arg">cmd</span></p>
+<p class="desc">syntax help on the specified cmd;</p>
+
+<p class="cmdc">\l</p>
+<p class="desc">list all databases;</p>
+
+<p class="cmdc">\l+</p>
+<p class="desc">list all databases with additional info;</p>
+
+<p class="cmdc">\lo_list</p>
+<p class="desc">list all large objects in this database;</p>
+
+<p class="cmdc">\o <span class="arg">filename</span></p>
+<p class="desc">redirect output to a file; now, if you exec
+"<samp>SELECT ...</samp>" the output will be saved in the specified file;</p>
+
+<p class="cmdc">\o</p>
+<p class="desc">cancel output to a file, restore output to the screen;</p>
+
+<p class="cmdc">\p</p>
+<p class="desc">print the current query buffer to stdout;</p>
+
+<p class="cmdc">\password <span class="arg">username</span></p>
+<p class="desc">setting/changing password for the specified user;</p>
+
+<p class="cmdc">\r</p>
+<p class="desc">reset (clear) the query buffer;</p>
+
+<p class="cmdc">\timing</p>
+<p class="desc">switch on the timing of query results (how long each SQL stmt
+takes, in milliseconds); to switch off add 'off';</p>
+
+
+
+<h4>
+<a name="sql_examples">SQL examples</a></h4>
+<p>
+Simple SQL statements:</p>
+
+<p class="cmdc">SELECT version();</p>
+<p class="cmdc">SELECT current_date;</p>
+<p class="cmdc">SELECT rolname FROM pg_roles;</p>
+<p class="cmd">SELECT datname FROM pg_database;</p>
+
+<p class="cmd">CREATE DATABASE testdb2;</p>
+
+<p class="cmd">CREATE TABLE emp (<br>
+id INT,<br>
+first_name VARCHAR(20),<br>
+last_name VARCHAR(20),<br>
+dept INT,<br>
+...);</p>
+<p class="cmd">DROP TABLE messages;</p>
+<p class="cmdc">INSERT INTO emp VALUES (1, 'Scott', 'Pilgrim', ...);</p>
+<p class="cmd">INSERT INTO emp (id, first_name, last_name)
+VALUES (2, 'James', 'Bond');</p>
+<p class="cmd">INSERT INTO users (username, password, created, modified, enabled)
+VALUES ('user', 'abracadabra', '2019-11-18', '2019-11-18', true);</p>
+<p class="cmd">UPDATE users SET password = (SELECT password FROM app_user WHERE id = 8) WHERE id = 1;</p>
+<p class="cmd">DELETE FROM user_role;</p>
+
+<p class="cmd">COPY emp FROM '/home/user/tmp/emp-data.txt';</p>
+<p class="cmdc">SELECT * FROM emp WHERE id = 2;</p>
+<p class="cmd">SELECT * FROM emp ORDER BY last_name;</p>
+
+<p class="cmdc">ALTER TABLE persons OWNER TO appuser;</p>
+<p class="cmd">ALTER TABLE categories OWNER TO appuser;</p>
+
+<p class="cmdc">ALTER TABLE user_role DROP CONSTRAINT user_role_fk1;</p>
+<p class="cmd">ALTER TABLE user_role ADD CONSTRAINT user_role_fk1 FOREIGN KEY (user_id) REFERENCES users;</p>
+
+
+<p>
+An SQL script (filename <samp>schema-postgresql.sql</samp>):</p>
+<div class="file"><pre>
+CREATE SCHEMA IF NOT EXISTS test AUTHORIZATION appuser;
+
+-- To use Hibernate and PostgreSQL together for
+-- storing large binary data, your best bet is to
+-- use a consistent style for defining the column
+-- datatypes, i.e, pick either "bytea" or "oid" and
+-- use it consistently);
+-- set hibernate.jdbc.use_streams_for_binary
+-- appropriately, based on which style you chose
+-- (false for oid, true for bytea);
+-- NOTE! If you add @Lob annotation,
+--     hibernate will generate an oid;
+
+CREATE TABLE category (
+id INTEGER CONSTRAINT category_pk PRIMARY KEY,
+name VARCHAR(32) NOT NULL);
+
+
+CREATE TABLE persons (
+id BIGSERIAL CONSTRAINT persons_pk PRIMARY KEY,
+first_name VARCHAR(32) NOT NULL,
+last_name VARCHAR(32) NOT NULL,
+category_id INTEGER,
+misc_info VARCHAR(4000),
+birth_date DATE,
+pass_date DATE,
+picture OID);
+
+
+CREATE TABLE app_user (
+id SERIAL CONSTRAINT app_user_pk PRIMARY KEY,
+username VARCHAR(32) NOT NULL,
+password VARCHAR(60) NOT NULL);
+
+
+CREATE TABLE role (
+id INTEGER CONSTRAINT role_pk PRIMARY KEY,
+name VARCHAR(32) NOT NULL);
+
+
+CREATE TABLE user_role (
+user_id INTEGER NOT NULL,
+role_id INTEGER NOT NULL,
+CONSTRAINT user_role_pk PRIMARY KEY (user_id, role_id));
+
+
+alter table app_user add constraint app_user_uk1 unique (username);
+alter table category add constraint category_uk1 unique (name);
+alter table role add constraint role_uk1 unique (name);
+alter table persons add constraint persons_fk1 foreign key (category_id) references category;
+alter table user_role add constraint user_role_fk1 foreign key (user_id) references app_user;
+alter table user_role add constraint user_role_fk2 foreign key (role_id) references role;
+
+-- GRANT ALL PRIVILEGES ON category TO appuser;
+-- GRANT ALL PRIVILEGES ON persons TO appuser;
+-- GRANT SELECT, INSERT, UPDATE, DELETE ON category TO appuser;
+-- GRANT SELECT, INSERT, UPDATE, DELETE ON persons TO appuser;
+
+-- GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO appuser;
+
+-- ALTER DEFAULT PRIVILEGES IN SCHEMA public
+--     GRANT USAGE, SELECT ON SEQUENCES TO appuser;
+<pre></div>
+
+
+
+<h4>
+<a name="data_types">Data types</a></h4>
+<p>
+PostgreSQL supports the following SQL data types:</p>
+<div class="file"><pre>
+  int
+  smallint
+  real
+  double precision
+  char(N)
+  varchar(N)
+  date
+  time
+  timestamp
+  interval
+  ...</pre></div>
+<p>
+and other types of general purpose, a set of geometric types, user-defined
+data types, etc. Type names are not key words, except where it's required to
+support special cases in the SQL standard.</p>
+
+
+
+<h4>
+<a name="psql_lin_apps">PostgreSQL-related Linux apps</a></h4>
+<p>
+Some PostgreSQL-related tasks are implemented as Linux cmds. For example,
+the following cmds can be used to create a new user or a new database, to
+drop an existing database or user:</p>
+
+<p class="cmdc">sudo -u postgres createuser zorro</p>
+<p class="cmdc">sudo -u postgres createdb testdb</p>
+<p class="cmdc">sudo -u postgres createdb -O zorro mydb</p>
+<p class="cmdc">sudo -u postgres dropdb mydb</p>
+<p class="cmd">sudo -u postgres dropuser batman</p>
+<p>
+As you see, all above cmds switch to <samp>postgres</samp> account, because
+you cannot create or drop database unless you have the appropriate privileges.</p>
+<p>
+PostgreSQL user names are separate from OS user accounts. When you connect
+to a database, you can choose what PostgreSQL user name to connect as; if you
+don't, it will default to the same name as your current OS account. There is
+always a PostgreSQL user account that has the same name as OS user that started
+the server, and this user always has permission to create databases. Instead of
+logging in as that user, you can specify the <code>-U</code> option to select
+another PostgreSQL user name to connect with. All these cmds accept standard
+connection options:</p>
+<ul>
+<li><code>-h</code> <kbd>host</kbd> - hostname of the database server,</li>
+<li><code>-p</code> <kbd>port</kbd> - port number (if it's not default),</li>
+<li><code>-U</code> <kbd>name</kbd> - username to connect as.</li>
+</ul>
+There are also many other options, see Linux <samp>man</samp>s for these cmds.</p>
+
+
+
+<h4>
+<a name="adminpack">Installing Adminpack</a></h4>
+<p>
+To install PostgreSQL <i>Adminpack</i>, enter the following cmd in
+<code>psql</code> prompt:</p>
+
+<p class="fmtc"><span class="prom">postgres=#</span> <code>CREATE EXTENSION adminpack;</code></p>
+<p class="cmd">CREATE EXTENSION</p>
+<p>
+You can check installed modules with the following cmd:</p>
+
+<p class="fmt"><span class="prom">postgres=#</span> <code>select * from pg_available_extensions;</code></p>
+
+
+
+<h4>
+<a name="auth">Auth, access, etc</a></h4>
+<p>
+By default, TCP/IP connection is disabled, and remote users cannot access
+the database. To remove this restriction, edit
+<samp>/etc/postgresql/<span class="arg">X.X</span>/main/postgresql.conf</samp> file:</p>
+<div class="file"><pre>
+listen_addresses = '*'
+port = 5432</pre>
+</div>
+<p>
+Restart postgresql service to activate changes, and try
+
+<p class="cmd">ss -nlt</p>
+<p>
+If you've done everything right, it would display</p>
+<div class="term"><pre>
+LISTEN     0    128     0.0.0.0:5432      0.0.0.0:*
+</pre></div>
+<p>
+And <b>do not forget about your firewall</b>, make sure it allows to accept
+connection requests on <samp>5432/tcp</samp>.</p>
+<p>
+If you value your data, you should use at least MD5 authentication which
+requires the clients to supply an MD5-encrypted passwords for authentication.
+To set this restriction, edit
+<samp>/etc/postgresql/<span class="arg">X.X</span>/main/pg_hba.conf</samp>
+file.</p>
+<p>
+<i>Note that the network range <samp>192.168.1.0/24</samp> is given as
+an example, and there is no corresponding range for IPv6 in assumption that
+clients would not use IPv6 (often, but not always, true)!</i></p>
+<div class="file"><pre>
+[...]
+# TYPE  DATABASE  USER  ADDRESS     METHOD
+
+# "local" is for Unix domain socket ... only
+local   all       all                   md5
+# IPv4 local connections:
+host    all       all   127.0.0.1/32    md5
+host    all       all   192.168.1.0/24  md5
+# IPv6 local connections:
+host    all       all   ::1/128         md5
+[...]</pre></div>
+<p>
+Restart postgresql service to activate changes.</p>
+<p>
+If you still cannot connect and receive an error message like</p>
+<div class="term"><pre>
+  FATAL: no pg_hba.conf entry for host "postresql-client", ...
+</pre></div>
+<p>
+go back to
+<samp>/etc/postgresql/<span class="arg">X.X</span>/main/pg_hba.conf</samp>
+file and try to add a line like this:</p>
+<div class="file"><pre>
+host    all      all      0.0.0.0/0  trust
+</pre></div>
+
+<!--
+To accept connections from a remote PostreSQL client to all databases and
+all users add the following line to /etc/postgresql/10/main/pg_hba.conf:
+
+  host    all          all            0.0.0.0/0  trust
+
+Failing to do so may result in the following error message:
+
+psql: FATAL:  no pg_hba.conf entry for host "postresql-client", user "postgres", database "postgres", SSL on
+FATAL:  no pg_hba.conf entry for host "postresql-client", user "postgres", database "postgres", SSL off
+-->
+
+
+
+<h4>
+<a name="move_db_files">Moving database files</a></h4>
+<p>
+You can get info about the current data dir from the config file:</p>
+
+<p class="fmt"><samp>/etc/postgresql/<span class="arg">X.X</span>/main/postgresql.conf</samp></p>
+<p>
+or from the database itself:</p>
+
+<p class="cmdc">sudo -u postgres psql</p>
+<p class="cmd">...</p>
+<p class="fmtc"><span class="prom">postgres=#</span> <code>show data_directory;</code></p>
+<p class="cmd">...</p>
+<p class="fmt"><span class="prom">postgres=#</span> <code>\q</code></p>
+<p>
+Choose new location and <b>shutdown database</b> (it's required to ensure
+the data integrity!):</p>
+
+<p class="cmdc">sudo service postgresql stop</p>
+<p class="cmd">...</p>
+<p class="cmd">sudo service postgresql status</p>
+<p>
+or (for Linux with systemd)</p>
+
+<p class="cmdc">sudo systemctl stop postgresql</p>
+<p class="cmd">...</p>
+<p>
+When database is successfully shut down copy current data dir to a new
+location (you should not create new dir manually, leave it to rsync):</p>
+
+<p class="cmd">sudo rsync -av /var/lib/postgresql /u02</p>
+<p>
+Now you must edit config file (see above):</p>
+
+<p class="fmt"><samp>data_directory = '/u02/postgresql/<span class="arg">X.X</span>/main'</samp></p>
+<p>
+Start database to see if it's O.K. and it really uses new location:</p>
+
+<p class="cmdc">sudo service postgresql start</p>
+<p class="cmd">...</p>
+<p class="cmd">sudo service postgresql status</p>
+<p>
+or (in case ...)</p>
+<p class="cmdc">sudo systemctl start postgresql</p>
+<p class="cmd">...</p>
+<p class="cmdc">sudo systemctl status postgresql</p>
+<p class="cmd">...</p>
+<p class="cmdc">sudo -u postgres psql</p>
+<p class="cmd">...</p>
+<p class="fmtc"><span class="prom">postgres=#</span> <code>show data_directory;</code></p>
+<p class="cmd">...</p>
+<p>
+At the old location you can rename <samp>main</samp> to something like
+<samp>main.bak</samp> to avoid confusion in future, or (maybe after some
+reasonable wait time) delete old stuff.</p>
+
+
+
+<h4>
+<a name="backup">Backup / restore</a></h4>
+<p>
+To backup a single database use <code>pg_dump</code> (Linux app), to backup
+the whole database (i.e., <a href="#concepts">database cluster</a>)
+use <code>pg_dumpall</code> (Linux app).</p>
+<p>
+To backup a single database in plain text format (which is actually SQL script):</p>
+
+<p class="cmd">sudo -u postgres pg_dump testdb &gt; testdb_bkp.sql</p>
+<p>
+(you should do it on behalf of DBA, i.e. database superuser).
+To restore <samp>testdb</samp> using this backup file, you must first
+create an empty database with the appropriate name, then exec:</p>
+
+<p class="cmd">sudo -u postgres psql testdb &lt; testdb_bkp.sql</p>
+<p>
+An alternative restore cmd:</p>
+
+<p class="cmd">sudo -u postgres psql -d testdb -f testdb_bkp.sql</p>
+<p>
+There is a slightly different approach: backup using a custom-format
+archive file:</p>
+
+<p class="cmd">sudo -u postgres pg_dump -Fc testdb &gt; testdb_bkp.dump</p>
+<p>
+It provides a compressed file, and allows to restore separate tables.
+However, in this case you must restore like this:</p>
+
+<p class="cmd">sudo -u postgres pg_restore -d testdb testdb_bkp.dump</p>
+<p>
+Once again, you have to create <samp>testdb</samp> beforehand.</p>
+<p>
+Since <code>pg_dump</code> does not save info about roles or tablespaces
+(it's a cluster-wide stuff), PostgreSQL developers provide a utility
+<code>pg_dumpall</code> which saves the entire contents of a database cluster
+- all databases + cluster-wide data:</p>
+
+<p class="cmd">sudo -u postgres pg_dumpall &gt; full_db.bkp</p>
+<p>
+To restore the whole database cluster:</p>
+
+<p class="cmd">sudo -u postgres psql -f full_db.bkp postgres</p>
+<p>
+You should specify some existing database name to start from, but if you are
+loading into an empty cluster, use <samp>postgres</samp>. It's important to
+have database superuser access when restoring a <code>pg_dumpall</code> dump.
+Also, if you use tablespaces, make sure that the tablespace paths in the dump
+are appropriate for the new installation.</p>
+
+
+
+<h4>
+<a name="concepts">Concepts</a></h4>
+<p>
+A <b>database</b> is a named collection of SQL (database) objects.
+A collection of databases managed by a single PostgreSQL server instance
+constitutes a <b>database cluster</b></a>.</p>
+<p>
+Every database object (table, function, ...) belongs to one and only one
+database. But there are some system catalogs, e.g., <samp>pg_database</samp>,
+that belong to a whole cluster and are accessible from each database within
+the cluster. In general, the hierarchy looks like this: server, database,
+schema, table (or some other kind of object).</p>
+<p>
+In a connection request client must specify the name of the database, it's not
+possible to access more than one database per connection. However, app is not
+restricted in the number of connections it opens to the same or other
+databases.</p>
+<p>
+Databases are physically separated and access control is managed at the
+connection level. If one PostgreSQL server instance houses projects or users
+that should be separate and for the most part unaware of each other, put them
+into separate databases. If the projects or users are interrelated and should
+be able to use each other's resources, put them in the same database but into
+separate schemas. <b>Schema</b> is a purely logical structure, who can access
+what is managed by the privilege system.</p>
+<p>
+Each <b>table</b> is a named collection of rows. Each <b>row</b> of a given
+table has the same set of named columns, and each <b>column</b> has a specific
+data type.</p>
+<p>
+PostgreSQL <b>tablespace</b> allows db admin to define location in the file
+system where the files representing database objects can be stored, e.g.
+(on behalf of database superuser):</p>
+
+<p class="cmd">CREATE TABLESPACE fastspace LOCATION
+'/mnt/sda1/postgresql/data';</p>
+<p>
+The location must be an existing, empty dir owned by the PostgreSQL OS user.
+All objects subsequently created within the tablespace will be stored in files
+underneath this dir.</p>
+
+<!--
+<a name="mysqldump">
+<h4 class="part3">Database backup</h4></a>
+<p>
+-->
+
+</div>
+
+</body></html>

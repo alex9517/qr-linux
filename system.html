@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (system arch x86 and x86-64)</title>
+<meta name="description" content="linux quick reference, arch, acpi, kernel, memory, x86, x86-64, /etc, /var/log" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<h1 class="part">Linux Operating System</h1>
+
+<p class="menu">
+<a href="acpi.html">ACPI</a>&nbsp;//
+<a href="#files">Files &amp; dirs</a>&nbsp;//
+<a href="kernel.html">Kernel</a>&nbsp;//
+<a href="lvm-raid.html">LVM &amp; RAID</a>&nbsp;//
+<a href="memory.html">Memory</a>&nbsp;//
+<a href="howto.html#x86-64">x86-64</a>
+</p>
+
+
+<h4>
+<a name="files">Files and Dirs</a></h4>
+
+<h5>Filesystem Hierarchy Standard (FHS)</h5>
+<p>
+The <b>FHS</b> defines the dir struct and dir contents in Unix and Unix-like
+OSs. It's maintained by the Linux Foundation. The latest version is 3.0,
+released on 3 June 2015. Currently it's only used by Linux distributions.</p>
+<p>
+In the FHS all files and dirs appear under the root dir, even if they
+are stored on different physical or virtual devices.</p>
+
+<table class="grid">
+<tr>
+<th class="grid_2">Directory</th>
+<th class="grid_2">Purpose</th></tr>
+<tr>
+<td class="grid_2"><samp>/</samp></td><td class="grid_2">
+Primary hierarchy root and root dir of the entire filesystem hierarchy.</td></tr>
+<tr>
+<td class="grid_2"><samp>/bin</samp></td><td class="grid_2">
+Essential cmd binaries that need to be available in single user mode; for all
+users, e.g., <code>cat</code>, <code>ls</code>, <code>cp</code>.</td></tr>
+<tr>
+<td class="grid_2"><samp>/boot</samp></td><td class="grid_2">
+Boot loader files, e.g., kernels, initrd.</td></tr>
+<tr>
+<td class="grid_2"><samp>/dev</samp></td><td class="grid_2">
+Essential devices, e.g., <samp>/dev/null</samp>.</td></tr>
+<tr>
+<td class="grid_2"><samp>/etc</samp></td><td class="grid_2">
+Host-specific system-wide config files.
+There has been controversy over the meaning of the name itself. In early
+versions of the UNIX Implementation Document from Bell labs, <samp>/etc</samp>
+is referred to as the etcetera dir, as this dir historically held everything
+that did not belong elsewhere (however, the FHS restricts <samp>/etc</samp> to
+static config files and may not contain binaries). Since the publication of
+early doc, the dir name has been re-explained in various ways. Recent
+interpretations include backronyms such as "Editable Text Configuration" or
+"Extended Tool Chest".</td></tr>
+<tr>
+<td class="grid_2"><samp>/etc/opt</samp></td><td class="grid_2">
+Config files for add-on packages that are stored in <samp>/opt/</samp>.</td></tr>
+<tr>
+<td class="grid_2"><samp>/etc/sgml</samp></td><td class="grid_2">
+Config files, such as catalogs, for software that processes SGML.</td></tr>
+<tr>
+<td class="grid_2"><samp>/etc/X11</samp></td><td class="grid_2">
+Config files for the X Window System, version 11.</td></tr>
+<tr>
+<td class="grid_2"><samp>/etc/xml</samp></td><td class="grid_2">
+Config files, such as catalogs, for software that processes XML.</td></tr>
+<tr>
+<td class="grid_2"><samp>/home</samp></td><td class="grid_2">
+Users' home dirs, containing saved files, personal settings, etc.</td></tr>
+<tr>
+<td class="grid_2"><samp>/lib</samp></td><td class="grid_2">
+Libraries essential for the binaries in <samp>/bin/</samp> and <samp>/sbin/</samp>.</td></tr>
+<tr>
+<td class="grid_2"><samp>/lib<kbd>XXX</kbd></samp></td><td class="grid_2">
+Alternate format essential libraries. Such dirs are optional, but if they
+exist, they have some requirements.</td></tr>
+<tr>
+<td class="grid_2"><samp>/media</samp></td><td class="grid_2">
+Mount points for removable media such as CD-ROMs (appeared in FHS-2.3).</td></tr>
+<tr>
+<td class="grid_2"><samp>/mnt</samp></td><td class="grid_2">
+Temporarily mounted filesystems.</td></tr>
+<tr>
+<td class="grid_2"><samp>/opt</samp></td><td class="grid_2">
+Optional application software packages.</td></tr>
+<tr>
+<td class="grid_2"><samp>/proc</samp></td><td class="grid_2">
+Virtual filesystem providing process and kernel info as files.
+In Linux, corresponds to a procfs mount.</td></tr>
+<tr>
+<td class="grid_2"><samp>/root</samp></td><td class="grid_2">
+Home directory for the root user.</td></tr>
+<tr>
+<td class="grid_2"><samp>/run</samp></td><td class="grid_2">
+Run-time variable data: info about the running system since last boot,
+e.g., currently logged-in users and running daemons.</td></tr>
+<tr>
+<td class="grid_2"><samp>/sbin</samp></td><td class="grid_2">
+Essential system binaries, e.g., <code>fsck</code>, <code>init</code>,
+<code>route</code>.</td></tr>
+<tr>
+<td class="grid_2"><samp>/srv</samp></td><td class="grid_2">
+Site-specific data which are served by the system.</td></tr>
+<tr>
+<td class="grid_2"><samp>/tmp</samp></td><td class="grid_2">
+Temporary files (see also <samp>/var/tmp</samp>). Often not preserved
+between system reboots, and may be severely size restricted.</td></tr>
+<tr>
+<td class="grid_2"><samp>/usr</samp></td><td class="grid_2">
+Secondary hierarchy for read-only user data; contains the majority of
+(multi-)user utilities and applications.</td></tr>
+<tr>
+<td class="grid_2"><samp>/usr/bin</samp></td><td class="grid_2">
+Non-essential cmd binaries (not needed in single user mode); for all users.</td></tr>
+<tr>
+<td class="grid_2"><samp>/usr/include</samp></td><td class="grid_2">
+Standard include files.</td></tr>
+<tr>
+<td class="grid_2"><samp>/usr/lib</samp></td><td class="grid_2">
+Libraries for the binaries in <samp>/usr/bin/</samp> and
+<samp>/usr/sbin/</samp>.</td></tr>
+<tr>
+<td class="grid_2"><samp>/usr/lib<kbd>XXX</kbd></samp></td><td class="grid_2">
+Alternate format libraries (optional).</td></tr>
+<tr>
+<td class="grid_2"><samp>/usr/local</samp></td><td class="grid_2">
+Tertiary hierarchy for local data, specific to this host.
+Typically has further subdirs, e.g., <samp>bin/</samp>, <samp>lib/</samp>,
+<samp>share/</samp>.</td></tr>
+<tr>
+<td class="grid_2"><samp>/usr/sbin</samp></td><td class="grid_2">
+Non-essential system binaries, e.g., daemons for various network-services.</td></tr>
+<tr>
+<td class="grid_2"><samp>/usr/share</samp></td><td class="grid_2">
+Architecture-independent (shared) data.</td></tr>
+<tr>
+<td class="grid_2"><samp>/usr/src</samp></td><td class="grid_2">
+Source code, e.g., the kernel source code with its header files.</td></tr>
+<tr>
+<td class="grid_2"><samp>/usr/X11R6</samp></td><td class="grid_2">
+X Window System, Version 11, Release 6 (up to FHS-2.3, optional).</td></tr>
+<tr>
+<td class="grid_2"><samp>/var</samp></td><td class="grid_2">
+Variable files - files whose content is expected to continually change during
+normal operation of the system—such as logs, spool files, and temporary e-mail
+files.</td></tr>
+<tr>
+<td class="grid_2"><samp>/var/cache</samp></td><td class="grid_2">
+Application cache data. Such data are locally generated as a result of
+time-consuming I/O or calculation. The app must be able to regenerate or
+restore the data. The cached files can be deleted without loss of data.</td></tr>
+<tr>
+<td class="grid_2"><samp>/var/lib</samp></td><td class="grid_2">
+State info. Persistent data modified by programs as they run, e.g., databases,
+packaging system metadata, etc.</td></tr>
+<tr>
+<td class="grid_2"><samp>/var/lock</samp></td><td class="grid_2">
+Lock files. Files keeping track of resources currently in use.</td></tr>
+<tr>
+<td class="grid_2"><samp>/var/log</samp></td><td class="grid_2">
+Log files. Various logs.</td></tr>
+<tr>
+<td class="grid_2"><samp>/var/mail</samp></td><td class="grid_2">
+Users' mailboxes.</td></tr>
+<tr>
+<td class="grid_2"><samp>/var/opt</samp></td><td class="grid_2">
+Variable data from add-on packages that are stored in <samp>/opt/</samp>.</td></tr>
+<tr>
+<td class="grid_2"><samp>/var/run</samp></td><td class="grid_2">
+Run-time variable data. This dir contains system info data describing
+the system since it was booted. In FHS 3.0, <samp>/var/run</samp> is replaced
+by <samp>/run</samp>; a system should either continue to provide
+a <samp>/var/run</samp> dir, or provide a symlink to <samp>/run</samp>,
+for backwards compatibility.</td></tr>
+<tr>
+<td class="grid_2"><samp>/var/spool</samp></td><td class="grid_2">
+Spool for tasks waiting to be processed, e.g., print queues and outgoing
+mail queue.</td></tr>
+<tr>
+<td class="grid_2"><samp>/var/spool/mail</samp></td><td class="grid_2">
+Deprecated location for users' mailboxes.</td></tr>
+<tr>
+<td class="grid_2"><samp>/var/tmp</samp></td><td class="grid_2">
+Temporary files to be preserved between reboots.</td></tr>
+</table>
+<p>
+Some distributions that generally follow the standard deviate from it in
+some areas. Common deviations include:</p>
+<ul>
+<li>Modern Linux distributions include a <samp>/sys</samp> directory as
+a virtual filesystem (<samp>sysfs</samp>, comparable to <samp>/proc</samp>,
+which is a <samp>procfs</samp>) that stores and allows modification of the
+devices connected to the system, whereas many traditional UNIX and Unix-like
+OSs use <samp>/sys</samp> as a symbolic link to the kernel source tree.</li>
+<li>Many modern UNIX systems (like FreeBSD via its ports system) install
+third party packages into <samp>/usr/local</samp> dir while keeping the code
+considered as the part of the system in <samp>/usr</samp> dir.</li>
+<li>Some Linux distributions no longer differentiate between <samp>/lib</samp>
+versus <samp>/usr/lib</samp> and have <samp>/lib</samp> symlinked to
+<samp>/usr/lib</samp>.</li>
+<li>Some Linux distributions no longer differentiate between <samp>/bin</samp>
+vs <samp>/usr/bin</samp> and <samp>/sbin</samp> vs <samp>/usr/sbin</samp>.
+They symlink ... And <samp>/usr/sbin</samp> may get symlinked to
+<samp>/usr/bin</samp>.</li>
+</ul>
+<p>
+Modern Linux distros include a <samp>/run</samp> dir as a temporary filesystem
+(<samp>tmpfs</samp>) which stores volatile runtime data, following the FHS
+version 3.0. According to the FHS version 2.3, such data were stored in
+<samp>/var/run</samp> but this was a problem in some cases because this dir
+isn't always available at early boot. As a result, these programs have had to
+resort to trickery, such as using <samp>/dev/.udev</samp>,
+<samp>/dev/.mdadm</samp>, etc, even though the device dir isn't intended for
+such data. Among other advantages, this makes the system easier to use normally
+with the root fs mounted read-only. Below are the changes Debian made in its
+2013 Wheezy release:</p>
+<ul>
+<li><samp>/dev/.* → /run/*</samp></li>
+<li><samp>/dev/shm → /run/shm</samp></li>
+<li><samp>/dev/shm/* → /run/*</samp></li>
+<li><samp>/etc/* (writeable files) → /run/*</samp></li>
+<li><samp>/lib/init/rw → /run</samp></li>
+<li><samp>/var/lock → /run/lock</samp></li>
+<li><samp>/var/run → /run</samp></li>
+<li><samp>/tmp → /run/tmp</samp></li>
+</ul>
+
+
+<h5>
+<a name="passwd_hash">About password hash</a></h5>
+<p>
+<samp>/etc/shadow</samp> stores password hashes (if account has password).
+The type of the hash function can be (?) defined from the prefix:</p>
+<ul>
+<li><samp>$1$</samp> : MD5</li>
+<li><samp>$2$</samp> : Bcrypt
+<ul>
+<li><samp>$2a$</samp> : Bcrypt, 1999</li>
+<li><samp>$2x$</samp>, <samp>$2y$</samp> : Bcrypt, 2011</li>
+<li><samp>$2b$</samp> : Bcrypt, 2014</li>
+</ul></li>
+<li><samp>$sha1$</samp> : SHA-1</li>
+<li><samp>$5$</samp> : SHA-256</li>
+<li><samp>$6$</samp> : SHA-512</li>
+</ul>
+
+
+<h5>
+<a name="logs">Logs</a></h5>
+<p>
+By default most Linux logs can be found in <samp>/var/log/</samp> dir.</p>
+
+<table class="grid">
+<tr>
+<th>Filename(s)</th><th>Purpose</th></tr>
+<tr>
+<td class="grid_2"><samp>auth.log</samp></td><td class="grid_2">Authentication logs</td></tr>
+<tr>
+<td class="grid_2"><samp>boot.log</samp></td><td class="grid_2">Boot logs</td></tr>
+<tr>
+<td class="grid_2"><samp>btmp</samp></td><td class="grid_2">Invalid login attempts</td></tr>
+<tr>
+<td class="grid_2"><samp>cron</samp></td><td class="grid_2">Cron logs</td></tr>
+<tr>
+<td class="grid_2"><samp>daemon.log</samp></td><td class="grid_2">Logs for specific services (daemons)</td></tr>
+<tr>
+<td class="grid_2"><samp>dmesg</samp></td><td class="grid_2">Kernel boot messages</td></tr>
+<tr>
+<td class="grid_2"><samp>httpd/</samp></td><td class="grid_2">Apache logs</td></tr>
+<tr>
+<td class="grid_2"><samp>kern.log</samp></td><td class="grid_2">Kernel logs</td></tr>
+<tr>
+<td class="grid_2"><samp>lastlog</samp></td><td class="grid_2">Last user logins (non-text; use <code>lastlog</code>)</td></tr>
+<tr>
+<td class="grid_2"><samp>mail*</samp></td><td class="grid_2">Mail server logs</td></tr>
+<tr>
+<td class="grid_2"><samp>messages</samp></td><td class="grid_2">General/all logs</td></tr>
+<tr>
+<td class="grid_2"><samp>mysql*</samp></td><td class="grid_2">MySQL logs</td></tr>
+<tr>
+<td class="grid_2"><samp>secure</samp></td><td class="grid_2">Security/authentication logs</td></tr>
+<tr>
+<td class="grid_2"><samp>syslog</samp></td><td class="grid_2">All system logs</td></tr>
+<tr>
+<td class="grid_2"><samp>wtmp</samp></td><td class="grid_2">User logins and logouts (non-text; use <code>last</code>)</td></tr>
+</table>
+<p>
+See config in <samp>/etc/rsyslog.conf</samp> and
+<samp>/etc/rsyslog.d/</samp>.</p>
+<p>
+The list of facilities recognized by Linux:</p>
+<ul>
+<li><samp>auth</samp> or <samp>authpriv</samp>: Messages coming from authorization and security related events;</li>
+<li><samp>kern</samp>: Any message coming from the Linux kernel;</li>
+<li><samp>mail</samp>: Messages generated by the mail subsystem;</li>
+<li><samp>cron</samp>: Cron daemon related messages;</li>
+<li><samp>daemon</samp>: Messages coming from daemons;</li>
+<li><samp>news</samp>: Messages coming from network news subsystem;</li>
+<li><samp>lpr</samp>: Printing related log messages;</li>
+<li><samp>user</samp>: Log messages coming from user programs;</li>
+<li><samp>local0</samp> to <samp>local7</samp>: Reserved for local use;</li>
+</ul>
+<p>
+The list of priorities in ascending order:</p>
+<ul>
+<li><samp>debug</samp>: Debug information from programs;</li>
+<li><samp>info</samp>: Simple informational message - no intervention is required;</li>
+<li><samp>notice</samp>: Condition that may require attention;</li>
+<li><samp>warn</samp>: Warning;</li>
+<li><samp>err</samp>: Error;</li>
+<li><samp>crit</samp>: Critical condition;</li>
+<li><samp>alert</samp>: Condition that needs immediate intervention;</li>
+<li><samp>emerg</samp>: Emergency condition;</li>
+</ul>
+<p>
+Linux uses the concept of "rotating" log files instead of purging or
+deleting them. When a log is rotated (usually once a week, though there are
+exceptions), a new log file is created and the old one is renamed (optionally
+compressed). The number of backlogs is limited (usually <samp>4</samp>),
+the oldest are auto deleted.</p>
+<p>
+The rotation is initiated through the logrotate utility. See config in
+<samp>/etc/logrotate.conf</samp> and <samp>/etc/logrotate.d/</samp>.</p>
+
+
+<h5>
+<a name="tmpdirs">About temporary directories</a></h5>
+<p>
+In Unix and Linux, the global temp dirs are:</p>
+
+<p class="fmtc"><samp>/tmp</samp></p>
+<p class="fmt"><samp>/var/tmp</samp></p>
+<p>
+Typically, the last is for persistent files (to be preserved over reboots),
+while <samp>/tmp</samp> is for files that are allowed to disappear during
+reboot.</p>
+<p>
+You can force apps to use a different location for temp stuff.
+<samp>TMPDIR</samp> is the canonical Unix env variable that should be
+used to specify a temp dir for scratch space. Most Unix/Linux programs
+honor this setting, some do not.</p>
+
+</div>
+
+</body></html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference / ACPI</title>
+<meta name="description" content="linux quick reference, acpi, dsdt, power management, power states, STR, STD" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<!--
+<a id="restart" title="Start from the beginning" href="toc.html">
+<img class="butt" src="images/reset.png" /></a>
+-->
+
+<h1 class="part">
+<a name="acpi">ACPI</a></h1>
+
+<p class="menu">
+<a href="#dsdt">DSDT</a>&nbsp;//
+<a href="#power_states">Power states</a></p>
+<p>
+<b>Advanced Configuration and Power Interface</b> is an open industry
+specification defining hardware &amp; software interfaces that enable
+<b>OSPM</b> (OS-directed configuration and power management) to enumerate
+and configure motherboard devices, and manage their power supply, consumption,
+etc.</p>
+<p>
+ACPI replaces old <b>APM</b> (Advanced Power Management), the "MultiProcessor
+spec" and the "Plug and Play BIOS spec". ACPI brings power management under
+the control of the OS, as opposed to the old BIOS-centered system which relied
+on platform-specific firmware to determine PM and config policy.</p>
+<p>
+ACPI has three main components:</p>
+<ul>
+<li>the ACPI tables (see <a href="#dsdt">DSDT</a>),</li>
+<li>the ACPI BIOS,</li>
+<li>the ACPI registers.</li>
+</ul>
+<p>
+Unlike its predecessors (APM, PnP BIOS), the ACPI implements little of its
+functionality in the ACPI BIOS code, whose main role is to load the ACPI tables
+in system memory. Instead, most of the firmware ACPI functionality is provided
+in ACPI Machine Language (<b>AML</b>) bytecode stored in the ACPI tables.</p>
+<p>
+To use these tables, OS must have an interpreter for the AML bytecode.
+The ACPI Component Architecture (ACPICA) provides an open-source OS-independent
+reference implementation of the OS-related ACPI code. The ACPICA code is used
+by Linux and FreeBSD, which supplement it with their OS-specific code.</p>
+
+
+
+<h4 class="part2">
+<a name="dsdt">DSDT</a></h4>
+<p>
+(Differentiated System Description Table) is a part of ACPI spec.
+It contains the <b>Differentiated Definition Block</b>, which supplies
+the implementation and configuration info about the base system.
+DSDT has definitions of all of devices that ACPI supports, and describes
+their capabilities (e.g., the battery, AC Adapter, Embedded Controller,
+Fans and Thermal Zones). This info is presented in a hierarchical manner,
+so that ACPI (and OS) can be aware of dependency relationships among the
+system hardware. The DSDT is loaded and inserted into the ACPI Namespace
+at boot time and tells the ACPI drivers what to look for.</p>
+<p>
+An OEM must supply a DSDT to an ACPI-compatible OS (firmware from the
+manufacturer).</p>
+<p>
+<b>The main problem</b>. The ACPI spec defines the requirements for the DSDT
+(and everything else, for that matter) pretty explicitly. Intel's ASL compiler,
+<samp>iasl</samp>, used to compile the DSDT from ASL (ACPI Source Language)
+to AML (ACPI Machine Language) throws errors and warnings if the underlying
+ASL is buggy. Unfortunately, Microsoft's ASL compiler allows many of these
+errors and warnings to sneak by. As a result, many OEMs write buggy DSDTs,
+and it turns out that Windows is very forgiving of bugs in the DSDT that get
+by Microsoft's compiler.</p>
+<p>
+This means that a DSDT that does not conform to ACPI spec may work under
+Windows. However, when you try to use it in Linux (where the ACPI developers
+use Intel ASL compiler and expect DSDT to comply with the standard) the buggy
+sections of the DSDT are unsupported and ACPI may not find some devices
+(or some of their capabilites). If you have missing or incompletely supported
+functionality in <samp>/proc/acpi</samp>, the cause may be a buggy DSDT.</p>
+<p>
+Usually, the presence of "MSFT" in the DSDT line in <samp>dmesg</samp> means
+that your DSDT was compiled with the Microsoft compiler.</p>
+<p>
+In addition to the DSDT, laptops that conform to the ACPI 2.0 spec may provide
+an <b>ECDT</b>. This is a small table that provides minimal info about the
+Embedded Controller to the ACPI drivers before this section is parsed from
+the DSDT. This is necessary to prevent some problems with device init (such as
+the battery and AC adapter in some systems) that rely on the Embedded
+Controller. However, some laptops that should provide an ECDT, do not. So,
+to get around this, we'll have to patch the kernel to read the necessary
+info from the DSDT.</p>
+<p>
+The latest ACPI patches (for vanilla source kernels) can be downloaded from
+<a href="http://acpi.sourceforge.net">acpi.sourceforge.net</a>.
+
+
+
+<h4 class="part2">
+<a name="power_states">Power states</a></h4>
+<p>
+The ACPI spec defines the following four Global "Gx" states and six Sleep "Sx"
+states for an ACPI-compliant computer-system. Global states are:</p>
+<ul>
+<li><b>G0</b> - working (see S0);</li>
+<li><b>G1</b> - sleeping (see S1, S2, S3, S4);</li>
+<li><b>G2</b> - soft off (see S5);</li>
+<li><b>G3</b> - mechanical off; the computer's power has been totally removed
+via a mechanical switch (as on the rear of a PSU). The power cord can be
+removed and the system is safe for disassembly (typically, only the real-time
+clock continues to run - using its own small battery);</li>
+</ul>
+<p>
+Sleep states are:</p>
+<ul>
+<li><b>S0</b> - working; the system is fully usable, though hardware components
+that are not in use can save power by entering a lower power state, i.e., if
+the screen is off it's still S0;</li>
+<li><b>S1</b> - Power on Suspend (POS); all the processor caches are flushed,
+and the CPU(s) stops executing instructions; the power to the CPU(s) and RAM
+is maintained; devices that do not indicate they must remain on, may be powered
+off;</li>
+<li><b>S2</b> - CPU powered off, dirty cache is flushed to RAM;</li>
+<li><b>S3</b> - commonly referred as <b>Sleep</b> or <b>STR</b> (Suspend to
+RAM); also known as <b>Standby</b>; RAM remains powered;</li>
+<li><b>S4</b> - commonly referred as <b>Hibernate</b> or <b>STD</b> (Suspend
+to Disk); all content of the main memory is saved to non-volatile memory such
+as HDD, and is powered down;</li>
+<li><b>S5</b> - soft off: G2/S5 is almost the same as G3 Mechanical
+Off, except that the PSU still supplies power, at a minimum, to the power
+button to allow return to S0. A full reboot is required. No previous content
+is retained. Other components may remain powered so the computer can "wake"
+on input from the keyboard, clock, modem, LAN, or USB device;</li>
+</ul>
+<p>
+Note that states S1, S2, S3 are all commonly named "Sleep".</p>
+<p>
+There is also <b>Modern Standby</b> mode (aka "S0 low-power idle") supported
+mostly by SoC (System on Chip). In this state, a system quickly switches from a
+low-power state to a high-power state, and quickly responds to hardware/network
+events. Systems supporting "Modern Standby" do not use S1-S3.</p>
+<p>
+ACPI spec also defines a <b>Legacy state</b>: the state on an OS which does not
+support ACPI. In this state, the hardware and power are not managed via ACPI.</p>
+
+</div>
+
+</body></html>

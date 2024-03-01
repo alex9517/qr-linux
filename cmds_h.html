@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (halt, head, hexdump, host, hostname, htop, hwclock)</title>
+<meta name="description" content="linux quick reference, halt, reboot, poweoff, shutdown, head, hexdump, host, hostname, htop, hwclock" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<div id="topmenu">
+<p class="menu">
+<a href="#halt">halt</a>&nbsp;|
+<a href="#head">head</a>&nbsp;|
+<a href="#hexdump">hexdump</a>&nbsp;|
+<a href="#history">history</a>&nbsp;|
+<a href="#host">host</a>&nbsp;|
+<a href="#hostname">hostname</a>&nbsp;|
+<a href="#htop">htop</a>&nbsp;|
+<a href="#hwclock">hwclock</a></p>
+</div>
+
+
+
+<p class="cmdname_dep"><a name="halt"></a>halt, reboot, poweroff</p>
+<p class="dep">Deprecated</p>
+<p>
+allow a system administrator to halt, reboot or poweroff the system.</p>
+
+<p class="fmt"><code>/sbin/halt&nbsp;</code>[<kbd>options</kbd>]</p>
+<p class="fmt"><code>/sbin/reboot&nbsp;</code>[<kbd>options</kbd>]</p>
+<p class="fmt"><code>/sbin/poweroff&nbsp;</code>[<kbd>options</kbd>]</p>
+<p>
+Actually, <code>halt</code> and <code>poweroff</code> are symlinks to
+<code>reboot</code>.
+When <code>--force</code> is specified, or when runlevel is <samp>0</samp>
+or <samp>6</samp>, then <b>reboot system call</b> directly reboots the
+system. Otherwise <a href="cmds_s.html#shutdown"><code>shutdown</code></a>
+is executed.</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code>
+&nbsp;&nbsp; <code>-v</code> &nbsp;&nbsp; <code>--verbose</code></p>
+
+<p class="fmtc"><code>-f</code>, <code>--force</code></p>
+<p class="desc">don't call <code>shutdown</code>, perform the actual action
+corresponding to the invocation name;</p>
+
+<p class="fmtc"><code>-n</code>, <code>--no-sync</code></p>
+<p class="desc">don't sync disks before reboot or halt;</p>
+
+<p class="fmtc"><code>-p</code>, <code>--poweroff</code></p>
+<p class="desc">force <code>halt</code> to behave as <code>poweroff</code>;</p>
+
+<p class="fmtc"><code>-q</code>, <code>--quiet</code></p>
+<p class="desc">reduce output to errors only;</p>
+
+<p class="fmtc"><code>-w</code>, <code>--wtmp-only</code></p>
+<p class="desc">write shutdown rec in <samp>/var/log/wtmp</samp>, but do not
+perform actual <code>shutdown</code> or <b>reboot system call</b>;</p>
+
+
+
+
+
+<p class="cmdname"><a name="hddtemp"></a>hddtemp</p>
+<p>
+This is a utility to monitor HDD (hard disk drive) temperature. In fact, it
+works with SSDs too, at least with those using SATA interface. Technically,
+<code>hddtemp</code> uses S.M.A.R.T. (Self-Monitoring Analysis and Reporting
+Technology) and can only get info from HDD/SSD supporting this feature and
+equipped with a temperature sensor (practically all modern drives).</p>
+
+<p class="fmt"><code>hddtemp </code>[<kbd>options</kbd>] [<kbd>type</kbd><code>:</code>]<kbd>disk</kbd></p>
+
+<p class="cmdc">sudo hddtemp /dev/sda</p>
+<p class="cmdc">sudo hddtemp /dev/sda /dev/sdb</p>
+<p class="cmdc">sudo hddtemp /dev/hda</p>
+<p class="cmdc">sudo hddtemp PATA:/dev/hda</p>
+<p class="cmd">sudo hddtemp SCSI:/dev/sdc</p>
+<p>
+Usually there is no need to specify <kbd>type</kbd> which can be
+<samp>PATA</samp>, <samp>SATA</samp>, or <samp>SCSI</samp>. But sometimes
+detection fails.</p>
+<div class="box1">
+<p>
+However, it does not fail (even without <kb>type</kbd> spec) when I insert
+my USB Flash drive (JetFlashTranscend), and get a report that "drive supported,
+but it doesn't have a temperature sensor". Interesting. I didn't know that USB
+flash drives can have S.M.A.R.T.</p>
+</div>
+<p>
+You can also run <code>hddtemp</code> as a daemon providing permanent
+temperature monitoring.</p>
+
+
+
+
+<p class="cmdname"><a name="head"></a>head</p>
+<p>
+prints the first <samp>10</samp> (unless other value is explicitly given)
+lines of the specified file(s) to stdout.</p>
+
+<p class="cmdc">head msgs.txt</p>
+<p class="desc">print the first 10 lines of <samp>msgs.txt</samp>;</p>
+
+<p class="cmdc">head -25 file2.txt</p>
+<p class="desc">print the first 25 lines of <samp>file2.txt</samp>;</p>
+
+<p class="cmdc">head -n 25 file2.txt</p>
+<p class="desc">print the first 25 lines ...;</p>
+
+<p class="cmdc">head -n -25 file2.txt</p>
+<p class="desc">print the whole file except the last 25 lines;</p>
+
+<p class="cmdc">head -c 2k misc.dat</p>
+<p class="desc">print the first 2K bytes of <samp>misc.dat</samp>;</p>
+
+<p class="fmt"><code>head&nbsp;</code>[<kbd>options</kbd>] [<kbd>file</kbd>]<kbd>&nbsp;...</kbd></p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code>
+&nbsp;&nbsp; <code>-v</code> &nbsp;&nbsp; <code>--verbose</code></p>
+
+<p class="fmtc"><code>-c&nbsp;</code><kbd>n</kbd>,
+<code>--bytes=</code><kbd>n</kbd></p>
+<p class="desc">print the first <kbd>n</kbd> bytes of a file;</p>
+
+<p class="fmtc"><code>-c -</code><kbd>n</kbd>, <code>--bytes=-</code><kbd>n</kbd></p>
+<p class="desc">print all but the last <kbd>n</kbd> bytes of a file;</p>
+
+<p class="fmtc"><code>-n&nbsp;</code><kbd>n</kbd>,
+<code>--lines=</code><kbd>n</kbd></p>
+<p class="desc">print the first <kbd>n</kbd> lines of a file;</p>
+
+<p class="fmtc"><code>-n -</code><kbd>n</kbd>,
+<code>--lines=-</code><kbd>n</kbd></p>
+<p class="desc">print all but the last <kbd>n</kbd> lines of a file;</p>
+
+<p class="fmtc"><code>-q</code>, <code>--quiet</code></p>
+<p class="desc">never print headers giving file names;</p>
+
+
+
+
+
+<p class="cmdname"><a name="hexdump"></a>hexdump</p>
+<p>
+is a filter that displays the specified files (or data coming from stdin)
+in a specified format (ASCII, decimal, hexadecimal, octal).</p>
+
+<p class="fmt"><code>hexdump&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;file ...</kbd></p>
+<p>
+For each input file, <code>~</code> sequentially transforms the data
+according to the format strings and in the order they were specified.
+The result is sent to stdout. <code>~</code> returns <samp>0</samp>
+on success, and positive number on error.</p>
+
+<p class="cmdc">hexdump -C -n 1024 logo.gif</p>
+<p class="desc">display the first 1K bytes of <samp>logo.gif</samp>
+in <samp>hex+ASCII</samp> format;</p>
+
+
+
+<h5>Options</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-b</code></td>
+<td class="opt_desc">one-byte octal display;</td></tr>
+<tr>
+<td class="opt_name"><code>-c</code></td>
+<td class="opt_desc">one-byte character display;</td></tr>
+<tr>
+<td class="opt_name"><code>-C</code></td>
+<td class="opt_desc">canonical hex+ASCII display;</td></tr>
+<tr>
+<td class="opt_name"><code>-d</code></td>
+<td class="opt_desc">two-byte decimal display;</td></tr>
+</table>
+
+<p class="fmtc"><code>-e</code> <kbd>format_str</kbd></p>
+<p class="desc">specifies a format string to be used for displaying data
+(see online man for details);</p>
+
+<p class="fmtc"><code>-f</code> <kbd>format_file</kbd></p>
+<p class="desc">specifies a file that contains one or more format strings
+separated by newlines;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-n</code> <kbd>m</kbd></td>
+<td class="opt_desc">interpret only <kbd>m</kbd> bytes of input;</td></tr>
+<tr>
+<td class="opt_name"><code>-o</code></td>
+<td class="opt_desc">two-byte octal display;</td></tr>
+<tr>
+<td class="opt_name"><code>-s</code> <kbd>n</kbd></td>
+<td class="opt_desc">skip <kbd>n</kbd> bytes from the beginning of the input;</td></tr>
+<tr>
+<td class="opt_name"><code>-v</code></td>
+<td class="opt_desc">causes <code>~</code> to display all input data;
+otherwise, any num of groups of output lines, which would be identical
+to the immediately preceding grp of output lines (except for the input
+offsets), are replaced with a line comprised of a single asterisk;</td></tr>
+<tr>
+<td class="opt_name"><code>-x</code></td>
+<td class="opt_desc">two-byte hexadecimal display;</td></tr>
+</table>
+
+
+
+
+
+<p class="cmdname"><a name="history"></a>history</p>
+<p>
+The GNU <code>history</code> cmd keeps a list of all cmds that have been run from that terminal session and allows you to
+repeat/replay those cmds without typing them again. The history list is displayed with the line numbers. The modified entries are
+prefixed with a <samp>*</samp>.</p>
+<p>
+To list all cmds that you used since the start of this terminal session:</p>
+
+<p class="cmd">history</p>
+<p>
+To exec [again] some cmd from the list you only need its line number:</p>
+
+<p class="cmd">!25</p>
+<p>
+Of course, you can use <span class="keys">CTRL+P</span> and <span class="keys">CTRL+N</span>, but this is only convenient for the
+nearest cmds.</p>
+<p>
+To see the last <samp>10</samp> cmds from the history:</p>
+
+<p class="cmd">history 10</p>
+<p>
+You can use <code>grep</code> to find some specific cmd, e.g.</p>
+
+<p class="cmd">history | grep iptables</p>
+<p>
+If, for example, you entered [whatever the reason] a plaintext password on the cmdline, you definitely should remove this entry
+from history list as quickly as possible. Get the number of the entry and delete it:</p>
+
+<p class="cmd">history -d 214</p>
+<p>
+Of course, you can delete (clear) the whole history, but isn't that too much?</p>
+
+<p class="cmd">history -c</p>
+<p>
+The syntax in general:</p>
+
+<p class="cmdc">history --help</p>
+<p class="fmtc"><code>history</code> [<kbd>n</kbd>]</p>
+<p class="fmtc"><code>history</code> [<code>-c</code>] [<code>-d</code> <kbd>offset</kbd>]</p>
+<p class="fmtc"><code>history -anrw</code> [<kbd>filename</kbd>]</p>
+<p class="fmt"><code>history -ps</code> <kbd>arg</kbd> [<kbd>arg</kbd>...]</p>
+<p>
+If <kbd>filename</kbd> is given, it is used as the history file. But usually
+the history file name is set by<samp> HISTFILE </samp>env var, and the default
+is <samp>~/.bash_history</samp> (hidden file in the home dir).</p>
+<p>
+The size of the history list is set by<samp> HISTSIZE </samp>env var. It works
+like FIFO: when the list is full, top/first lines disappear as you exec new cmds.</p>
+
+
+
+<h5>Options</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-a</code></td>
+<td class="opt_desc">append history lines from this session to the history file;</td></tr>
+<tr>
+<td class="opt_name"><code>-c</code></td>
+<td class="opt_desc">clear the history list by deleting all entries;</td></tr>
+<tr>
+<td class="opt_name"><code>-d</code> <kbd>n</kbd></td>
+<td class="opt_desc">delete the history entry at position <kbd>n</kbd>;
+negative value means count back from the end of the history list;</td></tr>
+<tr>
+<td class="opt_name"><code>-n</code></td>
+<td class="opt_desc">read all history lines not already read from
+the history file and append them to the history list;</td></tr>
+<tr>
+<td class="opt_name"><code>-p</code></td>
+<td class="opt_desc">perform history expansion on each ARG and
+display the result without storing it in the history list;</td></tr>
+<tr>
+<td class="opt_name"><code>-r</code></td>
+<td class="opt_desc">read the history file and append the contents
+to the history list;</td></tr>
+<tr>
+<td class="opt_name"><code>-s</code></td>
+<td class="opt_desc">append the ARGs to the history list as a single entry;</td></tr>
+
+<tr>
+<td class="opt_name"><code>-w</code></td>
+<td class="opt_desc">write the current history to the history file;</td></tr>
+</table>
+
+
+
+
+
+<p class="cmdname"><a name="host"></a>host</p>
+<p>
+is a simple DNS lookup utility. It is used mainly to convert names to
+IP addresses and vice versa.</p>
+
+<p class="fmt"><code>host&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;name&nbsp;</kbd>[<kbd>server</kbd>]</p>
+<p>
+<kbd>name</kbd> is either the domain name or IPv4/IPv6 address of a host
+to be resolved. <kbd>server</kbd> is an IP address of an optional name server
+to be used instead of those listed in <samp>/etc/resolv.conf</samp>.</p>
+
+<p class="cmdc">host srv5.acme.net</p>
+<p class="desc">what IP address has <samp>srv5.acme.net</samp>?</p>
+
+<p class="cmdc">host 212.87.37.250</p>
+<p class="desc">what's the name of the host with IP = <samp>212.87.37.250</samp>?</p>
+
+<p class="cmdc">host -t MX acme.net</p>
+<p class="desc">what servers handle mail for <samp>acme.net</samp> domain?</p>
+
+<p class="cmdc">host -t SOA local</p>
+<p class="desc">display SOA records for the domain <samp>.local</samp>;</p>
+
+
+
+<h5>Options</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-v</code></td>
+<td class="opt_desc">verbose;</td></tr>
+<tr>
+<td class="opt_name"><code>-4</code></td>
+<td class="opt_desc">use IPv4 query transport only;</td></tr>
+<tr>
+<td class="opt_name"><code>-6</code></td>
+<td class="opt_desc">use IPv6 query transport only;</td></tr>
+<tr>
+<td class="opt_name"><code>-a</code></td>
+<td class="opt_desc">set verbose mode and make a query of type <samp>ANY</samp>;</td></tr>
+<tr>
+<td class="opt_name"><code>-C</code></td>
+<td class="opt_desc">attempt to display the SOA records for zone name from
+all the listed authoritative name servers for that zone;</td></tr>
+</table>
+
+<p class="fmtc"><code>-c</code> <kbd>cls</kbd></p>
+<p class="desc">make a query of the specified class (default is <samp>IN</samp>);</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-d</code></td>
+<td class="opt_desc">same as <code>-v</code> (verbose);</td></tr>
+<tr>
+<td class="opt_name"><code>-i</code></td>
+<td class="opt_desc">specifies that reverse lookups of IPv6 addresses should
+use <samp>IP6.INT</samp> domain (default is <samp>IP6.ARPA</samp>);</td></tr>
+<tr>
+<td class="opt_name"><code>-l</code></td>
+<td class="opt_desc">list all hosts in domain using <samp>AXFR</samp>
+(obsolete; use <code>-t AXFR</code> instead; means: perform zone
+transfer for zone name);</td></tr>
+<tr>
+<td class="opt_name"><code>-N</code> <kbd>n</kbd></td>
+<td class="opt_desc">set the number of dots that have to be in name for
+it to be considered absolute (default is <samp>1</samp>);</td></tr>
+<tr>
+<td class="opt_name"><code>-R</code> <kbd>n</kbd></td>
+<td class="opt_desc">retry query <kbd>n</kbd> times
+(default is <samp>1</samp>);</td></tr>
+<tr>
+<td class="opt_name"><code>-r</code></td>
+<td class="opt_desc">use non-recursive queries;</td></tr>
+<tr>
+<td class="opt_name"><code>-s</code></td>
+<td class="opt_desc">don't send query to the next name server if any server
+responds with a <samp>SERVFAIL</samp>;</td></tr>
+<tr>
+<td class="opt_name"><code>-T</code></td>
+<td class="opt_desc">query name server using TCP (default is UDP);</td></tr>
+</table>
+
+<p class="fmtc"><code>-t</code> <kbd>type</kbd></p>
+<p class="desc">select the query type (CNAME, NS, MX, SOA, etc);</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-W</code> <kbd>n</kbd></td>
+<td class="opt_desc">wait <kbd>n</kbd> seconds for a reply
+(<samp>1</samp> is minimum);</td></tr>
+<tr>
+<td class="opt_name"><code>-w</code></td>
+<td class="opt_desc">wait forever for a reply;</td></tr>
+</table>
+
+
+
+
+
+<p class="cmdname"><a name="hostname"></a>hostname</p>
+<p>
+displays or sets system's hostname. To set a new hostname you need
+<samp>root</samp> priv, and this name is only valid until next reboot.
+To make it permanent, edit config file (name/location depends on distro,
+see <a href="#files">Files</a> below). <code>dnsdomainname</code> displays
+the system's DNS name (it cannot be changed locally). There are also
+<code>domainname</code>, <code>ypdomainname</code>, <code>nisdomainname</code>
+that can be used to show/set system's NIS/YP domain name.</p>
+
+<p class="cmdc">hostname</p>
+<p class="desc">show full name of this computer;</p>
+
+<p class="cmdc">hostname -s</p>
+<p class="desc">show short name of this computer;</p>
+
+<p class="cmdc">hostname -a</p>
+<p class="desc">show the alias names of this computer;</p>
+
+<p class="cmdc">hostname -f</p>
+<p class="desc">show the host’s fully qualified domain name;</p>
+
+<p class="cmdc">dnsdomainname</p>
+<p class="desc">show the DNS domain name of this host;</p>
+
+<p class="cmdc">hostname ws4</p>
+<p class="desc">set the host name of this computer to <samp>ws4</samp>
+(<samp>root</samp> only);</p>
+
+<p class="cmdc">hostname -i -v</p>
+<p class="desc">show IP addresses of this host and give some explanations;</p>
+
+<p class="fmt"><code>hostname&nbsp;</code>[<kbd>options</kbd>] [<kbd>hostname</kbd>]</p>
+<p class="fmt"><code>domainname&nbsp;</code>[<kbd>options</kbd>] [<kbd>name</kbd>]</p>
+<p class="fmt"><code>dnsdomainname&nbsp;</code>[<kbd>options</kbd>]</p>
+<p class="fmt"><code>nisdomainname&nbsp;</code>[<kbd>options</kbd>]</p>
+<p class="fmt"><code>ypdomainname&nbsp;</code>[<kbd>options</kbd>]</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-h</code> &nbsp;&nbsp; <code>--help</code>
+&nbsp;&nbsp; <code>-V</code> &nbsp;&nbsp; <code>--version</code>
+&nbsp;&nbsp; <code>-v</code> &nbsp;&nbsp; <code>--verbose</code></p>
+
+<p class="fmtc"><code>-A</code>, <code>--all-fqdns</code></p>
+<p class="desc">show all FQDNs of the machine;
+all configured net addresses on all net interfaces are enumerated
+and translated to DNS domain names; addresses that cannot be translated
+(e.g., having no appropriate reverse DNS entry) are
+skipped; note that diff addresses may resolve to the same name, so
+the duplicate entries are possible; the order of the output is random;</p>
+
+<p class="fmtc"><code>-a</code>, <code>--alias</code></p>
+<p class="desc">(deprecated) display the alias name of the host (if used);</p>
+
+<p class="fmtc"><code>-b</code>, <code>--boot</code></p>
+<p class="desc">always set a hostname; make it <samp>localhost</samp>
+if nothing else can be found (e.g., file <samp>/etc/hostname</samp>
+is missing or empty);</p>
+
+<p class="fmtc"><code>-d</code>, <code>--domain</code></p>
+<p class="desc">display the name of the DNS domain; don’t use
+<code>domainname</code> (it shows NIS domain name), run
+<code>dnsdomainname</code> instead;</p>
+
+<p class="fmtc"><code>-F</code> <kbd>fname</kbd>,
+<code>--file</code> <kbd>fname</kbd></p>
+<p class="desc">read the host name from the specified file;</p>
+
+<p class="fmtc"><code>-f</code>, <code>--fqdn</code></p>
+<p class="desc">display the fully qualified domain name;</p>
+
+<p class="fmtc"><code>-I</code>, <code>--all-ip-addresses</code></p>
+<p class="desc">display all net addresses of the host; all configured
+addresses on all net interfaces are enumerated; the loopback interface and
+IPv6 link-local addresses are omitted; contrary to <code> -i</code>, this
+option does not depend on name resolution; the order of output is random;</p>
+
+<p class="fmtc"><code>-i</code>, <code>--ip-address</code></p>
+<p class="desc">display the IP address(es) of the host; it works only if
+the host name can be resolved;</p>
+
+<p class="fmtc"><code>-s</code>, <code>--short</code></p>
+<p class="desc">display the short host name;</p>
+
+<p class="fmtc"><code>-y</code>, <code>--yp</code>, <code>-nis</code></p>
+<p class="desc">display the NIS domain name (<samp>root</samp> can also set
+a new NIS domain);</p>
+
+<table class="files">
+<a name="files">
+<caption>Files</caption></a>
+<tr>
+<td class="file_name" style="width:50%">/etc/sysconfig/network</td>
+<td class="file_desc">hostname (Red Hat, Fedora);</td></tr>
+<tr>
+<td class="file_name">/etc/hostname</td>
+<td class="file_desc">hostname (Ubuntu, Debian);</td></tr>
+<tr>
+<td class="file_name">/etc/HOSTNAME</td>
+<td class="file_desc">hostname (Slackware, ...);</td></tr>
+</table>
+
+
+
+
+
+<p class="cmdname"><a name="htop"></a>htop</p>
+<p>
+is an interactive [ncurses-based] process viewer.
+It's like <a href="cmds_t.html#top">top</a>, but allows you to scroll
+vert/horiz, viewing all running processes and their full cmd lines. Tasks
+related to processes (e.g., <code>kill</code>) can be done without
+entering their PIDs.</p>
+
+<p class="fmt"><code>htop</code> [<code>-dChusv</code>]</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-h</code> &nbsp;&nbsp; <code>--help</code> &nbsp;&nbsp;
+<code>-v</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>-d</code>, <code>--delay=</code><kbd>delay</kbd></p>
+<p class="desc">delay between updates (in <samp>0.1</samp> sec);</p>
+
+<p class="fmtc"><code>-C</code>, <code>--no-color</code>, <code>--no-colour</code></p>
+<p class="desc">use monochrome mode;</p>
+
+<p class="fmtc"><code>-u</code>, <code>--user=</code><kbd>username</kbd></p>
+<p class="desc">show only the processes of a specified user;</p>
+
+<table class="options"><tr>
+<td class="opt_name"><code>-p</code></td>
+<td class="opt_desc">start working thread for pagemap memory stats;</td>
+</tr></table>
+<p class="fmtc"><code>-s</code>, <code>--sort-key </code><kbd>column</kbd></p>
+<p class="desc">sort by col (<code>--sort-key help </code> shows a column list);</p>
+
+
+<h5>Interactive commands</h5>
+
+<p class="fmtc"><code>q</code> or <span class="keys">F10</span></p>
+<p class="desc">quit;</p>
+
+<p class="fmtc"><span class="keys">&#8592;</span> /
+<span class="keys">&#8594;</span> / <span class="keys">&#8595;</span> /
+<span class="keys">&#8593;</span> / <span class="keys">PgUP</span> /
+<span class="keys">PgDn</span> / <span class="keys">Home</span> /
+<span class="keys">End</span></p>
+<p class="desc">scroll the process list;</p>
+
+<p class="fmtc"><span class="keys">Space</span></p>
+<p class="desc">tag/untag a process; cmds that can operate on multiple
+processes (like <code>kill</code>), will be applied to the list of tagged
+proc, instead of the currently highlighted one;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>U</code></td>
+<td class="opt_desc">untag all processes;</td>
+<tr>
+<td class="opt_name"><code>s</code></td>
+<td class="opt_desc">trace proc system calls (<code>strace</code> (1) must be
+installed); pressing this key will attach proc to the currently selected
+process, presenting a live update of sys calls issued by proc;</td>
+<tr>
+<td class="opt_name"><code>l</code></td>
+<td class="opt_desc">display proc open files (<code>lsof</code> (1) must
+be installed); pressing this key will display the list of file descriptors
+opened by proc;</td>
+</tr></table>
+
+<p class="fmtc"><span class="keys">F1</span>, <code>h</code>, <code>?</code></p>
+<p class="desc">help screen;</p>
+
+<p class="fmtc"><span class="keys">F2</span>, <code>S</code></p>
+<p class="desc">show setup screen, where you can config the meters displayed
+at the top of the screen, set various display opts, choose color scheme,
+select column order;</p>
+
+<p class="fmtc"><span class="keys">F3</span>, <code>/</code></p>
+<p class="desc">incrementally search cmd lines of all displayed processes;
+the currently selected cmd will update as you type; while in search mode,
+pressing <span class="keys">F3</span> will cycle through matching occurrences;</p>
+
+<p class="fmtc"><span class="keys">F4</span>, <code>\</code></p>
+<p class="desc">incremental process filtering: type in part of a proc cmd line
+and only processes whose names match will be shown; to cancel filtering, enter
+the Filter option again and press <span class="keys">Esc</span>;</p>
+
+<p class="fmtc"><span class="keys">F5</span>, <code>t</code></p>
+<p class="desc">toggle between tree and your previously selected sort view;
+selecting a sort view will exit the tree view;</p>
+
+<p class="fmtc"><span class="keys">F6</span>, <code>&lt;</code> , <code>&gt;</code></p>
+<p class="desc">select a field for sorting (the current sort field is indicated
+by a highlight in the header);</p>
+
+<p class="fmtc"><span class="keys">F7</span>, <code>]</code></p>
+<p class="desc">increase the selected process's priority (subtract from
+'nice' value) (superuser only);</p>
+
+<p class="fmtc"><span class="keys">F8</span>, <code>[</code></p>
+<p class="desc">decrease the selected process's priority (add to 'nice' value);</p>
+
+<p class="fmtc"><span class="keys">F9</span>, <code>k</code></p>
+<p class="desc">kill proc (sends a signal which is selected in a menu);
+if multiple processes were tagged, sends the signal to all of them; if none
+is tagged, sends to the currently selected;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>I</code></td>
+<td class="opt_desc">toggle sort order (increasing/decreasing);</td>
+</tr></table>
+
+<p class="fmtc"><code>+</code>, <code>-</code></p>
+<p class="desc">when in tree mode, expand/collapse subtree (when subtree is
+collapsed a "+" sign shows to the left of the proc name);</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>a</code></td>
+<td class="opt_desc">(on multiprocessor machines) set CPU affinity
+(which CPUs a proc is allowed to use);</td></tr>
+<tr>
+<td class="opt_name"><code>u</code></td>
+<td class="opt_desc">show only processes owned by a specified user;</td></tr>
+<tr>
+<td class="opt_name"><code>M</code></td>
+<td class="opt_desc">sort by memory usage;</td></tr>
+
+<tr>
+<td class="opt_name"><code>P</code></td>
+<td class="opt_desc">sort by processor usage;</td></tr>
+
+<tr>
+<td class="opt_name"><code>T</code></td>
+<td class="opt_desc">sort by time;</td></tr>
+
+<tr>
+<td class="opt_name"><code>F</code></td>
+<td class="opt_desc">"follow" process: if the sort order causes the currently
+selected proc to move in the list, make the selection bar follow and keep it
+always on screen; when a movement key is used, "follow" stops working;</td></tr>
+
+<tr>
+<td class="opt_name"><code>K</code></td>
+<td class="opt_desc">hide/show (toggle) kernel threads display;</td></tr>
+
+<tr>
+<td class="opt_name"><code>H</code></td>
+<td class="opt_desc">hide/show (toggle) user threads display;
+on systems that represent user threads differently than ordinary processes
+(such as recent NPTL-based systems), this can hide threads from userspace
+processes;</td></tr>
+</table>
+
+<p class="fmtc"><span class="keys">CTRL+L</span></p>
+<p class="desc">refresh/recalculate;</p>
+
+<p class="fmtc"><kbd>pid</kbd></p>
+<p class="desc">type in a PID and the selection highlight moves to the
+corresponding proc;</p>
+
+
+
+<h5>Columns</h5>
+<p>
+'<samp>-</samp>' in all rows means that a column is either not
+supported (on your system), or currently not implemented. The col names
+are the ones used in the "Available Columns" section of the setup screen.</p>
+
+<p class="fmtc"><samp>Command</samp></p>
+<p class="desc">full cmd line of the process;</p>
+
+<p class="fmtc"><samp>PID</samp></p>
+<p class="desc">the process ID;</p>
+
+<p class="fmtc"><samp>PPID</samp></p>
+<p class="desc">the parent process ID;</p>
+
+<p class="fmtc"><samp>PGRP</samp></p>
+<p class="desc">the process's group ID;</p>
+
+<p class="fmtc"><samp>SESSION</samp> (<samp>SESN</samp>)</p>
+<p class="desc">the process's session ID;</p>
+
+<p class="fmtc"><samp>TTY_NR</samp> (<samp>TTY</samp>)</p>
+<p class="desc">the controlling terminal of the proc;</p>
+
+<p class="fmtc"><samp>TPGID</samp>
+<p class="desc">the process ID of the foreground proc group of the controlling
+terminal;</p>
+
+<p class="fmtc"><samp>STATE</samp> (<samp>S</samp>)</p>
+<p class="desc">the state of the proc: <samp>S</samp> - sleeping (idle),
+<samp>R</samp> - running, <samp>D</samp> - disk sleep (uninterruptible),
+<samp>Z</samp> - zombie (waiting for parent to read it's exit status),
+<samp>T</samp> - traced or suspended (e.g. by <samp>SIGTSTP</samp>),
+<samp>W</samp> - paging;</p>
+
+<p class="fmtc"><samp>PROCESSOR</samp> (<samp>CPU</samp>)</p>
+<p class="desc">the ID of the CPU the process last executed on;</p>
+
+<p class="fmtc"><samp>NLWP</samp></p>
+<p class="desc">the number of threads in the process;</p>
+
+<p class="fmtc"><samp>NICE</samp> (<samp>NI</samp>)</p>
+<p class="desc">the nice value of a process, from <samp>19</samp>
+(low priority) to <samp>-20</samp> (high priority); a high value means
+the process is being nice, letting others have a higher relative priority;
+only <samp>root</samp> can lower the value (i.e., increase proc priority);</p>
+
+<p class="fmtc"><samp>PERCENT_CPU</samp> (<samp>CPU%</samp>)</p>
+<p class="desc">the percentage of CPU time that the proc is currently using;</p>
+
+<p class="fmtc"><samp>UTIME</samp> (<samp>UTIME+</samp>)</p>
+<p class="desc">the amount of time the process has spent executing on the
+CPU in user mode (i.e. everything minus system calls), measured in clock ticks;</p>
+
+<p class="fmtc"><samp>STIME</samp> (<samp>STIME+</samp>)</p>
+<p class="desc">the amount of time the kernel has spent executing system calls
+on behalf of the process, measured in clock ticks;</p>
+
+<p class="fmtc"><samp>TIME</samp> (<samp>TIME+</samp>)</p>
+<p class="desc">the time the process has spent in user and system time
+(measured in clock ticks);</p>
+
+<p class="fmtc"><samp>CUTIME</samp></p>
+<p class="desc">the children's user CPU time (the amount of time the process's
+waited-for children have spent executing in user mode);</p>
+
+<p class="fmtc"><samp>CSTIME</samp></p>
+<p class="desc">the children's system CPU time (the amount of time the kernel
+has spent executing system calls on behalf of all the process's waited-for
+children);</p>
+
+<p class="fmtc"><samp>PRIORITY</samp> (<samp>PRI</samp>)</p>
+<p class="desc">the kernels internal priority for the process, usually just
+it's nice value plus <samp>20</samp>; different for real-time processes;</p>
+
+<p class="fmtc"><samp>PERCENT_MEM</samp></p>
+<p class="desc">the percentage of memory the process is currently using
+(based on the process's resident memory size);</p>
+
+<p class="fmtc"><samp>M_SIZE</samp> (<samp>VIRT</samp>)</p>
+<p class="desc">size in memory of the total program size;</p>
+
+<p class="fmtc"><samp>M_RESIDENT</samp> (<samp>RES</samp>)</p>
+<p class="desc">the resident set size, i.e. the size of the text and data
+sections, plus stack usage;</p>
+
+<p class="fmtc"><samp>M_SHARE</samp> (<samp>SHR</samp>)</p>
+<p class="desc">the size of the process's shared pages;</p>
+
+<p class="fmtc"><samp>M_TRS</samp> (<samp>CODE</samp>)</p>
+<p class="desc">the size of the text segment of the process;</p>
+
+<p class="fmtc"><samp>M_LRS</samp> (<samp>LIB</samp>)</p>
+<p class="desc">the library size of the process;</p>
+
+<p class="fmtc"><samp>M_DRS</samp> (<samp>DATA</samp>);</p>
+<p class="desc">the size of the data segment plus stack usage of the process;</p>
+
+<p class="fmtc"><samp>M_DT</samp> (<samp>DIRTY</samp>)</p>
+<p class="desc">the size of the dirty pages of the process;</p>
+
+<p class="fmtc"><samp>ST_UID</samp> (<samp>UID</samp>)</p>
+<p class="desc">the user ID of the process owner;</p>
+
+<p class="fmtc"><samp>USER</samp></p>
+<p class="desc">the username of the process owner, or the user ID if the name
+can't be determined;</p>
+
+<p class="fmtc"><samp>STARTTIME</samp></p>
+<p class="desc">the time the process was started;</p>
+
+<p class="fmtc"><samp>RCHAR</samp> (<samp>RD_CHAR</samp>)</p>
+<p class="desc">the number of bytes the process has read;</p>
+
+<p class="fmtc"><samp>WCHAR</samp> (<samp>WR_CHAR</samp>)</p>
+<p class="desc">the number of bytes the process has written;</p>
+
+<p class="fmtc"><samp>SYSCR</samp> (<samp>RD_SYSC</samp>)</p>
+<p class="desc">the number of <samp>read</samp> (2) syscalls for the process;</p>
+
+<p class="fmtc"><samp>SYSCW</samp> (<samp>WR_SYSC</samp>)</p>
+<p class="desc">the number of <samp>write</samp> (2) syscalls for the process;</p>
+
+<p class="fmtc"><samp>RBYTES</samp> (<samp>IO_RBYTES</samp>)</p>
+<p class="desc">bytes of <samp>read</samp> (2) I/O for the process;</p>
+
+<p class="fmtc"><samp>WBYTES</samp> (<samp>IO_WBYTES</samp>)</p>
+<p class="desc">bytes of <samp>write</samp> (2) I/O for the process;</p>
+
+<p class="fmtc"><samp>IO_READ_RATE</samp> (<samp>IORR</samp>)</p>
+<p class="desc">the I/O rate of <samp>read</samp> (2) in bytes per second,
+for the process;</p>
+
+<p class="fmtc"><samp>IO_WRITE_RATE</samp> (<samp>IOWR</samp>)</p>
+<p class="desc">the I/O rate of <samp>write</samp> (2) in bytes per second,
+for the process;</p>
+
+<p class="fmtc"><samp>IO_RATE</samp> (<samp>IO</samp>)</p>
+<p class="desc">the I/O rate, <samp>IO_READ_RATE + IO_WRITE_RATE</samp>;</p>
+
+<p class="fmtc"><samp>CNCLWB</samp> (<samp>IO_CANCEL</samp>)</p>
+<p class="desc">bytes of cancelled <samp>write</samp> (2) I/O;</p>
+
+<p class="fmtc"><samp>CGROUP</samp></p>
+<p class="desc">which cgroup the process is in;</p>
+
+<p class="fmtc"><samp>CTID</samp></p>
+<p class="desc">OpenVZ container ID (virtual env ID);</p>
+
+<p class="fmtc"><samp>VPID</samp></p>
+<p class="desc">OpenVZ process ID;</p>
+
+<p class="fmtc"><samp>VXID</samp>
+<p class="desc">VServer process ID;</p>
+
+
+
+
+
+<p class="cmdname"><a name="hwclock"></a>hwclock</p>
+<p>
+can be used to query/set computer's hardware clock. There are two
+main clocks in a Linux system: <b>hardware clock</b> and
+<b>system clock</b>. The hardware clock (RTC, real time clock, CMOS/BIOS
+clock) runs all the time (uses motherboard battery when the power
+is off). The system clock inside the Linux kernel is driven by the timer
+interrupts and works only when OS is running.</p>
+
+<p class="cmdc">hwclock --show</p>
+<p class="desc">show hardware clock time (RTC);</p>
+
+<p class="cmdc">hwclock --show --utc</p>
+<p class="desc">show hardware clock time (RTC) assuming it is UTC (warning
+will be given if hardware clock is set to localtime);</p>
+
+<p class="cmdc">hwclock --show --localtime</p>
+<p class="desc">show hardware clock time (RTC) assuming it is localtime
+(warning will be given if it is set to UTC);</p>
+
+<p class="cmdc">hwclock --set --date="2/4/2006 09:40:00"</p>
+<p class="desc">set RTC to the specified date/time (Feb, 4, 2006, 9:40);</p>
+
+<p class="cmdc">hwclock --adjust</p>
+<p class="desc">adjust RTC (uses <samp>/etc/adjtime</samp> to calculate time drift);</p>
+<p>
+The system time is the number of seconds since 00:00:00 Jan 1, 1970 UTC
+(Universal Time Coordinated). The hardware clock is only used to initialize
+system time at the system start, and the system time is the only time that
+matters. You should avoid discontinuities in the system time (for example,
+changing it with <a href="cmds_d.html#date"><code>date</code></a>).
+When rebooting/shutting down, OS synchronizes hardware clock with the
+current system time.</p>
+<p>
+The hardware clock is usually not very accurate, though its drift is to some
+extent systematic and predictable. <code>~</code> can be used to correct this
+drift using historical data in <samp>/etc/adjtime</samp> file. Assuming your
+computer is not configured to get accurate time from the NTP server, and runs
+without reboot sufficiently long (at least several days), the hardware clock
+adjustment procedure is like this:</p>
+<ul>
+<li>Set hardware clock to the current time
+(<code>hwclock --set</code> <kbd>...</kbd>) as accurate as possible;</li>
+<li>Repeat this after 24..120 hours (in fact, 24 may be too short);</li>
+<li>24 hours later run <code>hwclock --adjust</code>;</li>
+<li>24 hours later once again run <code>hwclock --adjust</code>;</li>
+</ul>
+<p>
+Computers using NTP usually run in so called "11-minutes mode", which means
+the hardware clock is set to the current system time every 11 minutes.
+In this case the above procedure can cause the chaos.
+You can adjust system time smoothly using
+<a href="cmds_n.html#ntpd"><code>ntpd</code></a> or
+<a href="cmds_n.html#ntpd"><code>ntpdate</code></a>,
+though it works slowly, approx. 2 days for 1 minute. This method is
+good for servers [that don't use NTP] running 24x7 if error is within
+1..2 min.
+Otherwise, it may be better to shutdown/reboot, enter the BIOS setup and
+set hardware clock (you should make a reasonable delay before starting OS,
+if the system time was far ahead).</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>--show</code></p>
+<p class="desc">show the hardware clock (RTC) time;</p>
+
+<p class="fmtc"><code>--set</code></p>
+<p class="desc">set the hardware clock (RTC) to the specified date/time;</p>
+
+<p class="fmtc"><code>--hctosys</code></p>
+<p class="desc">set the system time from RTC (is used by the system
+startup scripts and should not be used otherwise);</p>
+
+<p class="fmtc"><code>--systohc</code></p>
+<p class="desc">set the hardware clock to the current system time
+(is mainly used by the system shutdown scripts);</p>
+
+<p class="fmtc"><code>--adjust</code></p>
+<p class="desc">add or subtract time from the hardware clock to account
+for systematic drift since the last time the clock was set or adjusted;</p>
+
+<p class="fmtc"><code>--date=</code><kbd>date_str</kbd></p>
+<p class="desc">date specification for <code>--set</code> option;</p>
+
+<p class="fmtc"><code>--utc</code>, <code>--localtime</code></p>
+<p class="desc">indicates that hardware clock is kept in UTC or localtime
+respectively (RTC itself knows nothing about this); if
+<samp>/etc/adjtime</samp> is missing, the localtime is default, otherwise the
+default is whichever was last specified with <code>~</code>
+(<samp>/etc/adjtime</samp> remembers this);</p>
+
+<p class="fmtc"><code>--noadjfile</code></p>
+<p class="desc">disables facilities provided by <samp>/etc/adjtime</samp>;
+you must specify <code>--utc</code> or <code>--localtime</code> with this
+option;</p>
+
+<p class="fmtc"><code>--test</code></p>
+<p class="desc">do everything except actually updating the hardware
+clock or anything else (useful for learning/testing);</p>
+
+<p class="fmtc"><code>--debug</code></p>
+<p class="desc">display info about internal operations of <code>~</code>;</p>
+
+</div>
+
+</body></html>

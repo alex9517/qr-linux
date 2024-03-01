@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (date, dd, df, diff, dig, du, dumpe2fs)</title>
+<meta name="description" content="linux quick reference, date, dd, ddrescue, df, diff, dig, dos2unix, du, dumpe2fs" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<div id="topmenu">
+<p class="menu">
+<a href="#date">date</a>&nbsp;|
+<a href="#dd">dd</a>&nbsp;|
+<a href="#ddrescue">ddrescue</a>&nbsp;|
+<a href="#df">df</a>&nbsp;|
+<a href="#diff">diff</a>&nbsp;|
+<a href="#dig">dig</a>&nbsp;|
+<a href="#dos2unix">dos2unix</a>&nbsp;|
+<a href="#du">du</a>&nbsp;|
+<a href="#dumpe2fs">dumpe2fs</a></p>
+</div>
+
+<p class="cmdname"><a name="date">date</a></p>
+<p>
+displays or sets the system date and time
+(see also <a href="cmds_h-j#hwclock"><code>hwclock</code></a>).
+
+<p class="fmt"><code>date&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;...&nbsp;</kbd>[<code>+</code><kbd>format</kbd>]</p>
+
+<p class="fmt"><code>date&nbsp;</code>[<code>-u</code> | <code>--utc</code> | <code>--universal</code>]
+[<kbd>MMDDhhmm</kbd>[[<kbd>CC</kbd>]<kbd>YY</kbd>][<kbd>.ss</kbd>]]</p>
+
+<p><kbd>MM</kbd> - month, <kbd>DD</kbd> - day,
+<kbd>hh</kbd> - hour, <kbd>mm</kbd> - minute, <kbd>CC</kbd> - century,
+<kbd>YY</kbd> - year, <kbd>ss</kbd> - second. If <kbd>DDMMhhmm...</kbd> is
+omitted, <code>~</code> displays the current date, otherwise the specified
+date will be set (to set the date you must be <samp>root</samp>).</p>
+
+<p class="cmdc">date 020410002011.30</p>
+<p class="desc">set the system date to <samp>2011-Feb-04 10:00:30</samp>;</p>
+
+<p class="cmdc">date +%u</p>
+<p class="desc">show the day of the week (1..7);</p>
+
+<p class="cmdc">date +%e</p>
+<p class="desc">show the day of the month without leading 0s (1..31);</p>
+
+<p class="cmdc">date '+%B %d'</p>
+<p class="desc">output the current date in a format including the full month name and the day of the month;</p>
+
+<p class="cmdc">date +%a -d '1 day ago'</p>
+<p class="desc">show abbreviated weekday name of the previous day;</p>
+
+<p class="cmdc">date +%A --date='20 days'</p>
+<p class="desc">show full weekday name of the date that is 20 days ahead;</p>
+
+<p class="cmdc">date -d '100 days'</p>
+<p class="desc">show the date of the day that is 100 days ahead from now;</p>
+
+<p class="cmdc">date --date='3 months 1 day'</p>
+<p class="desc">show the date of the day 3 months and 1 day hence;</p>
+
+<p class="cmdc">date --date='25 Dec' +%j</p>
+<p class="desc">show the day of year of Christmas in the current year;</p>
+
+<p class="cmdc">date --date='21 Feb 2011' +%s</p>
+<p class="desc">show the num of seconds since
+<samp>'00:00:00 1970-01-01 UTC'</samp> up to the specified date (the time
+is <samp>00:00:00</samp>, if not specified);</p>
+
+<p class="cmdc">date --date='21 Feb 2011 00:00' +%s</p>
+<p class="desc">like previous; the result in both cases is <samp>1298235600</samp>;</p>
+
+<p class="cmdc">date --set='21:00:00'</p>
+<p class="desc">set time to 21:00;</p>
+
+<p class="cmdc">date --set="Feb 10 10:15 2007"</p>
+<p class="desc">set date to 2007-Feb-10, set time to 10:15;</p>
+
+
+<h5>Some options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>-d</code> <kbd>str</kbd></p>
+<p class="desc">display time described by <kbd>str</kbd>
+(<code>--date=</code><kbd>str</kbd>);</p>
+
+<p class="fmtc"><code>-s</code> <kbd>str</kbd></p>
+<p class="desc">set time described by <kbd>str</kbd>
+(<code>--set=</code><kbd>str</kbd>);</p>
+
+<p class="fmtc"><code>-u</code>, <code>--utc</code>, <code>--universal</code></p>
+<p class="desc">display or set Universal Time Coordinated;</p>
+
+
+<h5>Format</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>%%</code></td>
+<td class="opt_desc">literal %;</td></tr>
+<tr>
+<td class="opt_name"><code>%a</code></td>
+<td class="opt_desc">locale’s abbreviated weekday name (Sun..Sat);</td></tr>
+<tr>
+<td class="opt_name"><code>%A</code></td>
+<td class="opt_desc">locale’s full weekday name (Sunday..Saturday);</td></tr>
+<tr>
+<td class="opt_name"><code>%b</code></td>
+<td class="opt_desc">locale’s abbreviated month name (Jan..Dec);</td></tr>
+<tr>
+<td class="opt_name"><code>%B</code></td>
+<td class="opt_desc">locale’s full month name (January..December);</td></tr>
+<tr>
+<td class="opt_name"><code>%c</code></td>
+<td class="opt_desc">locale’s date and time;</td></tr>
+<tr>
+<td class="opt_name"><code>%C</code></td>
+<td class="opt_desc">century (year divided by 100 and truncated to int);</td></tr>
+<tr>
+<td class="opt_name"><code>%d</code></td>
+<td class="opt_desc">day of month (01..31);</td></tr>
+<tr>
+<td class="opt_name"><code>%D</code></td>
+<td class="opt_desc">date (mm/dd/yy);</td></tr>
+<tr>
+<td class="opt_name"><code>%e</code></td>
+<td class="opt_desc">day of month, blank padded (1..31);</td></tr>
+<tr>
+<td class="opt_name"><code>%F</code></td>
+<td class="opt_desc">same as %Y-%m-%d;</td></tr>
+<tr>
+<td class="opt_name"><code>%g</code></td>
+<td class="opt_desc">2-digit year corresponding to %V week number;</td></tr>
+<tr>
+<td class="opt_name"><code>%G</code></td>
+<td class="opt_desc">4-digit year corresponding to %V week number;</td></tr>
+<tr>
+<td class="opt_name"><code>%h</code></td>
+<td class="opt_desc">same as %b;</td></tr>
+<tr>
+<td class="opt_name"><code>%H</code></td>
+<td class="opt_desc">hour (00..23);</td></tr>
+<tr>
+<td class="opt_name"><code>%I</code></td>
+<td class="opt_desc">hour (01..12);</td></tr>
+<tr>
+<td class="opt_name"><code>%j</code></td>
+<td class="opt_desc">hday of year (001..366);</td></tr>
+<tr>
+<td class="opt_name"><code>%k</code></td>
+<td class="opt_desc">hour (0..23);</td></tr>
+<tr>
+<td class="opt_name"><code>%l</code></td>
+<td class="opt_desc">hour (1..12);</td></tr>
+<tr>
+<td class="opt_name"><code>%m</code></td>
+<td class="opt_desc">month (01..12);</td></tr>
+<tr>
+<td class="opt_name"><code>%M</code></td>
+<td class="opt_desc">minute (00..59);</td></tr>
+<tr>
+<td class="opt_name"><code>%n</code></td>
+<td class="opt_desc">a newline;</td></tr>
+<tr>
+<td class="opt_name"><code>%N</code></td>
+<td class="opt_desc">nanoseconds (000000000..999999999);</td></tr>
+<tr>
+<td class="opt_name"><code>%p</code></td>
+<td class="opt_desc">locale’s upper case AM or PM indicator;</td></tr>
+<tr>
+<td class="opt_name"><code>%P</code></td>
+<td class="opt_desc">locale’s lower case am or pm indicator;</td></tr>
+<tr>
+<td class="opt_name"><code>%r</code></td>
+<td class="opt_desc">time, 12-hour (hh:mm:ss [AP]M);</td></tr>
+<tr>
+<td class="opt_name"><code>%R</code></td>
+<td class="opt_desc">time, 24-hour (hh:mm);</td></tr>
+<tr>
+<td class="opt_name"><code>%s</code></td>
+<td class="opt_desc">seconds since ’00:00:00 1970-01-01 UTC’  (GNU ext);</td></tr>
+<tr>
+<td class="opt_name"><code>%S</code></td>
+<td class="opt_desc">second (00..60);</td></tr>
+<tr>
+<td class="opt_name"><code>%t</code></td>
+<td class="opt_desc">a horizontal tab;</td></tr>
+<tr>
+<td class="opt_name"><code>%T</code></td>
+<td class="opt_desc">time, 24-hour (hh:mm:ss);</td></tr>
+<tr>
+<td class="opt_name"><code>%u</code></td>
+<td class="opt_desc">day of week (1..7 / Mon, Tue, Wed, Thu, Fri, Sat, Sun);</td></tr>
+<tr>
+<td class="opt_name"><code>%U</code></td>
+<td class="opt_desc">week number of year with Sun as 1st day of week (00..53);</td></tr>
+<tr>
+<td class="opt_name"><code>%V</code></td>
+<td class="opt_desc">week number of year with Mon as 1st day of week (01..53);</td></tr>
+<tr>
+<td class="opt_name"><code>%w</code></td>
+<td class="opt_desc">day of week (0..6 : Sun, Mon, Tue, Wed, Thu, Fri, Sat);</td></tr>
+<tr>
+<td class="opt_name"><code>%W</code></td>
+<td class="opt_desc">week number of year with Mon as 1st day of week (00..53);</td></tr>
+<tr>
+<td class="opt_name"><code>%x</code></td>
+<td class="opt_desc">locale’s date representation (mm/dd/yy);</td></tr>
+<tr>
+<td class="opt_name"><code>%X</code></td>
+<td class="opt_desc">locale’s time representation (%H:%M:%S);</td></tr>
+<tr>
+<td class="opt_name"><code>%y</code></td>
+<td class="opt_desc">past two digits of year (00.99);</td></tr>
+<tr>
+<td class="opt_name"><code>%Y</code></td>
+<td class="opt_desc">year (1970…);</td></tr>
+<tr>
+<td class="opt_name"><code>%z</code></td>
+<td class="opt_desc">RFC-2822 style numeric timezone (-0500), non-std ext.;</td></tr>
+<tr>
+<td class="opt_name"><code>%Z</code></td>
+<td class="opt_desc">time zone (e.g., EDT);</td></tr>
+</table>
+
+
+
+<p class="cmdname"><a name="dd">dd</a></p>
+<p>
+copies a file, converting and formatting according to the options.</p>
+
+<p class="fmt"><code>dd if=</code><kbd>input_file&nbsp;</kbd><code>of=</code><kbd>output_file&nbsp;</kbd>[<kbd>options</kbd>]</p>
+<p>
+<b>Working with CD/DVD</b>:</p>
+
+<p class="cmdc">dd if=/dev/sr0 of=cdimage.iso</p>
+<p class="desc">write image of CD (DVD) to a file (<samp>cdimage.iso</samp>);
+old (PATA) devices can have names like
+<samp>/dev/hdc</samp>, <samp>/dev/cdrom</samp>, etc;</p>
+
+<p class="cmdc">dd if=cdimage.iso of=/dev/sr0</p>
+<p class="desc">create new CD/DVD using image file <samp>cdimage.iso</samp>;
+of course <i>you need an appropriate device</i> (CD/DVD Writer) and a blank
+CD-R (DVD+R) disk;</p>
+
+<p>
+<b>Backup / restore</b> disk partition:</p>
+
+<p class="cmdc">dd if=/dev/sda3 conv=sync,noerror bs=64K | gzip -c &gt; root.img.gz</p>
+<p class="desc">backup disk partition, compress, overwrite an existing file;</p>
+
+<p class="cmdc">gunzip -c root.img.gz | dd of=/dev/sda3 conv=sync,noerror</p>
+<p class="desc">restore partition using a compressed image of that partition;</p>
+
+<p>
+<b>Backup / restore MBR</b> and partition table:</p>
+
+<p class="cmdc">dd if=/dev/sda of=mbr.img bs=512 count=1</p>
+<p class="desc">save Master Boot Record and partition table to
+<samp>mbr.img</samp>;</p>
+
+<p class="cmdc">dd if=mbr.img of=/dev/sda</p>
+<p class="desc">restore MBR and partition table using file
+<samp>mbr.img</samp>;</p>
+
+<p class="cmdc">dd if=mbr.img of=/dev/sda bs=446 count=1</p>
+<p class="desc">restore MBR, do not touch the existing partition table;</p>
+
+<p>
+<b>Backup / restore GPT:</b></p>
+<p>
+GPT table length depends on the number of partitions, and you should not do
+anything without a preliminary research. First, you must find the exact number
+of partitions. Assuming dev is <samp>/dev/sda</samp>:</p>
+
+<p class="cmd">parted -ms /dev/sda print</p>
+<p>
+(<code>parted</code> is usually present by default). The number of bytes
+to read would be:</p>
+
+<p class="fmt"><samp><span class="arg">N</span> = (128 * n) + 1024</samp></p>
+<p>
+where <samp>n</samp> is the number of partitions found by prev cmd.
+Now, to save GPT to file <samp>sda-part.gpt</samp>, use:</p>
+
+<p class="cmd">dd if=/dev/sda of=sda-part.gpt bs=1 count=<span class="arg">N</span></p>
+<p>
+To restore GPT to the same HDD/SSD, or to a new HDD/SSD of <i>the same or
+larger size (!)</i>:</p>
+
+<p class="cmd">dd if=sda-part.gpt of=/dev/sda bs=1 count=<span class="arg">N</span></p>
+<p>
+If you find this too complicated, try
+<a href="cmds_g.html#gdisk"><code>sgdisk</code></a>.</p>
+
+<p>
+<b>Random sequences</b>:</p>
+
+<p class="cmdc">dd if=/dev/random bs=1 count=5 | xxd -ps</p>
+<p class="desc">create a 40-bits random key
+(<a href="misc.html#xxd"><code>xxd</code></a>
+converts it to a 10 char string);</p>
+
+<p class="cmdc">dd if=/dev/urandom of=pdatfs bs=1M count=16</p>
+<p class="desc">create a 10M file (<samp>pdatfs</samp>) and fill it with
+random data;</p>
+
+<p>
+<b>Old examples</b> with floppy disks:</p>
+
+<p class="cmdc">dd if=stage1 of=/dev/fd0 bs=512 count=1</p>
+<p class="cmdc">dd if=stage2 of=/dev/fd0 bs=512 seek=1</p>
+<p class="desc">(Red Hat, Fedora?) create a GRUB boot floppy (stage1/2 files
+must be in <samp>/usr/share/grub/i386-pc</samp>);</p>
+
+<p class="cmdc">dd if=bzImage of=/dev/fd0</p>
+<p class="desc">copy file <samp>bzImage</samp> to a floppy disk;</p>
+
+<p class="cmdc">dd if=disk2.img of=/dev/fd0 ibs=18k count=80</p>
+<p class="desc">create floppy diskette using file <samp>disk2.img</samp>, copy only 1440K;</p>
+
+
+<h5>Some options</h5>
+
+<table class="options">
+
+<tr>
+<td class="opt_name"><code>bs=</code><kbd>n</kbd></td>
+<td class="opt_desc">read &amp; write <kbd>n</kbd> bytes at a time;</td></tr>
+<tr>
+<td class="opt_name"><code>cbs=</code><kbd>n</kbd></td>
+<td class="opt_desc">convert <kbd>n</kbd> bytes at a time;</td></tr>
+<tr>
+<td class="opt_name"><code>conv=</code><kbd>lst</kbd></td>
+<td class="opt_desc">convert file according to a [comma-sep.] keywords list;</td></tr>
+<tr>
+<td class="opt_name"><code>count=</code><kbd>n</kbd></td>
+<td class="opt_desc">copy only <kbd>n</kbd> <code>ibs</code>-sized input blocks;</td></tr>
+<tr>
+<td class="opt_name"><code>ibs=</code><kbd>n</kbd></td>
+<td class="opt_desc">read <kbd>n</kbd> bytes at a time;</td></tr>
+<tr>
+<td class="opt_name"><code>if=</code><kbd>file</kbd></td>
+<td class="opt_desc">read from file instead of stdin;</td></tr>
+<tr>
+<td class="opt_name"><code>obs=</code><kbd>n</kbd></td>
+<td class="opt_desc">write <kbd>n</kbd> bytes at a time;</td></tr>
+<tr>
+<td class="opt_name"><code>of=</code><kbd>file</kbd></td>
+<td class="opt_desc">write to file instead of stdout;</td></tr>
+<tr>
+<td class="opt_name"><code>seek=</code><kbd>n</kbd></td>
+<td class="opt_desc">skip <kbd>n</kbd> obs-sized blocks at start of output;</td></tr>
+<tr>
+<td class="opt_name"><code>skip=</code><kbd>n</kbd></td>
+<td class="opt_desc">skip <kbd>n</kbd> ibs-sized blocks at start of input;</td></tr>
+</table>
+
+
+<h5>
+Following options may be used in <span class="arg">keywords</span>
+list with <code>conv</code></h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>ascii</code></td>
+<td class="opt_desc">from EBCDIC to ASCII;</td></tr>
+<tr>
+<td class="opt_name"><code>ebcdic</code></td>
+<td class="opt_desc">from ASCII to EBCDIC;</td></tr>
+<tr>
+<td class="opt_name"><code>ibm</code></td>
+<td class="opt_desc">from ASCII to alternated EBCDIC;</td></tr>
+<tr>
+<td class="opt_name"><code>block</code></td>
+<td class="opt_desc">pad nl-terminated rec with spaces to cbs-size;</td></tr>
+<tr>
+<td class="opt_name"><code>unblock&nbsp;</code></td>
+<td class="opt_desc">replace trailing spaces in cbs-size rec with nl;</td></tr>
+<tr>
+<td class="opt_name"><code>lcase</code></td>
+<td class="opt_desc">change upper case to lower case;</td></tr>
+<tr>
+<td class="opt_name"><code>ucase</code></td>
+<td class="opt_desc">change lower case to upper case;</td></tr>
+<tr>
+<td class="opt_name"><code>sparse</code></td>
+<td class="opt_desc">try to seek rather than write the output for NUL input
+blocks;</td></tr>
+<tr>
+<td class="opt_name"><code>swab</code></td>
+<td class="opt_desc">swap every pair of input bytes;</td></tr>
+<tr>
+<td class="opt_name"><code>sync</code></td>
+<td class="opt_desc">pad every input block with NULs to <i>ibs-size</i>; when used
+with <i>block</i> or <i>unblock</i>, pad with spaces rather than NULs;</td></tr>
+<tr>
+<td class="opt_name"><code>excl</code></td>
+<td class="opt_desc">fail if the output file already exists;</td></tr>
+<tr>
+<td class="opt_name"><code>nocreat</code></td>
+<td class="opt_desc">do not create the output file;</td></tr>
+<tr>
+<td class="opt_name"><code>notrunc</code></td>
+<td class="opt_desc">do not truncate the output file;</td></tr>
+<tr>
+<td class="opt_name"><code>noerror</code></td>
+<td class="opt_desc">continue after read errors;</td></tr>
+<tr>
+<td class="opt_name"><code>fdatasync</code></td>
+<td class="opt_desc">physically write output file data before finishing;</td></tr>
+<tr>
+<td class="opt_name"><code>fsync</code></td>
+<td class="opt_desc">like prev, but also write metadata;</td></tr>
+</table>
+
+
+
+
+<p class="cmdname"><a name="ddrescue">ddrescue</a></p>
+<p>
+(GNU ddrescue) is a data recovery tool. It copies data from one file or
+block device to another, trying to rescue data in case of read errors.</p>
+
+<p class="cmdc">ddrescue -n -b2048 /dev/cdrom cdimage logfile</p>
+<p class="desc">rescue a CD-ROM: copy CD image to a file
+(<samp>cdimage</samp>), then, if operaion succeeds, you can burn it to
+a blank CD-ROM;</p>
+
+<p class="cmdc">ddrescue -d -b2048 /dev/cdrom cdimage logfile</p>
+<p class="desc">similar to prev (copy CD image to a file), but use direct access;</p>
+
+<p class="cmdc">ddrescue -n -b 2048 /media/VIDEO_TS/<span class="arg">FILE</span>.VOB .</p>
+<p class="desc">try to copy a damaged file from a DVD to the current
+dir on HDD (mind a dot at the end); this is a good first pass to save quickly
+those blocks that can be saved easily, and to estimate the sizes of damaged
+areas; then, if the damaged area is not that big, you can try the same cmd
+without <code>-n</code>;
+NOTE! Some protected DVDs cannot be copied file by file, and <code>~</code>
+may fail absolutely in such case, though DVD can be played without problems;</p>
+
+<p class="cmdc">ddrescue --fill=+ /dev/zero /dev/sda4 logfile</p>
+<p class="desc">wipe the good sectors; the drive will still test bad
+(unreadable sectors); this is a good way of wiping the failing drive
+before sending it for repairment or returning back to shop;</p>
+
+<p class="cmdc">ddrescue --fill=- -D /dev/zero /dev/sda1</p>
+<p class="desc">force the drive to remap the bad sectors (assuming
+there are few of them and no deprication); we are trying to rewrite bad
+sectors and may be the drive would manage to reallocate them to new spare
+sectors; actually, this procedure may fail;</p>
+
+<p class="fmt"><code>ddrescue&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;infile outfile&nbsp;</kbd>[<kbd>logfile</kbd>]</p>
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-h</code> &nbsp;&nbsp; <code>--help</code> &nbsp;&nbsp;
+<code>-V</code> &nbsp;&nbsp; <code>--version</code> &nbsp;&nbsp;
+<code>-v</code> &nbsp;&nbsp; <code>--verbose</code></p>
+
+<p class="fmtc"><code>-b</code> <kbd>n</kbd>,
+<code>--block-size=</code><kbd>n</kbd></p>
+<p class="desc">HW block size (in bytes) of input device (default is 512);</p>
+
+<p class="fmtc"><code>-B</code>, <code>--binary-prefixes</code></p>
+<p class="desc">show units with binary prefixes; by default SI prefixes
+(powers of 1000) are used;</p>
+
+<p class="fmtc"><code>-c</code> <kbd>n</kbd>,
+<code>--cluster-size=</code><kbd>n</kbd></p>
+<p class="desc">num of sectors to copy at a time (by default
+<kbd>n</kbd> = 128, i.e., 64KiB at a time, provided sector size is 512 bytes);</p>
+
+<p class="fmtc"><code>-C</code>, <code>--complete-only</code></p>
+<p class="desc">limit rescue to the blocks listed in logfile, don't read new
+data beyond the logfile limits (useful when reading from devices of undefined
+size, like raw dev)</p>
+
+<p class="fmtc"><code>-d</code>, <code>--direct</code></p>
+<p class="desc">
+use direct disk access for input file (must be device or HDD partition);
+if sector size is not correctly set, all reads will fail;</p>
+
+<p class="fmtc"><code>-D</code>, <code>--synchronous</code></p>
+<p class="desc">use synchronous writes for output file;</p>
+
+<p class="fmtc"><code>-e</code> <kbd>n</kbd>,
+<code>--max-errors=</code><kbd>n</kbd></p>
+<p class="desc">max num of error areas allowed before giving up; defaults
+to infinity;</p>
+
+<p class="fmtc"><code>-F</code> <kbd>t</kbd>,
+<code>--fill-type=</code><kbd>t</kbd></p>
+<p class="desc">fill given type areas with the input file data;</p>
+
+<p class="fmtc"><code>-g</code>, <code>--generate-logfile</code></p>
+<p class="desc">generate an approximate logfile from the input and output
+files of the original rescue run;</p>
+
+<p class="fmtc"><code>-i</code> <kbd>p</kbd>,
+<code>--input-position=</code><kbd>p</kbd></p>
+<p class="desc">
+starting position in input file (in bytes); by default
+<kbd>p</kbd> = <samp>0</samp>; in fill mode it refers to the original
+input file;</p>
+
+<p class="fmtc"><code>-m</code> <kbd>file</kbd>,
+<code>--domain-logfile=</code><kbd>file</kbd></p>
+<p class="desc">restrict rescue domain to the blocks marked as finished
+in <kbd>file</kbd>; this is useful if dest drive fails during the rescue;</p>
+
+<p class="fmtc"><code>-n</code>, <code>--no-split</code></p>
+<p class="desc">stop after trimming pass, don't try to rescue the most
+difficult parts of the file as this may take a lot of time;</p>
+
+<p class="fmtc"><code>-o</code> <kbd>p</kbd>,
+<code>--output-position=</code><kbd>p</kbd></p>
+<p class="desc">starting position in output file (in bytes);
+defaults to input pos; bytes before <kbd>p</kbd> are not touched;</p>
+
+<p class="fmtc"><code>-q</code>, <code>--quiet</code></p>
+<p class="desc">quiet operation;</p>
+
+<p class="fmtc"><code>-r</code> <kbd>n</kbd>,
+<code>--max-retries=</code><kbd>n</kbd></p>
+<p class="desc">exit after <kbd>n</kbd> retries
+(default is <samp>0</samp>; <samp>-1</samp> means infinity);
+each sector is tried once per pass, to retry bad sectors detected on
+a prev pass, specify non-zero <kbd>n</kbd>;</p>
+
+<p class="fmtc"><code>-R</code>, <code>--retrim</code></p>
+<p class="desc">mark all failured block inside the rescue domain as
+non-trimmed before beginning the rescue;</p>
+
+<p class="fmtc"><code>-s</code> <kbd>n</kbd>,
+<code>--max-size=</code><kbd>n</kbd></p>
+<p class="desc">max size of input data to be copied (in bytes);
+use this when <code>~</code> cannot determine the size of input device;</p>
+
+<p class="fmtc"><code>-S</code>, <code>--sparse</code></p>
+<p class="desc">use sparse writes for output file;</p>
+
+<p class="fmtc"><code>-t</code>, <code>--truncate</code></p>
+<p class="desc">truncate <kbd>outfile</kbd> to zero size before writing;</p>
+
+<a name="multipliers">
+<p>
+Numbers may be followed by multipliers:</p></a>
+
+<p class="fmtc"><samp>b</samp> = blocks</p>
+<p class="fmtc"><samp>k</samp> = <samp>kB</samp> = <samp>10<sup>3</sup></samp> = <samp>1000</samp></p>
+<p class="fmtc"><samp>Ki</samp> = <samp>KiB</samp> = <samp>2<sup>10</sup></samp> = <samp>1024</samp></p>
+<p class="fmtc"><samp>M</samp> = <samp>10<sup>6</sup></samp> = <samp>1000000</samp></p>
+<p class="fmtc"><samp>Mi</samp> = <samp>MiB</samp> = <samp>2<sup>20</sup></samp> = <samp>1048576</samp></p>
+<p class="fmtc"><samp>G</samp> = <samp>10<sup>9</sup></samp></p>
+<p class="fmt"><samp>Gi</samp> = <samp>GiB</samp> = <samp>2<sup>30</sup></samp></p>
+
+
+
+<p class="cmdname"><a name="df">df</a></p>
+<p>
+displays the amount of disk space available on the filesystem containing
+each <kbd>file</kbd> arg. <kbd>file</kbd> can also be a device name, but fs
+must be mounted. Without this arg the space available on all currently
+mounted filesystems is shown.</p>
+
+<p class="cmdc">df -m</p>
+<p class="desc">report disk space usage in MB (all mounted filesystems);</p>
+
+<p class="cmdc">df -h</p>
+<p class="desc">report disk space usage in human readable format;</p>
+
+<p class="cmdc">df -i /u02/templates</p>
+<p class="desc">report inode usage in fs where <samp>/u02/templates</samp> resides;</p>
+
+<p class="fmt"><code>df&nbsp;</code>[<kbd>options</kbd>] [<kbd>file</kbd>]<kbd>&nbsp;...</kbd></p>
+
+
+<h5>Some options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>-a</code>, <code>--all</code></p>
+<p class="desc">include filesystems having <samp>0</samp> blocks;</p>
+
+<p class="fmtc"><code>-B</code> <kbd>n</kbd>,
+<code>--block-size=</code><kbd>n</kbd></p>
+<p class="desc">use <kbd>n</kbd>-byte blocks;</p>
+
+<p class="fmtc"><code>-h</code>, <code>--human-readable</code></p>
+<p class="desc">use human readable format;</p>
+
+<p class="fmtc"><code>-H</code>, <code>--si</code></p>
+<p class="desc">like prev, but use powers of <samp>1000</samp>, not <samp>1024M</samp>;</p>
+
+<p class="fmtc"><code>-i</code>, <code>--inodes</code></p>
+<p class="desc">list inode info instead of block usage;</p>
+
+<p class="fmtc"><code>-k</code></p>
+<p class="desc">use <samp>1K</samp> blocks (like <code>--block-size=1K</code>);</p>
+
+<p class="fmtc"><code>-l</code>, <code>--local</code></p>
+<p class="desc">limit listing to local filesystems;</p>
+
+<p class="fmtc"><code>-P</code>, <code>--portability</code></p>
+<p class="desc">use the POSIX output format;</p>
+
+<p class="fmtc"><code>-t</code> <kbd>t</kbd>, <code>--type=</code><kbd>t</kbd></p>
+<p class="desc">limit listing to the filesystems of the specified type;</p>
+
+<p class="fmtc"><code>-T</code>, <code>--print-type</code></p>
+<p class="desc">print filesystem type;</p>
+
+<p class="fmtc"><code>-x</code> <kbd>t</kbd>,
+<code>--exclude-type=</code><kbd>t</kbd></p>
+<p class="desc">exclude from listing filesystems of the specified type;</p>
+
+<p class="fmtc"><code>--no-sync</code></p>
+<p class="desc">do not invoke <code>sync</code> before getting usage info (default);</p>
+
+<p class="fmtc"><code>--sync</code></p>
+<p class="desc">invoke <code>sync</code> before getting usage info;</p>
+
+
+
+<p class="cmdname"><a name="diff">diff</a></p>
+<p>
+finds differences between two files.</p>
+
+<p class="cmdc">diff -y msg01.txt msg02.txt</p>
+<p class="desc">find differences between <samp>msg01.txt</samp> and
+<samp>msg02.txt</samp>, show results in a side by side format;</p>
+
+<p class="cmdc">diff -r /etc ./bkp/etc</p>
+<p class="desc">compare directories recursively (that is, compare each file
+in the first dir to the corresponding file in the second dir);</p>
+
+<p class="fmt"><code>diff&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;file1 file2</kbd></p>
+<p>
+If one of the specified files is a directory, <code>~</code> looks in this
+dir for an appropriate file (named like another file specified on the cmd
+line). If both args are dirs, then corresponding files in these dirs are
+compared in alphabetical order. The procedure is not recursive unless
+<code>-r</code> is given. Actual contents of dirs [taken as files] are never
+compared.</p>
+
+
+<h5>Some options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>-v</code> &nbsp;&nbsp;
+<code>--version</code></p>
+
+<p class="fmtc"><code>-a</code>, <code>--text</code></p>
+<p class="desc">treat all files as text and compare them line-by-line,
+even if they do not seem to be text;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-b</code></td><td class="opt_desc">ignore variations in amount of white space;</td></tr>
+<tr><td class="opt_name"><code>-B</code></td><td class="opt_desc">ignore variations in amount of blank lines;</td></tr>
+<tr><td class="opt_name"><code>-c</code></td><td class="opt_desc">use the context output format;</td></tr>
+</table>
+
+<p class="fmtc"><code>-C</code> [<kbd>n</kbd>],
+<code>--context</code>[<code>=</code><kbd>n</kbd>]</p>
+<p class="desc">use the context output format, showing <kbd>n</kbd>
+lines of context (default is 3);</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-d</code></td>
+<td class="opt_desc">change the algorithm to find a smaller set of changes;</td></tr>
+</table>
+
+<p class="fmtc"><code>-D</code> <kbd>name</kbd></p>
+<p class="desc">make merged if-then-else format output, conditional on the
+pre-processor macro name;</p>
+
+<p class="fmtc"><code>-e</code>, <code>--ed</code></p>
+<p class="desc">make output that is a valid <code>ed</code> script;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-f</code></td>
+<td class="opt_desc">make output that looks like an <code>ed</code> script, but has changes in the order they appear in the file;</td></tr>
+</table>
+
+<p class="fmtc"><code>-F</code> <kbd>regexp</kbd></p>
+<p class="desc">in context and unified format, for each hunk of differences,
+show some of the last preceding line matching <kbd>regexp</kbd>;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-H</code></td>
+<td class="opt_desc">use heuristics to speed handling of large files
+that have numerous scattered small changes;</td></tr>
+</table>
+
+<p class="fmtc"><code>-i</code>, <code>--ignore-case</code></p>
+<p class="desc">ignore variations in case;</p>
+
+<p class="fmtc"><code>-I</code> <kbd>regexp</kbd>,
+<code>--ignore-matching-lines=</code><kbd>regexp</kbd></p>
+<p class="desc">ignore changes that just insert/delete lines matching
+<kbd>regexp</kbd>;</p>
+
+<p class="fmtc"><code>-l</code>, <code>--paginate</code></p>
+<p class="desc">pass the output through <code>pr</code> to paginate it;</p>
+
+<p class="fmtc"><code>-L</code> <kbd>label</kbd>,
+<code>--label=</code><kbd>label</kbd></p>
+<p class="desc">use <kbd>label</kbd> instead of the file name in the context
+format and unified format headers;</p>
+
+<p class="fmtc"><code>-n</code>, <code>--rcs</code></p>
+<p class="desc">output RCS-format diffs (similar to <code>-f</code> except
+that each command specifies the number of lines affected);</p>
+
+<p class="fmtc"><code>-N</code>, <code>--new-file</code></p>
+<p class="desc">in directory comparision, if a file is found in only one dir,
+treat it as present but empty in the other dir;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-p</code></td>
+<td class="opt_desc">associate all changes with the corresponding C-functions;</td></tr>
+<tr>
+<td class="opt_name"><code>-P</code></td>
+<td class="opt_desc">in directory comparision, if a file appears only in the
+second dir, treat it as present but empty in the other dir;</td></tr>
+<tr>
+<td class="opt_name"><code>-q</code></td>
+<td class="opt_desc">report only whether the files differ, without details;</td></tr>
+</table>
+
+<p class="fmtc"><code>-r</code>, <code>--recursive</code></p>
+<p class="desc">in dir comparision, recursively compare subdirs;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-s</code></td>
+<td class="opt_desc">report when two files are the same;</td></tr>
+</table>
+
+<p class="fmtc"><code>-S</code> <kbd>file</kbd></p>
+<p class="desc">when comparing dirs, start with the specified file
+(may be used to resume an aborted procedure);</p>
+
+<table class="options"><tr>
+<td class="opt_name"><code>-t</code></td>
+<td class="opt_desc">expand TABs to spaces in the output to preserve the
+alignment of TABs in the input files;</td></tr>
+<tr>
+<td class="opt_name"><code>-T</code></td>
+<td class="opt_desc">output a TAB rather than a space before the text of
+a line in normal or context format;</td></tr>
+<tr>
+<td class="opt_name"><code>-u</code></td>
+<td class="opt_desc">use the unified output format;</td></tr>
+</table>
+
+<p class="fmtc"><code>-U</code> [<kbd>n</kbd>],
+<code>--unified</code>[<code>=</code><kbd>n</kbd>]</p>
+<p class="desc">use the unified output format, showing <kbd>n</kbd> lines
+of context (default is 3);</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-w</code></td>
+<td class="opt_desc">ignore white spaces when comparing lines;</td></tr>
+</table>
+
+<p class="fmtc"><code>-W</code> <kbd>n</kbd>,
+<code>--width=</code><kbd>n</kbd></p>
+<p class="desc">use the specified width of columns in side by side
+output format;</p>
+
+<p class="fmtc"><code>-x</code> <kbd>pattern</kbd></p>
+<p class="desc">when comparing dirs, ignore files and subdirs whose
+basenames match the specified pattern;</p>
+
+<p class="fmtc"><code>-X</code> <kbd>file</kbd></p>
+<p class="desc">when comparing dirs, ignore files and subdirs whose basenames
+match any pattern from the specified file;</p>
+
+<table class="options"><tr>
+<td class="opt_name"><code>-y</code></td>
+<td class="opt_desc">use the side by side output format;</td></tr>
+</table>
+
+
+
+<p class="cmdname"><a name="dig">dig</a></p>
+<p>
+gets domain info from the DNS servers. You can find some useful definitions
+in <a href="tcpip.html#dns_info">DNS-related info</a>. DIG means
+"domain information groper".</p>
+
+<p class="fmt"><code>dig</code> [<code>@</code><kbd>server</kbd>]
+[<kbd>options</kbd>] [<kbd>name</kbd>] [<kbd>type</kbd>] [<kbd>queryopt</kbd>]</p>
+<p>
+A typical invocation looks like:</p>
+
+<p class="fmt"><code>dig @</code><kbd>server name type</kbd></p>
+<p>
+<kbd>server</kbd> (name or IPv4/IPv6 address) is DNS to be used (by default
+those listed in <samp>/etc/resolv.conf</samp> will be used), <kbd>name</kbd>
+is the name of the resource record to be looked up (usually domain or host
+name), <kbd>type</kbd> is any valid query type like <samp>ANY</samp>,
+<samp>A</samp> (default), <samp>MX</samp>, <samp>SIG</samp>, etc.</p>
+
+<p class="cmdc">dig mail.acme.com -t A</p>
+<p class="desc">get the IP address of the host <samp>mail.acme.com</samp>;</p>
+
+<p class="cmdc">dig @195.133.122.20 mydomain.net</p>
+<p class="desc">show records for <samp>mydomain.net</samp> using the
+specified name server (<samp>195.133.122.20</samp>);</p>
+
+<p class="cmdc">dig mydomain.net -t mx</p>
+<p class="desc">show <samp>MX</samp> records (mail servers) for
+<samp>mydomain.net</samp>;</p>
+
+<p class="cmdc">dig -x 128.9.0.32</p>
+<p class="desc">show the hostname of the node with IP <samp>128.9.0.32</samp>;
+
+<p class="cmdc">dig +qr www.acme.com any -x 127.0.0.1
+mydomain.ru ns +noqr</p>
+<p class="desc">make three lookups in one cmd: an <samp>ANY</samp> query for
+<samp>www.acme.com</samp>, a reverse lookup of <samp>127.0.0.1</samp> and a
+query for the <samp>NS</samp> record of <samp>mydomain.ru</samp>; a global
+query option <code>+qr</code> is applied to all  queries except the last one
+that is affected by the local query option <code>+noqr</code>;</p>
+
+<p class="cmdc">dig +multiline @ns-pri.example.com<br>
+2.0.192.in-addr.arpa NS</p>
+<p class="desc">query against the authoritative server for the <samp>NS</samp>
+in <samp>2.0.194.in-addr.arpa</samp>; this is usually the first check you
+should do to verify if the name server setup is correct;</p>
+
+<p class="cmdc">dig 2.0.192.in-addr.arpa +nssearch</p>
+<p class="desc">look for the authoritative servers for
+<samp>2.0.192.in-addr.arpa</samp>;</p>
+
+<p>
+<code>dig</code> is mostly used as cmdline tool, but it also has a batch
+mode of operation for reading lookup requests from a file (see <code>-f</code>
+option).</p>
+
+
+<h5>Query type</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>A</code></td>
+<td class="opt_desc">network address (default);</td></tr>
+<tr>
+<td class="opt_name"><code>ANY</code></td>
+<td class="opt_desc">all information about specified domain;</td></tr>
+<tr>
+<td class="opt_name"><code>MX</code></td>
+<td class="opt_desc">mail exchangers;</td></tr>
+<tr>
+<td class="opt_name"><code>NS</code></td>
+<td class="opt_desc">name servers;</td></tr>
+<tr>
+<td class="opt_name"><code>SOA</code></td>
+<td class="opt_desc">zone of authority record;</td></tr>
+<tr>
+<td class="opt_name"><code>HINFO</code></td>
+<td class="opt_desc">host information;</td></tr>
+<tr>
+<td class="opt_name"><code>AXFR</code></td>
+<td class="opt_desc">zone transfer;</td></tr>
+<tr>
+<td class="opt_name"><code>IXFR</code></td>
+<td class="opt_desc">incremental zone transfer;</td></tr>
+<tr>
+<td class="opt_name"><code>TXT</code></td>
+<td class="opt_desc">arbitrary number of strings;</td></tr>
+</table>
+
+
+<h5>Query class</h5>
+
+<p class="fmt"><samp>IN</samp> (Internet, default); <samp>HS</samp> (Hesiod);
+<samp>CH</samp> (Chaosnet);</p>
+
+
+<h5>Some options</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-h</code></td>
+<td class="opt_desc">help;</td></tr>
+<tr>
+<td class="opt_name"><code>-v</code></td>
+<td class="opt_desc">version;</td></tr>
+<tr>
+<td class="opt_name"><code>-4</code></td>
+<td class="opt_desc">use IPv4 query transport only;</td></tr>
+<tr>
+<td class="opt_name"><code>-6</code></td>
+<td class="opt_desc">use IPv6 query transport only;</td></tr>
+</table>
+
+<p class="fmtc"><code>-b</code> <kbd>addr</kbd></p>
+<p class="desc">set the src IP addr of the query (must be one of the valid
+host's IPs or <samp>0.0.0.0</samp> or <samp>::</samp>);</p>
+
+<p class="fmtc"><code>-c</code> <kbd>query-class</kbd></p>
+<p class="desc">set query class (default is <samp>IN</samp>);</p>
+
+<p class="fmtc"><code>-f</code> <kbd>file</kbd></p>
+<p class="desc">specify the name of a file containing a list of query specs
+(one per line) which are to be executed successively; lines beginning with
+';', '#', or '\n' are ignored; other options may still appear on cmdline,
+and will be in effect for each query;</p>
+
+<p class="fmtc"><code>-k</code> <kbd>file</kbd></p>
+<p class="desc">specify <samp>TSIG</samp> key file (to sign queries sent by
+<code>~</code> and their responses using transaction signatures);</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-m</code></td>
+<td class="opt_desc">enable memory usage debugging;</td></tr>
+</table>
+
+<p class="fmtc"><code>-p</code> <kbd>nn</kbd></p>
+<p class="desc">use the specified port instead of DNS standard
+<samp>53</samp>;</p>
+
+<p class="fmtc"><code>-q</code> <kbd>name</kbd></p>
+<p class="desc">set query name to <kbd>name</kbd>;</p>
+
+<p class="fmtc"><code>-t</code> <kbd>query-type</kbd></p>
+<p class="desc">set query type (default is <samp>A</samp>);</p>
+
+<p class="fmtc"><code>-x</code> <kbd>addr</kbd></p>
+<p class="desc">reverse lookup; <kbd>addr</kbd> is either IPv4 dotted-decimal
+notation, or IPv6 colon-delimited address;</p>
+
+<p class="fmtc"><code>-y <span class="arg">name</span>:<span class="arg">key</span></code></p>
+<p class="desc">specify <code>named</code> base64 <samp>TSIG</samp> key
+(unsafe);</p>
+
+
+<h5>Some query options</h5>
+
+<p class="fmtc"><code>+nssearch</code></p>
+<p class="desc">try to find the authoritative name servers for the zone
+containing the name being looked up and display the <samp>SOA</samp> record
+that each name server has for the zone;</p>
+
+<p class="fmtc"><code>+</code>[<code>no</code>]<code>tcp</code></p>
+<p class="desc">use (do not use) TCP when querying name servers (default is
+UDP for all query types except <samp>AXFR/IXFR</samp>);</p>
+
+<p class="fmtc"><code>+time=<span class="arg">t</span></code></p>
+<p class="desc">set query timeout in seconds (def is <samp>5s</samp>, min is
+<samp>1s</samp>);</p>
+
+<p class="fmtc"><code>+trace</code></p>
+<p class="desc">follow the delegation tree from the root down and show all
+the steps in the recursion;</p>
+
+<p class="fmtc"><code>+tries=<span class="arg">n</span></code></p>
+<p class="desc">set the number of tries for UDP queries (default is
+<samp>3</samp>);</p>
+
+<p class="fmtc"><code>+retry=<span class="arg">n</span></code></p>
+<p class="desc">set the number of retries for UDP queries (default is
+<samp>2</samp>);</p>
+
+<p class="fmtc"><code>+domain=<span class="arg">name</span></code></p>
+<p class="desc">set the default domain name;</p>
+
+<p class="fmtc"><code>+</code>[<code>no</code>]<code>showsearch</code></p>
+<p class="desc">set whether to show intermediate search results;</p>
+
+<p class="fmtc"><code>+</code>[<code>no</code>]<code>short</code></p>
+<p class="desc">provide a terse answer;</p>
+
+<p class="fmtc"><code>+</code>[<code>no</code>]<code>cmd</code></p>
+<p class="desc">control display of command line;</p>
+
+<p class="fmtc"><code>+</code>[<code>no</code>]<code>comments</code></p>
+<p class="desc">control display of comment lines;</p>
+
+<p class="fmtc"><code>+</code>[<code>no</code>]<code>qr</code></p>
+<p class="desc">print the query as it is sent (default is 'no');</p>
+
+<p class="fmtc"><code>+</code>[<code>no</code>]<code>all</code></p>
+<p class="desc">set or clear all display flags;</p>
+
+<p class="fmtc"><code>+</code>[<code>no</code>]<code>multiline</code></p>
+<p class="desc">print records like <samp>SOA</samp> in a verbose multi-line
+format with human-readable comments;</p>
+
+
+
+<p class="cmdname"><a name="dos2unix">dos2unix, unix2dos</a></p>
+<p>
+<code>dos2unix</code> converts text files from DOS/Mac to Unix format,
+<code>unix2dos</code> converts text files from Unix to DOS/Mac format.
+Ubuntu users, look for <code><a href="cmds_f.html#fromdos">fromdos</a></code>
+and <code><a href="cmds_f.html#fromdos">todos</a></code>.</p>
+
+<p class="fmt"><code>dos2unix&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;file</kbd></p>
+<p class="fmt"><code>unix2dos&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;file</kbd></p>
+
+<p class="cmdc">dos2unix *txt</p>
+<p class="desc">convert all files with the matching names in the current dir from DOS to Unix format (it's assumed that all files are text);</p>
+
+<p class="cmdc">dos2unix -k *html</p>
+<p class="desc">convert all HTML files in the current dir from DOS to Unix format preserving original date stamp;</p>
+
+<p class="cmdc">dos2unix</p>
+<p class="desc">get input from stdin and write output to stdout;</p>
+
+<p class="cmdc">unix2dos -k *html</p>
+<p class="desc">convert all HTML files in the current dir from Unix to DOS format preserving original date stamp;</p>
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-h</code> &nbsp;&nbsp; <code>--help</code> &nbsp;&nbsp;
+<code>-V</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>-c</code> <kbd>mode</kbd>,
+<code>--convmode</code> <kbd>mode</kbd></p>
+<p class="desc">set conversion mode, which can be <code>ascii</code>
+(default), <code>iso</code>, <code>mac</code>;</p>
+
+<p class="fmtc"><code>-k</code>, <code>--keepdate</code></p>
+<p class="desc">keep the date stamp of the output file the same as the date
+stamp of the input file;</p>
+
+<p class="fmtc"><code>-q</code>, <code>--quiet</code></p>
+<p class="desc">quiet mode, suppress all warning msgs;</p>
+
+
+
+<p class="cmdname"><a name="du">du</a></p>
+<p>
+shows disk space usage in <samp>1K</samp> blocks. However, if
+<samp>POSIXLY_CORRECT</samp> env variable is set, then block size is
+<samp>512 bytes</samp>.</p>
+
+<p class="cmdc">du -hs</p>
+<p class="desc">show grand total for the current dir;</p>
+
+<p class="cmdc">du --max-depth=1 -h</p>
+<p class="desc">show grand total for each subdir of the current dir in human
+readable format (i.e. numbers with letters K, M, G);</p>
+
+<p class="cmdc">du --block-size=1 --max-depth=1</p>
+<p class="desc">show grand total in bytes for each subdir of the current dir;</p>
+
+<p class="cmdc">du -k -max-depth=1 | sort -nr</p>
+<p class="desc">show grand total in kilobytes for each subdir of the current
+dir sorted by size in reverse order (largest first);</p>
+
+<p class="fmt"><code>du&nbsp;</code>[<kbd>options</kbd>][<kbd>file</kbd>]<kbd>&nbsp;...</kbd></p>
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>-a</code>, <code>--all</code></p>
+<p class="desc">write counts for all files, not just directories;</p>
+
+<p class="fmtc"><code>-B</code> <kbd>n</kbd>,
+<code>--block-size=</code><kbd>n</kbd></p>
+<p class="desc">use <kbd>n</kbd>-byte blocks;</p>
+
+<p class="fmtc"><code>-b</code>, <code>--bytes</code></p>
+<p class="desc">print size in bytes; equivalent to
+<code>--apparent-size --block-size=1</code>;</p>
+
+<p class="fmtc"><code>-c</code>, <code>--total</code></p>
+<p class="desc">produce a grand total;</p>
+
+<table class="options"><tr>
+<td class="opt_name"><code>-D</code></td>
+<td class="opt_desc">dereference file that is a symbolic link;</td></tr>
+</table>
+
+<p class="fmtc"><code>-H</code>, <code>--si</code></p>
+<p class="desc">use powers of <samp>1000</samp>, not <samp>1024</samp>;</p>
+
+<p class="fmtc"><code>-h</code>, <code>--human-readable</code></p>
+<p class="desc">use human readable format;</p>
+
+<p class="fmtc"><code>-k</code>, <code>--kilobytes</code></p>
+<p class="desc">like <code>--block-size=1K</code>;</p>
+
+<p class="fmtc"><code>-l</code>, <code>--count-links</code></p>
+<p class="desc">count sizes many times if hard linked;</p>
+
+<p class="fmtc"><code>-L</code>, <code>--dereference</code></p>
+<p class="desc">dereference all symbolic links;</p>
+
+<p class="fmtc"><code>-P</code>, <code>--no-dereference</code></p>
+<p class="desc">don't follow any symbolic links (default);</p>
+
+<p class="fmtc"><code>-0</code>, <code>--null</code></p>
+<p class="desc">end each output line with <samp>'\0'</samp> rather than
+a newline;</p>
+
+<p class="fmtc"><code>-S</code>, <code>--separate-dirs</code></p>
+<p class="desc">do not include size of subdirs;</p>
+
+<p class="fmtc"><code>-s</code>, <code>--summarize</code></p>
+<p class="desc">display only a total for each arg;</p>
+
+<p class="fmtc"><code>-x</code>, <code>--one-file-system</code></p>
+<p class="desc">skip dirs on different filesystems;</p>
+
+<p class="fmtc"><code>-X</code> <kbd>file</kbd>,
+<code>--exclude-from=</code><kbd>file</kbd></p>
+<p class="desc">exclude files that match any pattern in <kbd>file</kbd>;</p>
+
+<p class="fmtc"><code>--apparent-size</code></p>
+<p class="desc">print apparent sizes, rather than disk usage; although the
+apparent size is usually smaller, it may be larger due to holes in sparse
+files, internal fragmentation, etc;</p>
+
+<p class="fmtc"><code>--exclude=</code><kbd>pattern</kbd></p>
+<p class="desc">exclude files that match the <kbd>pattern</kbd>; shell
+pattern is assumed (<samp>?</samp>, <samp>*</samp>), not a regexp;</p>
+
+<p class="fmtc"><code>--max-depth=</code><kbd>n</kbd></p>
+<p class="desc">print the total for a dir or file only if it's <kbd>n</kbd>
+or fewer levels below; <code>--max-depth=0</code> is equivalent to
+<code>--summarize</code>;</p>
+
+
+
+<p class="cmdname"><a name="dumpe2fs">dumpe2fs</a></p>
+<p>
+displays <samp>ext2</samp>/<samp>ext3</samp>/<samp>ext4</samp> filesystem info.</p>
+
+<p class="cmdc">dumpe2fs -h /dev/sda4</p>
+<p class="desc">show fs superblock info (all that you want, usually);</p>
+
+<p class="cmdc">dumpe2fs -b /dev/hda7</p>
+<p class="desc">display the bad blocks list for the specified filesystem;</p>
+
+<p class="fmt"><code>dumpe2fs&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;device</kbd></p>
+
+
+<h5>Some options</h5>
+
+<table class="options"><tr>
+<td class="opt_name"><code>-b</code></td>
+<td class="opt_desc">print the blocks which are reserved as bad in the
+filesystem;</td></tr>
+</table>
+
+<p class="fmtc"><code>-ob</code> <kbd>n</kbd></p>
+<p class="desc">use block <kbd>n</kbd> as a superblock when examining
+a filesystem (for badly corrupted filesystems);</p>
+
+<p class="fmtc"><code>-oB</code> <kbd>n</kbd></p>
+<p class="desc">use blocks of <kbd>n</kbd> bytes when examining a filesystem
+(for badly corrupted filesystems);</p>
+
+<table class="options"><tr>
+<td class="opt_name"><code>-f</code></td>
+<td class="opt_desc">force <code>~</code> to display a filesystem even
+though it may have some feature flags which <code>~</code> may not
+understand;</td></tr>
+<tr>
+<td class="opt_name"><code>-h</code></td>
+<td class="opt_desc">only display the superblock info;</td></tr>
+<tr>
+<td class="opt_name"><code>-i</code></td>
+<td class="opt_desc">
+display fs data from an image file created by <code>e2image</code>, using
+<kbd>device</kbd> as the pathname to the image file;</td></tr>
+<tr>
+<td class="opt_name"><code>-x</code></td>
+<td class="opt_desc">print the detailed group info block numbers in hex
+format;</td></tr>
+<tr>
+<td class="opt_name"><code>-V</code></td>
+<td class="opt_desc">show version and exit;</td></tr>
+</table>
+
+</div>
+
+</body></html>

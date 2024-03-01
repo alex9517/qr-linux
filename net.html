@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference / Network</title>
+<meta name="description" content="linux quick reference, avahi, dlna, dns, link-local, mdns, nfs, smb, tcp/ip, zeroconf" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+<script>
+$(document).ready(function() {
+  $("#show_naming").click(function() {
+    $("#naming").slideToggle(100);
+  });
+
+  $("#show_nfs0").click(function() {
+    $("#nfs0").slideToggle(100);
+  });
+
+  $("#show_nfs0c").click(function() {
+    $("#nfs0c").slideToggle(100);
+  });
+});
+</script>
+</head><body>
+
+<div id="main">
+
+<h1 class="part">Network apps &amp; prots</h1>
+
+<p class="menu">
+<a href="#basics">-Basics-</a>&nbsp;//
+<a href="#avahi">Avahi</a>&nbsp;//
+<a href="#nic_names">Dev&nbsp;naming</a>&nbsp;//
+<a href="#dlna">DLNA</a>&nbsp;//
+<a href="#dns">DNS</a>&nbsp;//
+<a href="#dns_over_https">DNS-over-HTTPS</a>&nbsp;//
+<a href="http.html">HTTP</a>&nbsp;//
+<a href="#link-local">Link-local</a>&nbsp;//
+<a href="postfix-dovecot.html">Mail</a>&nbsp;//
+<a href="#mdns">mDNS</a>&nbsp;//
+<a href="#net-tools">Net-tools</a>&nbsp;//
+<a href="#nfs">NFS</a>&nbsp;//
+<a href="#smb">SMB</a>&nbsp;//
+<a href="#static_ip">Static&nbsp;IP</a>&nbsp;//
+<a href="tcpip.html">TCP/IP</a>&nbsp;//
+<a href="wifi.html">WiFi</a>&nbsp;//
+<a href="#zeroconf">Zeroconf</a>&nbsp;//
+<a href="#icann">ICANN,RIPE,etc</a>
+</p>
+<p class="center3">
+Some network-related tools/utilities you should know:</p>
+<p class="menu">
+<a href="cmds_i.html#ip">ip</a>&nbsp;//
+<a href="cmds_m.html#mtr">mtr</a>&nbsp;//
+<a href="cmds_n.html#nmcli">nmcli</a>&nbsp;//
+<a href="cmds_s.html#ss">ss</a>
+</p>
+
+
+<h3>
+<a name="basics">Basics</a></h3>
+
+<h5>About networking</h5>
+<p>
+There are multiple ways to configure networking in Linux systems.
+Currently, the <b>NetworkManager</b> is probably the most popular network
+configuration daemon for Linux distributions. The main purpose of
+<i>NetworkManager</i> is to make net config and operation as painless and
+automatic as possible. It provides a D-Bus interface and a library
+(<samp>libnm</samp>) to make its APIs available to other apps.</p>
+<p>
+<i>NetworkManager</i> allows the experienced users (admins) to provide their
+own configuration. On the other hand, it auto configures standard networking
+for those without "specific requirements".</p>
+
+
+<h5>
+<a name="static_ip">Setting static IP in Ubuntu 19.xx</a></h5>
+<p>
+You can use GUI "Settings/Network", and it is simple assuming you know TCP/IP
+basics and all those numbers for your network (netmask, nameserver, gateway, etc).</p>
+<p>
+Or, you can do everything in text-mode-cmdline style using the <b>netplan</b>,
+<a href="howto.html#yaml">YAML</a> network configuration program. In this case
+start with editing</p>
+
+<p class="fmt"><samp>/etc/netplan/01-network-manager-all.yaml</samp></p>
+<p>
+Note that this is not just a text file, it's YAML. You don't have to know it,
+just follow the indentation pattern. After a standard desktop installation it
+may look like this:</p>
+<div class="file">
+<pre>
+# Let NetworkManager manage all devices on this system
+network:
+  version: 2
+  renderer: NetworkManager
+</pre></div>
+<p>
+You must put in this file something like this:</p>
+<div class="file">
+<pre>
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    enp7s0:
+     dhcp4: no
+     addresses: [192.168.1.92/24]
+     gateway4: 192.168.1.1
+     nameservers:
+       addresses: [8.8.8.8,8.8.4.4]
+</pre></div>
+<p>
+(with correct NIC name, IP, gateway, nameservers; though Google nameservers
+may stay)</p>
+<p>
+To activate these changes, exec:</p>
+
+<p class="cmd">sudo netplan apply</p>
+<p>
+and check the result with</p>
+
+<p class="cmd">ip a</p>
+
+
+<h5>
+<a name="net_restart">Restarting network</a></h5>
+<p>
+No need to say that networking is auto started at system startup.
+But sometimes you want to <b>restart it without rebooting the system</b>:</p>
+
+<p class="cmdc">sudo systemctl restart NetworkManager.service
+<p class="or">or</p>
+<p class="cmdc">sudo systemctl stop NetworkManager.service
+<p class="cmdc">sudo systemctl start NetworkManager.service
+<p class="cmd">sudo systemctl status NetworkManager.service
+<p>
+The last cmd is not necessary and does not require <i>superuser</i> mode.</p>
+<p>
+Also, you can use<code> nmcli </code>(NetworkManager Client, cmdline utility):</p>
+
+<p class="cmdc">sudo nmcli networking off</p>
+<p class="cmd">sudo nmcli networking on</p>
+
+
+<h5>Some network-related files and dirs</h5>
+<div class="file">
+<pre>
+/etc/NetworkManager/*
+/etc/netplan/*
+/etc/network/*
+/etc/systemd/network/*
+/etc/systemd/networkd.conf
+/etc/systemd/resolved.conf
+/etc/host.conf
+/etc/hosts
+/etc/hosts.allow
+/etc/hosts.deny
+/etc/networks
+/etc/nsswitch.conf
+/etc/resolv.conf (-&gt; /run/systemd/resolve/stub-resolv.conf)
+/run/systemd/resolve/stub-resolv.conf
+/run/systemd/resolve/resolv.conf</pre></div>
+
+
+<h5>
+<a name="nic_names">About network device naming (new approach)</a></h5>
+<p>
+<b>No more</b> <samp>eth0</samp>, <samp>eth1</samp>, <samp>wlan0</samp>, etc!</p>
+<p>
+Starting with <b>systemd</b> version 197 Linux systems use automatically assigned,
+predictable, stable network interface names for all local Ethernet, WLAN and WWAN
+interfaces. Debian-based distributions use new naming approx since Debian 9, i.e.
+Ubuntu 18.xx, Ubuntu 19.xx, Ubuntu 20.xx (I'm not sure about earlier). Try:</p>
+
+<p class="cmd">ip a</p>
+<p>
+and probably you will see smth like <samp>enp7s0</samp> (which may be former
+<samp>eth0</samp>). The result will be the same with <code>ifconfig</code>, except
+<i>ifconfig</i> may be not installed by default
+(see <a href="#net-tools">net-tools</a>).</p>
+
+<p id="show_naming">
+<span class="ref">The important features ...</span></p>
+<div class="box1" id="naming" style="display:none">
+The important features of this new scheme:</p>
+<ul>
+<li>Stable interface names across reboots</li>
+<li>Stable interface names even when hardware is added or removed, i.e.
+no re-enumeration takes place (to the level the firmware permits this)</li>
+<li>Stable interface names when kernels or drivers are updated/changed</li>
+<li>Stable interface names when you replace broken ethernet cards by new ones</li>
+<li>The names are auto determined without user config</li>
+<li>The names are fully predictable, i.e. just from <code>lspci</code> output
+you can figure out what the interface is going to be called</li>
+<li>Fully stateless operation, changing the hardware config will not cause changes
+in <samp>/etc</samp></li>
+<li>Compatibility with read-only root</li>
+<li>The network interface naming now follows more closely the scheme used for
+aliasing block device nodes and other device nodes in <samp>/dev</samp> via
+symlinks</li>
+<li>It's applicable to both x86 and non-x86 machines</li>
+<li>The same on all distributions using <samp>systemd/udev</samp></li>
+</ul>
+</div>
+<p>
+You still can force (not described here, see Internet) the old style/scheme,
+but it looks like sooner or later there'll be no choice.</p>
+
+
+
+
+<h3>
+<a name="net-tools">Net-tools</a></h3>
+<p>
+<b>Net-tools is deprecated</b>. Use new apps, like:</p>
+<p class="center">
+<samp> <a href="cmds_i.html#ip">ip</a> &nbsp;&nbsp;</samp>
+<samp> <a href="cmds_m.html#mtr">mtr</a> &nbsp;&nbsp;</samp>
+<samp> <a href="cmds_n.html#nmcli">nmcli</a> &nbsp;&nbsp;</samp>
+<samp> <a href="cmds_s.html#ss">ss</a></samp></p>
+<p>
+Net-tools is/was the collection of base networking utilities for Linux. It includes
+<code>arp</code> (8), <code>hostname</code> (1), <code>ifconfig</code> (8),
+<code>ipmaddr</code>, <code>iptunnel</code>, <code>mii-tool</code> (8),
+<code>nameif</code> (8), <code>netstat</code>(8), <code>plipconfig</code> (8),
+<code>rarp </code> (8), <code>route</code> (8) <code>slattach</code> (8).</p>
+<p>
+These are good old cmds, but due to Linux kernel evolution they are considered
+by many experts <b>deprecated</b>. Latest Ubuntu Linux versions do not install
+<samp>net-tools</samp> by default. So far (2020) you can install it yourself,
+but is that really necessary?</p>
+
+<table class="grid">
+<caption>Short description</caption>
+<tr>
+<td class="grid"><code><a href="cmds_a.html#arp">arp</a></code></td>
+<td class="grid">is used to manipulate the kernel's ARP cache, usually
+to add or delete an entry, or to dump the entire cache</td></tr>
+<tr>
+<td class="grid"><code><a href="cmds_h.html#hostname">hostname</a></code></td>
+<td class="grid">displays or sets system's hostname</td></tr>
+<tr>
+<td class="grid"><code><a href="cmds_i.html#ifconfig">ifconfig</a></code></td>
+<td class="grid">configures network interfaces</td></tr>
+<tr>
+<td class="grid"><code>ipmaddr</code></td>
+<td class="grid">adds, deletes and shows an interface's multicast addresses</td></tr>
+<tr>
+<td class="grid"><code>iptunnel<code></td>
+<td class="grid">adds, changes, deletes and shows an interface's tunnels</td></tr>
+<tr>
+<td class="grid"><code>mii-tool</code></td>
+<td class="grid">checks or sets the status of a network interface's Media
+Independent Interface (MII) unit</td></tr>
+<tr>
+<td class="grid"><code>nameif</code></td>
+<td class="grid">names network interfaces based on MAC addresses</td></tr>
+<tr>
+<td class="grid"><code><a href="cmds_n.html#netstat">netstat</a></code></td>
+<td class="grid">is used to report network connections, routing tables, and
+interface statistics</td></tr>
+<tr>
+<td class="grid"><code>plipconfig</code></td>
+<td class="grid">is used to fine tune the PLIP device parameters, to improve
+its performance</td></tr>
+<tr>
+<td class="grid"><code>rarp</code></td>
+<td class="grid">is used to manipulate the kernel's RARP table</td></tr>
+<tr>
+<td class="grid"><code><a href="cmds_r.html#route">route</a></code></td>
+<td class="grid">is used to manipulate the IP routing table</td></tr>
+<tr>
+<td class="grid"><code>slattach</code></td>
+<td class="grid">attaches a network interface to a serial line. This allows
+you to use normal terminal lines for point-to-point links to other computers</td></tr>
+</table>
+
+
+
+<h5>Miscellaneous network-related cmds</h5>
+<p class="center">
+<i>Some of the following cmds/utilities are not included in the popular
+Linux distributions!</i></p>
+<p class="ext">
+<code>arpwatch</code> - Ethernet Activity Monitor.</p>
+<p class="ext">
+<code>bmon</code> - bandwidth monitor and rate estimator.</p>
+<p class="ext">
+<code>bwm-ng</code> - live network bandwidth monitor.</p>
+<p class="ext">
+<code><a href="cmds_c.html#curl">curl</a></code> - can be used to transfer resources
+specified as URLs from/to a server using internet protocols like HTTP, HTTPS, etc.</p>
+<p class="ext">
+<code>darkstat</code> - captures network traffic, shows usage stats.</p>
+<p class="ext">
+<code>dhclient</code> - DHCP client (Dynamic Host Configuration Protocol client).</p>
+<p class="ext">
+<code><a href="cmds_d.html#dig">dig</a></code> - gets domain info from the DNS
+servers.</p>
+<p class="ext">
+<code>dstat</code> - replacement for <code>vmstat</code>, <code>iostat</code>,
+<code>mpstat</code>, <code>netstat</code> and <code>ifstat</code>.</p>
+<p class="ext">
+<code><a href="cmds_e.html#ethtool">ethtool</a></code> - a cmdline utility for
+querying and modifying ethernet card settings.</p>
+<p class="ext">
+<code>gated</code> - gateway routing daemon.</p>
+<p class="ext">
+<code><a href="cmds_h.html#host">host</a></code> – a simple DNS lookup utility.</p>
+<p class="ext">
+<code>hping</code> - TCP/IP packet assembler/analyzer.</p>
+<p class="ext">
+<code>ibmonitor</code> - shows bandwidth and total data transferred.</p>
+<p class="ext">
+<code>ifstat</code> - reports network interfaces bandwidth.</p>
+<p class="ext">
+<code>iftop</code> - displays bandwidth usage.</p>
+<p class="ext">
+<code><a href="cmds_i.html#ip">ip</a></code> - shows and manipulate routing, network
+devices, interfaces and tunnels.</p>
+<p class="ext">
+<code>iperf3</code> - network bandwidth measurement tool.</p>
+<p class="ext">
+<code><a href="cmds_i.html#iptables">iptables</a></code> - configures Linux firewall.</p>
+<p class="ext">
+<code>IPTraf</code> - an IP Network Monitor.</p>
+<p class="ext">
+<code>iputils</code> - set of small useful utilities for Linux networking.</p>
+<p class="ext">
+<code>iw</code> - a new nl80211 based CLI configuration utility for wireless devices.</p>
+<p class="ext">
+<code>jwhois</code> - a client for the <i>whois</i> service.</p>
+<p class="ext">
+<code><a href="cmds_l.html#lsof">lsof</a></code> - (not exactly network-related utility)
+reveals info about network sockets.</p>
+<p class="ext">
+<code><a href="cmds_m.html#mtr">mtr</a></code> - advanced network diagnostic tool
+that combines the functionality of <code>ping</code> and <code>traceroute</code>.</p>
+<p class="ext">
+<code>ncat</code> - new implementation of the <code>netcat</code>.</p>
+<p class="ext">
+<code><a href="cmds_n.html#netcat">netcat</a></code> - a utility allowing to open
+TCP connections, sending UDP pkts, listening on arbitrary TCP/UDP ports, scanning
+ports, etc.</p>
+<p class="ext">
+<code>nethogs</code> - a small "net top" tool.</p>
+<p class="ext">
+<code>Netperf</code> - network bandwidth testing.</p>
+<p class="ext">
+<code>netsniff-ng</code> - network analyzer and networking toolkit using
+<a href="howto.html#zero-copy">zero-copy</a> mechanisms for network packets.</p>
+<p class="ext">
+<code><a href="cmds_n.html#netstat">netstat</a></code> - print network connections,
+routing tables, statistics, etc.</p>
+<p class="ext">
+<code>netwatch</code> - monitors network connections.</p>
+<p class="ext">
+<code>ngrep</code> - <code>grep</code> applied to the network layer.</p>
+<p class="ext">
+<code>nload</code> - displays network usage.</p>
+<p class="ext">
+<code><a href="cmds_n.html#nmap">nmap</a></code> - network security scanner
+(network port scanner).</p>
+<p class="ext">
+<code>nmcli</code> - a cmdline tool to report network status, manage network connections,
+and control the NetworkManager.</p>
+<p class="ext">
+<code>nmtui</code> - provides a text interface to configure networking by controlling NetworkManager.</p>
+<p class="ext">
+<code>nslookup</code> - allows to query DNS servers interactively.</p>
+<p class="ext">
+<code><a href="cmds_p.html#ping">ping</a></code> - tests connectivity between
+two systems on a network (sends icmp echo_request to a network host).</p>
+<p class="ext">
+<code><a href="cmds_r.html#route">route</a></code> - displays and manipulates the IP
+routing table; it's mainly used to configure static routes to specific hosts or networks
+via an interface.</p>
+<p class="ext">
+<code>slurm</code> - network load monitor.</p>
+<p class="ext">
+<code>snort</code> - Network Intrusion Detection and Prevention System.</p>
+<p class="ext">
+<code>smokeping</code> - estimates your network latency.</p>
+<p class="ext">
+<code>socat</code> - establishes two bidirectional byte streams and transfers
+data between them.</p>
+<p class="ext">
+<code>speedometer</code> - displays the speed of data transfer across a network.</p>
+<p class="ext">
+<code>speedtest-cli</code> - test internet bandwidth using speedtest.net</p>
+<p class="ext">
+<code><a href="cmds_s.html#ss">ss</a></code> - dumps socket statistics and displays
+info similar to <code>netstat</code>; it shows more TCP and state info than other
+similar utils.</p>
+<p class="ext">
+<code>tcpdump</code> - a powerful cmdline network sniffer; it is used to capture and
+analyze TCP/IP packets transmitted or received over a network on a specific interface.</p>
+<p class="ext">
+<code>tcptrack</code> - displays info about TCP connections on a network interface.</p>
+<p class="ext">
+<code>telnet</code> - user interface to the TELNET protocol (probably outdated
+like TELNET).</p>
+<p class="ext">
+<code>tracepath</code> - very similar function to traceroute.</p>
+<p class="ext">
+<code><a href="cmds_t.html#traceroute">traceroute</a></code> - a cmdline utility for
+tracing the full path from your local system to another network system.</p>
+<p class="ext">
+<code>vnStat</code> - network traffic monitor.</p>
+<p class="ext">
+<code>websocat</code> - connection forwarder from/to web sockets to/from
+usual sockets, in style of <code>socat</code>.</p>
+<p class="ext">
+<code><a href="cmds_w.html#wget">wget</a></code> - advanced non-interactive
+network downloader (retrieves files using HTTP, HTTPS, FTP and FTPS).</p>
+<p class="ext">
+<b>Wireless Tools for Linux</b> includes <code>iwconfig</code>, <code>iwlist</code>,
+<code>iwspy</code>, <code>iwpriv</code>, <code>ifrename</code>.</p>
+<p class="ext">
+<b>Wireshark</b> - a powerful, versatile, easy to use tool for capturing and analyzing
+packets in a packet-switched network in real-time.</p>
+
+<!--
+<p>
+Some usage examples (this utilities are installed in Ubuntu 19.xx by default):</p>
+
+<p class="cmdc">nmcli dev status</p>
+<p class="desc">show all network devices;</p>
+
+<p class="cmdc">nmcli con show</p>
+<p class="desc">show all network connections;</p>
+
+<p class="cmdc">nmcli con show -a</p>
+<p class="desc">show active network connections;</p>
+
+<p class="cmdc">tcpdump -i eth0</p>
+<p class="desc">capture packets from the specified network interface;</p>
+
+<p class="cmdc">tcpdump -c 10 -i eth0</p>
+<p class="desc">capture packets from the specified network interface;
+limit the number of pkts to 10;</p>
+
+<p class="cmdc">tcpdump -w eth0pkts.txt -i eth0</p>
+<p class="desc">capture packets from the specified network interface;
+save output to a file;</p>
+-->
+
+
+
+
+<h3>
+<a name="dlna">Media server (miniDLNA)</a></h3>
+<p>
+DLNA (Digital Living Network Alliance) was founded by a group of
+consumer electronics companies in June 2003 to develop and promote
+interoperability guidelines for sharing digital media among multimedia
+devices (smartphones, tablets, PCs, TV sets and storage servers). In a
+typical use case, a user sends videos, pictures or music from their
+smartphone or storage server through their home WLAN to a TV set or tablet
+for display.</p>
+<p>
+DLNA uses UPnP (Universal Plug and Play) for the discovery of networked devices.</p>
+<p>
+MiniDLNA is a simple DLNA/UPnP server. It is a reasonable solution for
+a home network if you want to use your Smart TV (or tablet) to watch the
+movies stored on your PC.</p>
+<p>
+Software download (Ubuntu):</p>
+
+<p class="cmd">sudo apt-get install minidlna</p>
+<p>
+Check you firewall, because MiniDLNA [unless modified] is going to use:</p>
+
+<p class="fmtc"><samp>tcp/8200</samp></p>
+<p class="fmt"><samp>udp/1900</samp></p>
+<p>
+Edit config file <samp>/etc/minidlna.conf</samp>. Here is a simple
+version with a single media dir (all movies in one place):</p>
+
+<div class="file">
+<pre>port=8200
+# media_dir=/u04/dvd
+# media_dir=/u04/avi
+media_dir=/u02/video
+friendly_name=DLNA Server
+db_dir=/var/cache/minidlna
+log_dir=/var/log
+inotify=yes
+enable_tivo=no
+strict_dlna=no
+notify_interval=30
+serial=12345678
+model_number=1</pre>
+</div>
+<p>
+To restart service:</p>
+
+<p class="cmd">service minidlna restart</p>
+<p>
+To rebuild the database:</p>
+
+<p class="cmdc">service minidlna force-reload</p>
+<p class="or">or</p>
+<p class="cmd">/etc/init.d/minidlna force-reload</p>
+<p>
+You must rebuild database each time when you put a new file in media dir
+(or remove some file from media dir). Usually it takes seconds.</p>
+<p>
+Notification interval is set to 30s, because with default setting (900s),
+after switching TV on, you may have to wait a long time before your TV
+discovers DLNA server.</p>
+<p>
+It looks like there is nothing to set on Smart TV except physical connection
+to your network (Ethernet or Wi-Fi). On Samsung Smart TV you should look for
+DLNA server under "SmartHub -- AllShares". Usually, I just press a "Source"
+button on Remote Control, and there it is.</p>
+<p>
+DLNA server regularly anounces its presence, and all DLNA-enabled devices
+can use it. Typical devices are: Smart TV, smartphone, tablet.</p>
+
+<p class="warn">Note:</p>
+<p class="indent">
+<b>DLNA</b> is a standard provided by Digital Living Network Alliance,
+a non-profit collaborative trade organization including many companies
+in the mobile, consumer electronics, PC, and service provider industries.
+Alliance has stated the common goal of using standards-based technology
+to make it easier for consumers to use and share their digital photos,
+music and videos.</p>
+<p class="indent">
+<b>UPnP</b>, Universal Plug and Play is a set of networking protocols
+that permits networked devices (PCs, printers, gateways, mobile devices,
+etc) to seamlessly discover each other's presence on the network and
+establish functional network services for data sharing, communications,
+and entertainment. This is mostly for home networks.</p>
+
+
+
+<h3 class="part">
+<a name="dns">Domain Name System (DNS)</a></h3>
+<p>
+DNS translates human-readable hostnames into numerical IP addresses
+required by network protocols. Usually <b>DNS server</b> aka <b>name
+server</b> accepts request on <samp>udp/53</samp>; client sends name,
+server returns corresponding IP address. There are:</p>
+<ul>
+<li>classical unicast DNS;</li>
+<li>multicast DNS (mostly for small/home networks);</li>
+</ul>
+<div class="box1">
+<p>
+By definition, the <b>Domain Name System</b> is a hierarchical decentralized
+naming system for computers, services, or other resources connected to the
+Internet or a private net. It associates various info with domain names
+assigned to each of the participating entities and translates domain names to
+the numerical IP addresses which are required by underlying network protocol
+to locate and identify computer services and devices. DNS provides a worldwide
+distributed directory service, and it has been an essential component of the
+Internet since 1985.</p>
+<p>
+DNS delegates the responsibility of assigning domain names and mapping those
+names to Internet resources by designating authoritative name servers for each
+domain. Network administrators may delegate authority over sub-domains of their
+allocated name space to other name servers. This mechanism provides distributed
+and fault-tolerant service and was designed to avoid a single large central
+database.</p>
+</div>
+<p>
+Before DNS, the whole map of name/IP entries was kept in
+<samp>/etc/hosts</samp> file which had to be copied to all net hosts
+after each update. It was OK at the early stages of ARPANET development
+but not with the millions of network devices connected to modern Internet.</p>
+<p>
+Technically, even now <samp>/etc/hosts</samp> is the part of the name
+resolving system. Another important file <samp>/etc/nsswitch.conf</samp>
+(name service switch) defines the order in which services are queried for
+name service lookups, and usually it contains:</p>
+<div class="file">
+<pre>passwd:         compat
+group:          compat
+shadow:         compat
+
+hosts:          files mdns4_minimal [NOTFOUND=return] dns
+networks:       files
+
+protocols:      db files
+services:       db files
+ethers:         db files
+rpc:            db files
+
+netgroup:       nis</pre></div>
+<p>
+According to the above config the search order is:</p>
+<ol>
+<li>Look in <samp>/etc/hosts</samp>.</li>
+<li>Try mDNS (multicast DNS).</li>
+<li>Try standard (unicast) DNS.</li>
+</ol>
+<p>
+Since <samp>/etc/hosts</samp> works with static addresses and does
+not understand DHCP, the only records it contains may be those related
+to <samp>localhost</samp>, and some IPv6 stuff.</p>
+<div class="file">
+<pre>127.0.1.1    ws10
+127.0.0.1    localhost
+
+# The following lines are desirable for IPv6 capable hosts
+::1 ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+ff02::3 ip6-allhosts</pre>
+</div>
+
+
+
+
+<h3 class="part">
+<a name="dns_over_https">DNS over HTTPS in Mozilla Firefox</a></h3>
+<p>
+DNS over HTTPS (IETF RFC8484).</p>
+<p>
+Enabling DNS over HTTPS in Mozilla Firefox browser (Cloudflare 1.1.1.1):</p>
+<ol>
+<li>Open Firefox menu (top right corner button) and click <b>Preferences</b>.</li>
+<li>Scroll down to <b>Network Settings</b> and click <b>Settings</b>.</li>
+<li>In the <b>Connection Settings</b> popup check <b>Enable DNS over HTTPS</b>.</li>
+<li>In the dropdown, select <b>Cloudflare</b> (it's default and there is
+nothing else, at least in Mozilla Firefox 72.x.x). However, you can select
+<i>Custom</i> and enter the DNS server of your choice (assuming it supports
+DNS over HTTPS). Some known options are: CleanBrowsing, Google Public DNS,
+Quad9, Yandex.DNS.</li>
+<li>Click OK and close the preferences window (you don't have to restart
+your browser).</li>
+</ol>
+
+
+
+
+<h3 class="part">
+<a name="nfs">NFS (Ubuntu 19.04)</a></h3>
+
+<h5>NFS Server setup</h5>
+<p>
+Maybe it is already installed?</p>
+
+<p class="cmd">dpkg -l | grep nfs-kernel-server</p>
+<p>
+If not, then, as usually:</p>
+
+<p class="cmdc">sudo apt update</p>
+<p class="cmd">sudo apt install nfs-kernel-server</p>
+<p>
+Now comes a big decision: what to export and how? That is, what directories
+will be accessible to the clients? Remember that NFS is not a safe technology!
+The main config file is<samp> /etc/exports </samp>containing lines</p>
+
+<p class="fmt"><samp>&lt;<i>path</i>&gt; &lt;<i>ipaddr</i>&gt;(&lt;<i>options</i>&gt;)</samp></p>
+<p>
+Let's see an example of <samp>/etc/exports</samp>. Note that it allows access to
+some shares from all hosts of the specified network (<samp>192.168.1.0/24</samp>).
+This is not the best approach, unless you really want this shared resource to be
+available to everybody. Whenever it's possible, specify the exact IP addresses.
+Of course, DHCP makes it inconvenient, but maybe important hosts must have
+static IPs.</p>
+<div class="file">
+<pre>
+/u01 192.168.1.100(no_root_squash,rw,sync,no_subtree_check)
+/u02 192.168.1.0/24(rw,sync,no_subtree_check)
+/u03/mp3 192.168.1.0/24(ro,sync,no_subtree_check)
+/u04/tmp *(rw,sync,no_subtree_check)</pre>
+</div>
+<p>
+<i>The last line is really bad - read/write access to everybody!</i></p>
+<p>
+Some options:</p>
+<ul class="tight">
+<li><samp>ro</samp> - read-only access.</li>
+<li><samp>rw</samp> - read/write access.</li>
+<li><samp>sync </samp>forces NFS to write changes to disk before replying. This results
+in a more stable and consistent environment since the reply reflects the actual state of
+the remote volume. However, it also reduces the speed.</li>
+<li><samp>no_subtree_check </samp>prevents subtree checking, a process where the host
+must check for every request whether the file is still available in the exported tree.
+This can cause problems when a file opened by the client is renamed, removed, etc.
+In most cases you need this option.</li>
+<li><samp>no_root_squash </samp>allows client's<samp> root </samp> to access server's
+files as<samp> root</samp>. By default (i.e. without this option), NFS translates
+requests from a client's <samp>root</samp> into a non-privileged user on the server
+(<samp>nobody:nogroup</samp>).</li>
+</ul>
+<p>
+When<samp> /etc/exports </samp>is ready, and each time when you modify it, run:</p>
+
+<p class="cmd">sudo exportfs -av</p>
+<p>
+The<code> -a </code>options means <i>export or unexport all dirs</i>, <code> -v
+</code>means <i>verbose</i>. There are others options, e.g.<code> -r </code>which
+means <i>reexport all directories</i> synchronizing<samp> /var/lib/nfs/etab
+</samp>with<samp> /etc/exports</samp>.</p>
+<p>
+The std cmds to start/stop/restart service:</p>
+
+<p class="cmdc">sudo systemctl start nfs-kernel-server</p>
+<p class="cmdc">sudo systemctl stop nfs-kernel-server</p>
+<p class="cmd">sudo systemctl restart nfs-kernel-server</p>
+
+<div class="box1">
+<p>
+The list of processes related to NFSv4:</p>
+<ul>
+<li><samp>rpc.nfsd</samp> - this process is the NFS server. It works with the Linux
+kernel to meet the dynamic demands of NFS clients, such as providing server threads
+each time an NFS client connects.</li>
+<li><samp>rpc.rquotad</samp>: this process provides user quota info for remote users.
+It is started auto by the NFS service and does not require user configuration.</li>
+<li><samp>rpc.idmapd</samp> — (required for use with NFSv4) this process provides
+NFSv4 client and server upcalls which map between on-the-wire NFSv4 names (strings
+in the form of <samp>user@domain</samp>) and local UIDs and GIDs. It requires<samp>
+/etc/idmapd.conf </samp> to be properly configured.</li>
+<!--
+rpc.svcgssd — This process is used by the NFS server to perform user authentication and is started only when SECURE_NFS=yes is set in the /etc/sysconfig/nfs file.
+
+rpc.gssd — This process is used by the NFS server to perform user authentication and is started only when SECURE_NFS=yes is set in the /etc/sysconfig/nfs file.
+-->
+</ul>
+</div>
+
+
+<h5>Firewall and ports used by NFS server</h5>
+<p>
+In the past, NFS server was using multiple ports, but now (starting with NFSv4?) it
+only listens to<samp> TCP/2049 </samp> and does not interact with <i>portmapper</i>,
+<samp>rpc.mountd</samp>, <samp>rpc.lockd</samp>, <samp>rpc.statd</samp>. Their
+functionality was moved in the kernel.</p>
+
+
+<h5 id="show_nfs0">
+Old stuff : NFS Server, Ubuntu 11.xx... (click here to show/hide)</h5>
+<div class="box1" id="nfs0" style="display:none">
+<h3>NFS examples (Ubuntu 11.xx)</h3>
+<h5>NFS server setup</h5>
+<p>
+The following pkgs are required:</p>
+
+<p class="cmd">apt-get install nfs-kernel-server nfs-common portmap</p>
+<p>
+You can use <code>start</code>, if service is not running, or
+<code>restart</code>:</p>
+
+<p class="cmdc">/etc/init.d/nfs-kernel-server restart</p>
+<p class="cmd">/etc/init.d/portmap restart</p>
+<p>
+To test if NFS is running use:</p>
+
+<p class="cmd">rpcinfo -p localhost</p>
+<p>
+and look for <code>mountd</code>, <code>portmapper</code>, <code>nfs</code>,
+<code>nlockmgr</code> in output.</p>
+<p>
+Configuring shares (<samp>/etc/exports</samp>), read access to all:</p>
+
+<p class="fmt"><samp>/opt *(ro,sync)</samp></p>
+<p>
+Read/write to all:</p>
+
+<p class="fmt"><samp>/opt *(rw,sync)</samp></p>
+<p>
+Read/write to a specified host only:</p>
+
+<p class="fmt"><samp>/opt 192.168.1.4(rw,sync)</samp></p>
+<p>
+Whenever you modify <samp>/etc/exports</samp>, run:</p>
+
+<p class="cmd">exportfs -av</p>
+</div>
+
+
+<h5>
+<a name="nfs_client">NFS client setup (Ubuntu 19.04)</a></h5>
+<p>
+To access NFS shares you need NFS client pkg:</p>
+
+<p class="cmdc">sudo apt update</p>
+<p class="cmd">sudo apt install nfs-common</p>
+<p>
+Also, you have to create a <b>mount point</b>, an empty directory to mount NFS
+share on. Let's assume that mount point is <samp>/mnt/u02</samp>. The following
+cmds can be used to mount NFS share on this dir:</p>
+
+<p class="cmdc">sudo mount srv2:/u02 /mnt/u02</p>
+<p class="cmd">sudo mount -t nfs srv2:/u02 /mnt/u02</p>
+<p>
+You can use either the server name, like in above example, or the IP address
+of NFS server. Filesystem type spec is probably superfluous. If you do not know
+the name of the share, try the following cmd:</p>
+
+<p class="cmdc">showmount -e srv2</p>
+<p class="cmd">showmount -e 192.168.1.22</p>
+<p>
+The<samp> -e </samp> option means <i>show the NFS server's export list</i>.</p>
+<p>
+If you cannot mount NFS share, make sure your IP is in the list
+(<samp>etc/exports</samp>), and server's firewall is configured right, e.g.</p>
+
+<p class="cmd">nmap -p 2049 srv2</p>
+
+
+
+
+<h5 id="show_nfs0c">
+Old stuff : NFS Client, Ubuntu 11.xx... (click here to show/hide)</h5>
+<div class="box1" id="nfs0c" style="display:none">
+<h5>NFS client setup (Ubuntu 11.xx)</h5>
+<p>
+Installing pkgs:</p>
+
+<p class="cmd">apt-get install nfs-common portmap</p>
+<p>
+Starting services:</p>
+
+<p class="cmd">/etc/init.d/portmap restart</p>
+<p>
+Geting server share info:</p>
+
+<p class="cmd">showmount -e 192.168.1.2</p>
+<p>
+Mounting NFS shares on the client:</p>
+
+<p class="cmd">mount -t nfs 192.168.1.2:/opt /mnt</p>
+<p>
+You can also add mount entry to <samp>/etc/fstab</samp>, so after reboot
+your machine auto mounts that share:</p>
+
+<p class="cmd">echo "192.168.1.2:/opt/ /mnt nfs defaults 0 0" &gt;&gt; /etc/fstab</p>
+<p>
+If you can't access NFS share from the client, ensure that:</p>
+<ul>
+<li>TCP/UDP <samp>2049</samp>,<samp>111</samp> ports are open on your firewall
+(maybe also, TCP/UDP <samp>662</samp>, <samp>875</samp>, <samp>892</samp>,
+<samp>1024:65535</samp>);</li>
+<li>Check the output of <code>rpcinfo</code> cmd;</li>
+<li>Update the share info with <code>exportfs -av</code> cmd;</li>
+<li>Reload NFS services (both server and client);</li>
+</ul>
+</div>
+
+
+
+
+<h3 class="part">
+<a name="smb">SMB (Ubuntu 13.xx)</a></h3>
+
+<h5>Samba server setup</h5>
+<p>
+Standard set:</p>
+
+<p class="cmd">sudo apt-get install samba samba-common</p>
+<p>
+Samba-related ports (?): UDP <samp>137</samp>, <samp>138</samp>;
+TCP <samp>139</samp>, <samp>445</samp>.</p>
+<p>
+The main Samba config file is <samp>/etc/samba/smb.conf</samp>.
+Here's an example Samba server config (stand-alone server /
+secure read-write file server): </p>
+<div class="file">
+<pre>[global]
+workgroup = WKG
+netbios name = WS2
+server string = %h server (Samba, Ubuntu)
+log file = /var/log/samba/log.%m
+max log size = 1000
+syslog = 0
+panic action = /usr/share/samba/panic-action %d
+security = user
+encrypt passwords = true
+passdb backend = tdbsam
+obey pam restrictions = yes
+map to guest = bad user
+
+[printers]
+comment = All Printers
+browseable = no
+path = /var/spool/samba
+printable = yes
+guest ok = no
+read only = yes
+create mask = 0700
+
+[print$]
+comment = Printer Drivers
+path = /var/lib/samba/printers
+browseable = yes
+read only = yes
+guest ok = no
+
+[ws2home]
+path = /home
+writeable = yes
+browseable = no
+read only = no
+guest ok = no
+
+[u01]
+path = /u01
+browseable = no
+read only = yes
+guest ok = no</pre>
+</div>
+<p>
+You should add user to a SMB password file:</p>
+
+<p class="cmd">smbpasswd -a alex</p>
+<p>
+To activate changes in config:</p>
+
+<p class="cmdc">sudo restart smbd</p>
+<p class="cmd">sudo restart nmbd</p>
+
+
+<h5>
+<a name="smb_client">Samba client setup</a></h5>
+<p>
+Minimal (required):</p>
+
+<p class="cmd">sudo apt-get install cifs-utils samba-common</p>
+<p>
+With GUI config and winbind:</p>
+
+<p class="cmd">sudo apt-get install cifs-utils samba-common system-config-samba samba winbind</p>
+<p>
+Create mount points:</p>
+
+<p class="cmdc">mkdir -p /mnt/ws2home</p>
+<p class="cmd">mkdir -p /mnt/ws2u02</p>
+<p>
+To mount a shared resource:</p>
+
+<p class="cmd">sudo mount -t cifs //srv2/ws2home /mnt/ws2home -o username=alex</p>
+<p>
+You'll be prompted for password. Also, you can keep password in a secret file,
+like <samp>.smb-auth.dat</samp>:</p>
+
+<div class="file">
+<pre>username=alex
+password=ndjf7rJT9e</pre>
+</div>
+<p>
+Restrict access (actually, it does not help much):</p>
+
+<p class="cmd">chmod 600 .smb-auth.dat</p>
+<p>
+Credentials (auth) file can be useful if you put mount info in
+<samp>/etc/fstab</samp>. The corresponding line should be:</p>
+
+<p class="fmt"><samp>//srv2/ws2home /mnt/ws2home cifs credentials=/home/alex/.smb-auth.dat,rw,noauto,user 0 0</samp></p>
+
+
+<h5>
+<a name="smb_stop">Stopping and disabling Samba server (Ubuntu ??.??)</a></h5>
+<p>
+If you want to stop Samba temporarily:</p>
+
+<p class="cmdc">service smbd stop</p>
+<p class="cmd">service nmbd stop</p>
+<p>
+If you want to prevent Samba server from starting on boot:</p>
+
+<p class="cmdc">mv /etc/init/nmbd.conf /etc/init/nmbd.conf.stop</p>
+<p class="cmd">mv /etc/init/smbd.conf /etc/init/smbd.conf.stop</p>
+<p>
+See also Ubuntu <code>update-rc.d</code> utility for Sys V services.</p>
+
+
+
+<h3 class="part">
+<a name="zeroconf">Zeroconf</a></h3>
+<p>
+is a collection of tools and protocols allowing networks to configure
+themselves without user's intervention (at least, it's supposed to work
+like this).</p>
+<p>
+In other words, <i>zeroconf</i> (or <i>Zero-configuration networking</i>)
+is a set of technologies that automatically creates a usable computer network
+based on the Internet Protocol Suite (TCP/IP) when computers or network
+peripherals are interconnected. It's supposed to be used in <b>small/home
+networks</b> without dedicated servers (like <i>name server</i>). The three
+core technologies used for zeroconf are:</p>
+<ol>
+<li><b>Automatic assignment of numeric network addresses</b> for networked
+devices. Usually IP addresses are assigned by a <b>DHCP</b> server. If DHCP is
+not available, then <a href="#link-local">Link-local addressing</a> is used.</li>
+
+<li><b>Automatic distribution and resolution of computer hostnames</b>.
+This can be done by <a href=#mdns">mDNS</a> or LLMNR (Microsoft's Link-local
+Multicast Name Resolution; it's included in every Windows version starting
+with Windows Vista). Note that Microsoft's NetBIOS Name Service can also be
+used with IPv4, but it's not available in IPv6. The
+<a href="#bonjour">Bonjour</a> implementation (mDNSResponder) is included
+in Android since version 4.1.</li>
+
+<li><b>Automatic location of network services</b>, such as printing devices.
+As mDNS and LLMNR do not provide info about the type of device or its status,
+other protocols are required for service discovery. <b>WS-Discovery</b> (Web
+Services Dynamic Discovery) is a technical spec defining a multicast discovery
+proto to locate services on a local network. It operates over TCP and UDP port
+<samp>3702</samp> and uses IP multicast address <samp>239.255.255.250</samp>.
+<b>DNS-SD</b> (DNS-based service discovery)a llows clients to discover a named
+list of service instances, given a service type, and to resolve those services
+to hostnames using DNS queries. The spec is compatible with unicast DNS
+server/client software, and it also works well with mDNS.</li>
+</ol>
+<p>
+As you probably noticed, the names of all these technologies start with
+the word "automatic".</p>
+
+
+<h5>
+<a name="bonjour">Bonjour</a></h5>
+<p>
+is Apple's implementation of zero-configuration networking. Bonjour locates
+devices such as printers, other computers, and the services that those devices
+offer on a local network using multicast Domain Name System (mDNS) service
+records. The software comes with Apple's macOS and iOS operating systems.
+Bonjour can also be installed onto computers running Microsoft Windows.</p>
+<p>
+Initially (2002) it was named <i>Rendezvous</i> (Mac OS X 10.2), and was
+renamed in 2005 to <i>Bonjour</i> due to some trademark conflict.</p>
+
+
+<h5>
+<a name="link-local">Link-local address</a></h5>
+<p>
+A link-local address is a network address that is valid only for communications
+within the network segment (link) or the broadcast domain that the host is
+connected to. Link-local addresses are most often assigned automatically
+through a process known as <b>stateless address autoconfiguration</b> or
+<b>link-local address autoconfiguration</b>.</p>
+<p>
+Link-local addresses are not guaranteed to be unique beyond a single network
+segment. Routers therefore do not forward packets with link-local addresses.</p>
+<p>
+For protocols that have only link-local addresses, such as Ethernet, hardware
+addresses assigned by manufacturers in networking elements are unique,
+consisting of a vendor identification and a serial identifier.</p>
+<p>
+Link-local addresses for IPv4 are assigned to the address block
+<samp>169.254.0.0/16</samp>, i.e. the range is
+<samp>169.254.0.0 - 169.254.255.255</samp>, but the first/last 256 addresses
+are reserverd for future. Link-local addresses are assigned to interfaces by
+host-internal, i.e. stateless, address autoconfig when other means of address
+assignment (e.g., DHCP) are not available (or failed).</p>
+<p>
+In IPv6 the address block <samp>fe80::/10</samp> has been reserved for
+link-local unicast addressing. Unlike IPv4, IPv6 requires a link-local address
+on every network interface on which the IPv6 is enabled, even when routable
+addresses are also assigned. Consequently, IPv6 hosts usually have more than
+one IPv6 address assigned to each of their IPv6-enabled network interfaces.
+The link-local address is required for IPv6 sublayer ops of the Neighbor
+Discovery Protocol and for some other IPv6-based protocols, e.g., DHCPv6.</p>
+
+
+<h5>
+<a name="mdns">Multicast DNS (mDNS)</a></h5>
+<p>
+It's a theoretical intro, see practical stuff in
+<a href="#avahi">Avahi</a> (which is a Linux implementation of mDNS).</p>
+<p>
+The <b>Multicast DNS</b> protocol (RFC 6762), aka <b>mDNS</b>, resolves
+host names to IP addresses within a <b>small network without a local name
+server</b>. It's <a href="#zeroconf">Zeroconf</a> service using essentially
+the same programming interfaces, packet formats and operating semantics as the
+standard (unicast) DNS. It was designed as a stand-alone protocol, but it can
+work in concert with standard DNS servers. mDNS can work in conjunction with
+<b>DNS-SD</b> (DNS Service Discovery, RFC 6763).</p>
+<p>
+The mDNS uses <a href="tcpip.html#multicast">IP multicast</a> UDP packets
+(port <samp>udp/5353</samp>), multicast address <samp>224.0.0.251</samp> for
+IPv4 and <samp>ff02::fb</samp> for IPv6 link-local addressing.</p>
+<p>
+When an mDNS client needs to resolve a hostname, it sends an <i>IP
+multicast</i> query message asking the host having the specified name to
+identify itself. The target host then multicasts a message including its IP
+address, and all hosts within that subnet use that info to update their mDNS
+caches. Any host can relinquish its claim to a domain name by sending a
+response pkt with <samp>TTL&nbsp;=&nbsp;0</samp>.</p>
+<p>
+By default, mDNS only and exclusively resolves host names within TLD (top
+level domain) <b>local</b>, i.e., host names like <samp>*.local</samp>. This
+can cause problems if that domain includes hosts which do not implement mDNS
+but can be found via standard (unicast) DNS server.</p>
+<p>
+The mDNS is implemented by the <a href="#bonjour">Apple Bonjour</a> and
+open source <a href="#avahi">Avahi</a> software pkgs.</p>
+
+<div class="box1" style="margin-bottom:2em">
+<p>
+It's also implemented in Android (since 4.1) and MS Windows 10.</p>
+<p>
+However, Android implementation (at least, up to 6.0) does not work as you
+expect it to work, it's DNS-SD (service discovery), you cannot send a name and
+receive IP, you can only search for a properly configured service (if there is
+one). And worse of all, it's not the part of the system, it must be the part of
+your app: you have to attach the bunch of additional functions to your code;
+this allows your app to find some service on the target host (by name), and
+with the help of some tricks to fetch IP address (probably the only thing you
+need).</p>
+<p>
+Windows 10 implementation is even more limited - it's a service discovery
+(DNS-SD) capable of discovering network printers only. To be fair, I have not
+tried it, may be it's not that bad.</p>
+</div>
+
+
+<h5>
+<a name="avahi">Avahi</a></h5>
+<p>
+The Avahi mDNS/DNS-SD [daemon] ("SD" means "service discovery") is an open
+source implementation of Apple's Zeroconf architecture (see
+<a href="#bonjour">Bonjour</a>).</p>
+<p>
+In Ubuntu Linux <samp>avahi-daemon</samp> usually works out of the box,
+but it's useless until you add <samp>.local</samp> to your hostname. You can
+edit <samp>/etc/hostname</samp> directly or use some utlity, e.g.
+<code>hostname</code> (<b><samp>ws10</samp> is used just for demo!</b>):</p>
+<div class="file">
+<pre>ws10.local</pre></div>
+<p>
+Note that TLD (top-level domain) <samp>local</samp> has a special meaning,
+and it should not be used for anything except Zeroconf. Some experts call it
+<i>pseudo-top-level domain</i> because it's not a legal Internet domain, it's
+not routable and has no sense beyond LAN.</p>
+<p>
+There is also one important file <samp>/etc/avahi/avahi-daemon.conf</samp>
+related to Avahi, which is usually good as it is (with default settings). But
+if, e.g., you have several network interfaces, you may want to edit that config
+file and change the lines like <samp>allow-interfaces</samp> or
+<samp>deny-interfaces</samp>. And whenever you change
+<samp>/etc/avahi/avahi-daemon.conf</samp>, you must restart Avahi daemon</p>
+
+<p class="cmd">sudo service avahi-daemon restart</p>
+<p>
+There are some cmds allowing you to see how it works. First of all, try:</p>
+
+<p class="cmd">ping ws10.local</p>
+<p>
+Also, you should try:</p>
+
+<p class="cmd">avahi-resolve -v -n ws10.local</p>
+<p class="cmd">avahi-resolve -v -4 -n ws10.local</p>
+<p class="cmd">avahi-resolve -v -6 -n ws10.local</p>
+<p class="cmd">avahi-resolve -v -a 192.168.0.2</p>
+<p>
+If it doesn't work, then maybe Avahi daemon is not running:</p>
+
+<p class="cmd">ps ax | grep avahi</p>
+<p class="cmd">sudo service avahi-daemon start</p>
+<p>
+Even if Avahi is OK, it still may not work properly because of firewall
+rules blocking mDNS-related port <samp>upd/5353</samp> and/or addresses
+<samp>224.0.0.251</samp> (<samp>ff02::fb</samp> for IPv6), and/or link-local
+ranges <samp>169.254.0.0/16</samp> (<samp>fe80::/10</samp> for IPv6).</p>
+
+
+<h5>Avahi : advertising services</h5>
+<p>
+Multicast DNS-SD (service discovery) allows programs to publish and discover
+services available on a local network. To see what is actually available,
+try one of the following cmds:</p>
+
+<p class="cmd">avahi-browse -a</p>
+<p class="cmd">avahi-browse -a -r</p>
+<p class="cmd">avahi-browse --all -v</p>
+<p class="cmd">avahi-browse _http._tcp</p>
+<p>
+Service description files are XML files with <samp>.service</samp> ext and
+residing in <samp>/etc/avahi/services/</samp> dir. For example, to advertise
+a web-service, you can create <samp>web_rest.service</samp> with following
+content:</p>
+<div class="file">
+<pre>
+&lt;?xml version="1.0" standalone='no'?&gt;
+&lt;!DOCTYPE service-group SYSTEM "avahi-service.dtd"&gt;
+&lt;service-group&gt;
+&lt;name replace-wildcards="yes"&gt;TechService on %h&lt;/name&gt;
+  &lt;service&gt;
+    &lt;type&gt;_tech_svc._ws._tcp&lt;/type&gt;
+    &lt;port&gt;8443&lt;/port&gt;
+    &lt;txt-record&gt;TechService, a RESTful web service
+        for system management&lt;/txt-record&gt;
+  &lt;/service&gt;
+&lt;/service-group&gt;</pre></div>
+<p>
+<b>Service description rules:</b></p>
+<ul>
+<li><samp>&lt;service-group&gt;</samp> - should contain one
+<samp>&lt;name&gt;</samp> and one or more <samp>&lt;service&gt;</samp>
+elements.</li>
+
+<li><samp>&lt;name replace-wildcards="yes"&gt;%h
+<span class="arg">your_service_name</span>&lt;/name&gt;</samp> - the service
+name. If <samp>replace-wild‐cards</samp> is "yes" (default is "no"), any
+occurence of <samp>%h</samp> will be replaced by the local hostname. When you
+detect the service with <code>dns-sd</code> or a similar Bonjour discovery
+tool, it will be displayed like "TechService on ws10.local".</li>
+
+<li>
+<samp>&lt;service&gt;</samp> - contains the service info for exactly one
+service type. It can be <samp>&lt;service protocol="ipv4"&gt;</samp> (or
+<samp>ipv6</samp>, or just <samp>any</samp>, which is default). It must
+contain one <samp>&lt;type&gt;</samp> and one <samp>&lt;port&gt;</samp>
+element. Optionally it may contain one <samp>&lt;domain-name&gt;</samp>, one
+<samp>&lt;host-name&gt;</samp>, any number of <samp>&lt;subtype&gt;</samp>,
+any number of <samp>&lt;txt-record&gt;</samp> elements.
+<ul>
+<li><samp>&lt;type&gt;</samp> contains the DNS-SD service type for this
+service, e.g. <samp>_http._tcp</samp>. See
+<a href="files/avahi_service_types.txt">Avahi Service Types</a> and
+<a href="http://www.dns-sd.org/ServiceTypes.html">DNS-SD Service Types</a>.</li>
+
+<li><samp>&lt;subtype&gt;</samp> contains an additional DNS-SD service
+subtype for this service. e.g. <samp>_anon._sub._ftp._tcp</samp>.</li>
+<li><samp>&lt;domain-name&gt;</samp> - the domain name this service should
+be registered. By default it's the domain of avahi daemon (usually
+<samp>.local</samp>).</li>
+<li><samp>&lt;host-name&gt;</samp> - the hostname of the host that provides
+this service. This must be FQDN (fully-qualified domain name), like
+<samp>ws2.local</samp>, resolvable by multicast or unicast DNS. However, it
+doesn't have to be the part of the domain specified in
+<samp>&lt;domain-name&gt;</samp>.</li>
+<li><samp>&lt;port&gt;</samp> - the IP port number the service listens on.</li>
+<li><samp>&lt;txt-record&gt;</samp> - DNS-SD TXT record data.</li>
+</ul>
+</li></ul>
+<p>
+If you already have an NFS share, you can make it automountable in
+Zeroconf-enabled browsers and file managers like macOS Finder, Gnome/Files,
+etc. Here is a <samp>*.service</samp> file:</p>
+<div class="file">
+<pre>
+&lt;?xml version="1.0" standalone='no'?&gt;
+&lt;!DOCTYPE service-group SYSTEM "avahi-service.dtd"&gt;
+&lt;service-group&gt;
+  &lt;name replace-wildcards="yes"&gt;NFS Music Share on %h&lt;/name&gt;
+  &lt;service&gt;
+    &lt;type&gt;_nfs._tcp&lt;/type&gt;
+    &lt;port&gt;2049&lt;/port&gt;
+    &lt;txt-record&gt;path=/data/shared/Music&lt;/txt-record&gt;
+  &lt;/service&gt;
+&lt;/service-group&gt;</pre></div>
+
+
+
+<h3 class="part">
+<a name="icann">ICANN, RIPE NCC, RIR, LIR, etc</a></h3>
+<p>
+The <b>Internet Corporation for Assigned Names and Numbers</b> (<b>ICANN</b>)
+assigns blocks of Internet resources (IP Resources and AS Numbers / Autonomous
+System ~) to the <b>RIPE NCC</b> and the other <b>RIR</b>s
+(Regional Internet Registry).</p>
+<p>
+The <b>Réseaux IP Européens Network Coordination Centre</b> (<b>RIPE NCC</b>)
+is the Regional Internet Registry for Europe, the Middle East and parts of
+Central Asia. It is headquartered in Amsterdam, Netherlands.
+An RIR oversees the allocation and registration of Internet number resources
+(IPv4 addresses, IPv6 addresses and Autonomous System /AS/ Numbers) in
+a specific region.</p>
+<p>
+A <b>Local Internet Registry</b> (<b>LIR</b>) is an organization that has been
+allocated a block of IP addresses by a Regional Internet Registry (RIR),
+and that assigns most parts of this block to its own customers. Most LIRs are
+Internet service providers, enterprises, or academic institutions.
+Membership in an RIR is required to become a LIR.</p>
+<p>
+<b>Provider-aggregatable address space</b> is a block of IP addresses
+assigned by a Regional Internet Registry to an Internet Service Provider
+which can be aggregated into a single route advertisement for improved
+Internet routing efficiency. Unlike provider-independent address space,
+the end-user of address blocks within a provider-supplied space cannot
+reuse the addresses if they change up-stream connectivity providers.</p>
+<p>
+<b>Provider-independent address space</b> is a block of IP addresses
+assigned by a regional Internet registry (RIR) directly to an end-user
+organization. The user must contract with an Internet service provider
+to obtain routing of the address block within the Internet.
+Provider-independent addresses offer end-users the opportunity to change
+service providers without renumbering of their networks and to use multiple
+access providers in a multi-homed configuration. However, provider-independent
+blocks may increase the burden on global routers, as the opportunity for
+efficient route aggregation through Classless Inter-Domain Routing (CIDR)
+may not exist.</p>
+
+</div>
+
+</body></html>

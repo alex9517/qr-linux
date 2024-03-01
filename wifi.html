@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (WiFi)</title>
+<meta name="description" content="Linux quick reference, wifi wireless" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<h1 class="part">WiFi</h1>
+
+<p class="menu">
+<a href="#access_point">Access&nbsp;Point</a>&nbsp;//
+<a href="#antennas">Antennas</a>&nbsp;//
+<a href="#bands">Bands</a>&nbsp;//
+<a href="#channels">Channels</a>&nbsp;//
+<a href="#access_point">Router</a>&nbsp;//
+<a href="#ssid">SSID&nbsp;(BSSID,&nbsp;ESSID)</a>&nbsp;//
+<a href="#standards">Standards</a>
+</p>
+<p class="center">
+<i><b>Some WiFi-related commands:</b></i></p>
+<p class="menu">
+<a href="cmds_i.html#iw">iw</a>&nbsp;//
+<a href="cmds_i.html#iwconfig">iwconfig</a>&nbsp;//
+<a href="cmds_i.html#iwlist">iwlist</a>&nbsp;//
+<a href="cmds_i.html#iwspy">iwspy</a>&nbsp;//
+<a href="cmds_n.html#nmcli">nmcli</a>&nbsp;//
+</p>
+
+
+
+<h4>
+<a name="abbrev">Abbreviations</a></h4>
+
+<table class="grid">
+<tr>
+<td class="grid">AP</td>
+<td class="grid">Access Point. AP is a wireless network device that connects
+laptops, smartphones, WiFi adapters, etc to a local area network.</td></tr>
+
+<tr>
+<td class="grid">BSS</td>
+<td class="grid">Basic Service Set. There is one Access Point for each BSS
+and they talk to each other only if they belong to the same ESSID.</td></tr>
+
+<tr>
+<td class="grid">BSSID</td>
+<td class="grid">Basic Service Set ID. This is a 48-bit number used to
+identify the BSS.</td></tr>
+
+<tr>
+<td class="grid">DSSS</td>
+<td class="grid">Direct Sequence Spread Spectrum. This a physical layer
+protocol (Open Systems Interconnect, layer 1)</td></tr>
+
+<tr>
+<td class="grid">ESS</td>
+<td class="grid">Extended Service Set. This is a specific WLAN with a specific
+SSID, and it may consists of several BSS.</td></tr>
+
+<tr>
+<td class="grid">ESSID</td>
+<td class="grid">Extended Service Set ID. ESSID helps to prevent the chaos.
+Each wireless network needs to be assigned an ESSID that doesn't match that of any
+other network within its range of operation. The desired ESSID is then set on all
+wireless NICs and APs belonging to this particular WLAN, and they ignore all
+traffic using other identifiers.</td></tr>
+
+<tr>
+<td class="grid">FHSS</td>
+<td class="grid">Frequency Hopping Spread Spectrum. This a physical layer
+protocol (Open Systems Interconnect, layer 1)</td></tr>
+
+<tr>
+<td class="grid">PSK</td>
+<td class="grid">Pre Shared Key mode</td></tr>
+
+<tr>
+<td class="grid">SSID</td>
+<td class="grid">Service Set ID</td></tr>
+
+<tr>
+<td class="grid">TKIP</td>
+<td class="grid">Temporal Key Integrity Protocol</td></tr>
+
+<tr>
+<td class="grid">WEP</td>
+<td class="grid">Wired Equivalent Privacy. It was the first widely used data
+encryption scheme for wireless networks. A flaw in the encryption scheme was soon
+discovered and freely available tools like "WEP crack" became available to decipher
+WEP encryption keys within minutes.</td></tr>
+
+<tr>
+<td class="grid">WPA</td>
+<td class="grid">WiFi Protected Access. This is a newer better security protocol
+that was introduced to replace WEP.</td></tr>
+</table>
+
+
+<h5>
+<a name="standards">WiFi standards</a></h5>
+<p>
+There are many, but only the last three are eligible (n, ac, ax).</p>
+<ul>
+<li><samp>802.11a</samp> - last century..</li>
+<li><samp>802.11b</samp> - last century..</li>
+<li><samp>802.11g</samp> - outdated (2003)..</li>
+<li>... ... ...</li>
+<li><samp>802.11n</samp> (aka WiFi 4) - quite old (2009), but still widely
+used around the world. However, I wouldn't buy those devices;</li>
+<li><samp>802.11ac</samp> (aka WiFi 5) - this is the mainstream in 2021;</li>
+<li><samp>802.11ax</samp> (aka WiFi 6) - this is probably the nearest future;</li>
+</ul>
+
+
+
+
+<h4>
+<a name="access_point">Access Points and Routers</a></h4>
+<p>
+<i><b>A home net usually needs a WiFi router</b></i>.</p>
+<p>
+<i>Access Points are mostly for companies and larger networks.</i></p>
+<p>
+<b>WiFi router</b> acts as a hub that sets up a local area network and
+provides wired and wireless connections for the devices. <b>Access Point</b> (AP)
+is a wireless network device that connects laptops, smartphones, WiFi adapters, etc
+to a local area network. You can also consider Access Point as a <i>sub-device</i>
+within the local area network that can be used to extend the wireless coverage of
+an existing network and/or to allow the larger number of users to connect to that
+network.</p>
+<p>
+The term 'Access Point' is widely used in wireless technology, and a hardware
+device providing the functionality of 'Access Point' (as described above) is just
+a case.</p>
+<p>
+Note that <i>WiFi router</i> is an <i>Access Point</i> by definition. But opposite
+is not true: Access Point (hardware device) cannot function as a router. Routers
+manage local area networks, provide communications with other networks, ensure
+security, etc. Access Points typically only provide access to the networks
+established by routers.</p>
+<p>
+In general, routers and routing is a very large and complicated area of knowledge.
+But WiFi routers reside on the simpler and cheaper end of the router family. A
+WiFi router can be roughly defined as a network device providing two main
+services:</p>
+<ul>
+<li>It connects multiple devices (computers, phones, tablets, printers, etc)
+to a Local Area Network (which is often a home network).</li>
+<li>It provides Internet access for all those connected devices.</li>
+</ul>
+<p>
+As of the year 2021, a typical WiFi router provides 1000 Mbit/s Ethernet ports
+for wired connections and dual-band wireless access, supports 802.11ac (WiFi 5),
+provides many other functions like DHCP, Firewall, etc.</p>
+
+
+
+
+<h4>
+<a name="antennas">Antennas direction and router location</a></h4>
+<p>
+WiFi coverage is limited, walls and other obstacles decrease the signal. So, it
+is important to find an optimal location for your WiFi router. The universal rule:
+it should be equidistant from all the signal sources, whatever it means in your
+case. Probably, somewhere in the center of the house or office space.</p>
+<p>
+Also, you should choose the optimal orientation for your router's antennas.
+By default, antennas must be pointing <b>straight to the sky</b>. To be more
+exact: position antennas upward for a better horizontal reach; position antennas
+sideways for better vertical reach (e.g. in a two-story house).</p>
+
+
+
+<h5>About walls and other obstacles</h5>
+<p>
+The WiFi signal penetrates the obstacles and tries to go around the obstacles.
+The more obstacles, the worse for the signal. Obstacles may cause absorbtions
+and reflections of the signal, and sometimes the result is unpredictable.</p>
+<p>
+The open space is the best case.</p>
+<p>
+Some materials (e.g. wood, plastic, ordinary glass) are quite penetrable for the
+wireless signals. Others, like tinted glass, water (large volumes), brick, plaster
+are materials with the medium absorbtion. The worst obstacles are concrete (walls,
+floors, ceilings), metal (e.g. iron doors, metal nets, grates), ceramics.</p>
+<p>
+Here is a table showing how much some obstacles decrease the WiFi range (2.4 GHz
+band). Note that these <b>numbers are approximate</b>, just for the better
+understanding of the problem.</p>
+
+<table class="grid">
+<tr>
+<th class="gridcen" style="width:70%">Material</th>
+<th class="gridcen">The range in percents of the theoretically possible</th></tr>
+
+<tr>
+<td class="grid">Open space (air)</td>
+<td class="gridcen"><samp>100%</samp></td></tr>
+
+<tr>
+<td class="grid">Window / glass</td>
+<td class="gridcen"><samp>70%</samp></td></tr>
+
+<tr>
+<td class="grid">Window / tinted glass (has metal constituents)</td>
+<td class="gridcen"><samp>50%</samp></td></tr>
+
+<tr>
+<td class="grid">Wooden wall</td>
+<td class="gridcen"><samp>30%</samp></td></tr>
+
+<tr>
+<td class="grid">Concrete interior wall ~15cm/6ft</td>
+<td class="gridcen"><samp>15%</samp></td></tr>
+
+<tr>
+<td class="grid">Concrete bearing wall ~30cm/12ft</td>
+<td class="gridcen"><samp>10%</samp></td></tr>
+
+<tr>
+<td class="grid">Concrete floor/ceiling</td>
+<td class="gridcen"><samp>10-15%</samp></td></tr>
+
+</table>
+<p>
+Some other recommendations:</p>
+<ul>
+<li>Keep your router away from the <b>massive metal objects</b> - they effectively
+dissipates electromagnetic energy. This also applies to the large volumes of
+<b>water</b> (e.g. big aquarium).</li>
+
+<li>The potential <b>sources of interference</b> in the 2.4 GHz band:
+<ul class="tight">
+<li>Microwave ovens</li>
+<li>2.4 GHz cordless phones, DSSS and FHSS</li>
+<li>Fluorescent bulbs</li>
+<li>2.4 GHz video cameras</li>
+<li>Elevator motors</li>
+<li>Cauterizing devices</li>
+<li>Plasma cutters</li>
+<li>Bluetooth radios</li>
+<li>Nearby 802.11, 802.11b or 802.11g WLANs</li>
+<li>Wireless Internet Service Providers (WISPs)</li>
+</ul></li>
+
+<li>The potential <b>sources of interference</b> in the 5 GHz band:
+<ul class="tight">
+<li>5 GHz cordless phones</li>
+<li>Radars</li>
+<li>Perimeter sensors</li>
+<li>Digital satellites</li>
+<li>Nearby 802.11a or 802.11n WLANs</li>
+<li>Outdoor wireless 5 GHz bridges</li>
+</ul></li>
+
+<li>Some people are afraid of WiFi routers (radiates electromagnetic waves). WiFi
+routers don't like people too - humans absorb electromagnetic waves. So, try to
+keep the reasonable distance between those entities.</li>
+
+<li>If possible, mount your WiFi router high, i.e. over the obstacles.</li>
+</ul>
+
+
+
+
+<h4>
+<a name="bands">Bands</a></h4>
+<p>
+<i><b>WiFi frequency bands: 2.4 GHz and 5 GHz.</b></i></p>
+<p>
+<b>Frequency bands</b> are ranges of radio wave frequencies used to transmit
+data in the wireless spectrum. These bands can further be broken down into WiFi
+<a href="#channels">channels</a>. The general rule: higher frequency provides
+faster data transmission, but shorter signal range.</p>
+<p>
+The main differences between 2.4 GHz and 5 GHz bands are:</p>
+<ul>
+<li><b>Network coverage</b>. 2.4 GHz band provides better coverage than 5 GHz.
+The lower frequencies can more easily penetrate solid objects, like walls.</li>
+<li><b>Network speed</b>. 5 GHz band is faster than 2.4 GHz, it provides up to
+1300 Mbps, while 2.4 GHz band support speeds between 450 Mbps and 600 Mbps at
+best.</li>
+<li><b>Co-channel interference</b>. In the 2.4 GHz band, you can choose from 11
+WiFi channels, and only 3 of them are non-overlapping. In the 5 GHz band, you can
+choose from 45 channels, where 24 are non-overlapping. Overlapping channels suffer
+from interference. Also, 2.4 GHz band is used by some household appliances, and
+this can make the situation even worse.</li>
+</ul>
+
+
+
+
+<h4>
+<a name="channels">Channels</a></h4>
+<p>
+WiFi channels are smaller bands within WiFi frequency bands that are used
+to send and receive data. In general, you can have:</p>
+<ul>
+<li>11 WiFi channels in the 2.4 GHz frequency band</li>
+<li>45 WiFi channels in the 5 GHz frequency band</li>
+</ul>
+<p>
+Some WiFi channels are better than others because of</p>
+<ul>
+<li><b>co-channel interference</b> - devices are competing for time to talk on
+the same channel;</li>
+<li><b>adjacent-channel interference</b> - devices from overlapping channels are
+trying to talk over each other;</li>
+</ul>
+<p>
+You can avoid such interference by choosing to use a non-overlapping, uncrowded
+WiFi channel. Of course, if there is a possibility to choose from something.</p>
+<p>
+Each WiFi channel has a 20 MHz segment in the frequency band. Several channels
+can be bonded together to form wider segments. The width of a WiFi channel
+dictates the throughput. Or, simply speaking, the wider channel - the faster
+speed, and more data transferred. Unless they are impacted by interference.</p>
+
+
+<h5>Choosing a WiFi channel width</h5>
+<p>
+Interference is more common in certain frequency bands on certain channels. There
+are some recommended channel width settings for routers and access points:</p>
+<ul>
+<li>
+<b>Set 2.4 GHz WiFi channel width to 20 MHz</b>.
+Because there are several overlapping channels in this band - 8 out of 11. This
+can cause an interference, and, more likely than not, a weaker wireless performance
+instead of the expected faster speeds.</li>
+<li>
+<b>Set 5 GHz WiFi channel width to 20, 40, or 80 MHz</b>.
+This band has significantly more channels, and 24 out of 45 do not overlap.
+So, it is less crowded and better equipped to support wide channels.</li>
+</ul>
+<p>
+When adjusting channel width settings for 5 GHz band, you should enable support
+for all channel widths. Otherwise devices supporting 20 MHz channels only, won't
+be able to connect to a router with 80 MHz-only mode.</p>
+
+
+
+
+<h4>
+<a name="ssid">SSID, BSSID, ESSID</a></h4>
+<p>
+<i><b>SSID</b> - for regular users, <b>BSSID</b> and <b>ESSID</b> - for pros.</i></p>
+<p>
+The terms BSSID, ESSID, and SSID are used to describe sections of a wireless
+network (WLAN). They have slightly different meanings.</p>
+<p>
+A regular user needs to know <b>SSID</b> to connect to a wireless network. SSIDs
+are names of wireless networks.</p>
+<p>
+Administrators and pros should probably know about <b>BSSID</b>s and
+<b>ESSID</b>s.</p>
+
+
+<h5>SSID</h5>
+<p>
+<b>Service Set</b> is just another term referencing a wireless network (WLAN).</p>
+<p>
+<p>
+Since WLANs can coexist in the same area/airspace, each WLAN needs a unique name.
+This name is <b>SSID</b> (the Service Set ID of the network). SSIDs serve as WiFi
+network names and are typically natural language labels. The SSID is broadcast by
+stations in beacon packets to announce the presence of a network. A mobile device
+looks for all networks in the range when you try to connect to a local WiFi.</p>
+<p>
+To connect to a specific WLAN, you need to know its SSID and password.</p>
+
+
+<h5>
+<a name="bssid">BSSID</a></h5>
+<p>
+<b>BSS</b> (Basic Service Set) is the area covered by one Access Point.</p>
+<p>
+The Access Points within WLAN are identified by <b>BSSID</b> - a Basic Service Set
+Identifier. BSSID is included in all wireless packets. By convention a MAC address
+of an Access Point is used as BSSID, i.e, if you know the MAC address, you know the
+BSSID, and, since all packets contain the originator's BSSID, you can usually trace
+those packets. This works fine for an access point with one radio and one WLAN
+configured.</p>
+<p>
+Most often, there are different BSSIDs on an Access Point for each WLAN configured
+on a radio. If you have an AP with 2 radios and 32 WLANs configured on each, you
+would have 64 BSSIDs plus the base access point BSSID. To accommodate the multiple
+BSSIDs, each AP is assigned a unique block of 64 MAC addresses. Each radio has 32
+MAC addresses and supports up to 32 service set identifiers (SSIDs), with one MAC
+address assigned to each SSID as a basic service set identification (BSSID). All
+MAC addresses for an access point are assigned based on the base MAC address of the
+AP (usually the Access Point MAC address block is listed on a label on the back of
+the AP).</p>
+
+
+
+<h5><a name="essid">ESSID</a></h5>
+<p>
+<b>ESS</b> (Extended Service Set or Extended Basic Service Set) consists of all
+BSSs in the network. Technically, <b>ESSID</b> identifies the same network as the SSID does. The term SSID is
+used most often.</p>
+
+
+
+
+</div>
+
+</body></html>

@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (programming)</title>
+<meta name="description" content="linux quick reference, gcc, c++, g++, make, makefile, autoconf, automake, perl, indent, ld, ldconfig, ldd, nm, ranlib, gdb, git, zenity" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<h1 class="part">
+<a name="Programming">Programming</a></h1>
+
+<div id="contents">
+<table class="menu">
+<tr>
+<td class="menu1"><a href="#tools">Classic tools</a></td>
+<td class="menu2"><a href="#automake">Config/make/install</a></td></tr>
+<tr>
+<td class="menu1"><a href="#gcc">C/C++ Compiler</a></td>
+<td class="menu2"><a href="#gdb">GNU Debugger</a></td></tr>
+<tr>
+<td class="menu1"><a href="#git">GIT</a></td>
+<td class="menu2"><a href="#indent">Indent</a></td></tr>
+<tr>
+<td class="menu1"><a href="#libs">Notes on libraries</a></td>
+<td class="menu2"><a href="#symbols">Symbols in Obj Files</a></td></tr>
+<tr>
+<td class="menu1"><a href="#x86-64">32-bit on 64-bit</a></td>
+<td class="menu2"><a href="#zenity">Zenity</a></td></tr>
+</table>
+</div>
+
+<p>
+PHP syntax checking:</p>
+
+<p class="cmd">php -l <span class="arg">filename</span></p>
+<p>
+PERL syntax checking:</p>
+
+<p class="cmd">perl -c <span class="arg">filename</span></code></p>
+<p>
+BASH syntax checking (read cmds but do not execute):</p>
+
+<p class="cmd">bash -n <span class="arg">filename</span></p>
+
+
+
+<h4>
+<a name="tools">Classic tools</a></h4>
+
+<table class="grid_2">
+<tr>
+<td class="grid_2"><code>ar</code></td>
+<td class="grid_2">The GNU program to create, modify, and extract from archives.
+An archive is a single file holding a collection of other files in a
+struct that makes it possible to retrieve the original individual files
+(members of the archive).</td></tr>
+<tr>
+<td class="grid_2"><a href="#gcc"><code>gcc<code></a></td>
+<td class="grid_2">GNU C and C++ Compilers</td></tr>
+<tr>
+<td class="grid_2"><a href="#gdb"><code>gdb</code></a></td>
+<td class="grid_2">GNU Debugger</td></tr>
+<tr>
+<td class="grid_2"><a href="#indent"><code>indent</code></a></td>
+<td class="grid_2">modifies the appearance of C/C++ source files</td></tr>
+<tr>
+<td class="grid_2"><code>ld</code></td>
+<td class="grid_2">The GNU linker</td></tr>
+<tr>
+<td class="grid_2"><code>ldconfig</code></td>
+<td class="grid_2">creates, updates, and removes the necessary links and cache
+(for use by the run-time linker/loader
+<code>ld.so</code>, <code>ld-linux.so.2</code>) to the most recent
+shared libs found in the dirs specified on the cmd line, in the file
+<samp>/etc/ld.so.conf</samp>, and in the trusted dirs (<samp>/usr/lib</samp>,
+<samp>/lib</samp>).</td></tr>
+<tr>
+<td class="grid_2"><code>ldd</code></td>
+<td class="grid_2">lists shared library dependencies (shared libraries required
+by each program).</td></tr>
+<tr>
+<td class="grid_2"><code>nm</code></td>
+<td class="grid_2">GNU program to list the symbols from the object files.</td></tr>
+<tr>
+<td class="grid_2"><code>ranlib</code></td>
+<td class="grid_2">generates an index to the contents of an archive and stores
+it in the archive (it was required by old versions of <code>ar</code>).</td></tr>
+</table>
+<p>
+See also <a href="#libs">Notes on C/C++ libraries</a> and
+<a href="#automake">Autoconfig / Automake</a>.</p>
+
+
+<h5>
+<a name="examples">Examples (miscell)</a></h5>
+
+<p class="cmdc">gcc `pkg-config --cflags --libs gtk+-2.0` hello.c -o hello</p>
+<p class="desc">compile C app using GTK+ (<samp>libgtk2.0-dev</samp> must be
+installed);</p>
+
+<p class="cmdc">ldconfig -v /usr/local/lib</p>
+<p class="desc">create links and cache to the shared libraries found in
+<samp>/usr/local/lib</samp> and other default locations
+(<samp>/lib</samp>, <samp>/usr/lib</samp>, ...);</p>
+
+<p class="cmdc">ldd sqlplus</p>
+<p class="desc">print shared lib dependencies for Oracle SQL*Plus;</p>
+
+<p class="cmdc">/lib/libc.so.6</p>
+<p class="desc">display library version and other info;</p>
+
+<p class="cmdc">nm -D /usr/local/lib/libgsl.so</p>
+<p class="desc">list contents (symbols) of the specified library;</p>
+
+<p class="cmdc">perl -c ex01.pl</p>
+<p class="desc">check syntax only, do not execute;</p>
+
+<p class="cmdc">pkg-config --list-all</p>
+<p class="desc">list all modules found in the <code>pkg-config</code> path;</p>
+
+<p class="cmdc">pkg-config --variable pc_path pkg-config</p>
+<p class="desc">return the value of a variable defined in a pkg's
+<samp>.pc</samp> file;</p>
+
+
+
+<h4>
+<a name="automake">Autoconf / Automake</a></h4>
+<ol>
+<li> Create/edit <samp>Makefile.am</samp>.</li>
+<li> Create/edit <samp>configure.in</samp>.</li>
+</ol>
+<p class="cmdc">aclocal</p>
+<p class="cmd">...</p>
+<p class="cmdc">autoconf</p>
+<p class="cmd">...</p>
+<p class="cmd">automake -add-missing --copy</p>
+
+
+
+<h4>
+<a name="install">Configure / make / install</a></h4>
+<p>
+Configure/compile (make) can be done by a regular user, but to
+<code>make install</code>, you need a <samp>root</samp> priv, unless
+you install in your home dir. Some apps cannot (or should not) be installed
+in home dir!</p>
+
+<table class="grid_2">
+<tr><td class="grid_2" style="width:10em"><samp>C/C++</samp></td>
+<td class="grid_2" style="width:10em"><samp>PERL</samp></td></tr>
+<tr><td class="grid_2"><code>
+./configure<br>
+make<br>
+make install</code></td>
+<td class="grid_2"><code>
+perl Makefile.PL<br>
+make<br>
+make test<br>
+make install</code></td></tr>
+</table>
+
+
+
+<h4>
+<a name="gcc">gcc, cc, g++, c++</a></h4>
+<p>
+are used to invoke a GNU <samp>C</samp> and <samp>C++</samp> compilers.</p>
+<p>
+<code>g++</code> (<code>c++</code>) is a program that calls <code>gcc</code>
+(<code>cc</code>) with the default language set to <samp>C++</samp>, and
+automatically specifies linking against the <samp>C++</samp> library. In most
+cases options are the same.</p>
+
+<p class="cmdc">cc app.c</p>
+<p class="desc">build an executable file from the source file <samp>app.c</samp>;</p>
+
+<p class="cmdc">cc -Wall app.c -o apptest</p>
+<p class="desc">build an executable file <samp>apptest</samp> from the source
+file <samp>app.c</samp>, use the typical options to generate warning messages;</p>
+
+<p class="cmdc">c++ -O2 -Wall app.cpp main.cpp -o conv4</p>
+<p class="desc">build <samp>conv4</samp> from <samp>app.cpp</samp> and
+<samp>main.cpp</samp>, use reasonable options for code optimization and
+warning msgs;</p>
+
+<p class="cmdc">c++ chkpass.cpp -o chkpass -lldap</p>
+<p class="desc">build <samp>chkpass</samp> program with <samp>LDAP</samp> support;</p>
+
+<p class="cmdc">cc -v</p>
+<p class="desc">show miscellaneous info about <code>gcc</code>
+(version, features, etc);</p>
+
+<p class="cmdc">cc -v -c app.c</p>
+<p class="desc">create an object file verbosely (i.e., output detailed info
+about cmds executed, their versions, etc);</p>
+
+<p class="cmdc">cc -E app.c &gt; app.c.prep</p>
+<p class="desc">create a preprocessed file (may be large);</p>
+
+<p class="cmdc">cc -E app.c -dM | sort | less</p>
+<p class="desc">show all <samp>#define</samp> macros in <samp>app.c</samp>;</p>
+
+<p class="cmdc">cc -S app.c</p>
+<p class="desc">convert the C code into assembly language;</p>
+
+<p class="cmdc">cc -M app.c</p>
+<p class="desc">generate <samp>Makefile</samp> dependencies;</p>
+
+<p class="cmdc">cc -g -o helloworld app.c</p>
+<p class="desc">build binary executable file with additional debugging
+information (all optimization should be turned off);</p>
+
+<p class="cmdc">cc -pg -o helloworld app.c</p>
+<p class="desc">build a binary executable file with additional profiling info;</p>
+
+<p class="fmt"><code>gcc&nbsp;</code>[<code>-c</code> | <code>-E</code> | <code>-S</code>]
+[<code>-std=</code><kbd>standard</kbd>]
+[<code>-g</code>] [<code>-pg</code>] [<code>-O</code><kbd>level</kbd>]
+[<code>-W</code><kbd>warn...</kbd>]
+[<code>-pedantic</code>] [<code>-I</code><kbd>dir...</kbd>]
+[<code>-L</code><kbd>dir...</kbd>]
+[<code>-D</code><kbd>macro</kbd>[<code>=</code><kbd>def</kbd>]<kbd>...</kbd>]
+[<code>-U</code><kbd>macro</kbd>] [<code>-f</code><kbd>option...</kbd>]
+[<code>-m</code><kbd>machine-option...</kbd>]
+[<code>-o</code> <kbd>outfile</kbd>]<kbd>&nbsp;infile...</kbd></p>
+<p>
+Compilation can involve up to 4 stages:</p>
+<ul>
+<li>preprocessing,</li>
+<li>compilation,</li>
+<li>assembly,</li>
+<li>linking</li>
+</ul>
+<p>
+(always in that order)</p>
+<p>
+<code>~</code> is capable of preprocessing and
+compiling several files either into several assembler input files, or into
+one assembler input file; then each assembler input file produces an object
+file, and linking combines all the object files into an executable file.
+<code>~</code> normally does preprocessing, compilation, assembly and
+linking, but there are options to stop this process at an intermediate stage.
+<code>~</code> accepts options and file names as operands. Many options have
+multi-letter names; therefore multiple single-letter options may not be
+grouped: <code>-dr</code> is very different from <code>-d -r</code>. You can
+mix options and other arguments. For the most part, the order doesn’t matter.
+However, it does matter when you use several options of the same kind
+(<code>-I</code> or <code>-L</code> specified more than once: the dirs are
+searched in the order specified).</p>
+<p>
+Many options have long names starting with <code>-f</code>
+or <code>-W</code>. Most of these have both positive and negative forms
+(<code>-ffor-scope</code> and <code>-fno-for-scope</code>).</p>
+<p>
+Some options are overall (<code>-c</code>, <code>-o</code>, <code>-v</code>,
+<code>-x</code>), some options are related to preprocessor (<code>-I</code>,
+<code>-D</code>), some to linker (<code>-L</code>, <code>-l</code>).</p>
+
+
+<h5>Some options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>-ansi</code></p>
+<p class="desc">in <samp>C</samp> mode, support all <samp>ISO C90</samp>
+programs; in <samp>C++</samp> mode, remove GNU extensions that conflict with
+<samp>ISO C++</samp>;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-c</code></td>
+<td class="opt_desc">compile only (or assemble) the source files, do not link;</td></tr>
+</table>
+
+<p class="fmtc"><code>-D</code> <kbd>name</kbd></p>
+<p class="desc">predefine <kbd>name</kbd> as a macro, with definition
+<samp>1</samp>;</p>
+
+<p class="fmtc"><code>-D</code> <kbd>name</kbd><code>=</code><kbd>def</kbd></p>
+<p class="desc">the contents of definition are tokenized and processed
+as if they appeared during translation phase 3 in a <samp>#define</samp>
+directive; in particular, the definition will be truncated by embedded
+newline chars; if you are invoking the preprocessor from a shell or
+shell-like program you may need to use the shell’s quoting syntax to protect
+chars such as spaces that have a meaning in the shell syntax;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-dM</code></td>
+<td class="opt_desc">generate a list of <samp>#define</samp> directives
+for all the macros defined during the execution of the preprocessor,
+including predefined macros;</td></tr>
+
+<tr><td class="opt_name"><code>-dD</code></td>
+<td class="opt_desc">like <code>-dM</code>, but does not include the
+predefined macros, and outputs both <samp>#define</samp> directives and
+the result of preprocessing;</td></tr>
+
+<tr><td class="opt_name"><code>-dN</code></td>
+<td class="opt_desc">like <code>-dD</code>, but emits only the macro names,
+not their expansions;</td></tr>
+
+<tr><td class="opt_name"><code>-dI</code></td>
+<td class="opt_desc">output <samp>#include</samp> directives in addition
+to the result of preprocessing;</td></tr>
+
+<tr><td class="opt_name"><code>-E</code></td>
+<td class="opt_desc">stop after the preprocessing stage; do not run the
+compiler proper; the output is sent to the stdout;</td></tr>
+</table>
+
+<p class="fmtc"><code>-ffor-scope</code></p>
+<p class="desc">the scope of variables declared in a for-init-stmt is limited
+to the <samp>for</samp> loop itself, as specified by the <samp>C++</samp>
+standard;</p>
+
+<p class="fmtc"><code>-fno-for-scope</code></p>
+<p class="desc">the scope of variables declared in a for-init-stmt extends
+to the end of the enclosing scope, as was the case in old versions of
+<samp>G++</samp>, and traditional implementation of <samp>C++</samp>;</p>
+
+<p class="fmtc"><code>-fms-extensions</code></p>
+<p class="desc">accept some non-standard constructs used in Microsoft
+header files;</p>
+
+<p class="fmtc"><code>-fmem-report</code></p>
+<p class="desc">print some stats about permanent memory allocation when
+it finishes;</p>
+
+<p class="fmtc"><code>-fpic</code></p>
+<p class="desc">generate position-independent code (PIC) suitable for use
+in a shared library, if supported for the target machine;</p>
+
+<p class="fmtc"><code>-fPIC</code></p>
+<p class="desc">(m68k, PowerPC, SPARC) generate position-independent code,
+suitable for dynamic linking and avoiding any limit on the size of the global
+offset table;</p>
+
+<p class="fmtc"><code>-ftime-report</code></p>
+<p class="desc">print some stats about the time consumed by each pass when
+it finishes;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-g</code></td>
+<td class="opt_desc">produce debugging info in the operating system’s native
+format (stabs, COFF, XCOFF, or DWARF 2);</td></tr>
+</table>
+
+<p class="fmtc"><code>-ggdb</code></p>
+<p class="desc">produce debugging info for use by <samp>GDB</samp>;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-g</code><kbd>n</kbd></td>
+<td class="opt_desc">request debugging info and use level <kbd>n</kbd> to
+specify how much info to generate: <samp>1</samp> (min), <samp>2</samp>
+(default), <samp>3</samp> (max) (<code>-ggdb</code><kbd>n</kbd>);</td></tr>
+</table>
+
+<p class="fmtc"><code>-I</code><kbd>dir</kbd></p>
+<p class="desc">add <kbd>dir</kbd> to the head of the list of dirs
+to be searched for header files;</p>
+
+<p class="fmtc"><code>-L</code><kbd>dir</kbd></p>
+<p class="desc">add <kbd>dir</kbd> to the list of dirs to be searched for
+the libraries specified with <code>-l</code>;</p>
+
+<p class="fmtc"><code>-l</code><kbd>lib</kbd></p>
+<p class="desc">search the library named <kbd>lib</kbd> when linking;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-M</code></td>
+<td class="opt_desc">output rules suitable for make describing the
+dependencies of the main source file (implies <code>-E</code> and <code>-w</code>);</td></tr>
+</table>
+
+<p class="fmtc"><code>-march=</code><kbd>cpu-type</kbd></p>
+<p class="desc">generate instructions for the machine type <kbd>cpu-type</kbd>;
+in contrast to <code>-mtune=</code><kbd>cpu-type</kbd>, which merely tunes the
+generated code for the specified cpu-type, this option allows GCC to generate
+code that may not run at all on processors other than the specified one;
+specifying <code>-march=</code><kbd>cpu-type</kbd> implies
+<code>-mtune=</code><kbd>cpu-type</kbd>;</p>
+
+<p class="fmtc"><code>-mtune=</code><kbd>cpu-type</kbd></p>
+<p class="desc">set only the instruction scheduling params for machine type
+<kbd>cpu_type</kbd>; the instruction set is not changed;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-O0</code></td>
+<td class="opt_desc">do not optimize (default);</td></tr>
+
+<tr><td class="opt_name"><code>-O1</code></td>
+<td class="opt_desc">optimize; try to reduce code size and execution time,
+without performing any optimizations that take a great deal of compilation
+time;</td></tr>
+
+<tr><td class="opt_name"><code>-O2</code></td>
+<td class="opt_desc">optimize even more; perform nearly all supported
+optimizations that do not involve a space-speed tradeoff; the compiler does
+not perform loop unrolling or function inlining;</td></tr>
+
+<tr><td class="opt_name"><code>-O3</code></td>
+<td class="opt_desc">turn on all optimizations specified by <code>-O2</code>
+and also turn on the <code>-finline-functions</code>,
+<code>-funswitch-loops</code> and <code>-fgcse-after-reload</code> options;</td></tr>
+
+<tr><td class="opt_name"><code>-Os</code></td>
+<td class="opt_desc">optimize for size;</td></tr>
+</table>
+
+<p class="fmtc"><code>-o</code> <kbd>file</kbd></p>
+<p class="desc">place output in <kbd>file</kbd>; this applies regardless
+to the sort of output being produced; by default, there could be
+<samp>a.out</samp> (executable file), <kbd>src_name</kbd><samp>.o</samp>
+(object code), <kbd>src_name</kbd><samp>.s</samp> (assembler),
+<kbd>src_name.suffix</kbd><samp>.gch</samp> (precompiled header);
+preprocessed <samp>C</samp> source code goes to stdout;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-p</code></td>
+<td class="opt_desc">generate extra code to write profile info suitable
+for the analysis program <code>prof</code>;</td></tr>
+</table>
+
+<p class="fmtc"><code>-pedantic</code></p>
+<p class="desc">issue all the warnings demanded by strict <samp>ISO C</samp>
+and <samp>ISO C++</samp>; reject all programs that use forbidden extensions,
+and some other programs that do not follow <samp>ISO C</samp> and
+<samp>ISO C++</samp>; for ISO C, follows the version of the ISO C standard
+specified by any <code>-std</code> option used;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-pg</code></td>
+<td class="opt_desc">generate extra code to write profile info suitable for
+the analysis program <code>gprof</code>;</td></tr>
+
+<tr><td class="opt_name"><code>-S</code></td>
+<td class="opt_desc">stop after the stage of compilation proper; do not
+assemble;</td></tr>
+</table>
+
+<p class="fmtc"><code>-shared</code></p>
+<p class="desc">produce a shared object which can then be linked with other
+objects to form an executable; for predictable results, you must also specify
+the same set of options that were used to generate code (<code>-fpic</code>,
+<code>-fPIC</code>, or model suboptions);</p>
+
+<p class="fmtc"><code>-static</code></p>
+<p class="desc">on systems that support dynamic linking, this option prevents
+linking with the shared libraries;</p>
+
+<p class="fmtc"><code>-std=</code><kbd>standard</kbd></p>
+<p class="desc">language standard; some possible values:</p>
+
+<table class="opts" style="margin-left:3.6em">
+<tr><td class="opts">gnu89</td><td class="opt_desc"><samp>ISO C90</samp> plus <samp>GNU</samp> extensions (default);</td></tr>
+<tr><td class="opts">c89</td><td class="opt_desc"><samp>ISO C90</samp> (same as <code>-ansi</code>);</td></tr>
+<tr><td class="opts">c99</td><td class="opt_desc"><samp>ISO C99</samp> ( not yet fully supported);</td></tr>
+<tr><td class="opts">gnu99</td><td class="opt_desc"><samp>ISO C99</samp> plus <samp>GNU</samp> extensions;</td></tr>
+<tr><td class="opts">c++98</td><td class="opt_desc">The 1998 <samp>ISO C++</samp> standard plus amendments;</td></tr>
+<tr><td class="opts">gnu++98&nbsp;</td><td class="opt_desc">The same as <code>-std=c++98</code> plus <samp>GNU</samp> extensions (default for <samp>C++</samp> code);</td></tr>
+<tr><td class="opts">c11</td><td class="opt_desc">ISO C11, the 2011 revision
+of the ISO C standard. Support is incomplete and experimental. The name
+<code>c1x</code> is deprecated.</td></tr>
+<tr><td class="opts">gnu11</td><td class="opt_desc">GNU dialect of ISO C11.
+Support is incomplete and experimental. The name <code>gnu1x</code> is
+deprecated.</td></tr>
+<tr><td class="opts">c++11</td><td class="opt_desc">The 2011 ISO C++ standard
+plus amendments. Support for C++11 is still experimental, and may change in
+incompatible ways in future releases. The name <code>c++0x</code> is
+deprecated.</td></tr>
+<tr><td class="opts">gnu++11</td><td class="opt_desc">GNU dialect of C++11.
+Support for C++11 is still experimental, and may change in incompatible ways
+in future releases. The name <code>gnu++0x</code> is deprecated.</td></tr>
+</table>
+
+<p class="fmtc"><code>-U</code> <kbd>name</kbd></p>
+<p class="desc">cancel any previous definition of <kbd>name</kbd>,
+either built in or provided with a <code>-D</code> option;</p>
+
+<p class="fmtc"><code>-V</code> <kbd>version</kbd></p>
+<p class="desc">specifies which version of <code>~</code> to run;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-v</code></td>
+<td class="opt_desc">show cmds executed to run the stages of compilation;
+also show the versions of programs; if <code>-v</code> is specified with
+<code>--help</code>, then the various processes invoked by <code>~</code>
+also display their cmd line options;</td></tr>
+</table>
+
+<p class="fmtc"><code>-Wall</code></p>
+<p class="desc">warn whenever ... (combines the reasonable set of different
+warning options, including <code>-Wcomment</code>, <code>-Wformat</code>, etc);</p>
+
+<p class="fmtc"><code>-Werror</code></p>
+<p class="desc">make all warnings into errors;</p>
+
+<p class="fmtc"><code>-Wmissing-prototypes</code></p>
+<p class="desc">(<samp>C</samp> only) warn if a global function is defined
+without a previous prototype declaration; this warning is issued even if the
+definition itself provides a prototype;</p>
+
+<p class="fmtc"><code>-Wno-deprecated-declarations</code></p>
+<p class="desc">do not warn about uses of functions, variables,
+and types marked as deprecated by using the "deprecated" attribute;</p>
+
+<p class="fmtc"><code>-Wshadow</code></p>
+<p class="desc">warn whenever a local variable shadows another local var,
+parameter or global var or whenever a built-in function is shadowed;</p>
+
+<p class="fmtc"><code>-Wstrict-prototypes</code></p>
+<p class="desc">(<samp>C</samp> only) warn if a function is declared or
+defined without specifying the arg types;</p>
+
+<p class="fmtc"><code>-Wunreachable-code</code></p>
+<p class="desc">warn if the compiler detects that code will never be executed;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-w</code></td>
+<td class="opt_desc">inhibit all warning messages;</td></tr>
+</table>
+
+<p class="fmtc"><code>-x</code> <kbd>lang</kbd></p>
+<p class="desc">specify explicitly the language for the following input files;
+this option applies to all following input files until the next <code>-x</code>
+option; possible values for language are:</p>
+
+<table class="opts" style="margin-left:3.6em">
+<tr><td class="opts">c</td></tr>
+<tr><td class="opts">c-header</td></tr>
+<tr><td class="opts">c-cpp-output</td></tr>
+<tr><td class="opts">c++</td></tr>
+<tr><td class="opts">c++-header</td></tr>
+<tr><td class="opts">c++-cpp-output</td></tr>
+<tr><td class="opts">assembler</td></tr>
+<tr><td class="opts">assembler-with-cpp</td></tr>
+<tr><td class="opts">java</td></tr>
+<tr><td class="opts">...</td></tr>
+</table>
+
+<p class="fmtc"><code>-x none</code></p>
+<p class="desc">turn off any specification of a language, so that
+subsequent files are handled according to their file name suffixes (default);</p>
+
+
+<h5>Search path for #include</h5>
+<p>
+If stmt looks like</p>
+<div class="file"><pre>
+#include "<span class="arg">file</span>"</pre></div>
+<p>
+the curr dir is searched first, then dirs specified by<code> -iquote
+</code>options, then the same places as for angle brackets.</p>
+<p>
+If stmt looks like:</p>
+<div class="file"><pre>
+#include &lt;<span class="arg">file</span>&gt;</pre></div>
+<p>
+the search order is:</p>
+<div class="file"><pre>
+/usr/local/include
+<span class="arg">libdir</span>/gcc/<span class="arg">target</span>/<span class="arg">version</span>/include/c++/<span class="arg">version</span>
+<span class="arg">libdir</span>/gcc/<span class="arg">target</span>/<span class="arg">version</span>/include
+/usr/<span class="arg">target</span>/include
+/usr/include</pre></div>
+<p>
+The second line is for C++ programs only. The <kbd>target</kbd> is the
+canonical name of the system GCC was configured to compile code for;
+often but not always the same as the canonical name of the system it runs on.</p>
+
+<p class="warn">Note!</p>
+<p class="indent">In this context <b>canonical name</b> is something like
+<samp>'<span class="arg">cpu</span>-<span class="arg">company</span>-<span class="arg">system</span>'</samp>,
+e.g., <samp>x86_64-linux-gnu</samp> or <samp>i686-linux-gnu</samp>. Wikipedia
+defines <b>canonicalization</b> (aka "standardization" or "normalization") as
+"a process for converting data that has more than one possible representation
+into a standard, normal, or canonical form".</p>
+<p>
+All dirs added by <code>-I</code> are searched in left-to-right order
+before the default dirs. However, if the specified dir is already searched
+by default, the option is ignored and the search order for system dirs remains
+unchanged. To prevent searching any of the default dirs, use
+<code>-nostdinc</code> option.</p>
+
+
+
+<h4>
+<a name="gdb">gdb</a></h4>
+<p>
+is the GNU Debugger. You  can use it to debug programs written in
+<samp>C</samp>, <samp>C++</samp>, <samp>Modula-2</samp>. Once started,
+<code>~</code> reads cmds  from the terminal until you enter quit.</p>
+
+<p class="cmdc">gdb apptest</p>
+<p class="desc">start <samp>apptest</samp> executable in debugger;</p>
+
+<p class="fmt"><code>gdb&nbsp;</code>[<kbd>options</kbd>] [<kbd>program</kbd>]</p>
+
+
+<h5>Some commands</h5>
+
+<p class="fmtc"><code>break</code> [<kbd>file</kbd><code>:</code>]<kbd>function</kbd></p>
+<p class="desc">set a breakpoint at <kbd>function</kbd> (in <kbd>file</kbd>);</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>bt</code></td>
+<td class="opt_desc">backtrace (display the program stack);</td></tr>
+
+<tr><td class="opt_name"><code>c</code></td>
+<td class="opt_desc">continue execution (e.g., after a breakpoint);</td></tr>
+</table>
+
+<p class="fmtc"><code>edit</code> [<kbd>file</kbd><code>:</code>]<kbd>function</kbd></p>
+<p class="desc">look at the program line where it is presently stopped;</p>
+
+<p class="fmtc"><code>help</code> [<kbd>name</kbd>]</p>
+<p class="desc">show info about the specified <code>~</code> cmd, or general
+info about <code>~</code> usage;</p>
+
+<p class="fmtc"><code>list</code> [<kbd>file</kbd><code>:</code>]<kbd>function</kbd></p>
+<p class="desc">type the text of the program in the vicinity of where it is
+presently stopped;</p>
+
+<p class="fmtc"><code>next</code></p>
+<p class="desc">execute the next program line (after stopping);
+step over any function calls in the line;</p>
+
+<p class="fmtc"><code>print</code> <kbd>expr</kbd></p>
+<p class="desc">display the value of an expression;</p>
+
+<p class="fmtc"><code>quit</code></p>
+<p class="desc">exit <code>~</code>;</p>
+
+<p class="fmtc"><code>run</code> [<kbd>arglist</kbd>]</p>
+<p class="desc">start program (with <kbd>arglist</kbd>, if specified);</p>
+
+<p class="fmtc"><code>step</code></p>
+<p class="desc">execute the next program line (after stopping);
+step into any function calls in the line;</p>
+
+
+<h5>Some options</h5>
+
+<p class="fmt"><code>-h</code> &nbsp;&nbsp; <code>--help</code>
+&nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>-b</code> <kbd>bps</kbd></p>
+<p class="desc">set the line speed (baud rate or bits per second) of any
+serial interface used by <code>~</code> for remote debugging;</p>
+
+<p class="fmtc"><code>-batch</code></p>
+<p class="desc">run in batch mode; exit with status <samp>0</samp>
+after processing all the cmd files specified with <code>-x</code>
+(and <samp>.gdbinit</samp>, if not inhibited); exit with nonzero status
+if an error occurs in executing <code>~</code> cmds in the cmd files;</p>
+
+<p class="fmtc"><code>-c</code> <kbd>file</kbd></p>
+<p class="desc">use <kbd>file</kbd> as a core dump to examine;</p>
+
+<p class="fmtc"><code>-cd</code> <kbd>dir</kbd></p>
+<p class="desc">run <code>~</code> using <kbd>dir</kbd> as its working dir,
+instead of the current dir;</p>
+
+<p class="fmtc"><code>-d</code> <kbd>dir</kbd></p>
+<p class="desc">add <kbd>dir</kbd> to the path to search for source files;</p>
+
+<p class="fmtc"><code>-e</code> <kbd>file</kbd></p>
+<p class="desc">use <kbd>file</kbd> as the executable file to execute when
+appropriate, and for examining pure data in conjunction with a core dump
+(<code>-exec=</code><kbd>file</kbd>);</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-f</code></td>
+<td class="opt_desc"><code>emacs</code> sets this option when it runs
+<code>~</code> as a subprocess; it tells <code>~</code> to output the full
+file name and line number in a standard, recognizable fashion each time
+a stack frame is displayed (which includes each time the program stops);</td></tr>
+
+<tr><td class="opt_name"><code>-n</code></td>
+<td class="opt_desc">do not execute cmds from any <samp>.gdbinit</samp>
+ini files; normally, the cmds in these files are executed after all the
+cmd options and args have been processed (<code>-nx</code>);</td></tr>
+
+<tr><td class="opt_name"><code>-q</code></td>
+<td class="opt_desc">do not print the introductory and copyright messages;
+these messages are also suppressed in batch mode (<code>-quiet</code>);</td></tr>
+</table>
+
+<p class="fmtc"><code>-s</code> <kbd>file</kbd></p>
+<p class="desc">read symbol table from <kbd>file</kbd>;</p>
+
+<p class="fmtc"><code>-se</code> <kbd>file</kbd></p>
+<p class="desc">read symbol table from <kbd>file</kbd> and use it
+as the executable file;</p>
+
+<p class="fmtc"><code>-tty=</code><kbd>device</kbd></p>
+<p class="desc">run using <kbd>device</kbd> for your program's stdin
+and stdout;</p>
+
+<p class="fmtc"><code>-write</code></p>
+<p class="desc">enable writing into executable and core files;</p>
+
+<p class="fmtc"><code>-x</code> <kbd>file</kbd></p>
+<p class="desc">execute <code>~</code> cmds from <kbd>file</kbd>;</p>
+
+
+
+<h4>
+<a name="git">GIT</a></h4>
+<p>
+Adding git repo to an existing project:</p>
+
+<p class="cmdc">cd projects/app02</p>
+<p class="cmdc">git init</p>
+<p class="cmdc">git add *</p>
+<p class="cmd">git commit -m "Initial commit message."</p>
+<p>
+To see the history:</p>
+
+<p class="cmd">git log</p>
+<p>
+To see an older version of a file (curr ver - 4):</p>
+
+<p class="cmd">git show HEAD~4:src/main.cpp</p>
+<p>
+To revert a current file to the last committed version:</p>
+
+<p class="cmd">git checkout HEAD main.cpp</p>
+<p>
+To replace the current file with an earlier version:</p>
+
+<p class="cmd">git checkout <span class="arg">commit_hash</span> app.cpp</p>
+<p>
+Rollback the current file to a -5 version (5 commits back):</p>
+
+<p class="cmdc">git checkout master~5 app.h</p>
+
+<p class="or">or</p>
+
+<p class="cmd">git checkout HEAD~5 -- app.h</p>
+<p>
+To return the whole proj to some prev version:</p>
+
+<p class="cmd">git checkout <span class="arg">commit_hash</span></p>
+
+
+
+
+<h4>
+<a name="indent">Indent</a></h4>
+<p>
+modifies the appearance of C/C++ source files in accordance with some
+standard (GNU, Kernighan &amp; Ritchie, Berkeley, Linux) or user-defined
+style.</p>
+
+<p class="cmdc">indent app.cpp</p>
+<p class="desc">process <samp>app.cpp</samp> source file using defaults
+set in <samp>.indent.pro</samp> configuration file;</p>
+
+<p class="cmdc">indent -gnu main.cpp</p>
+<p class="desc">format <samp>main.cpp</samp> source file in accordance
+with GNU style;</p>
+
+<p class="fmt"><code>indent&nbsp;</code>[<kbd>options</kbd>]
+[<kbd>input_files</kbd>]</p>
+<p class="fmt"><code>indent&nbsp;</code>[<kbd>options</kbd>]
+[<kbd>single_inp_file</kbd>] [<code>-o</code> <kbd>output_file</kbd>]</p>
+
+
+<h5>Some options</h5>
+
+<p class="fmt"><code>--version</code></p>
+
+<p class="fmtc"><code>-bad</code>, <code>--blank-lines-after-declarations</code></p>
+<p class="desc">force blank lines after the declarations;</p>
+
+<p class="fmtc"><code>-bap</code>, <code>--blank-lines-after-procedures</code></p>
+<p class="desc">force blank lines after procedure bodies;</p>
+
+<p class="fmtc"><code>-bbo</code>, <code>--break-before-boolean-operator</code></p>
+<p class="desc">prefer to break long lines before boolean operators;</p>
+
+<p class="fmtc"><code>-bl</code>, <code>--braces-after-if-line</code></p>
+<p class="desc">put braces on line after if, etc;</p>
+
+<p class="fmtc"><code>-bli</code><kbd>n</kbd>, <code>--brace-indent</code><kbd>n</kbd></p>
+<p class="desc">indent braces <kbd>n</kbd> spaces;</p>
+
+<p class="fmtc"><code>-bls</code>, <code>--braces-after-struct-decl-line</code></p>
+<p class="desc">put braces on the line after struct declaration lines;</p>
+
+<p class="fmtc"><code>-cdb</code>, <code>--comment-delimiters-on-blank-lines</code></p>
+<p class="desc">put comment delimiters on blank lines;</p>
+
+<p class="fmtc"><code>-cdw</code>, <code>--cuddle-do-while</code></p>
+<p class="desc">cuddle while of do {} while; and preceding ‘}’;</p>
+
+<p class="fmtc"><code>-ce</code>, <code>--cuddle-else</code></p>
+<p class="desc">cuddle else and preceding ‘}’;</p>
+
+<p class="fmtc"><code>-cp</code><kbd>n</kbd>,
+<code>--else-endif-column</code><kbd>n</kbd></p>
+<p class="desc">put comments to the right of #else and #endif statements
+in column <kbd>n</kbd>;</p>
+
+<p class="fmtc"><code>-cs</code>, <code>--space-after-cast</code></p>
+<p class="desc">put a space after a cast operator;</p>
+
+<p class="fmtc"><code>-di</code><kbd>n</kbd>,
+<code>--declaration-indentation</code><kbd>n</kbd></p>
+<p class="desc">put variables in column <kbd>n</kbd>;</p>
+
+
+<p class="fmtc"><code>-nbad</code>, <code>--no-blank-lines-after-declarations</code></p>
+<p class="desc">do not force blank lines after declarations;</p>
+
+<p class="fmtc"><code>-nbap</code>, <code>--no-blank-lines-after-procedures</code></p>
+<p class="desc">do not force blank lines after procedure bodies;</p>
+
+<p class="fmtc"><code>-nbbo</code>, <code>--break-after-boolean-operator</code></p>
+<p class="desc">do not prefer to break long lines before boolean operators;</p>
+
+<p class="fmtc"><code>-nbc</code>, <code>--no-blank-lines-after-commas</code></p>
+<p class="desc">do not force newlines after commas in declarations;</p>
+
+<p class="fmtc"><code>-ncdb</code>,
+<code>--no-comment-delimiters-on-blank-lines</code></p>
+<p class="desc">don't put comment delimiters on blank lines;</p>
+
+<p class="fmtc"><code>-ncdw</code>, <code>--dont-cuddle-do-while</code></p>
+<p class="desc">do not cuddle } and the while of a do {} while;</p>
+
+<p class="fmtc"><code>-nce</code>, <code>--dont-cuddle-else</code></p>
+<p class="desc">do not cuddle } and else;</p>
+
+<p>
+Here is an example of a user-defined <samp>.indent.pro</samp>:</p>
+<div class="file">
+<pre>
+-nbad -bap -nbc -bbo -bl -bli2 -bls -ncdb -nce -cp1 -cs -di2
+-ndj -nfc1 -nfca -hnl -i2 -ip5 -lp -pcs -nprs -npsl -saf -sai
+-saw -nsc -nsob</pre>
+</div>
+
+
+
+<h4>
+<a name="libs">Notes on C/C++ libraries</a></h4>
+<p>
+There are two C/C++ library types in Linux:</p>
+<ol>
+<li>Static libs (<samp>*.a</samp>): the libraries of object code that are
+linked with the application, and become the part of the application
+[sometimes essentially increasing the size of the executable file].</li>
+
+<li>Dynamically linked shared object libs (<samp>*.so</samp>).
+There is only one form of these libraries but it can be used in two ways:
+<ul>
+<li>Dynamically linked at run time but statically aware. The libraries must
+be available during compile/link phase. The shared objects are not included
+into the executable component but are tied to the execution.</li>
+<li>Dynamically loaded/unloaded and linked during execution (e.g.,
+browser plug-in) using the dynamic linking loader system functions.</li>
+</ul></li>
+</ol>
+
+
+<h5>How to generate a static library</h5>
+<p>
+Let's assume that I have 2 (3, 4, 5,..) functions in separate files and
+I want to create a library. The steps are:</p>
+
+<p class="cmdc">cc -Wall -c cfunc1.c cfunc2.c</p>
+<p class="cmd">ar -cvq libctest.a cfunc1.o cfunc2.o</p>
+<p>
+To list files in this library:</p>
+
+<p class="cmd">ar -t libctest.a</p>
+<p>
+To compile an app (<samp>test1</samp>) with this lib:</p>
+
+<p class="cmd">cc -o test1 test1.c -lctest</p>
+<p>
+Also, <code>-L</code><kbd>path_to_lib_dir</kbd> may be required.</p>
+<p>
+The Linux <samp>.a</samp> lib is similar to Visual C++ static <samp>.lib</samp>.</p>
+
+
+<h5>How to create a shared library (dynamically linked object library)</h5>
+<ul>
+<li>Create object code;</li>
+<li>Create library;</li>
+<li><b>Optional step:</b> create default version using a symbolic link;</li>
+</ul>
+<p>
+For example:</p>
+
+<p class="cmdc">gcc -Wall -fPIC -c *.c</p>
+<p class="cmdc">gcc -shared -Wl,-soname,libctest.so.1 -o libctest.so.1.0 *.o</p>
+<p class="cmdc">mv libctest.so.1.0 /usr/local/lib
+<p class="cmdc">ln -sf /usr/local/lib/libctest.so.1.0 /usr/local/lib/libctest.so.1</p>
+<p class="cmd">ln -sf /usr/local/lib/libctest.so.1.0 /usr/local/lib/libctest.so</p>
+<p>
+Compiler options:</p>
+<ul>
+<li><code>-Wall</code>: include warnings;</li>
+<li><code>-fPIC</code>: compiler directive to output position independent
+code (required by shared libs; also <code>-fpic</code>);</li>
+<li><code>-shared</code>: create a shared obj which can then be linked with
+other objects to form an executable;</li>
+<li><code>-W1</code>: pass options to linker (the options to be passed on
+to the linker are: <code>-soname libctest.so.1</code>);</li>
+<li><code>-o</code>: output (in this case the name of the shared object
+<code>libctest.so.1.0</code>);</li>
+</ul>
+
+
+<h5>Versioning</h5>
+<p>
+Library versions should be specified for shared objects if the function
+interfaces are expected to be changed (functions added/removed, func
+prototypes changed, obj definitions changed, etc).</p>
+<p>
+If the library is expected to be updated, then a lib version should be
+specified when the shared obj lib is created. This is especially important
+for shared obj libs that are dynamically linked. This also avoids the
+"so called" Microsoft DLL hell, when a system upgrade changes std libs and
+thus breaks the older apps requiring the older versions of the shared
+obj functions.</p>
+<p>
+Versioning occurs with the GNU C/C++ libs too, and this often makes binaries
+compiled with one version of the GNU tools incompatible with binaries
+compiled with other versions unless those versions also reside on the system.
+Versioning allows multiple versions of the same lib to co-exist on the same
+system peacefully. The version of the lib is included in the symbol name, so
+the linker knows which version to link with.</p>
+
+
+
+<h5>
+<a name="symbols">Symbol types in object files</a></h5>
+
+<table class="grid_2">
+<tr>
+<td class="grid_2"><samp>A</samp></td>
+<td class="grid_2">The symbol's value is absolute, and will not be changed
+by further linking.</td></tr>
+<tr>
+<td class="grid_2"><samp>B<br>b</samp></td>
+<td class="grid_2">The symbol is in the uninitialized data section (known as BSS).</td></tr>
+<tr>
+<td class="grid_2"><samp>C</samp></td>
+<td class="grid_2">The symbol is common (uninitialized data).
+When linking, multiple common symbols may appear with the same name.
+If the symbol is defined anywhere, the common symbols are treated as
+undefined references.</td></tr>
+<tr>
+<td class="grid_2"><samp>D<br>d</samp></td>
+<td class="grid_2">The symbol is in the initialized data section.</td></tr>
+<tr>
+<td class="grid_2"><samp>G<br>g</samp></td>
+<td class="grid_2">The symbol is in an initialized data section for small
+objects. Some obj file formats permit more efficient access to small
+data objects, such as a global <samp>int</samp> var as opposed to a
+large global array.</td></tr>
+<tr>
+<td class="grid_2"><samp>i</samp></td>
+<td class="grid_2">For PE format files it indicates that the symbol is in a
+section specific to the implementation of DLLs. For ELF it indicates that
+the sym is an indirect function. This is a GNU extension to the std set of
+ELF symbol types. It indicates a symbol which if referenced by a relocation
+does not evaluate to its addr, but instead must be invoked at runtime.
+The runtime execution will then return the value to be used in relocation.</td></tr>
+<tr>
+<td class="grid_2"><samp>N</samp></td>
+<td class="grid_2">Debugging symbol.</td></tr>
+<tr>
+<td class="grid_2"><samp>p</samp></td>
+<td class="grid_2">The symbol is in a stack unwind section.</td></tr>
+<tr>
+<td class="grid_2"><samp>R<br>r</samp></td>
+<td class="grid_2">The symbol is in a read only data section.</td></tr>
+<tr>
+<td class="grid_2"><samp>S<br>s</samp></td>
+<td class="grid_2">The symbol is in an uninitialized data section for small
+objects.</td></tr>
+<tr>
+<td class="grid_2"><samp>T</samp></td>
+<td class="grid_2">The symbol is in the text (code) section.</td></tr>
+<tr>
+<td class="grid_2"><samp>U</samp></td>
+<td class="grid_2">The symbol is undefined.</td></tr>
+<tr>
+<td class="grid_2"><samp>u</samp></td>
+<td class="grid_2">The symbol is a unique global sym. This is a GNU extension
+to the std set of ELF sym bindings. For such sym the dynamic linker will make
+sure that in the entire process there is just one sym with this name and type
+in use.</td></tr>
+<tr>
+<td class="grid_2"><samp>V<br>v</samp></td>
+<td class="grid_2">The symbol is a weak object. When a weak defined sym is
+linked with a normal defined sym, the normal defined sym is used with no
+error. When a weak undefined sym is linked and the sym is not defined,
+the value of the weak sym becomes zero with no error. On some systems,
+uppercase indicates that a default value has been specified.</td></tr>
+<tr>
+<td class="grid_2"><samp>W<br>w</samp></td>
+<td class="grid_2">
+The symbol is a weak sym that has not been specifically tagged as a weak
+obj sym. When a weak defined sym is linked with a normal defined sym, the
+normal defined sym is used with no error. When a weak undefined symbol is
+linked and the sym is not defined, the value of the sym is determined in
+a system-specific manner without error. On some systems, uppercase indicates
+that a default value has been specified.</td></tr>
+<tr>
+<td class="grid_2"><samp>-</samp></td>
+<td class="grid_2">The symbol is a stabs sym in an <samp>a.out</samp> obj file.
+In this case, the next values printed are the stabs other field, the stabs
+desc field, and the stab type. Stabs symbols are used to hold debugging info.</td></tr>
+<tr>
+<td class="grid_2"><samp>?</samp></td>
+<td class="grid_2">The symbol type is unknown, or object file format specific.</td></tr>
+</table>
+<p>
+A <b>weak symbol</b> is a symbol definition in an obj file or dynamic lib
+that may be overridden by other sym definitions.</p>
+
+
+
+<h4>
+<a name="x86-64">32-bit on 64-bit</a></h4>
+<p>
+To find if 64-bit Linux supports 32-bit apps:</p>
+
+<p class="cmd">dpkg --print-foreign-architectures</p>
+<p>
+Installing 32-bit support, old-syle (does not work since Ubuntu 13.10):</p>
+
+<p class="cmd">sudo apt install ia32-libs</p>
+
+
+<h5>Installing 32-bit support (64-bit Ubuntu 14.04)</h5>
+<p>
+Add architecture:</p>
+
+<p class="cmd">sudo dpkg --add-architecture i386</p>
+<p>
+Add libs:</p>
+
+<p class="cmdc">sudo apt clean</p>
+<p class="cmdc">sudo apt update</p>
+<p class="cmdc">sudo apt install libc6:i386 libncurses5:i386 libstdc++6:i386</p>
+
+<p class="or">or (?)</p>
+
+<p class="cmdc">sudo apt install lib32z1 lib32ncurses5 lib32bz2-1.0</p>
+
+<p class="or">or</p>
+
+<p class="cmd">sudo apt install lib32z1 lib32ncurses5 lib32bz2-1.0 lib32stdc++6</p>
+<p>
+Some libs (main) can also be installed with
+(this is the closest replacement for ia32-libs):</p>
+
+<p class="cmdc">sudo apt install gcc-multilib</p>
+
+<p class="or">or</p>
+
+<p class="cmd">sudo apt install g++-multilib</p>
+<p>
+Some additional stuff (?):</p>
+
+<p class="cmdc">sudo apt install libgl1-mesa-dri:i386 libgl1-mesa-glx:i386 libc6-i386</p>
+<p class="cmd">sudo apt install libxcursor1:i386 libxrandr2:i386 libpulse0:i386</p>
+
+
+<h5>Compiling 32 on 64</h5>
+
+<p class="cmdc">apt-get install gcc-multilib</p>
+
+<p class="or">or</p>
+
+<p class="cmdc">apt-get install g++-multilib libc6-dev-i386</p>
+<p class="cmdc">...</p>
+<p class="cmd">...</p>
+<p class="cmd">gcc -m32 -pedantic-errors -std=c89 -Wall hello.c</p>
+<p>
+To see the version of a library installed (32 or 64):</p>
+
+<p class="cmd">dpkg -l libbz2-1.0</p>
+<p>
+Processor info:</p>
+
+<p class="cmd">grep --color=always -iw lm /proc/cpuinfo</p>
+
+
+
+<h4>
+<a name="jar">JAR</a></h4>
+<p>
+JAR (Java ARchive) is an archive file format typically used to aggregate
+many Java class files and associated metadata and resources into a single
+file for convenient distribution. JAR is actually ZIP archive, but you should
+use Java tools to work with it.</p>
+<p>
+To run a Java application:</p>
+
+<p class="cmd">java -jar TableDemo.jar</p>
+<p>
+To create a JAR including class files, dirs <samp>audio</samp> and
+<samp>images</samp>:</p>
+
+<p class="cmd">jar cvf SoundDemo.jar *.class audio images</p>
+<p>
+Also, you can put in archive all appropriate files and dirs, including source,
+comments, READMEs, etc (note that <samp>META-INF</samp> dir and manifest are
+created automatically; you can modify manifest afterwards):</p>
+
+<p class="cmd">jar cvf SoundDemo.jar *</p>
+<p>
+To view the contents of a JAR file:</p>
+
+<p class="cmd">jar tvf SoundDemo.jar</p>
+<p>
+To extract contents of a JAR file:</p>
+
+<p class="cmd">jar xvf SoundDemo.jar</p>
+<p>
+In both cases <code>v</code> (verbose) is optional.</p>
+<p>
+To update an existing JAR file (i.e., to add/replace files, dirs):</p>
+
+<p class="cmd">jar uf SoundDemo.jar images/app_logo.gif</p>
+<p>
+When you create a JAR file, a default manifest is created automatically as
+<samp>META-INF/MANIFEST.MF</samp>. There can be only one manifest in archive!
+<p>
+An example of a simple manifest file:</p>
+<div class="file">
+<pre>
+Manifest-Version: 1.0
+
+Created-By: 1.6.0_02-b06 (Sun Microsystems Inc.)
+
+Main-Class: SoundDemo
+
+Product-Name: Sound Processing App</pre>
+</div>
+To modify manifest, use <code>m</code> option and a separate text file with
+lines to be added (format is <samp>key:value</samp>, see examples below and
+an <a href="#manifest">important requirement</a>):</p>
+
+<p class="cmd">jar ufm SoundDemo.jar manif.txt</kbd>
+<p>
+To modify the default manifest while creating a new JAR file:</p>
+
+<p class="cmd">jar cfm <kbd>fname</kbd>.jar <kbd>manifest-add</kbd>
+<kbd>in-files</kbd></p>
+<p>
+Options and arguments:</p>
+<ul>
+<li><code>c </code> indicates that you want to create a JAR file;</li>
+
+<li><code>f </code> indicates that you want the output to go to
+a <samp><kbd>fname</kbd>.jar</samp> (rather than to stdout);</li>
+
+<li><code>m </code> indicates that you want to merge info from the specified
+file into the manifest of the archive you're creating;</li>
+
+<li><a name="manifest"><kbd>manifest-add </kbd></a> is the name
+(path/name) of a text file
+whose contents you want to add to the manifest; note that:
+<ol>
+<li>This file must have NL or CR at the end!</li>
+<li>The contents must be encoded in UTF8.</li>
+</ol></li>
+<li><kbd>in-files </kbd> is a space-separated list (or pattern) of files
+that must be placed in the JAR file.</li>
+</ul>
+<p>
+Note that <code>m</code> and <code>f</code> must go in the same order as the
+corresponding files.</p>
+<p>
+To add an application's entry point (i.e., class having
+<samp>main()</samp> function) to manifest, put the following
+line in <samp>manif.txt</samp>:</p>
+
+<p class="fmt"><samp>Main-Class: TableDemo</samp></p>
+<p>
+After that:</p>
+
+<p class="cmd">jar cfm TableDemo.jar manif.txt *.class</p>
+<p>
+If you need to reference classes in other JAR files:</p>
+
+<p class="fmt"><samp>Class-Path: MyUtils2.jar libs/AbcLib4.jar</samp></p>
+
+
+
+<h4>
+<a name="zenity">Zenity</a></h4>
+<p>
+With <code>zenity</code> you can provide some basic GUI features in shell
+scripts. It displays miscellaneous GTK+ dialogs, and returns user's input
+(either in the return code or on stdout). For example:</p>
+<div class="file">
+<pre>#!/bin/bash
+
+if zenity --info --text="The time is
+    `date +%R`; Pause and relax!"; then
+
+  exit 0
+fi</pre>
+</div>
+<p>
+This script can be run by <samp>cron</samp> and would remind you each hour
+to have a rest. The appropriate <samp>crontab</samp> line can look like this:</p>
+
+<p class="fmt"><samp>50 8-17 * * * env DISPLAY=:0 /home/pro/bin/time_warn.sh</samp></p>
+<p>
+See <code><a href="cmds_c.html#crontab">crontab</a></code> for explanations.</p>
+
+
+<!--
+<h4>
+<a name="fonts">Fonts</a></h4>
+<p>
+<b>Georgia:</b></p>
+<p class="fmt" style="font-family:Georgia">
+QWERTY qwerty ЙЦУКЕН йцукен 0123456789</p>
+
+<b>Georgia, bold:</b></p>
+<p class="fmt" style="font-family:Georgia;font-weight:bold">
+QWERTY qwerty ЙЦУКЕН йцукен 0123456789</p>
+
+<b>Georgia, italic:</b></p>
+<p class="fmt" style="font-family:Georgia;font-style:italic">
+QWERTY qwerty ЙЦУКЕН йцукен 0123456789</p>
+
+<p>
+<b>Droid-Sans:</b></p>
+<p class="fmt" style="font-family:Droid-Sans">
+QWERTY qwerty ЙЦУКЕН йцукен 0123456789</p>
+
+<p>
+<b>Droid-Sans, bold:</b></p>
+<p class="fmt" style="font-family:Droid-Sans;font-weight:bold">
+QWERTY qwerty ЙЦУКЕН йцукен 0123456789</p>
+
+<p>
+<b>UbuntuMono:</b></p>
+<p class="fmt" style="font-family:UbuntuMono">
+QWERTY qwerty ЙЦУКЕН йцукен 0123456789</p>
+
+<p>
+<b>UbuntuMono, italic:</b></p>
+<p class="fmt" style="font-family:UbuntuMono;font-style:italic">
+QWERTY qwerty ЙЦУКЕН йцукен 0123456789</p>
+
+<p>
+<b>Open-Sans:</b></p>
+<p class="fmt" style="font-family:Open-Sans">
+QWERTY qwerty ЙЦУКЕН йцукен 0123456789</p>
+
+<p>
+<b>Open-Sans, italic:</b></p>
+<p class="fmt" style="font-family:Open-Sans;font-style:italic">
+QWERTY qwerty ЙЦУКЕН йцукен 0123456789</p>
+
+<p>
+<b>Open-Sans, bold:</b></p>
+<p class="fmt" style="font-family:Open-Sans;font-weight:bold">
+QWERTY qwerty ЙЦУКЕН йцукен 0123456789</p>
+
+<p>
+<b>Courier:</b></p>
+<p class="fmt" style="font-family:Courier">
+QWERTY qwerty ЙЦУКЕН йцукен 0123456789</p>
+
+<p>
+<b>Courier, italic:</b></p>
+<p class="fmt" style="font-family:Courier;font-style:italic">
+QWERTY qwerty ЙЦУКЕН йцукен 0123456789</p>
+
+<p>
+<b>Serif:</b></p>
+<p class="fmt" style="font-family:serif">QWERTY qwerty ЙЦУКЕН йцукен 0123456789</p>
+
+<p>
+<b>Sans-serif:</b></p>
+<p class="fmt" style="font-family:sans-serif">QWERTY qwerty ЙЦУКЕН йцукен 0123456789</p>
+
+<p>
+<b>Monospace:</b></p>
+<p class="fmt" style="font-family:Monospace">QWERTY qwerty ЙЦУКЕН йцукен 0123456789</p>
+
+-->
+
+</div>
+
+</body></html>

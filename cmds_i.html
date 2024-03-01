@@ -1,0 +1,2642 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (iconv, id, ifconfig, info, init, iptables, iwspy)</title>
+<meta name="description" content="linux quick reference, iconv, id, ifconfig, info, init, initctl, ipcs, iptables, iwconfig, iwlist, iwspy" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<div id="topmenu">
+<p class="menu">
+<a href="#iconv">iconv</a>&nbsp;|
+<a href="#id">id</a>&nbsp;|
+<a href="#ifconfig">ifconfig</a>&nbsp;|
+<a href="#info">info</a>&nbsp;|
+<a href="#init">init</a>&nbsp;|
+<a href="#initctl">initctl</a>&nbsp;|
+<a href="#ip">ip</a>&nbsp;|
+<a href="#ipcs">ipcs</a>&nbsp;|
+<a href="#iptables">iptables</a>&nbsp;|
+<a href="#iw">iw</a>&nbsp;|
+<a href="#iwconfig">iwconfig</a>&nbsp;|
+<a href="#iwlist">iwlist</a>&nbsp;|
+<a href="#iwspy">iwspy</a>&nbsp;|
+<a href="#jobs">jobs</a></p>
+</div>
+
+
+
+<p class="cmdname"><a name="iconv"></a>iconv</p>
+<p>
+converts the encoding of characters in the target file from one char
+set to another, and sends the result to stdout, unless otherwise specified.</p>
+
+<p class="cmdc">iconv -l</p>
+<p class="desc">list known character sets;</p>
+
+<p class="cmdc">iconv -f CP1251 -t UTF8 msg.txt &gt; msg2.txt</p>
+<p class="desc">convert <samp>msg.txt</samp> from Windows 1251 to UTF8,
+write converted version to <samp>msg2.txt</samp> (initial file is not changed);</p>
+
+<p class="cmdc">iconv -f UTF8 -t CP1251 -o info2.txt info.txt</p>
+<p class="desc">convert <samp>info.txt</samp> from UTF8 to Windows 1251,
+write converted version to <samp>info2.txt</samp>;</p>
+
+<p class="cmd">iconv -f <span class="arg">enc1</span> -t <span class="arg">enc2 file</span></p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>-V</code>
+&nbsp;&nbsp; <code>--version</code> &nbsp;&nbsp; <code>-v</code>
+&nbsp;&nbsp; <code>--verbose</code></p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-c</code></td>
+<td class="opt_desc">omit invalid characters from output;</td></tr>
+</table>
+
+<p class="fmtc"><code>-f</code> <kbd>enc</kbd>,
+<code>--from-code</code> <kbd>enc</kbd></p>
+<p class="desc">convert from encoding <kbd>enc</kbd>;</p>
+
+<p class="fmtc"><code>-l</code>, <code>--list</code></p>
+<p class="desc">list supported character sets;</p>
+
+<p class="fmtc"><code>-o</code> <kbd>file</kbd>,
+<code>--output</code> <kbd>file</kbd></p>
+<p class="desc">write to <kbd>file</kbd> instead of stdout;</p>
+
+<p class="fmtc"><code>-s</code>, <code>--silent</code></p>
+<p class="desc">suppress warnings;</p>
+
+<p class="fmtc"><code>-t</code> <kbd>enc</kbd>,
+<code>--to-code</code> <kbd>enc</kbd></p>
+<p class="desc">convert to encoding <kbd>enc</kbd>;</p>
+
+
+
+
+
+<p class="cmdname"><a name="id"></a>id</p>
+<p>
+shows real and effective user and group IDs for the specified user
+(for the current user, if <kbd>user</kbd> is omitted).</p>
+
+<p class="cmdc">id</p>
+<p class="desc">my uid, gid, name, groups, etc;</p>
+
+<p class="cmdc">id -nG pro07</p>
+<p class="desc">the names of all groups that user <samp>pro07</samp> belongs to;</p>
+
+<p class="cmdc">id -u</p>
+<p class="desc">my effective user ID;</p>
+
+<p class="cmdc">id -gn</p>
+<p class="desc">my effective group name;</p>
+
+<p class="cmdc">id -u oracle</p>
+<p class="desc">effective user id of <samp>oracle</samp>;</p>
+
+<p class="fmt"><code>id&nbsp;</code>[<kbd>options</kbd>] [<kbd>user</kbd>]</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>-G</code>, <code>--groups</code></p>
+<p class="desc">show all group IDs;</p>
+
+<p class="fmtc"><code>-g</code>, <code>--group</code></p>
+<p class="desc">show only the effective group ID;</p>
+
+<p class="fmtc"><code>-n</code>, <code>--name</code></p>
+<p class="desc">show a name instead of a number;</p>
+
+<p class="fmtc"><code>-r</code>, <code>--real</code></p>
+<p class="desc">show the real ID instead of the effective ID;</p>
+
+<p class="fmtc"><code>-u</code>, <code>--user</code></p>
+<p class="desc">show the effective user ID only;</p>
+
+<p class="fmtc"><code>-Z</code>, <code>--context</code></p>
+<p class="desc">show the security context only;</p>
+<p>
+Options <code>-n</code> and <code>-r</code> are supposed to be used
+with <code>-ugG</code>.</p>
+
+
+
+
+<p class="cmdname_dep"><a name="ifconfig"></a>ifconfig</p>
+<p class="dep">Deprecated</p>
+<p>
+configures network interfaces.
+See also <a href="tcpip.html">TCP/IP protocols</a>.</p>
+
+<p class="cmdc">ifconfig</p>
+<p class="desc">show the status of currently active interfaces;</p>
+
+<p class="cmdc">ifconfig -a</p>
+<p class="desc">show the status of all interfaces;</p>
+
+<p class="cmdc">ifconfig eth0</p>
+<p class="desc">show the status of <samp>eth0</samp> interface;</p>
+
+<p class="cmdc">ifconfig eth0 192.168.0.4 netmask 255.255.255.0 up</p>
+<p class="desc">configure the first ethernet card (<samp>eth0</samp>),
+set IP 192.168.0.4, netmask 24-bit;</p>
+
+<p class="cmdc">ifconfig eth0:0 192.168.0.5 netmask 255.255.255.0 up</p>
+<p class="desc">configure an additional IP address (192.168.0.5) on
+<samp>eth0</samp>; netmask 24-bit;</p>
+
+<p class="cmdc">ifconfig lo0 127.0.0.1 up</p>
+<p class="desc">configure loopback interface;</p>
+
+<p class="cmdc">ifconfig eth1 down</p>
+<p class="desc">deactivate interface <samp>eth1</samp>;</p>
+
+<p class="fmt"><code>ifconfig&nbsp;</code>[<kbd>iface</kbd>]</p>
+
+<p class="fmt"><code>ifconfig&nbsp;</code><kbd>iface&nbsp;</kbd>[<kbd>addr_family</kbd>]<kbd>&nbsp;options</kbd></p>
+<p>
+<kbd>iface</kbd> is a driver name + a unit number
+(<samp>eth0</samp>, <samp>eth1</samp>, <samp>eth2</samp> for ethernet cards,
+<samp>lo0</samp> for loopback interface);</p>
+<p>
+<kbd>addr_family</kbd> specifies the address family: <samp>unix</samp>
+(UNIX Domain), <samp>inet</samp> (DARPA Internet; default),
+<samp>inet6</samp> (IPv6), <samp>ddp</samp> (Appletalk DDP),
+<samp>ipx</samp> (Novell IPX), <samp>ax25</samp> (AMPR AX.25 Packet Radio),
+<samp>netrom</samp> (AMPR NET/ROM), <samp>rose</samp> (AMPR ROSE),
+<samp>ec</samp> (Econet), <samp>ash</samp> (Ash), <samp>x25</samp> (CCITT X.25).</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<table class="options">
+<tr><td class="opt_name"><code>up</code></td>
+<td class="opt_desc">activate interface (it's assumed by default when an
+address is assigned to the interface);</td></tr>
+</table>
+
+<p class="fmtc"><code>down</code></p>
+<p class="desc">shutdown the specified interface;</p>
+
+<p class="fmtc">[<code>-</code>]<code>arp</code></p>
+<p class="desc">enable / disable the use of <samp>arp</samp> protocol
+on this interface;</p>
+
+<p class="fmtc">[<code>-</code>]<code>promisc</code></p>
+<p class="desc">enable / disable promiscuous mode on this interface;</p>
+
+<p class="fmtc">[<code>-</code>]<code>allmulti</code></p>
+<p class="desc">enable / disable all-multicast mode on this interface;</p>
+
+<p class="fmtc"><code>metric</code> <kbd>n</kbd></p>
+<p class="desc">set the interface metric;</p>
+
+<p class="fmtc"><code>mtu</code> <kbd>n</kbd></p>
+<p class="desc">set interface MTU (Maximum Transfer Unit);</p>
+
+<p class="fmtc"><code>netmask</code> <kbd>xxxx</kbd></p>
+<p class="desc">set IP network mask for this interface;</p>
+
+<p class="fmtc"><code>add</code>
+<kbd>addr</kbd><code>/</code><kbd>prefixlen</kbd></p>
+<p class="desc">add IPv6 address to an interface;</p>
+
+<p class="fmtc"><code>del</code>
+<kbd>addr</kbd><code>/</code><kbd>prefixlen</kbd></p>
+<p class="desc">remove IPv6 address from an interface;</p>
+
+<p class="fmtc"><code>tunnel</code> <kbd>aa.bb.cc.dd</kbd></p>
+<p class="desc">create a new SIT (IPv6-in-IPv4) device, tunnelling
+to the given destination;</p>
+
+<p class="fmtc"><code>irq</code> <kbd>spec</kbd></p>
+<p class="desc">set the interrupt line used by this device (if supported);</p>
+
+<p class="fmtc"><code>io_addr</code> <kbd>addr</kbd></p>
+<p class="desc">set the start address in I/O space (if supported);</p>
+
+<p class="fmtc"><code>mem_start</code> <kbd>addr</kbd></p>
+<p class="desc">set the start address for shared memory (if supported);</p>
+
+<p class="fmtc">[<code>-</code>]<code>broadcast</code>
+[<kbd>addr</kbd>]</p>
+<p class="desc">set the broadcast address for this interface
+(if <kbd>addr</kbd> is given); otherwise set/clear <samp>IFF_BROADCAST</samp>
+flag;</p>
+
+<p class="fmtc">[<code>-</code>]<code>pointtopoint</code>
+[<kbd>addr</kbd>]</p>
+<p class="desc">used to establish a direct link between 2 hosts;
+if <kbd>addr</kbd> is given, assign it to the other side of the link;
+otherwise set/clear <samp>IFF_POINTTOPOINT</samp> flag;</p>
+
+<p class="fmtc"><code>hw</code> <kbd>class addr</kbd></p>
+<p class="desc">set the hardware address of this interface (must be supported
+by the driver and hardware); <kbd>class</kbd> may be one of the following
+(there are more):</p>
+<table class="opts" style="margin-left:3.6em;width:80%">
+<tr><td class="opts">loop</td><td class="opt_desc">Local Loopback</td></tr>
+<tr><td class="opts">slip</td><td class="opt_desc">Serial Line IP</td></tr>
+<tr><td class="opts">cslip</td><td class="opt_desc">VJ Serial Line IP</td></tr>
+<tr><td class="opts">slip6</td><td class="opt_desc">6-bit Serial Line IP</td></tr>
+<tr><td class="opts">cslip6</td><td class="opt_desc">VJ 6-bit Serial Line IP</td></tr>
+<tr><td class="opts">adaptive</td><td class="opt_desc">Adaptive Serial Line IP</td></tr>
+<tr><td class="opts">ether</td><td class="opt_desc">Ethernet</td></tr>
+<tr><td class="opts">tr</td><td class="opt_desc">16/4 Mbps Token Ring</td></tr>
+<tr><td class="opts">ax25</td><td class="opt_desc">AMPR AX.25</td></tr>
+<tr><td class="opts">netrom</td><td class="opt_desc">AMPR NET/ROM</td></tr>
+<tr><td class="opts">rose</td><td class="opt_desc">AMPR ROSE</td></tr>
+<tr><td class="opts">tunnel</td><td class="opt_desc">IPIP Tunnel</td></tr>
+<tr><td class="opts">ppp</td><td class="opt_desc">Point-to-Point Protocol</td></tr>
+<tr><td class="opts">hdlc</td><td class="opt_desc">(Cisco)-HDLC</td></tr>
+<tr><td class="opts">lapb</td><td class="opt_desc">LAPB</td></tr>
+<tr><td class="opts">dlci</td><td class="opt_desc">Frame Relay DLCI</td></tr>
+<tr><td class="opts">frad</td><td class="opt_desc">Frame Relay Access Device</td></tr>
+<tr><td class="opts">sit</td><td class="opt_desc">IPv6-in-IPv4</td></tr>
+<tr><td class="opts">fddi</td><td class="opt_desc">Fiber Distributed Data Interface</td></tr>
+<tr><td class="opts">irda</td><td class="opt_desc">IrLAP</td></tr>
+<tr><td class="opts">x25</td><td class="opt_desc">generic X.25</td></tr>
+<tr><td class="opts">infiniband</td><td class="opt_desc">InfiniBand</td></tr>
+</table>
+<p>
+Desktop systems nowdays tend to minimize network config efforts due to use
+of DHCP, zero configuration networking (zeroconfig), and network management
+daemons (like <b>NetworkManager</b>). Servers, however, sometimes require
+manual job. For a quick temp config you can use <code>~</code>, otherwise
+you should edit some system files. For example, Ubuntu dynamic IP address
+assignment requires the following lines in
+<samp>/etc/network/interfaces</samp>:</p>
+
+<div class="file">
+<pre>auto eth0
+iface eth0 inet dhcp</pre>
+</div>
+<p>
+To configure your system to use a static IP address assignment:</p>
+
+<div class="file">
+<pre>auto eth0
+iface eth0 inet static
+address 192.168.0.6
+netmask 255.255.255.0
+gateway 192.168.0.254</pre>
+</div>
+<p>
+To assign several static IP addresses to a single NIC:</p>
+
+<div class="file">
+<pre>auto eth0
+auto eth0:1
+auto eth0:2
+
+iface eth0 inet static
+address 192.168.1.6
+netmask 255.255.255.0
+gateway 192.168.1.254
+
+iface eth0:1 inet static
+address 192.168.1.7
+netmask 255.255.255.0
+gateway 192.168.1.254
+
+iface eth0:2 inet static
+address 192.168.1.12
+netmask 255.255.255.0
+gateway 192.168.1.254</pre>
+</div>
+
+<table class="files">
+<a name="netfiles">
+<caption>Files</caption></a>
+<tr>
+<td class="file_name">/proc/net/socket</td>
+<td class="file_desc">&nbsp;</td></tr>
+<tr>
+<td class="file_name">/proc/net/dev</td>
+<td class="file_desc">&nbsp;</td></tr>
+<tr>
+<td class="file_name">/proc/net/if_inet6</td>
+<td class="file_desc">&nbsp;</td></tr>
+<tr>
+<td class="file_name">/etc/hosts</td>
+<td class="file_desc">hosts to be resolved locally</td></tr>
+<tr>
+<td class="file_name">/etc/resolv.conf</td>
+<td class="file_desc">DNS servers for internet domain name resolution</td></tr>
+<tr>
+<td class="file_name">/etc/nsswitch</td>
+<td class="file_desc">order of host name search (typical: local files first, then NIS, then DNS)</td></tr>
+<tr>
+<td class="file_name">/etc/network/interfaces</td>
+<td class="file_desc">Ubuntu / Debian</td></tr>
+<tr>
+<td class="file_name">/etc/sysconfig/network</td>
+<td class="file_desc">Red Hat / Fedora / CentOS</td></tr>
+<tr>
+<td class="file_name">/etc/sysconfig/network-scripts/*</td>
+<td class="file_desc">Red Hat / Fedora / CentOS</td></tr>
+</table>
+
+
+
+
+
+<p class="cmdname"><a name="info"></a>info</p>
+<p>
+reads doc in Info format. There is also <code>pinfo</code> - curses-based
+lynx-style info browser. Both use env var <samp>INFOPATH</samp>, but options
+are different.</p>
+
+<p class="fmt"><code>info&nbsp;</code>[<kbd>option</kbd>]<kbd>&nbsp;...&nbsp;</kbd>[<kbd>menu-item ...</kbd>]</p>
+<p>
+The first non-option arg, if present, is the menu entry to start from;
+it is searched for in all 'dir' files along <samp>INFOPATH</samp>. If it is
+not present, <code>~</code> merges all 'dir' files and shows the result.
+Any remaining args are treated as the names of menu items relative to the
+initial node visited.</p>
+
+<p class="cmdc">info</p>
+<p class="desc">show top-level dir menu;</p>
+
+<p class="cmdc">info emacs</p>
+<p class="desc">show <samp>emacs</samp> info starting at <samp>emacs</samp>
+node from top-level dir;</p>
+
+<p class="cmdc">info emacs buffers</p>
+<p class="desc">show <samp>emacs</samp> info starting at <samp>buffers</samp> node;</p>
+
+<p class="cmdc">info --show-options emacs</p>
+<p class="desc">show <samp>emacs</samp>’ command line options;</p>
+
+<p class="cmdc">pinfo slocate</p>
+<p class="desc">show info about <samp>slocate</samp> using <code>pinfo</code>;</p>
+
+<p class="cmdc">pinfo -m slocate</p>
+<p class="desc">similar to '<code>man slocate</code>' cmd;</p>
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-h</code> &nbsp;&nbsp; <code>--help</code>
+&nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>-d</code> <kbd>dir</kbd>,
+<code>--directory=</code><kbd>dir</kbd></p>
+<p class="desc">add <kbd>dir</kbd> to <samp>INFOPATH</samp>;</p>
+
+<p class="fmtc"><code>-f</code> <kbd>file</kbd>,
+<code>--file=</code><kbd>file</kbd></p>
+<p class="desc">specify Info file to visit;</p>
+
+<p class="fmtc"><code>-n</code> <kbd>name</kbd>,
+<code>--node=</code><kbd>name</kbd></p>
+<p class="desc">specify nodes in first visited Info file;</p>
+
+<p class="fmtc"><code>-o</code> <kbd>file</kbd>,
+<code>--output=</code><kbd>file</kbd></p>
+<p class="desc">output selected nodes to <kbd>file</kbd>;</p>
+
+<p class="fmtc"><code>-R</code>, <code>--raw-escapes</code></p>
+<p class="desc">output "raw" ANSI escapes (default);</p>
+
+<p class="fmtc"><code>-O</code>, <code>--show-options</code></p>
+<p class="desc">go to cmd line options node;</p>
+
+<p class="fmtc"><code>-w</code>, <code>--where</code>,
+<code>--location</code></p>
+<p class="desc">physical location of Info file;</p>
+
+<p class="fmtc"><code>--apropos=</code><kbd>str</kbd></p>
+<p class="desc">look up <kbd>str</kbd> in all indices of all manuals;</p>
+
+<p class="fmtc"><code>--dribble=</code><kbd>file</kbd></p>
+<p class="desc">remember user keystrokes in <kbd>file</kbd>;</p>
+
+<p class="fmtc"><code>--index-search=</code><kbd>str</kbd></p>
+<p class="desc">go to node pointed by index entry <kbd>str</kbd>;</p>
+
+<p class="fmtc"><code>--no-raw-escapes</code></p>
+<p class="desc">output escapes as literal text;</p>
+
+<p class="fmtc"><code>--restore=</code><kbd>file</kbd></p>
+<p class="desc">read initial keystrokes from <kbd>file</kbd>;</p>
+
+<p class="fmtc"><code>--subnodes</code></p>
+<p class="desc">recursively output menu items;</p>
+
+<p class="fmtc"><code>--vi-keys</code></p>
+<p class="desc">use <a href="#vi"><code>vi</code></a>-like and
+<a href="#less"><code>less</code></a>-like key bindings;</p>
+
+
+
+<p class="cmdname"><a name="init"></a>init</p>
+<p>
+is described here FYI only. It's not an app for users or administrators!
+It's a very important system daemon that runs all the time until the system
+is shut down.</p>
+<p>
+Historicaly, in Unix-based operating systems, <code>init</code>
+("initialization" or "initializer") is the first process started during
+system boot; it is direct or indirect ancestor of all processes in the system,
+and it auto adopts all orphaned processes. Unlike other daemons,
+<code>init</code> is started by the kernel using a hard-coded filename and
+has <samp>pid = 1</samp>.</p>
+<p>
+FYI: <samp>pid = 0</samp> is assigned to <b>swapper</b> (<b>sched</b>) which
+is not a separate program but a part of the kernel responsible for paging.</p>
+<p>
+If kernel is unable to start <code>init</code>, it throws kernel panic.</p>
+<p>
+One of the major drawbacks of the classical <b>init</b> is that it starts
+tasks serially, waiting for each task to finish loading before moving on to
+the next one. Modern Linux implementation of <b>init</b> (like
+<code><a href="boot.html#init">systemd</a></code>) try to improve
+performace by running tasks in parallel.</p>
+
+
+
+
+<p class="cmdname"><a name="initctl"></a>initctl</p>
+<p class="dep">Deprecated?</p>
+<p>
+(Ubuntu/Debian) provides communication with the <a href="sysinit.html#upstart">Upstart</a> <code>init</code> daemon. When run as
+<code>initctl</code> (it can also be invoked through symlinks), the first non-option arg is the <kbd>cmd</kbd>. Global options may
+be specified before or after <kbd>cmd</kbd>. The standard symlinks are <code>start</code>, <code>stop</code>, <code>status</code>.</p>
+
+<p class="cmdc">initctl list</p>
+<p class="desc">output a list of all jobs and their states;</p>
+
+<p class="cmdc">initctl --system list</p>
+<p class="desc">output a list of all jobs and their states (non-root user);</p>
+
+<p class="cmdc">initctl restart cron</p>
+<p class="desc">restart <code>cron</code> daemon
+(send <samp>SIGTERM</samp> to that daemon);</p>
+
+<p class="cmdc">initctl status logd</p>
+<p class="desc">show the status of <code>logd</code> daemon;</p>
+
+<p class="cmdc">status logd</p>
+<p class="desc">show the status of <code>logd</code> daemon;</p>
+
+<p class="cmdc">initctl emit --no-wait control-alt-delete</p>
+<p class="desc">emit a signal event <samp>control-alt-delete</samp>
+(signal event: emitter does not care whether the signal is handled, or
+how long it takes to handle);</p>
+
+<p class="cmdc">initctl emit unmounting-filesystems</p>
+<p class="cmdc">umount -a</p>
+<p class="desc">emit event <samp>unmounting-filesystems</samp> and wait
+while Upstart is starting or stopping any related services and runs the
+appropriate tasks; when it's finished, the second cmd is executed;</p>
+
+<p class="cmdc">initctl help</p>
+<p class="desc">show a list of <code>~</code> commands;</p>
+
+<p class="cmdc">initctl list --help</p>
+<p class="desc">show more info about <code>list</code> cmd;</p>
+
+
+<h5>Options</h5>
+
+<p class="fmtc"><code>--system</code></p>
+<p class="desc">instructs <code>~</code> to communicate with <code>init</code>
+daemon via the D-Bus rather than over the private socket (which is default,
+convenient, and fast, but available to <samp>root</samp> only); this option
+allows regular users to exec read-only cmds;</p>
+
+<p class="fmtc"><code>--dest</code></p>
+<p class="desc">specifies the well-known name of the <code>init</code> daemon
+when using <code>--system</code> option; usually, it's unnecessary as the
+daemon uses the default <samp>com.ubuntu.Upstart</samp> name; however, it may
+be useful for debugging;</p>
+
+<p class="fmtc"><code>--no-wait</code></p>
+<p class="desc">(only with <code>start</code>, <code>stop</code>,
+<code>restart</code>, <code>emit</code>) normally <code>~</code> waits for
+the cmd to finish before returning; this option causes it to only wait for
+the goal change or event to be queued;</p>
+
+<p class="fmtc"><code>--quiet</code></p>
+<p class="desc">output errors only;</p>
+
+
+<h5>Commands</h5>
+
+<p class="fmtc"><code>start</code> <kbd>job</kbd>
+[<kbd>key</kbd><code>=</code><kbd>value</kbd>]</p>
+<p class="desc">requests that a new instance of the named <kbd>job</kbd>
+be started, outputting the status of the job to stdout when cmd completes;
+<kbd>key<code>=</code>value</kbd> can be used to specify env vars to be
+passed to the starting job, and placed in its env; most jobs only permit a
+single instance; those that use the instance stanza in their config define
+a string expanded from env vars to name the instance; thus the env vars
+also serve to select which instance of <kbd>job</kbd> is to be acted upon;
+if the job is already running, this cmd will return an error;</p>
+
+<p class="fmtc"><code>stop</code> <kbd>job</kbd>
+[<kbd>key</kbd><code>=</code><kbd>value</kbd>]</p>
+<p class="desc">requests that an instance of <kbd>job</kbd> be stopped,
+outputting the status of the job to stdout when cmd completes;</p>
+
+<p class="fmtc"><code>status</code> <kbd>job</kbd>
+[<kbd>key</kbd><code>=</code><kbd>value</kbd>]</p>
+<p class="desc">requests the status an instance of <kbd>job</kbd>;
+
+<p class="fmtc"><code>list</code></p>
+<p class="desc">requests a list of the known jobs and instances;</p>
+
+<p class="fmtc"><code>emit</code> <kbd>event</kbd>
+[<kbd>key</kbd><code>=</code><kbd>value</kbd>]</p>
+<p class="desc">requests that the specified event be emitted, potentially
+causing jobs to be started and stopped depending on their use of the
+<samp>start on</samp> and <samp>stop on</samp> stanzas in their config;
+the optional <kbd>key<code>=</code>value</kbd> pairs specify env vars to be
+included with the event and thus exported into the environment of any jobs
+started and stopped by the event; env may also serve to specify which instance
+of multi-instance jobs should be started or stopped;</p>
+
+<p class="fmtc"><code>reload-configuration</code></p>
+<p class="desc">requests that the <code>init</code> daemon reloads its config
+(usually not necessary since this daemon watches its config directories
+with <samp>inotify</samp> and auto reloads in cases of changes);</p>
+
+<p class="fmtc"><code>version</code></p>
+<p class="desc">requests and outputs the version of the running
+<code>init</code> daemon;</p>
+
+<p class="fmtc"><code>log-priority</code> [<kbd>priority</kbd>]</p>
+<p class="desc">if called with <kbd>priority</kbd>, it requests that the
+<code>init</code> daemon log all messages with that priority or greater (may
+be used to both increase and decrease the volume of logged msgs);
+<kbd>priority</kbd> can be: <samp>debug</samp>, <samp>info</samp>,
+<samp>message</samp>, <samp>warn</samp>, <samp>error</samp>,
+<samp>fatal</samp>; without <kbd>priority</kbd>, it requests (and outputs
+to stdout) the current min msg priority that the <code>init</code>
+daemon will log;</p>
+
+
+
+
+
+<p class="cmdname"><a name="ip"></a>ip</p>
+<p>
+shows and manipulate routing, network devices, interfaces and tunnels.</p>
+
+<p class="fmtc"><code>ip </code>[ <kbd>OPTIONS</kbd> ]
+<kbd>OBJECT</kbd> { <kbd>COMMAND</kbd> | <code>help</code> }</p>
+
+<p class="fmt"><code>ip </code>[ <code>-force</code> ] <code>-batch</code> <kbd>filename</kbd></p>
+<p>
+Note that <code>ip</code> is functionally organized on two layers of Networking Stack:
+<i>Layer 2</i> (<a href="tcpip.html#link_layer">Link Layer</a>) and <i>Layer 3</i>
+(<a href="tcpip.html#internet_layer">IP Layer</a>) and does the work of all cmds
+from <a href="net.html#net-tools">net-tools</a> package.</p>
+
+<p class="center">
+<i>The following commands use <samp>enp7s0</samp> network interface name
+as an example (it's a built-in Ethernet device on an old ASUS motherboard).
+Your own network interface may have a different name!</i></p>
+
+<p class="cmdc">ip a</p>
+<p class="cmdc">ip addr</p>
+<p class="cmdc">ip address</p>
+<p class="desc">show addresses assigned to all network interfaces
+(enabled and disabled); similar to<code> ifconfig</code>, but output is not
+exactly the same;</p>
+
+<p class="cmdc">ip -br a</p>
+<p class="desc">like prev but very brief (<code>-br</code>) output:</p>
+<div class="term"><pre>
+lo          UNKNOWN      127.0.0.1/8 ::1/128
+enp7s0      UP           192.168.10.101/24
+                               fe80::3d5f:28ea:9721:76ea/64</pre></div>
+
+<p class="cmdc">ip -s link</p>
+<p class="desc">display a table of all network interfaces
+(<code>-s</code> means "show stat info") (similar to<code> netstat -I</code>):</p>
+<div class="term"><pre>
+1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue
+        state UNKNOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    RX: bytes  packets  errors  dropped overrun mcast
+    757713923  1397260  0       0       0       0
+    TX: bytes  packets  errors  dropped carrier collsns
+    757713923  1397260  0       0       0       0
+2: enp7s0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc
+        fq_codel state UP mode DEFAULT group default qlen 1000
+    link/ether 54:04:a6:7f:30:b1 brd ff:ff:ff:ff:ff:ff
+    RX: bytes  packets  errors  dropped overrun mcast
+    142884794755 105433976 0       0       0       672938
+    TX: bytes  packets  errors  dropped carrier collsns
+    38670413265 71936164 0       0       1       0</pre></div>
+
+<p class="cmdc">ip -s -h link show enp7s0</p>
+<p class="desc">show info related to the specified network device
+(<code>-h</code> means output stat in "human readable" format):</p>
+<div class="term"><pre>
+2: enp7s0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc fq_codel state UP
+mode DEFAULT group default qlen 1000
+    link/ether 54:04:a6:7f:30:b1 brd ff:ff:ff:ff:ff:ff
+    RX: bytes  packets  errors  dropped overrun mcast
+    94.5M      87.1k    0       0       0       292
+    TX: bytes  packets  errors  dropped carrier collsns
+    10.8M      73.2k    0       0       0       0
+</pre></div>
+
+<p class="cmdc">ip a add 192.168.10.154 dev enp7s0</p>
+<p class="desc">add new network interface;</p>
+
+<p class="cmdc">ip a del 192.168.10.154 dev enp7s0</p>
+<p class="desc">remove an existing network interface;</p>
+
+<p class="cmdc">ip link set dev enp7s0 address 00:0c:29:33:4e:aa</p>
+<p class="desc">add MAC address;</p>
+
+<p class="cmdc">ip link set dev enp7s0 mtu 2000</p>
+<p class="desc">set MTU value to <samp>2000</samp>;</p>
+
+<p class="cmdc">ip link set dev enp7s0 multicast on</p>
+<p class="cmdc">ip link set dev enp7s0 multicast off</p>
+<p class="desc">enable/disable multicast flag;</p>
+
+<p class="cmdc">ip link set dev enp7s0 txqueuelen 1200</p>
+<p class="desc">set the transmit queue length to <samp>1200</samp>;</p>
+
+<p class="cmdc">ip link set dev enp7s0 promisc on</p>
+<p class="cmdc">ip link set dev enp7s0 promisc off</p>
+<p class="desc">enable/disable promiscuous mode;</p>
+
+<p class="cmdc">ip link set dev enp7s0 allmulti on</p>
+<p class="desc">enable/disable all multicast mode;</p>
+
+<p class="cmdc">ip link set enp7s0 up</p>
+<p class="cmdc">ip link set enp7s0 down</p>
+<p class="desc">enable/disable the specified interface;</p>
+
+<p class="cmdc">ip link set dev enp7s0 arp on</p>
+<p class="cmdc">ip link set dev enp7s0 arp off</p>
+<p class="desc">enable/disable ARP for the specified interface;</p>
+
+<p class="cmdc">ip n</p>
+<p class="cmdc">ip neigh</p>
+<p class="cmdc">ip neighbour</p>
+<p class="desc">show the current neighbour table in kernel (similar
+to<code> arp -a</code>):</p>
+<div class="term"><pre>
+192.168.10.1 dev enp7s0 lladdr 00:14:d1:bd:ae:c5 REACHABLE
+192.168.10.104 dev enp7s0 lladdr c0:4a:00:17:d8:24 STALE
+192.168.10.103 dev enp7s0 lladdr 6c:71:d7:5b:71:9e STALE
+192.168.10.102 dev enp7s0 lladdr f4:7b:5e:ae:c1:45 STALE</pre></div>
+
+<p class="cmdc">ip n f</p>
+<p class="cmdc">ip n del</p>
+<p class="desc">invalidate neighbour table entries (similar to<code>
+arp -d</code>, remove the ARP cache entries);</p>
+
+<p class="cmdc">ip n del 192.168.100.11</p>
+<p class="desc">invalidate neighbour entry for the specified host;</p>
+
+<p class="cmdc">ip n del 192.168.100.11 dev enp7s0</p>
+<p class="desc">invalidate ARP cache entry for host<samp>
+192.168.100.11 </samp>on device<samp> enp7s0</samp>;</p>
+
+<p class="cmdc">ip neighbor show dev enp7s0</p>
+<p class="desc">show the ARP cache for interface<samp> enp7s0</samp>;</p>
+
+<p class="cmdc">ip r</p>
+<p class="cmdc">ip route</p>
+<p class="cmdc">ip route show all</p>
+<p class="desc">show kernel routing tables (similar to<code> route
+</code>or<code> netstat -r</code>):</p>
+<div class="term"><pre>
+default via 192.168.10.1 dev enp7s0 proto dhcp metric 100
+169.254.0.0/16 dev enp7s0 scope link metric 1000
+192.168.10.0/24 dev enp7s0 proto kernel scope
+                link src 192.168.10.101 metric 100</pre></div>
+
+<p class="cmdc">ip route list cache</p>
+<p class="desc">show routing info from the route cache (similar
+to<code> netstat -C</code>);</p>
+
+<p class="cmdc">ip maddr</p>
+<p class="desc">display multicast group membership info for IPv4 and IPv6
+(similar to<code> netstat -g</code>);</p>
+
+<p class="cmdc">ip route add default via 192.168.100.1</p>
+<p class="desc">set default gateway (route pkts through the specified IP addr);</p>
+
+<p class="cmdc">ip route add 10.23.30.0/24 via 192.168.10.1</p>
+<p class="desc">add static route to the specified net through the
+specified gateway;</p>
+
+<p class="cmdc">ip route del 10.28.0.0/16 via 192.168.10.1 dev enp7s0</p>
+<p class="desc">delete the specified route from the routing table;</p>
+
+<!--
+<p class="cmdc">ip route chg default via 192.168.10.1 dev enp7s0</p>
+<p class="desc">
+-->
+
+<h5>Options</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-0</code></td>
+<td class="opt_desc">(it's a zero) shortcut for<code> -family link</code>;</td></tr>
+<tr>
+<td class="opt_name"><code>-4</code></td>
+<td class="opt_desc">shortcut for<code> -family inet</code>;</td></tr>
+<tr>
+<td class="opt_name"><code>-6</code></td>
+<td class="opt_desc">shortcut for<code> -family inet6</code>;</td></tr>
+<tr>
+<td class="opt_name"><code>-a</code></td>
+<td class="opt_desc">execute the specified cmd over all objects; skip if cmd
+does not support this option (<code>-all</code>);</td></tr>
+<tr>
+<td class="opt_name"><code>-B</code></td>
+<td class="opt_desc">shortcut for<code> -family bridge</code>;</td></tr>
+<tr>
+<td class="opt_name"><code>-b</code></td>
+<td class="opt_desc">read cmds from the specified file or <i>stdin</i>
+and invoke them; first failure terminates <code>ip</code> exec
+(<code>-batch </code><kbd>filename</kbd>);</td></tr>
+<tr>
+<td class="opt_name"><code>-br</code></td>
+<td class="opt_desc">show only basic info in a tabular format for better
+readability; this only works with<code> ip addr show </code>and<code>
+ip link show </code> cmds (<code>-brief</code>);</td></tr>
+<tr>
+<td class="opt_name"><code>-c</code></td>
+<td class="opt_desc">use color output (<code>-color</code>);</td></tr>
+<tr>
+<td class="opt_name"><code>-D</code></td>
+<td class="opt_desc">shortcut for<code> -family decnet</code>;</td></tr>
+<tr>
+<td class="opt_name"><code>-d</code></td>
+<td class="opt_desc">show more details (<code>-details</code>);</td></tr>
+<tr>
+<td class="opt_name"><code>-f</code></td>
+<td class="opt_desc">the protocol family to use: <samp>inet</samp>,
+<samp>inet6</samp>, <samp>bridge</samp>, <samp>ipx</samp> (Novell NetWare IPX,
+old stuff), <samp>dnet</samp> (DecNet, very old), <samp>mpls</samp> (RFC 4950,
+MPLS - ICMP Extensions for Multiprotocol Label Switching), <samp>link</samp>;
+without this option the protocol family is guessed from other arguments; if the
+cmdline does not allow to guess, the default one will be used (<samp>inet</samp>
+or <samp>any</samp>); note that <samp>link</samp> is a special family identifier
+meaning that no networking protocol is involved
+(<code>-family </code><kbd>prot_family</kbd>);</td></tr>
+<tr>
+<td class="opt_name"><code>-h</code></td>
+<td class="opt_desc">output statistics using human readable values followed
+by suffix (<code>-human</code>);</td></tr>
+<tr>
+<td class="opt_name"><code>-I</code></td>
+<td class="opt_desc">shortcut for<code> -family ipx</code>;</td></tr>
+<tr>
+<td class="opt_name"><code>-j</code></td>
+<td class="opt_desc">output results in JavaScript Object Notation format
+(<code>-json</code>);</td></tr>
+<tr>
+<td class="opt_name"><code>-l</code></td>
+<td class="opt_desc">specify max num of loops the <code>ip address flush</code>
+logic will attempt before giving up; the default is <samp>10</samp>, zero means
+loop until all addresses are removed (<code>-loops </code><kbd>count</kbd>);</td></tr>
+<tr>
+<td class="opt_name"><code>-M</code></td>
+<td class="opt_desc">shortcut for<code> -family mpls</code>;</td></tr>
+<tr>
+<td class="opt_name"><code>-n</code></td>
+<td class="opt_desc">switch to the specified network namespace
+(<code>-netns </code><kbd>net_namespace</kbd>);</td></tr>
+<tr>
+<td class="opt_name"><code>-o</code></td>
+<td class="opt_desc">output each record on a single line, replacing line
+feeds with the '<samp>\</samp>' char; this may be useful if you want to
+count records with <code>wc</code> or pipe to <code>grep</code>
+(<code>-oneline</code>);</td></tr>
+<tr>
+<td class="opt_name"><code>-p</code></td>
+<td class="opt_desc">output results in JSON format, add indentation for
+better readability (<code>-pretty</code>);</td></tr>
+<tr>
+<td class="opt_name"><code>-r</code></td>
+<td class="opt_desc">use the system's name resolver to print DNS names
+instead of host addresses (<code>-resolve</code>);</td></tr>
+<tr>
+<td class="opt_name"><code>-rc</code></td>
+<td class="opt_desc">set the netlink socket receive buffer size; default is
+<samp>1</samp>MB (<code>-rcvbuf </code><kbd>size</kbd>);</td></tr>
+<tr>
+<td class="opt_name"><code>-s</code></td>
+<td class="opt_desc">output more info; if the option appears twice or more,
+there'll be even more info (<code>-stats</code>);</td></tr>
+<tr>
+<td class="opt_name"><code>-t</code></td>
+<td class="opt_desc">display current time when using monitor option
+(<code>-timestamp</code>);</td></tr>
+<tr>
+<td class="opt_name"><code>-ts</code></td>
+<td class="opt_desc">like prev (<i>timestamp</i>) but use shorter format
+(<code>-tshort</code>);</td></tr>
+<tr>
+<td class="opt_name"><code>-V</code></td>
+<td class="opt_desc">output utility version and exit (<code>-Version</code>);</td></tr>
+</table>
+<p class="fmtc"><code>-force</code></p>
+<p class="desc">do not terminate on errors in batch mode; if there were any
+errors during execution of the commands, the application return code will be
+non zero;</p>
+<p class="fmtc"><code>-iec</code></p>
+<p class="desc">print human readable rates in <a href="multipliers.html">IEC</a>
+units (e.g. <samp>1KiB = 1024</samp>);</p>
+
+
+<h5>Commands</h5>
+<p>
+Command specifies the action to perform on the object. The set of possible
+actions depends on the object type. The typical cmds are <samp>add</samp>,
+<samp>delete</samp>, <samp>show</samp> (or <samp>list</samp> ) objects, but
+some objects do not allow all these operations or have some additional
+cmds. The <samp>help</samp> cmd is available for all objects, and shows a list
+of available cmds and arg syntax.</p>
+<p>
+If cmd is not specified some default is assumed, usually <samp>list</samp> or
+<samp>help</samp> (if the objects of this class cannot be listed).</p>
+
+
+<h5>Objects</h5>
+
+<p class="fmt"><samp>address</samp> - IPv4 or IPv6 address on a device;</p>
+<p class="fmt"><samp>addrlabel</samp> - label configuration for prot addr selection;</p>
+<p class="fmt"><samp>l2tp</samp> - tunnel ethernet over IP (L2TPv3);</p>
+<p class="fmt"><samp>link</samp> - network device;</p>
+<p class="fmt"><samp>maddress</samp> - multicast address;</p>
+<p class="fmt"><samp>monitor</samp> - watch for netlink messages;</p>
+<p class="fmt"><samp>mroute</samp> - multicast routing cache entry;</p>
+<p class="fmt"><samp>mrule</samp> - rule in multicast routing policy database;</p>
+<p class="fmt"><samp>neighbour</samp> - manage ARP or NDISC cache entries;</p>
+<p class="fmt"><samp>netns</samp> - manage network namespaces;</p>
+<p class="fmt"><samp>ntable</samp> - manage the neighbor cache's operation;</p>
+<p class="fmt"><samp>route</samp> - routing table entry;</p>
+<p class="fmt"><samp>rule</samp> - rule in routing policy database;</p>
+<p class="fmt"><samp>tcp_metrics/tcpmetrics</samp> - manage TCP Metrics;</p>
+<p class="fmt"><samp>token</samp> - manage tokenized interface identifiers;</p>
+<p class="fmt"><samp>tunnel</samp> - tunnel over IP;</p>
+<p class="fmt"><samp>tuntap</samp> - manage TUN/TAP devices;</p>
+<p class="fmt"><samp>xfrm</samp> - manage IPSec policies;</p>
+<p>
+The names of objects may be written in full or abbreviated.</p>
+
+
+
+<h5>Exit status</h5>
+<p>
+Exit status is <samp>0</samp> if cmd was successful, and <samp>1</samp>
+if there was a syntax error. If an error was reported by the kernel exit status
+is <samp>2</samp>.</p>
+
+
+
+
+
+<p class="cmdname"><a name="ipcs"></a>ipcs</p>
+<p>
+reports interprocess communication facilities status.</p>
+
+<p class="cmdc">ipcs -m -l</p>
+<p class="desc">display the shared memory limits;</p>
+
+<p class="cmdc">ipcs -s -l</p>
+<p class="desc">display the semaphore limits;</p>
+
+<p class="cmdc">ipcs -u</p>
+<p class="desc">display a short summary on all IPC facilities;</p>
+
+<p class="fmt"><code>ipcs&nbsp;</code>[<kbd>options</kbd>]</p>
+<p>
+Without options <code>~</code> displays message queues, shared memory
+segments, semaphore sets that are currently active in the system.
+There are env variables that affect <code>~</code> execution:
+<samp>LANG</samp>, <samp>LC_ALL</samp>, <samp>LC_CTYPE</samp>,
+<samp>LC_MESSAGES</samp>, <samp>NLSPATH</samp>, <samp>TZ</samp>.</p>
+
+
+
+<h5>Options (resource specification)</h5>
+
+<table class="options">
+<tr><td class="opt_name"><code>-q</code></td>
+<td class="opt_desc">show info about active message queues;</td></tr>
+
+<tr><td class="opt_name"><code>-m</code></td>
+<td class="opt_desc">show info about active shared memory segments;</td></tr>
+
+<tr><td class="opt_name"><code>-s</code></td>
+<td class="opt_desc">show info about active semaphore sets;</td></tr>
+
+<tr><td class="opt_name"><code>-a</code></td>
+<td class="opt_desc">show all (default);</td></tr>
+</table>
+
+
+
+<h5>Options (output format specification)</h5>
+
+<table class="options">
+<tr><td class="opt_name"><code>-c</code></td>
+<td class="opt_desc">show creator’s user/group names;</td></tr>
+
+<tr><td class="opt_name"><code>-l</code></td>
+<td class="opt_desc">show info on max allowable sizes (limits): max num
+of bytes in message queue or size of shared mem segments or num of
+semaphores in each set;</td></tr>
+
+<tr><td class="opt_name"><code>-p</code></td>
+<td class="opt_desc">show process number info (pid of the last process
+to send a msg and pid of the last process to receive a msg on message queues,
+pid of the creating process and pid of the last process to attach or detach
+on shared memory segments);</td></tr>
+
+<tr><td class="opt_name"><code>-t</code></td>
+<td class="opt_desc">show time info: time of the last control operation that
+changed the access permissions for all facilities, time of the last
+<samp>msgsnd()</samp> and <samp>msgrcv()</samp> on message queues, time
+of the last <samp>shmat()</samp> and <samp>shmdt()</samp> on shared memory,
+time of the last <samp>semop()</samp> on semaphores;</td></tr>
+
+<tr><td class="opt_name"><code>-u</code></td>
+<td class="opt_desc">print a short summary;</td></tr>
+</table>
+
+
+
+
+
+
+<p class="cmdname"><a name="iptables"></a>iptables</p>
+<p>
+is a <b>firewall config tool</b> used by admins (and experienced users) to
+set/modify rules for packet filtering and NAT (Network Address Translation);
+<code>iptables</code> works with IPv4 only, <code>ip6tables</code> handles
+IPv6. See also:</p>
+<ul>
+<li><a href="files/iptabs_init.sh">iptabs_init.sh</a> script that I
+use for initial configuration of my firewall (see comments in
+<a href="#iptab_script">Sample&nbsp;Script</a>),</li>
+<li><a href="files/iptabs_remove.sh">iptabs_remove.sh</a> script that
+I use to remove all firewall rules,</li>
+<li><a href="#iptab_theory">More about Linux firewall</a></li>
+</ul>
+<p>
+In Linux, firewall (<b>netfilter</b>) is the part of the Linux kernel
+(a bunch of loadable modules). Technically, it's a <b>stateful firewall</b>
+of the type <b>packet filter</b> (there are also <i>proxy</i>-type firewalls,
+e.g., <samp>SQUID</samp>). Linux firewall has a modular struct and its
+functionality depends on the kernel config. Distro kernels usually provide
+a reasonable set of firewall features, but if you want something exotic,
+you may have to build your own kernel from source.</p>
+
+<div id="topmenu">
+<p class="menu">
+<a href="#iptab_chains">Chains</a>&nbsp;//
+<a href="#iptab_cmds">Commands</a>&nbsp;//
+<a href="#iptab_examples">Examples</a>&nbsp;//
+<a href="#iptab_limits">Limits</a>&nbsp;//
+<a href="#iptab_match">Matches</a>&nbsp;//
+<a href="#iptab_opts">Options</a>&nbsp;//
+<a href="#iptab_script">Sample&nbsp;Script</a>&nbsp;//
+<a href="#iptab_states">States</a>&nbsp;//
+<a href="#iptab_tables">Tables</a>&nbsp;//
+<a href="#iptab_targets">Targets</a></p>
+</div>
+<!--
+<p class="fmt"><code>iptables&nbsp;</code>[<code>-t</code> <kbd>table</kbd>]<kbd>&nbsp;cmd chain rule-spec&nbsp;</kbd>[<kbd>target</kbd>]</p>
+-->
+
+<h5 style="margin-bottom:0">
+<a name="iptab_examples">Examples</a></h5>
+<p class="warn">Note!</p>
+<p class="indent">You must be a superuser to exec following cmds!</p>
+<p>
+To see <samp>INPUT</samp> chain rules with line numbers:</p>
+
+<p class="cmdc">iptables -L INPUT --line-numbers -n</p>
+<p class="cmd">iptables -L INPUT --line-numbers -n | more</p>
+<p>
+In the above examples, <code>-L</code> (command) means 'list', <code>-n</code>
+(option) means 'do not resolve names', use IPs and numeric port specs (saves
+time). Remember: there are <b>5 kernel tables</b>, and the <i>filter</i> table
+is default, you don't have to specify it explicitly; to select other/any table
+use <code>-t</code> option:</p>
+<p>
+To list <samp>FORWARD</samp> chain rules with line numbers, interfaces,
+no name resolution:</p>
+
+<p class="cmd">iptables -L FORWARD --line-numbers -n -v</p>
+<p>
+The <code>-v</code> (verbose) provides more info, including interfaces.
+Line numbers are useful because they are required to insert, replace, delete
+rule(s).</p>
+<p>
+To flush <samp>FORWARD</samp> chain (to remove all rules):</p>
+
+<p class="cmd">iptables -F FORWARD</p>
+<p>
+To reset all counters in <samp>FORWARD</samp> chain:</p>
+
+<p class="cmd">iptables -Z FORWARD</p>
+<p>
+Creating a new user-defined chain in <samp>filter</samp> table;
+the name of this new chain will be 'allowed':</p>
+
+<p class="cmd">iptables -N allowed</p>
+<p>
+To delete the user-defined chain 'allowed', you must first flush it:</p>
+
+<p class="cmdc">iptables -F allowed</p>
+<p class="cmd">iptables -X allowed</p>
+<p>
+The <b>default policy</b> in popular Linux distros is usually
+<samp>ACCEPT</samp>. This may be OK for <samp>OUTPUT</samp> chain but
+not for <samp>INPUT</samp>, because it practically defeats the purpose.
+To change this situation you must explicitly set the default policy like
+this:</p>
+
+<p class="cmd">iptables -P INPUT DROP</p>
+<p>
+It means: drop all incoming packets. This default policy practically
+cuts you from network, but it's supposed to be suplemented with other,
+less restrictive, rules. Note that pkts that are supposed to be forwarded
+to another host/net do not traverse <samp>INPUT</samp> chain and go directly
+to <samp>FORWARD</samp>.</p>
+<p>
+You must take care of <samp>FORWARD</samp> chain only if your system
+is actually forwarding something to somewhere. To be sure, check
+<a href="cmds_c.html#ip_forward_status">IP forwarding status</a>;
+<samp>0</samp> means 'no forwarding'. It's normal for a desktop or laptop.
+But it would be reasonable to set the default policy <samp>DROP</samp> (just
+in case..):</p>
+
+<p class="cmd">iptables -P FORWARD DROP</p>
+<p>
+For routing hosts/servers this is only the beginning [of the chain].
+Of course, if you rely on some other firewall, the default forwarding
+policy can be <samp>ACCEPT</samp>, but .. I don't know..</p>
+<p>
+Setting the following default policy for <samp>OUTPUT</samp> chain</p>
+
+<p class="cmd">iptables -P OUTPUT ACCEPT</p>
+<p>
+may be redundant because most likely it is like this from the beginning
+(unless you changed it). To be exact, it means: let out all packets generated
+within this system (careless and irresponsible, but common).</p>
+<p>
+<b>Adding rules to the end of the chain</b> (<code>-A</code>) is the most
+popular style of firewall setting (probably because it minimizes the quantity
+of errors). The following rule is added to the end of the <samp>INPUT</samp>
+chain to drop fragmented packets (second and further fragments):</p>
+
+<p class="cmd">iptables -A INPUT -f -j DROP</p>
+<p>
+Next rule allows SSH connection requests from anywhere:</p>
+
+<p class="cmd">iptables -A INPUT -p tcp -m conntrack --ctstate NEW --dport 22 -j ACCEPT</p>
+
+<div class="box1">
+<p>
+About <a href="#iptab_states">state</a>: old style was</p>
+
+<p class="cmd">-m state --state <kbd>st</kbd></p>
+<p>
+and though it's still supported, you probably should use</p>
+
+<p class="cmd">-m conntrack --ctstate <kbd>st</kbd></p>
+</div>
+<p>
+Here goes the most basic rule for <samp>INPUT</samp> and <samp>FORWARD</samp>
+chains when the default policy is <samp>DROP</samp>. It allows your firewall
+to accept any packets of existing (already established) connections, but it
+rejects connection requests from the outside world (unless you add some
+exceptions later). Thus your system can be made practically unaccessible
+from the network, but you will be able to access everything (assuming
+your <samp>OUTPUT</samp> policy is properly set):</p>
+
+<p class="cmd">iptables -A INPUT -m conntrack --ctstate
+ESTABLISHED,RELATED -j ACCEPT</p>
+<p>
+In fact, you should start your firewall config by setting default policies
+<samp>DROP</samp> for input and forwarding, then adding <i>this</i> rule,
+then allowing some types of ICMP pkts (see below) to make your system visible
+to <code>ping</code>, and then maybe .. nothing else, if you don't want anybody
+to connect to your system. You should <b>put the above command as close as
+possible to the top of the list</b> (i.e., to the beginning of the chain).
+Experts also advice to add:</p>
+
+<p class="cmd">iptables -A INPUT -m conntrack --ctstate INVALID -j DROP</p>
+
+<!--
+<p>
+And this is the same command, old style:</p>
+<p class="cmd">iptables -A INPUT -p all
+-m state --state ESTABLISHED,RELATED -j ACCEPT</p>
+-->
+<p>
+The following cmd means: add new rule to the end of the <samp>FORWARD</samp>
+chain allowing to transfer any HTTP connection requests arriving from the
+specified IP range and destined to anywhere:</p>
+
+<p class="cmd">iptables -A FORWARD -p tcp -m iprange
+--src-range 192.168.1.10-192.168.1.20 -m state --state NEW
+--dport 80 -j ACCEPT</p>
+<p>
+Next cmd is adding new rule allowing to transfer TCP pkts arriving through
+network interface <samp>eth1</samp>, but only if they have <samp>SYN</samp>
+flag set, while <samp>RST</samp> and <samp>ACK</samp> are unset; other flags
+are not matched. It's a messy syntax and probably you should avoid it unless
+you know <a href="tcpip.html">TCP/IP</a> well enough. Available flags are
+<samp>ACK</samp>, <samp>FIN</samp>, <samp>PSH</samp>, <samp>RST</samp>,
+<samp>SYN</samp>, and <samp>URG</samp>; you can also use <samp>ALL</samp>
+(match every flag) and <samp>NONE</samp> (match none of those flags):</p>
+
+<p class="cmd">iptables -A FORWARD -p tcp -i eth1<br>
+--tcp-flags SYN,RST,ACK SYN -j DROP</p>
+<p>
+If you want to save firewall-related events to file, add following rule:</p>
+
+<p class="cmd">iptables -A INPUT -p tcp -j LOG --log-prefix "INPUT packets"</p>
+<p>
+This particular cmd is not good because it logs all TCP pkts traversing
+<samp>INPUT</samp> chain, and often it's too much. In most cases you should
+either invent more selective cmd or use it for a short period of time.</p>
+<p>
+<b>Inserting a rule in the middle of the chain</b> (<code>-I</code>) may be
+usefull if you want to correct some config mistakes, or to try this and that,
+or when you administer heavily loaded server and need to change your filtering
+policy on the fly.</p>
+<p>
+The following cmd inserts a new rule in the middle of the <samp>INPUT</samp>
+chain. The rule itself means: accept FTP requests from <samp>192.168.0.0</samp>
+network arriving through <samp>eth0</samp>. To be exact, this cmd puts new rule
+at line #15 and shifts down all other rules that follow it, i.e., the old #15
+becomes #16, etc:</p>
+
+<p class="cmd">iptables -I INPUT 15 -p tcp -i eth0<br>
+-s 192.168.0.0/24 --dport 21 -j ACCEPT</p>
+<p>
+When you <b>remove (delete) rule at the specified position</b>, the lower
+part of the table shifts up. You should remember that <b>each successful
+insert and delete changes line numbers</b> of rules that follow involved
+position.</p>
+<p>
+To delete rule #6 in <samp>INPUT</samp> chain:</p>
+
+<p class="cmd">iptables -D INPUT 6</p>
+<p>
+To delete rule #10 in <samp>FORWARD</samp> chain:</p>
+
+<p class="cmd">iptables -D FORWARD 10</p>
+<p>
+<b>Replace rule at the specified position:</b></p>
+
+<p>
+Replace rule #5 in the <samp>INPUT</samp> chain:</p>
+
+<p class="cmd">iptables -R INPUT 5 -p tcp -s 0/0 -m state
+--state NEW --dport 22 -j ACCEPT</p>
+<p>
+Replace rule #5 in the <samp>INPUT</samp> chain once again:</p>
+
+<p class="cmd">iptables -R INPUT 5 -p tcp -s 192.168.0.0/24 -m conntrack
+--ctstate NEW --dport 22 -j ACCEPT</p>
+
+<p>
+<b>Miscell rules for NAT:</b></p>
+<p>
+Enable HTTP forwarding with address translation from inet (external IP =
+<samp>213.110.24.250</samp>) to LAN host <samp>192.168.10.5</samp>:</p>
+
+<p class="cmd">iptables -t nat -A PREROUTING -p tcp -i eth2<br>
+-d 213.110.24.250 --dport 80<br>-j DNAT --to-destination 192.168.10.5</p>
+<p>
+Insert a new rule into <samp>PREROUTING</samp> chain: this rule translates
+external (internet) IP <samp>62.33.47.106</samp> to local (internal) IP
+<samp>192.168.10.6</samp> and translates TCP port <samp>29814</samp> to TCP
+port <samp>80</samp>, providing access to internal (behind the proxy) HTTP
+server (<samp>192.168.10.6</samp>). External users should connect to it using
+<samp>http://62.33.47.106:29814</samp> because IP <samp>62.33.47.106</samp>
+is also used to provide access to another web-server:</p>
+
+<p class="cmd">iptables -t nat -I PREROUTING 42 -p tcp -i eth0<br>
+-d 62.33.47.106 --dport 29814<br>-j DNAT --to-destination 192.168.10.6:80</p>
+<p>
+Enable IP forwarding and network address translation (simple case):</p>
+
+<p class="cmd">iptables -t nat -A POSTROUTING -o eth2<br>
+-j SNAT --to-source 192.168.0.0</p>
+<p>
+In the above example it's supposed that the host is a router connected to two
+or more different networks. The net interface <samp>eth2</samp> is connected to
+an internal network (LAN), and there must be other net interfaces, one of them
+is probably connected to Internet.</p>
+<p>
+In the following example we set mark <samp>44</samp> (random choice) to all
+packets with destination port <samp>443/tcp</samp>;</p>
+
+<p class="cmd">iptables -t mangle -A PREROUTING --dport 443<br>
+-p tcp -j MARK --set-mark 44</p>
+
+
+
+<h5>
+<a name="iptab_script">A set of rules for a typical Home PC</a></h5>
+<p>
+These scripts were mentioned at the beginning of the chapter:
+<samp><a href="files/iptabs_init.sh">iptabs_init.sh</a></samp> sets
+the rules for a typical Home PC (or any PC used as a workstation),
+<samp><a href="files/iptabs_remove.sh">iptabs_remove.sh</a></samp> removes
+those rules. Note that the last script would only work correctly for the rules
+created by the first script, if you add/remove some chains you must modify the
+second script.</p>
+<p>
+With the rules configured by <samp>iptabs_init.sh</samp>, your computer
+would respond to <code>ping</code>, but would not accept any connection
+requests from the outside (except SSH, HTTP/HTTPS, DLNA, and some other
+protocols). Forwarding is totally blocked, output is not restricted.</p>
+<p>
+In fact, such scripts are quite personal, i.e., some people want this, some
+people want that. So, the last part of the script is supposed to be modified
+according to your requirements. For example, you can (and should) comment out
+all lines from SSH (<samp>tcp/22</samp>) to the end of the script, unless you
+really need to connect from outside to SSHD on your comp, to web-server (some
+people want to have their own locally), to MiniDLNA (good service to watch on
+TV movies that you keep on your PC), etc.</p>
+<p>
+You can run <samp>iptabs_init.sh</samp> [as <samp>root</samp>] once after
+system installation, and if it's good for you, save it using following cmds:</p>
+<!--
+<div class="file">
+<pre>iptables -F
+iptables -P INPUT DROP
+iptables -P FORWARD DROP
+iptables -P OUTPUT ACCEPT
+
+ip6tables -F
+ip6tables -P INPUT DROP
+ip6tables -P FORWARD DROP
+ip6tables -P OUTPUT ACCEPT
+
+iptables -A INPUT -i lo -j ACCEPT
+iptables -A INPUT -m conntrack
+    --ctstate ESTABLISHED,RELATED -j ACCEPT
+iptables -A INPUT -m conntrack --ctstate INVALID -j DROP
+
+ip6tables -A INPUT -i lo -j ACCEPT
+ip6tables -A INPUT -m conntrack
+    --ctstate ESTABLISHED,RELATED -j ACCEPT
+ip6tables -A INPUT -m conntrack --ctstate INVALID -j DROP
+
+# Drop remote pkts pretending to be from a loopback iface;
+
+iptables -A INPUT -s 127.0.0.0/8 ! -i lo -j DROP
+ip6tables  -A INPUT -s ::1/128 ! -i lo -j DROP
+
+# Drop all pkts going to broadcast/multicast/anycast addr;
+
+iptables -A INPUT -m addrtype --dst-type BROADCAST -j DROP
+iptables -A INPUT -m addrtype --dst-type MULTICAST -j DROP
+iptables -A INPUT -m addrtype --dst-type ANYCAST -j DROP
+iptables -A INPUT -d 224.0.0.0/4 -j DROP
+
+# Create user-defined chain preventing brute-force attacks;
+# The limit is 10 new connections within 5 minutes from a
+#   single host;
+# Log suspicious attempts of brute-force;
+
+iptables -N BRUTE
+iptables -A BRUTE -m recent --name BRU --set
+iptables -A BRUTE -m recent --name BRU --update
+    --seconds 300 --hitcount 10 -m limit
+    --limit 1/second --limit-burst 100
+     -j LOG --log-prefix "iptables[Brute Force?]: "
+iptables -A BRUTE -m recent --name BRU --update
+    --seconds 300 --hitcount 10 -j DROP
+iptables -A BRUTE -j ACCEPT
+
+ip6tables -N BRUTE
+ip6tables -A BRUTE -m recent --name BRU --set
+ip6tables -A BRUTE -m recent --name BRU --update
+    --seconds 300 --hitcount 10 -m limit
+    --limit 1/second --limit-burst 100
+     -j LOG --log-prefix "iptables[Brute Force?]: "
+ip6tables -A BRUTE -m recent --name BRU --update
+    --seconds 300 --hitcount 10 -j DROP
+ip6tables -A BRUTE -j ACCEPT
+
+# Create user-defined chain preventing ICMP and
+#   ICMP REPLY flooding.
+# The limit is 6 pings/sec from a single source.
+# Everything below that limit is allowed to pass through.
+
+iptables -N ICMPFLOOD
+iptables -A ICMPFLOOD -m recent --set --name ICMP --rsource
+iptables -A ICMPFLOOD -m recent --update --seconds 1
+    --hitcount 6 --name ICMP --rsource --rttl -m limit
+    --limit 1/sec --limit-burst 1
+     -j LOG --log-prefix "iptables[ICMP-flood]: "
+iptables -A ICMPFLOOD -m recent --update --seconds 1
+    --hitcount 6 --name ICMP --rsource --rttl -j DROP
+iptables -A ICMPFLOOD -j ACCEPT
+
+ip6tables -N ICMPFLOOD
+ip6tables -A ICMPFLOOD -m recent --set --name ICMP --rsource
+ip6tables -A ICMPFLOOD -m recent --update --seconds 1
+    --hitcount 6 --name ICMP --rsource --rttl -m limit
+    --limit 1/sec --limit-burst 1
+     -j LOG --log-prefix "iptables[ICMP-flood]: "
+ip6tables -A ICMPFLOOD -m recent --update --seconds 1
+    --hitcount 6 --name ICMP --rsource --rttl -j DROP
+ip6tables -A ICMPFLOOD -j ACCEPT
+
+# Allow ICMP;
+# RFC 792 states that all hosts MUST respond to
+# ICMP ECHO requests (8). Blocking these requests makes
+# network diagnostic very tricky an inconvenient. Real
+# security lies in protecting all services, not in hiding;
+
+iptables -A INPUT -p icmp
+    --icmp-type 0 -m conntrack --ctstate NEW -j ACCEPT
+iptables -A INPUT -p icmp
+    --icmp-type 3 -m conntrack --ctstate NEW -j ACCEPT
+iptables -A INPUT -p icmp
+    --icmp-type 8 -m conntrack --ctstate NEW -j ICMPFLOOD
+iptables -A INPUT -p icmp
+    --icmp-type 11 -m conntrack --ctstate NEW -j ACCEPT
+
+# Required for IPv6 ICMP packet types according to RFC 4890;
+
+ip6tables -A INPUT -p ipv6-icmp --icmpv6-type 1 -j ACCEPT
+ip6tables -A INPUT -p ipv6-icmp --icmpv6-type 2 -j ACCEPT
+ip6tables -A INPUT -p ipv6-icmp --icmpv6-type 3 -j ACCEPT
+ip6tables -A INPUT -p ipv6-icmp --icmpv6-type 4 -j ACCEPT
+ip6tables -A INPUT -p ipv6-icmp --icmpv6-type 128
+    -j ICMPFLOOD
+ip6tables -A INPUT -p ipv6-icmp --icmpv6-type 133 -j ACCEPT
+ip6tables -A INPUT -p ipv6-icmp --icmpv6-type 134 -j ACCEPT
+ip6tables -A INPUT -p ipv6-icmp --icmpv6-type 135 -j ACCEPT
+ip6tables -A INPUT -p ipv6-icmp --icmpv6-type 136 -j ACCEPT
+ip6tables -A INPUT -p ipv6-icmp --icmpv6-type 137 -j ACCEPT
+ip6tables -A INPUT -p ipv6-icmp --icmpv6-type 141 -j ACCEPT
+ip6tables -A INPUT -p ipv6-icmp --icmpv6-type 142 -j ACCEPT
+ip6tables -A INPUT -s fe80::/10
+    -p ipv6-icmp --icmpv6-type 130 -j ACCEPT
+ip6tables -A INPUT -s fe80::/10
+    -p ipv6-icmp --icmpv6-type 131 -j ACCEPT
+ip6tables -A INPUT -s fe80::/10
+    -p ipv6-icmp --icmpv6-type 132 -j ACCEPT
+ip6tables -A INPUT -s fe80::/10
+    -p ipv6-icmp --icmpv6-type 143 -j ACCEPT
+ip6tables -A INPUT
+    -p ipv6-icmp --icmpv6-type 148 -j ACCEPT
+ip6tables -A INPUT
+    -p ipv6-icmp --icmpv6-type 149 -j ACCEPT
+ip6tables -A INPUT -s fe80::/10
+    -p ipv6-icmp --icmpv6-type 151 -j ACCEPT
+ip6tables -A INPUT -s fe80::/10
+    -p ipv6-icmp --icmpv6-type 152 -j ACCEPT
+ip6tables -A INPUT -s fe80::/10
+    -p ipv6-icmp --icmpv6-type 153 -j ACCEPT
+
+# SSH : Do you really need this system
+#     to be connected from the outside?
+
+# iptables -A INPUT -p tcp --dport 22 --syn
+#    -m conntrack --ctstate NEW -j BRUTE
+# ip6tables -A INPUT -p tcp --dport 22 --syn
+#    -m conntrack --ctstate NEW -j BRUTE
+
+# HTTP/HTTPS : Only if you need it!
+
+# iptables -A INPUT -p tcp -m multiport
+#  --dports 80,443 --syn -m conntrack --ctstate NEW -j ACCEPT
+# ip6tables -A INPUT -p tcp -m multiport
+#  --dports 80,443 --syn -m conntrack --ctstate NEW -j ACCEPT</pre>
+</div>
+-->
+
+<p class="cmdc">iptables-save &gt; /etc/iptables.rules</p>
+<p class="cmd">ip6tables-save &gt; /etc/ip6tables.rules</p>
+<p>
+To configure auto restore of the saved rules after reboot,
+add the following lines to <samp>/etc/network/interfaces</samp>:</p>
+<div class="file"><pre>
+pre-up /sbin/iptables-restore &lt; /etc/iptables.rules
+pre-up /sbin/ip6tables-restore &lt; /etc/ip6tables.rules
+</pre></div>
+<p>
+The above cmds are good for Ubuntu/Debian, but RedHat/Fedora store those
+rules by default in <samp>/etc/sysconfig/iptables</samp>, and handle all
+these things in a different way.</p>
+<p>
+You can also configure auto saving of <code>iptables</code> rules,
+however it has sense only if the rules are often modified or if you
+want to save/restore packet counters (in the last case option
+<code>-c</code> should be added to both <code>iptables-save</code> and
+<code>iptables-restore</code>).</p>
+<p>
+The script <samp>iptabs_remove.sh</samp> is supposed to be used in two
+cases:</p>
+<ul>
+<li>if you mess up with the firewall config and want to start from the
+beginning;</li>
+<li>if you modified <samp>iptabs_init.sh</samp> and want to re-run it without
+system restart;</li>
+</ul>
+<p>
+You should modify <samp>iptabs_remove.sh</samp> only when you add/remove some
+user-defined chains; modification of rules does not affect it.</p>
+
+
+
+<h5>
+<a name="iptab_cmds">Commands</a></h5>
+
+<p class="fmtc"><code>-A</code>, <code>--append</code></p>
+<p class="desc">append rule(s) to the end of the selected chain;</p>
+
+<p class="fmtc"><code>-D</code>, <code>--delete</code></p>
+<p class="desc">delete rule(s) from the selected chain (specify exactly
+the rule or its number; the first rule is #1);</p>
+
+<p class="fmtc"><code>-E</code> <kbd>old new</kbd>,
+<code>--rename-chain</code> <kbd>old new</kbd></p>
+<p class="desc">rename a user-defined chain;</p>
+
+<p class="fmtc"><code>-F</code>, <code>--flush</code></p>
+<p class="desc">flush the selected chain (all chains of the table,
+if not specified);</p>
+
+<p class="fmtc"><code>-I</code>, <code>--insert</code></p>
+<p class="desc">insert rule(s) in the selected chain as the given rule
+numbers; if not specified, #1 is default;</p>
+
+<p class="fmtc"><code>-L</code>, <code>--list</code></p>
+<p class="desc">list all rules in the selected chain (in all chains,
+if not specified); use <code>-n</code> to avoid reverse DNS lookup;</p>
+
+<p class="fmtc"><code>-N</code> <kbd>name</kbd>,
+<code>--new-chain</code> <kbd>name</kbd></p>
+<p class="desc">create a new user-defined chain; </p>
+
+<p class="fmtc"><code>-P</code> <kbd>chain target</kbd>,
+<code>--policy</code> <kbd>chain target</kbd></p>
+<p class="desc">set the policy for the chain to the given target; only
+built-in chains can have policies;</p>
+
+<p class="fmtc"><code>-R</code>, <code>--replace</code></p>
+<p class="desc">replace a rule in the selected chain (if src and/or dest
+names resolve to multiple addresses, the cmd will fail);</p>
+
+<p class="fmtc"><code>-X</code> <kbd>name</kbd>,
+<code>--delete-chain</code> <kbd>name</kbd></p>
+<p class="desc">delete a user-defined chain;</p>
+
+<p class="fmtc"><code>-Z</code>, <code>--zero</code>
+<p class="desc">zero (reset) packet and byte counters in the specified chain
+(all chains, if not specified);</p>
+
+
+
+<h5>
+<a name="iptab_match">Some popular matches</a></h5>
+
+<p class="fmtc"><code>--icmp-type</code>
+[<code>!</code>] <kbd>n</kbd></p>
+<p class="desc">match by ICMP type, usually numeric, typically <samp>8</samp>
+and <samp>11</samp> (see <a href="tcpip.html#icmp">TCP/IP</a>);</p>
+
+<p class="fmtc"><code>--length</code>
+<kbd>n</kbd>[<code>:</code><kbd>m</kbd>]</p>
+<p class="desc">match the packet length against a numeric value or range;</p>
+
+<p class="fmtc"><code>--limit</code> <kbd>rate</kbd></p>
+<p class="desc">max average matching rate, where rate may be
+<kbd>n</kbd>/second, <kbd>n</kbd>/minute, <kbd>n</kbd>/hour, <kbd>n</kbd>/day
+(default is 3/hour);</p>
+
+<p class="fmtc"><code>--mac-source</code> [<code>!</code>] <kbd>addr</kbd></p>
+<p class="desc">match src MAC address; appropriate only for pkts coming
+from Ethernet devices and entering <samp>INPUT</samp>, <samp>FORWARD</samp>,
+<samp>PREROUTING</samp> chains;</p>
+
+<p class="fmtc"><code>--source-ports <span class="arg">lst</span></code></p>
+<p class="fmtc"><code>--destination-ports <span class="arg">lst</span></code></p>
+<p class="fmtc"><code>--ports <span class="arg">lst</span></code></p>
+<p class="desc">multiport match (up to 15 ports can be specified);
+<kbd>lst</kbd> - comma-separated list of port numbers;
+should be used only with <code>-p tcp</code> or <code>-p udp</code>;</p>
+
+<p class="fmtc"><code>--pkt-type
+unicast</code>|<code>broadcast</code>|<code>multicast</code></p>
+<p class="desc">match by the link-layer packet type;</p>
+
+<p class="fmtc"><code>--state</code> <kbd>st</kbd></p>
+<p class="fmtc"><code>--ctstate</code> <kbd>st</kbd></p>
+<p class="desc">match by the connection state, see
+<a href="#iptab_states">more about states</a>;</p>
+
+<p class="fmtc"><code>--sport</code>,
+<code>--source-port</code> [<code>!</code>]
+<kbd>port</kbd>[<code>:</code><kbd>port</kbd>]</p>
+<p class="desc">match by source port or port range; <samp>:1024</samp> means
+<samp>0:1024</samp>, <samp>1024:</samp> means <samp>1024:65535</samp>;</p>
+
+<p class="fmtc"><code>--dport</code>,
+<code>--destination-port</code> [<code>!</code>]
+<kbd>port</kbd>[<code>:</code><kbd>port</kbd>]</p>
+<p class="desc">match by destination port or port range;</p>
+
+<p class="fmtc"><code>--tcp-flags</code>
+[<code>!</code>] <kbd>mask comp</kbd></p>
+<p class="desc">match by TCP flags; the first arg is a comma separated list
+of flags that we examine, the second arg is a comma separated list of flags
+that must be set:
+<samp>SYN</samp>, <samp>ACK</samp>, <samp>FIN</samp>, <samp>RST</samp>,
+<samp>URG</samp>, <samp>PSH</samp>, <samp>ALL</samp>, <samp>NONE</samp>;</p>
+
+<p class="fmtc">[<code>!</code>] <code>--syn</code></p>
+<p class="desc">match only TCP pkts with <samp>SYN</samp> flag set and
+<samp>ACK</samp>, <samp>RST</samp> unset; such pkts are used to request TCP
+connection initiation; it is equivalent to <code>--tcp-flags SYN,ACK,RST SYN</code>;</p>
+
+
+
+<h5>
+<a name="iptab_opts">Options</a></h5>
+
+<p class="fmtc"><code>-c</code> <kbd>pkts bytes</kbd>,
+<code>--set-counters</code> <kbd>pkts bytes</kbd></p>
+<p class="desc">this allows to initialize packet and byte counters of a rule
+(usually during <samp>INSERT</samp>, <samp>UPDATE</samp>, <samp>REPLACE</samp>);</p>
+
+<p class="fmtc"><code>-d</code> [<code>!</code>] <kbd>addr</kbd>[<code>/</code><kbd>mask</kbd>],
+<code>--dst</code> [<code>!</code>] <kbd>addr</kbd>[<code>/</code><kbd>mask</kbd>]</p>
+<p class="desc">(also <code>--destination..</code>)
+dest specification; <kbd>addr</kbd> can be a hostname, network name,
+IP address; <kbd>mask</kbd> can be specified by its length in bits;</p>
+
+<p class="fmtc">[<code>!</code>] <code>-f</code>, <code>--fragment</code></p>
+<p class="desc">the rule only refers to the second and further fragments
+of the fragmented packets; since there is no way to tell the src or dst
+ports (or ICMP type) of such a packet, it will not match any rules that
+specify src, dst, icmp type; with "<code>!</code>" the rule will only match
+head fragments, or unfragmented packets;</p>
+
+<p class="fmtc"><code>-i</code> [<code>!</code>] <kbd>iface</kbd>,
+<code>--in-interface</code> [<code>!</code>] <kbd>iface</kbd></p>
+<p class="desc">the name of interface through which the packet was received;
+appropriate only for <samp>INPUT</samp>, <samp>FORWARD</samp> and
+<samp>PREROUTING</samp>; by default any interface name will match;</p>
+
+<p class="fmtc"><code>-j</code> <kbd>target</kbd>,
+<code>--jump</code> <kbd>target</kbd></p>
+<p class="desc">specifies what to do if the packet matches the rule;</p>
+
+<p class="fmtc"><code>--line-numbers</code></p>
+<p class="desc">add line numbers when listing rules;</p>
+
+<p class="fmtc"><code>-m <span class="arg">module</span></code></p>
+<p class="desc">load the specified extended pkt matching module
+(<code>addrtype</code>, <code>ah</code>, <code>cluster</code>,
+<code>connbytes</code>, <code>connlimit</code>, etc);</p>
+
+<p class="fmtc"><code>-n</code>, <code>--numeric</code></p>
+<p class="desc">output IP addresses and port numbers instead of host/network
+names and services which is default;</p>
+
+<p class="fmtc"><code>-o</code> [<code>!</code>] <kbd>iface</kbd>,
+<code>--out-interface</code> [<code>!</code>] <kbd>iface</kbd></p>
+<p class="desc">the name of interface through which the packet is going
+to be sent; appropriate only for <samp>OUTPUT</samp>, <samp>FORWARD</samp>,
+<samp>POSTROUTING</samp>; by default any interface name will match;</p>
+
+<p class="fmtc"><code>-p</code> [<code>!</code>] <kbd>prot</kbd>,
+<code>--protocol</code> [<code>!</code>] <kbd>prot</kbd></p>
+<p class="desc">protocol spec, <kbd>prot</kbd> can be
+<samp>tcp</samp>, <samp>udp</samp>, <samp>udplite</samp>, <samp>icmp</samp>,
+<samp>esp</samp>, <samp>ah</samp>, <samp>sctp</samp>, <samp>all</samp>
+(default); also it can be specified by a num value (<samp>0</samp> means
+<samp>all</samp>); <code>!</code> inverts the test;</p>
+
+<p class="fmtc"><code>-s</code> [<code>!</code>]
+<kbd>addr</kbd>[<code>/</code><kbd>mask</kbd>],
+<code>--source</code> [<code>!</code>]
+<kbd>addr</kbd>[<code>/</code><kbd>mask</kbd>]</p>
+<p class="desc">source spec; <kbd>addr</kbd> can be a hostname,
+network name, IP; <kbd>mask</kbd> can be specified by its length in bits;</p>
+
+<p class="fmtc"><code>-t</code> <kbd>table</kbd></p>
+<p class="desc">use the specified kernel <a href="#iptab_tables">table</a>;
+by default it's <samp>filter</samp>;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-v</code></td>
+<td class="opt_desc">verbose mode (to be used with <code>-L</code>);</td></tr>
+</table>
+
+<p class="fmtc"><code>-x</code>, <code>--exact</code></p>
+<p class="desc">output exact values of the counters instead of rounded ones
+(that is, multiply by 1024, not 1000);</p>
+
+
+
+
+<h4>
+<a name="iptab_theory">More about Linux firewall</a></h4>
+<p>
+When a packet arrives or is going to leave, it is matched against the rules
+in those chains one-by-one. If a match is found, the process jumps onto the
+target and performs the action associated with it. If a packet traveses the
+chain and is not matched anywhere, it's handled according to the default
+policy of this chain. The default policy is actually a target. By default,
+all chains have a default policy <samp>ACCEPT</samp>, i.e., "let it go".</p>
+
+
+<h5>
+<a name="iptab_tables">Kernel tables</a></h5>
+<p>
+There are 5 independent kernel tables containing</p>
+<ul>
+<li>built-in (predefined) chains,</li>
+<li>user-defined chains;</li>
+</ul>
+<img class="centered" src="images/netfilter.png" />
+
+<ol class="par">
+<li>
+<b>filter</b> table is default - you don't have to specify it explicitly
+in your command. It contains <samp>INPUT</samp>, <samp>FORWARD</samp>, and
+<samp>OUTPUT</samp> (pre-defined) chains. An <i>important thing (!)</i> to
+remember: though pkts that are supposed to be routed are coming into the box,
+they're bypassing <samp>INPUT</samp> chain and go directly to
+<samp>FORWARD</samp>.</li>
+
+<li>
+<b>nat</b> is used when a packet that creates a new connection is
+encountered; there are following buil-in chains <samp>PREROUTING</samp>
+(for altering pkts as soon as they come in), <samp>OUTPUT</samp>
+(for altering locally-generated pkts), <samp>POSTROUTING</samp>
+(for altering pkts as they are about to go out).</li>
+
+<li>
+<b>mangle</b> is used for specialized packet alteration; it has following
+built-in chains <samp>PREROUTING</samp> (for altering incoming pkts before
+routing), <samp>OUTPUT</samp> (for altering locally-generated pkts before
+routing), <samp>INPUT</samp> (for pkts coming into the box itself),
+<samp>FORWARD</samp> (for altering pkts being routed through the box),
+<samp>POSTROUTING</samp> (for altering pkts as they are about to go out).</li>
+
+<li>
+<b>raw</b> table is used mainly to config exemptions from connection
+tracking in combination with the <samp>NOTRACK</samp> target. It registers
+at the netfilter hooks with higher priority and is thus called before
+<samp>ip_conntrack</samp>, or any other IP tables. It provides
+<samp>PREROUTING</samp> and <samp>OUTPUT</samp> chains</li>
+
+<li>
+<b>security</b> (not all kernel have it) table is used for Mandatory
+Access Control (MAC) networking rules, such as those enabled by the
+<samp>SECMARK</samp> and <samp>CONNSECMARK</samp> targets. MAC is implemented
+by Linux Security Modules such as SELinux. The <samp>security</samp> table is
+called after the <samp>filter</samp> table, allowing any Discretionary Access
+Control (DAC) rules in the <samp>filter</samp> table to take effect before MAC
+rules. This table provides <samp>INPUT</samp>, <samp>OUTPUT</samp>, and
+<samp>FORWARD</samp> built-in chains.</li>
+</ol>
+
+
+
+<h5>
+<a name="iptab_chains">Chains</a></h5>
+<p>
+Each chain is a list of rules which can match a set of packets.
+Each rule specifies a <a href="#iptab_targets">target</a> - what to do with
+a matched packet. If pkt doesn't match, the next rule in the chain is examined.
+There are also cmds without rules and targets.</p>
+<p>
+There are <b>five predefined chains</b> with a default policy (usually it's
+<samp>ACCEPT</samp> or <samp>DROP</samp>):</p>
+<ul>
+<li><samp>PREROUTING</samp>: packets enter this chain as they just arrive
+on the network interface and before a routing decision is made; this chain
+is present in the <samp>nat</samp>, <samp>mangle</samp> and <samp>raw</samp>
+tables;</li>
+
+<li><samp>INPUT</samp>: pkts to be locally delivered (i.e., sent to this host,
+not supposed to be forwarded); this chain is present in the <samp>mangle</samp>
+and <samp>filter</samp> tables;</li>
+
+<li><samp>FORWARD</samp>: pkts that are routed through the current host; this
+chain is only present in the <samp>mangle</samp> and <samp>filter</samp> tables;</p>
+
+<li><samp>OUTPUT</samp>: pkts sent from this machine to the outside world;
+this chain is present in the <samp>raw</samp>, <samp>mangle</samp>,
+<samp>nat</samp> and <samp>filter</samp> tables;</li>
+
+<li><samp>POSTROUTING</samp>: pkts that are about to leave the network
+interface; this chain is present in the <samp>nat</samp> and
+<samp>mangle</samp> tables;</li>
+</ul>
+
+
+
+<h5>
+<a name="iptab_targets">Targets</a></h5>
+<p>
+A <b>target</b> is the action triggered when a packet meets the matching
+criteria of a rule. <b>Terminating targets</b> perform an action which
+terminates evaluation within the chain and returns control to the netfilter
+hook. <b>Non-terminating targets</b> perform an action and continue evaluation
+within the chain.</p>
+<p>
+Note that some targets are applicable to specific chains only.</p>
+
+<p class="fmtc"><samp>ACCEPT</samp></p>
+<p class="desc">(terminating target) let the packet trough;
+the rule is accepted and will not continue traversing the current chain
+or any other chain in this table; however, the pkt can still travel through
+chains within other tables, and could be dropped there;</p>
+
+<p class="fmtc"><samp>DROP</samp></p>
+<p class="desc">(terminating target) drop the packet silently,
+right here, right now, and forget about it;</p>
+
+<p class="fmtc"><samp>REJECT</samp></p>
+<p class="desc">(terminating target) just like <samp>DROP</samp>, but,
+unlike <samp>DROP</samp>, sends a response back; it's only valid in the
+<samp>INPUT</samp>, <samp>FORWARD</samp>, <samp>OUTPUT</samp> chains and
+user-defined chains called from these chains; the only option is</p>
+<table class="opts" style="margin-left:3.6em;width:80%"><tr>
+<td class="opts">--reject-with <span class="arg">type</span></td>
+<td class="opt_desc">&nbsp;</td></tr></table>
+<p class="desc">where <kbd>type</kbd> can be (not all are listed here):</p>
+<table class="opts" style="margin-left:3.6em;width:80%"><tr>
+<td class="opts">
+tcp-reset<br>
+icmp-net-unreachable<br>
+icmp-host-unreacable<br>
+icmp-port-unreachable<br>
+icmp-proto-unreachable</td>
+<td class="opt_desc">&nbsp;</td></tr></table>
+
+<p class="fmtc"><samp>RETURN</samp></p>
+<p class="desc">stop traversing this chain and resume at the next rule in
+the previous (calling) chain;</p>
+
+<p class="fmtc"><samp>DNAT</samp></p>
+<p class="desc">(destination NAT) modify dest address of the packet and all
+future pkts in this connection; valid only in <samp>nat</samp> table, within
+<samp>PREROUTING</samp> and <samp>OUTPUT</samp> chains and within any chains
+called upon from these chains; the option:</p>
+<table class="opts" style="margin-left:3.6em;width:80%">
+<tr>
+<td class="opts">--to-destination</td>
+<td class="opt_desc">
+<kbd>ip</kbd>[<code>-</code><kbd>ip</kbd>][<code>:</code><kbd>port</kbd>-<kbd>port</kbd>]
+</td></tr></table>
+<p class="desc">
+specifies either a single new dest address, or a range; port range may be
+added for TCP and UDP protocols; port stays unchanged, if not specified;</p>
+
+<p class="fmtc"><samp>SNAT</samp></p>
+<p class="desc">(source NAT) modify the src address of the packet and all
+future pkts in this connection; it is only valid in the <samp>nat</samp> table
+for the <samp>POSTROUTING</samp> chain; the option</p>
+<table class="opts" style="margin-left:3.6em;width:80%"><tr>
+<td class="opts">--to-source
+<span class="arg">ip</span>[-<span class="arg">ip</span>][:<span class="arg">port</span>-<span class="arg">port</span>]</td>
+<td class="opt_desc">&nbsp;</td></tr></table>
+<p class="desc">new src address (or range); optionally port range
+(<samp>tcp</samp>, <samp>udp</samp>);</p>
+
+<p class="fmtc"><samp>MASQUERADE</samp></p>
+<p class="desc">should only be used in the <samp>nat</samp> table
+<samp>POSTROUTING</samp> chain with dynamically assigned IPs (like DHCP
+or dialup inet connection); for static addresses use <samp>SNAT</samp>;
+the option</p>
+<table class="opts" style="margin-left:3.6em;width:80%"><tr>
+<td class="opts">--to-ports
+<span class="arg">port</span>[-<span class="arg">port</span>] &nbsp;</td>
+<td class="opt_desc">src port (or range);</td></tr></table>
+
+<p class="fmtc"><samp>REDIRECT</samp></p>
+<p class="desc">alter the dest IP address to send the packet to the machine
+itself (locally-generated pkts are mapped to 127.0.0.1); should only be used
+in the <samp>nat</samp> table <samp>PREROUTING</samp>, <samp>OUTPUT</samp> and
+user-defined chains called from the first two; it takes one option:</p>
+<table class="opts" style="margin-left:3.6em;width:80%"><tr>
+<td class="opts">--to-ports <span class="arg">port</span>[-<span class="arg">port</span>] &nbsp;</td>
+<td class="opt_desc">dest port (or range);</td></tr></table>
+
+<p class="fmtc"><samp>MARK</samp></p>
+<p class="desc">valid only in the <samp>mangle</samp> table; the mark value
+is not set within the actual packet, but is associated with the pkt within the
+kernel;</p>
+
+<p class="fmtc"><samp>LOG</samp></p>
+<p class="desc">turn on kernel logging of matching packets; this is
+<b>non-terminating target</b>, so if you want to log refused packets, use
+two separate rules: first to log, second to drop; options are:</p>
+<table class="opts" style="margin-left:3.6em;width:80%">
+<tr>
+<td class="opts">--log-level <span class="arg">n</span></td>
+<td class="opt_desc">typical value is <samp>7</samp>;
+see <samp>syslog.conf</samp>;</td></tr>
+<tr>
+<td class="opts">--log-prefix <span class="arg">str</span></td>
+<td class="opt_desc">text <kbd>str</kbd> up to 29 char;</td></tr>
+<tr>
+<td class="opts">--log-tcp-sequence &nbsp;</td>
+<td class="opt_desc">log TCP seq numbers (unsafe);</td></tr>
+<tr>
+<td class="opts">--log-tcp-options</td>
+<td class="opt_desc">log opts from TCP pkt header;</td></tr>
+<tr>
+<td class="opts">--log-ip-options</td>
+<td class="opt_desc">log opts from IP pkt header;</td></tr>
+</table>
+<p class="desc">The location of the log depends on the distro, usually it's
+<samp>/var/log/syslog</samp> or <samp>/var/log/messages</samp>.</p>
+
+<p class="fmtc"><samp>ULOG</samp></p>
+<p class="desc">multicast the packet and pkt info through a netlink socket.
+One or more user-space processes may then subscribe to various multicast groups
+and receive the packet;</p>
+
+<p class="fmtc"><samp>QUEUE</samp></p>
+<p class="desc">pass the packet to userspace;</p>
+
+
+
+<h5>
+<a name="iptab_states">States</a></h5>
+<p>
+Linux firewall provides "statefulness" with the help of <samp>conntrack</samp>
+module. Connections tracked by this module can be in one of the following
+states:</p>
+<p class="fmtc"><samp>NEW</samp></p>
+<p class="desc">This state represents the very first packet of a connection.</p>
+
+<p class="fmtc"><samp>ESTABLISHED</samp></p>
+<p class="desc">This state is used for packets that are part of an existing
+connection. To be in this state, a connection should have received a reply
+from the other host.</p>
+
+<p class="fmtc"><samp>RELATED</samp></p>
+<p class="desc">This state is used for connections that are related to another
+<samp>ESTABLISHED</samp> connection, e.g., FTP data connection are "related" to
+the already "established" FTP control connection.</p>
+
+<p class="fmtc"><samp>INVALID</samp></p>
+<p class="desc">This state means the packet doesn't have a proper state; the
+reasons may be diff, like the system running out of memory, etc.</p>
+
+<p class="fmtc"><samp>UNTRACKED</samp></p>
+<p class="desc">Any packets exempted from connection tracking in the
+<samp>raw</samp> table with the <samp>NOTRACK</samp> target end up in this
+state.</p>
+
+<p class="fmtc"><samp>DNAT</samp></p>
+<p class="desc">This is a virtual state used to represent pkts whose
+dest address was changed by rules in the <samp>nat</samp> table.</p>
+
+<p class="fmtc"><samp>SNAT</samp></p>
+<p class="desc">Like prev, this state represents pkts whose source address
+was changed.</p>
+
+
+
+<h5>
+<a name="iptab_limits">Limits</a></h5>
+<p>
+are useful in preventing DOS attacks and password cracking attempts.
+For example, to limit the number of ICMP packets allowed to pass through,
+you can use the following rule:</p>
+
+<p class="cmd">iptables -A INPUT -p icmp -m limit --limit 1/sec --limit-burst 1 -j ACCEPT</p>
+<p>
+As long as pkts arrive at rate one (or less) packet per sec, they are accepted.
+If pkts start to come more often, they are treated according to the default
+policy which should be <samp>DROP</samp>.</p>
+<p>
+Here is more selective rule. It limits connection attempts from any
+particular source address:</p>
+
+<p class="cmd">iptables -A INPUT -p tcp --dport 22 -m conntrack --ctstate NEW -m recent --set --name SSHPKT --rsource</p>
+<p class="cmd">iptables -A INPUT -p tcp --dport 22 -m conntrack --ctstate NEW -m recent --set --name SSHPKT --update --seconds 180 --hitcount 5 --name SSH --rsource -j DROP</p>
+<p>
+A named module <samp>SSHPKT</samp> keeps track of pkts requesting connections
+to the port <samp>22/tcp</samp>. The name can be different, if not specified,
+it will be <samp>DEFAULT</samp>. The first cmd adds each new src IP to the,
+list, or updates counter for this address if it's already in the list. The
+second cmd checks counters and drops excessive pkts. The limit is 5 requests
+within 180 sec from a particular src IP. Techincally, only 4 pkts will pass
+throuh, the fifth will be dropped.</p>
+<p>
+The above example focuses on SSH, but you can use similar approach for other
+services too.</p>
+<p>
+As relatively new kernels can handle param <samp>--mask</samp>, you can limit
+the flow of packets not just from a partular source address, but from the whole
+network. For example, with the following mask you can limit the flow from
+a class B network (254 nodes):</p>
+
+<p class="cmd">iptables ... -m recent ... --mask 255.255.255.0</p>
+
+
+
+
+
+<p class="cmdname"><a name="iw"></a>iw</p>
+<p>
+displays and manipulates wireless devices and their configuration.
+The old tool <a href="#iwconfig">iwconfig</a> is deprecated.</p>
+<p>
+<b>Note # 1</b>. About device names: old-style names like <samp>wlan0</samp>
+are not used anymore in real cmds. But they are still used in articles, post,
+examples. See <a href="net.html#nic_names">Network / Dev naming</a>.</p>
+<p>
+<b>Note # 2</b>. Some of the following cmds require a <samp>root</samp> priv,
+i.e. you should use them with <code>sudo</code>.</p>
+
+<p class="cmdc">iw dev</p>
+<p class="desc">show available wireless hardware devices and interfaces;</p>
+
+<p class="cmdc">iw list</p>
+<p class="desc">output device capabilities (it can be a long list);</p>
+
+<p class="cmdc">iw dev wlan0 scan</p>
+<p class="desc">scan the surrounding environment and display ...</p>
+
+<p class="cmdc">sudo iw dev wlan0 connect D_LINK01</p>
+<p class="cmdc">sudo dhclient wlan0</p>
+<p class="desc">try to connect to the specified SSID; if connection was
+successfully established, you can get IP addr from WiFi router using
+<code>dhclient</code>;</p>
+
+<p class="cmdc">iw dev wlan0 link</p>
+<p class="desc">show the link details (you must be connected to an AP);</p>
+
+<p class="cmdc">sudo iw dev wlan0 disconnect</p>
+<p class="desc">disconnect from the AP;</p>
+
+
+<h5>Syntax:</h5>
+
+<p class="fmt"><code>iw </code>[<kbd>options</kbd>] { <code>help</code> [ <kbd>command</kbd> ] | <kbd>object command</kbd> }</p>
+<p>
+Where</p>
+
+<p class="fmt"><kbd>object</kbd> <samp>:=</samp> { <code>dev</code> | <code>phy</code> | <code>reg</code> }</p>
+
+
+
+<h5>Options:</h5>
+<p class="fmt"><code>--version</code> &nbsp;&nbsp; show version info and exit;</p>
+
+<p class="fmt"><code>--debug</code> &nbsp;&nbsp; enable netlink message debugging;</p>
+<p>
+The <kbd>command</kbd> specifies the action to perform on the object. The set of possible actions depends on the object type.</p>
+
+<p class="cmdc">iw help</p>
+<p class="desc">shows all supported cmds;</p>
+
+<p class="fmtc"><code>iw help </code><kbd>command</kbd></p>
+<p class="desc">shows the help for all matching commands;</p>
+
+
+
+<h5>Layers and protocols</h5>
+<p>
+It is useful to remember that frequency bands, channels and other hardware-related
+things belong to <b>physical layer</b>, i.e. <b>Layer 1</b> of the Open Systems
+Interconnection model (OSI). <b>MAC</b> address belongs to the <b>data-link
+layer</b> which is <b>Layer 2</b> of the Open Systems Interconnection. <b>IP</b>
+address belongs to OSI Layer 3</b>. The Address Resolution Protocol (ARP)
+works between Layer 2 and Layer 3 on a local area network (LAN), and maps IPv4
+addresses to network devices' MAC addresses and vice versa.</p>
+<p>
+But! <b>ARP</b> is only used in IPv4, while in IPv6 the same functionality is
+provided by the <b>Neighbor Discovery Protocol</b>!</p>
+<p>
+<b>Association</b> is the process of connecting a wireless interface to an Access
+Point. When working with WiFi, we usually set parameter values for the physical
+layer (frequency, channel, etc), and then associate the WiFi interface with an
+Access Point at the MAC layer.</p>
+<p>
+The <kbd>object</kbd> can be:</p>
+
+<p class="fmt"><code>dev </code><kbd>interface_name</kbd> &nbsp;&nbsp; network interface (Layer 2);</p>
+
+<p class="fmt"><code>phy </code><kbd>phy_name</kbd> &nbsp;&nbsp; wireless hardware device (by name) (Layer 1);</p>
+
+<p class="fmt"><code>phy# </code><kbd>phy_index</kbd> &nbsp;&nbsp; wireless hardware device (by index) (Layer 1);</p>
+
+<p class="fmt"><code>reg</code> &nbsp;&nbsp; regulatory agent;</p>
+
+
+
+<h5>Modes</h5>
+<p>
+Wireless network interface can operate in different modes:</p>
+<ul>
+<li><b>Managed mode</b>. This is a normal working mode, NIC only receives
+packets destined to it.</li>
+<li><b>Promiscuous mode</b>. This is a listening mode, NIC receives all packets
+passing through the network. This mode can be used by both wired (e.g. Ethernet)
+adapter and wireless adapters.</li>
+<li><b>Monitor mode</b>. This is also a listening mode, but it can only be used
+by wireless adapters.</li>
+</ul>
+<p>
+Technically, a wireless adapter can receive transmissions from any device using
+the same frequency and located sufficiently close. In general, a WiFi adapter
+ignores any packets with inappropriate BSSID (i.e., belonging to other WiFi
+networks). However, some WiFi adapters support <b>monitor mode</b> that allows
+them to capture any packets transmitted on the same frequency.<p>
+<p>
+Note that this is a potential security threat, and it may be illegal.</p>
+
+
+
+<h5>How to set monitor mode</h5>
+<p>
+Remember that not all wireless adapters support monitor mode.</p>
+<p>
+<i>In some cases (some systems) you need to stop <b>NetworkManager</b> before
+executing the following cmds. And do not forget to start it afterwards!</i></p>
+
+<p class="cmd">sudo systemctl stop NetworkManager</p>
+<p>
+First of all, let's find the interface name:</p>
+
+<p class="cmd">sudo iw dev</p>
+<p>
+For simplicity, an old (outdated) <samp>wlan0</samp> will be used in the
+following cmds:</p>
+
+<p class="cmdc">sudo ip link set wlan0 down</p>
+<p class="cmdc">sudo iw wlan0 set monitor control</p>
+<p class="cmd">sudo ip link set wlan0 up</p>
+<p>
+And check the result:</p>
+
+<p class="cmd">sudo iw dev</p>
+<p>
+To return to normal (i.e., <b>managed</b>) mode, you can use a similar
+sequence of cmds:</p>
+
+<p class="cmdc">sudo ip link set wlan0 down</p>
+<p class="cmdc">sudo iw wlan0 set type managed</p>
+<p class="cmd">sudo ip link set wlan0 up</p>
+
+<!--
+now we will look at the interface name itself with a wireless extension and put
+it into monitor mode (if you have only one wireless interface):
+
+t=`iw dev | grep 'Interface' | sed 's/Interface //'`;sudo ip link set $t down && sudo iw $t set monitor control && sudo ip link set $t up
+
+If instead of changing the real interface you want to create a virtual monitor
+in monitor mode, then to create a wireless interface in monitor mode called
+mon0, you need to do this:
+
+sudo iw phy phy0 interface add mon0 type monitor
+
+My commands creates a virtual interface, but it does not translate into monitor
+mode. If you have a similar situation, then do this:
+
+sudo ip link set mon0 down
+sudo iw mon0 set monitor control
+sudo ip link set mon0 up
+
+We also check:
+sudo iw dev
+
+To remove a virtual interface:
+sudo iw dev mon0 del
+-->
+
+
+
+
+<p class="cmdname"><a name="iwconfig"></a>iwconfig</p>
+<p>
+configures a wireless network interface (similar to <a href="#ifconfig"><code>ifconfig</code></a>, but sets net interface params
+specific to the wireless op). Since Linux kernel maintainers consider <i>iwconfig</i> <b>deprecated</b>, you should probably use
+<a href="#iw">iw</a>.</p>
+
+<p class="fmt"><code>iwconfig</code> [<kbd>iface</kbd>]</p>
+<p class="fmt"><code>iwconfig</code> <kbd>iface</kbd> [<kbd>params</kbd>]</p>
+<p>
+If <kbd>params</kbd> are not given, <code>~</code> displays params and stats.</p>
+
+<p class="cmdc">iwconfig wlan0</p>
+<p class="desc">display params and stats for iface <samp>wlan0</samp>;</p>
+
+<p class="cmdc">iwconfig wlan0 essid any</p>
+<p class="desc">set ESSID <samp>any</samp> for iface <samp>wlan0</samp>;</p>
+
+<p class="cmdc">iwconfig wlan0 essid 'My home wifi'</p>
+<p class="desc">set ESSID "My home wifi" for iface <samp>wlan0</samp>;</p>
+
+<p class="cmdc">iwconfig wlan0 mode ad-hoc</p>
+<p class="desc">set mode <samp>Ad-Hoc</samp> for iface <samp>wlan0</samp>;</p>
+
+<p class="cmdc">iwconfig wlan0 channel auto</p>
+<p class="desc">let the wireless device to pick up the appropriate channel;</p>
+
+<p class="cmdc">iwconfig wlan0 ap 00:60:1D:01:23:45</p>
+<p class="desc">force the card to register to the specified Access Point;</p>
+
+<p class="cmdc">iwconfig wlan0 ap auto</p>
+<p class="desc">force the card to reassociate with the currently best
+Access Point;</p>
+
+<p class="cmdc">iwconfig wlan0 bit 54M</p>
+<p class="desc">force the card to transmit at the speed 54 Mbit/sec;</p>
+
+<p class="cmdc">iwconfig wlan0 retry lifetime 300m</p>
+<p class="desc">set max retry time to 300 milliseonds;</p>
+
+
+
+<h5>Parameters</h5>
+
+<p class="fmtc"><code>ap</code></p>
+<p class="desc">force the card to register to the Access Point given by the
+address, if it is possible; the address is the cell identity of the AP,
+as reported by wireless scanning, which may be different from its network
+MAC address; if the wireless link is point to point, set the address of the
+other end of the link; if the link is ad-hoc, set the cell identity of the
+ad-hoc network; when the quality of the connection goes too low, the driver
+may revert back to automatic mode (the card selects the best AP in the range);
+<samp>off</samp> re-enables automatic mode without changing the current
+AP, <samp>any</samp> or <samp>auto</samp> force the card to reassociate with
+the currently best AP;</p>
+
+<p class="fmtc"><code>commit</code></p>
+<p class="desc">forces the card to apply all pending changes; some cards may
+not apply changes done through Wireless Extensions immediately (they wait to
+aggregate changes or apply it only when the card is brought up via
+<code>ifconfig</code>); usually, you need not interfere, except for debugging
+purposes;</p>
+
+<p class="fmtc"><code>essid</code></p>
+<p class="desc">ESSID (other names: Network Name, Domain ID ) is used to
+identify cells which are part of the same virtual network; while AP Address or
+NWID define a single cell, the ESSID defines a group of cells connected via
+repeaters or infrastructure, where the user may roam transparently; some cards
+allow to disable ESSID checking (ESSID promiscuous) with <samp>off</samp> or
+<samp>any</samp>, and reenable it with <samp>on</samp>; if network's ESSID
+coincides with the special keyword (off, on, any), you use <code>--</code>
+to escape it;</p>
+
+<p class="fmtc"><code>frag</code> [<kbd>n</kbd>]</p>
+<p class="desc">sets max fragment size which is always lower than the max pkt
+size; fragmentation allows to split an IP pkt in a burst of smaller frags
+transmitted on the medium; it may add overhead, but in a very noisy
+env this reduces the error penalty and allow pkts to get through
+interference bursts; this param may also control Frame Bursting available
+on some cards - the ability to send multiple IP pkts together; this mechanism
+would be enabled if the fragment size is larger than the max pkt size;
+you can also set this param to <samp>auto</samp>, <samp>fixed</samp> or
+<samp>off</samp>;</p>
+
+<p class="fmtc"><code>freq/channel</code></p>
+<p class="desc">operating frequency or channel; a value &lt; 1000 indicates
+a channel, a value &gt; 1000 means freq in Hz (K, M, G mean KHz, MHz, GHz);
+channel nums usually start at 1 (<code>iwlist</code> gives the total num of
+channels, available freqs, current freq as a channel); depending on
+regulations, some freqs/channels may not be available; when mode is "Managed",
+most APs set the channel, and you cannot set it with <code>~</code>;
+in "Ad-Hoc" mode, the freq setting may only be used at initial cell creation,
+and may be ignored when joining an existing cell; use <samp>off</samp> or
+<samp>auto</samp> to let the card pick up the best channel (when supported);</p>
+
+<p class="fmtc"><code>key/enc</code> [<kbd>xxx</kbd>]</p>
+<p class="desc">to set the current encryption key, enter the key in hex
+digits; to set a key other than the current key, prepend or append [index]
+to the key itself (this won't change which is the active key); you can also
+enter the key as an ASCII str with <samp>s:</samp> prefix; to change the
+currently active key, enter [index] without any key value; <samp>off</samp>
+disables, <samp>on</samp> reenables encryption; the security mode may be
+<samp>open</samp> or <samp>restricted</samp>; with most cards, in
+<samp>open</samp> mode no auth is used and the card may accept non-encrypted
+sessions; in <samp>restricted</samp> mode only encrypted sessions are accepted
+and the card will use auth if available; to set multiple keys, or set a key
+and change the active key, use multiple <code>key</code> cmds;</p>
+
+<p class="fmtc"><code>mode</code></p>
+<p class="desc">device operating mode, depends on the net topology;
+it can be "Ad-Hoc" (network composed of only one cell and without Access
+Point), "Managed" (node connects to a net composed of many Access Points,
+with roaming), "Master" (the node is the synchronisation master or acts as
+an Access Point), "Repeater" (forwards pkts between other wireless nodes),
+"Secondary" (acts as a backup master/repeater), "Monitor" (is not associated
+with any cell and passively monitor all pkts on the frequency), "Auto";</p>
+
+<p class="fmtc"><code>modu</code>, <code>modulation</code></p>
+<p class="desc">forces the card to use a specific set of modulations
+(may be necessary to fix interoperability issues); usually, a card can
+support standard (802.11b, 802.11g, ...) and some proprietary modulations
+(use <a href="#iwlist"><code>iwlist</code></a> to find available);
+<samp>auto</samp> allows the driver to do its best;</p>
+
+<p class="fmtc"><code>nick</code>, <code>nickname</code></p>
+<p class="desc">nickname (station name); some 802.11 products do define it,
+but this is not used as far as the protocols (MAC, IP, TCP) are concerned and
+completely useless for config; some wireless diag tools may use it;</p>
+
+<p class="fmtc"><code>nwid</code></p>
+<p class="desc">(obsolete / use for pre-802.11 hw only)
+Network ID; this param is used to differentiate adjacent wireless
+networks and identify nodes belonging to the same cell (802.11 protocol
+uses the ESSID and AP Address for this function);</p>
+
+<p class="fmtc"><code>power</code></p>
+<p class="desc">sets misc power management params and mode;
+<samp>period</samp> <kbd>n</kbd> sets period between wake-ups,
+<samp>timeout</samp> <kbd>n</kbd> sets timeout before going back to sleep;
+values are in sec, millisec (m), microsec (u); <samp>saving</samp>
+<kbd>n</kbd> sets the generic level of power saving; <samp>off</samp> disables,
+<samp>on</samp> reenables power management; mode can be <samp>all</samp>
+(receive all pkts), <samp>unicast</samp> (receive unicast pkts only),
+<samp>multicast</samp> (receive multicast and broadcast pkts only);</p>
+
+<p class="fmtc"><code>rate</code>, <code>bit</code>, <code>bitrate</code></p>
+<p class="desc">set the bitrate in b/s (if supported); the bitrate is
+the speed at which bits are transmitted over the medium, the real speed of
+the link is lower due to medium sharing and misc overhead; <samp>k</samp>,
+<samp>M</samp>, <samp>G</samp> mean <samp>10<sup>3</sup></samp>,
+<samp>10<sup>6</sup></samp>, <samp>10<sup>9</sup></samp>; values below 1000
+are card specific, usually an index in the bitrate list; <samp>auto</samp>
+causes auto speed selection (fallback to lower rate on noisy channels),
+<samp>fixed</samp> reverts back to the fixed setting; if you specify a bitrate
+value + <samp>auto</samp>, the driver will use all rates lower or equal than
+this value;</p>
+
+<p class="fmtc"><code>retry</code></p>
+<p class="desc">most cards have MAC retransmissions, and some allow to set
+the behaviour of the retry mechanism; to set max num of retries, enter limit
+value - some reasonable positive num; to set max length of time the MAC should
+retry, enter <samp>lifetime</samp> value; by default, it's in seconds,
+<samp>m</samp> or <samp>u</samp> are for milliseconds or microseconds
+respectively; you can also add the <samp>short</samp>, <samp>long</samp>,
+<samp>min</samp> and <samp>max</samp> modifiers; if the card supports auto
+mode, they define the bounds of the limit or lifetime; some cards define
+different values depending on pkt size;</p>
+
+<p class="fmtc"><code>rts</code> [<kbd>n</kbd>]</p>
+<p class="desc">sets the size of the smallest pkt for which the node sends
+RTS; a value equal to the max pkt size disables the mechanism; you may also
+set this param to <samp>auto</samp>, <samp>fixed</samp> or <samp>off</samp>;
+RTS/CTS adds a handshake before each pkt transmission to make sure that
+the channel is clear; this adds overhead, but increases performance in case
+of hidden nodes or a large number of active nodes;</p>
+
+<p class="fmtc"><code>sens</code></p>
+<p class="desc">sensitivity threshold; positive value is assumed to be
+the raw value used by the hardware or a percentage, negative value is assumed
+to be dBm; depending on the hardware, this param may control various functions;
+on modern cards it usually controls handover/roaming threshold, the lowest
+signal level for which hw remains associated with the current AP;
+when the sig level goes below this threshold the card starts looking for
+a new/better AP; some cards may use the num of missed beacons to trigger
+this proc; for high density of APs, a higher threshold make sure the
+card is always associated with the best AP, for low density of APs, a lower
+threshold minimizes num of failed handoffs; on ancient cards this
+param usually controls the defer threshold - the lowest sig level for
+which hw considers the channel busy; sig levels above this threshold make
+hw to inhibit its own transmission, whereas signals weaker than this are
+ignored and hw is free to transmit; this is usually strongly linked to the
+receive threshold - the lowest sig level for which hw attempts pkt reception;
+proper setting of these thresholds prevents time waste on the background
+noise while still receiving weak transmissions; modern designs control those
+thresholds auto;</p>
+
+<p class="fmtc"><code>txpower</code></p>
+<p class="desc">set transmit power in dBm (if card supports multiple transmit
+powers); the power in dBm is P = 30 + 10log(W), where W is the power in watt;
+<samp>on</samp> and <samp>off</samp> enable/disable the radio,
+<samp>auto</samp> and <samp>fixed</samp> enable/disable power control
+(if supported);</p>
+
+
+
+<h5>Displayed parameters</h5>
+<p>
+are mostly the same as described above.
+Note that <samp>'='</samp> means that param is fixed and forced,
+while <samp>':'</samp> means that param is auto and the current value is shown
+(and may change). An address like <samp>00:00:00:00:00:00</samp> means that the
+card failed to associate with an AP (most likely a config issue). The AP param
+will be shown as <samp>Cell</samp> in Ad-Hoc mode. Other parameters:</p>
+
+<p class="fmtc"><samp>Link quality</samp></p>
+<p class="desc">overall quality of link, an aggregate value that depends on
+the driver and the hardware;</p>
+
+<p class="fmtc"><samp>Signal level</samp></p>
+<p class="desc">received signal strength (RSSI);
+may be in arbitrary units or dBm; in Ad-Hoc mode may be undefined
+(use <a href="#iwspy"><code>iwspy</code></a>);</p>
+
+<p class="fmtc"><samp>Noise level</samp></p>
+<p class="desc">background noise level (when no pkts transmit);</p>
+
+<p class="fmtc"><samp>Rx invalid nwid</samp></p>
+<p class="desc">num of pkts received with a different NWID or ESSID; check
+config; (!) also an adjacent network on the same freq may be the cause;</p>
+
+<p class="fmtc"><samp>Rx invalid crypt</samp></p>
+<p class="desc">num of pkts that the hardware was unable to decrypt;
+check encryption settings;</p>
+
+<p class="fmtc"><samp>Rx invalid frag</samp></p>
+<p class="desc">num of pkts for which the hardware was not able to properly
+re-assemble the link layer fragments (most likely one was missing);</p>
+
+<p class="fmtc"><samp>Tx excessive retries</samp></p>
+<p class="desc">most MAC protocols will retry the pkt a number of times
+before giving up;</p>
+
+<p class="fmtc"><samp>Invalid misc</samp></p>
+<p class="desc">other pkts lost in relation with specific wireless operations;</p>
+
+<p class="fmtc"><samp>Missed beacon</samp></p>
+<p class="desc">num of periodic beacons from the Cell or AP we have missed;
+beacons are sent at the regular intervals to maintain the cell coordination;
+failure to receive them usually means that the card is out of range;</p>
+<!--
+<p>
+The part of <samp>/etc/network/interfaces</samp> related to a wireless
+interface may look like this:</p>
+<div class="file">
+<p class="fmt">auto wlan0</p>
+<p class="fmt">iface wlan0 inet static</p>
+<p class="fmt">address 192.168.0.1</p>
+<p class="fmt">netmask 255.255.255.0</p>
+<p class="fmt">broadcast 192.168.0.255</p>
+<p class="fmt">network 192.168.0.0</p>
+<p class="fmt">wireless-essid 'My home wifi'</p>
+<p class="fmt">wireless-mode ad-hoc</p>
+<p class="fmt">wireless-channel 11</p>
+<p class="fmt">wireless-rate 54Mb/s</p>
+</div>
+-->
+<p>
+See also <samp>/proc/net/wireless</samp>.</p>
+
+
+
+
+
+<p class="cmdname"><a name="iwlist"></a>iwlist</p>
+<p>
+displays all info from a wireless interface related to
+the category specified by <kbd>param</kbd>.</p>
+
+<p class="fmt"><code>iwlist</code> [<kbd>iface</kbd>] <kbd>param</kbd></p>
+
+<p class="cmdc">iwlist wlan0 scanning</p>
+<p class="desc">start scanning on <samp>wlan0</samp>
+(<samp>root</samp> priv is required);</p>
+
+<p class="cmdc">iwlist wlan0 rate</p>
+<p class="desc">display the bitrates supported on the specified device;</p>
+
+<p class="cmdc">iwlist --help</p>
+<p class="cmd">iwlist --version</p>
+
+
+
+<h5>Parameters</h5>
+
+<p class="fmtc"><code>ap</code>, <code>accesspoint</code>, <code>peers</code></p>
+<p class="desc">(deprecated; try <code>scanning</code>) the list of Access
+Points in range, and optionally the quality of link to them;</p>
+
+<p class="fmtc"><code>auth</code></p>
+<p class="desc">list the WPA auth params curently set;</p>
+
+<p class="fmtc"><code>event</code></p>
+<p class="desc">list the wireless events supported by device;</p>
+
+<p class="fmtc"><code>freq</code>, <code>frequency</code>, <code>channel</code></p>
+<p class="desc">the list of available frequencies and the number of defined
+channels; usually driver returns the total num of channels and only those
+freqs that are available in the present locale, i.e., there is no one-to-one
+mapping between freqs displayed and channel nums;</p>
+
+<p class="fmtc"><code>genie</code></p>
+<p class="desc">list the Generic Information Elements set in the device
+(used for WPA support);</p>
+
+<p class="fmtc"><code>keys</code>, <code>enc</code>, <code>encryption</code></p>
+<p class="desc">list the encryption key sizes supported and list all the enc
+keys set in the device;</p>
+
+<p class="fmtc"><code>modu</code>, <code>modulation</code></p>
+<p class="desc">list modulations supported by the device, and those currently
+enabled;</p>
+
+<p class="fmtc"><code>power</code></p>
+<p class="desc">list Power Management attribs/modes of the device;</p>
+
+<p class="fmtc"><code>rate</code>, <code>bitrate</code></p>
+<p class="desc">show the bitrates supported;</p>
+
+<p class="fmtc"><code>retry</code></p>
+<p class="desc">list transmit retry limits and retry lifetime on the device;</p>
+
+<p class="fmtc"><code>scan</code>, <code>scanning</code></p>
+<p class="desc">(<samp>root</samp> only)
+the list of Access Points and Ad-Hoc cells in range, and optionally misc
+info about them (ESSID, Quality, Frequency, Mode, etc); the result
+depends on what card supports; the scope of scan depends on card
+and card settings; though this cmd takes optional args, most drivers
+ignore them; <samp>essid</samp> specifies a scan on a specific ESSID;
+with some cards/drivers, this allows to see hidden networks; regular users
+cannot trigger a scan, but option <samp>last</samp> allows them to read
+left-over scan results;</p>
+
+<p class="fmtc"><code>txpower</code></p>
+<p class="desc">list Transmit Powers available on the device;</p>
+
+<p class="fmtc"><code>wpa</code>, <code>wpakeys</code></p>
+<p class="desc">list all WPA encryption keys set in the device;</p>
+<p>
+See also <samp>/proc/net/wireless</samp>.</p>
+
+
+
+
+
+<p class="cmdname"><a name="iwspy"></a>iwspy</p>
+<p>
+provides wireless stats on the link between your NIC and another wireless
+device on the network. Stats include quality of the link, signal strength
+and noise level. However, if you just exec:</p>
+
+<p class="cmd">iwspy wlan0</p>
+<p>
+the answer may be something like "No statistics to collect". This means that
+you must first specify a target (this activates monitoring):</p>
+
+<p class="cmd">iwspy wlan0 192.168.1.5</p>
+<p>
+Note that <code>~</code> works only for nodes within the current wireless
+cell, you cannot monitor Access Points you are not associated with and nodes
+in other cells. In <b>Managed</b> mode pkts are usually relayed by AP,
+and you will get the signal strength of AP in this case. Thus, this
+functionality is mostly useful in <b>Ad-Hoc</b> and <b>Master</b> modes.</p>
+<p>
+When monitoring is on, both cmds shown above display the stats.</p>
+<p>
+The stats is updated each time a new pkt arrives, so every address (you can
+specify up to 8) in the list adds some overhead. This means that you should
+deactivate proc when you need no more info. To switch monitoring off:</p>
+
+<p class="cmd">iwspy wlan0 off</p>
+<p>
+In general, the syntax is:</p>
+
+<p class="fmt"><code>iwspy</code> <kbd>iface</kbd> [<kbd>params</kbd>]</p>
+<p>
+The only option (besides params) is <code>--version</code>.</p>
+
+
+
+<h5>Parameters</h5>
+
+<table class="options">
+<tr><td class="opt_name"><code>+</code></td>
+<td class="opt_desc">add a new set of addresses at the end of the current
+list (instead of replacing it);</td></tr>
+</table>
+
+<p class="fmtc"><kbd>dnsname</kbd> | <kbd>ipaddr</kbd></p>
+<p class="desc">set an IP address, or in some cases a DNS name; actually,
+<code>~</code> needs MAC and uses ARP to fetch it; <code>~</code> may fail
+if there is no corresponding MAC in ARP cache, in this case you can
+<a href="cmds_p.html#ping"><code>ping</code></a> the target <kbd>ipaddr</kbd>
+(it puts an appropriate record in ARP cache), and then retry <code>~</code>;</p>
+
+<p class="fmtc"><kbd>hwaddr</kbd></p>
+<p class="desc">like previous, but sets MAC address directly, without ARP;</p>
+
+<p class="fmtc"><code>getthr</code></p>
+<p class="desc">get current low and high signal strength thresholds for
+<code>~</code> event;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>off</code></td>
+<td class="opt_desc">remove the current list of addresses and disable spy
+functionality;</td></tr>
+</table>
+
+<p class="fmtc"><code>setthr</code></p>
+<p class="desc">set low/high signal strength thresholds for <code>~</code>
+event (if drivers supports); each time the signal strength for any of the
+addresses monitored goes under or beyond the corresponding threshold,
+a Wireless Event is generated; this allows to monitor link outages without
+having to run <code>~</code> often;</p>
+
+
+
+
+
+<p class="cmdname"><a name="jobs"></a>jobs</p>
+<p>
+Usually, it's a Shell built-in cmd. Job control assumes the ability to stop, suspend, continue, resume the execution of processes
+(commands). You can check if this is shell built-in using one of the following cmds:</p>
+
+<p class="cmdc">type -a jobs</p>
+<p class="cmd">command -V jobs</p>
+<p>
+The usage is simple:</p>
+
+<p class="cmdc">jobs</p>
+<p class="fmtc"><code>jobs </code>[<code>-lnprs</code>][<kbd>jobspec ...</kbd>]</p>
+<p class="fmt"><code>jobs -x </code><kbd>cmd</kbd> [<kbd>args ...</kbd>]</p>
+<p>
+If <kbd>jobspec</kbd> is given, output is restricted to info about that job only.</p>
+<p>
+Display the PIDs of the jobs whose names begins with "p":</p>
+
+<p class="cmd">jobs %p</p>
+<p>
+To display only running jobs:</p>
+
+<p class="cmd">jobs -r</p>
+<p>
+To display only jobs that have stopped:</p>
+
+<p class="cmd">jobs -s</p>
+
+
+
+<h5>Options</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-l</code></td>
+<td class="opt_desc">show process IDs in addition to the usual info;</td></tr>
+<tr>
+<td class="opt_name"><code>-p</code></td>
+<td class="opt_desc">list only PID of the job's process group leader;</td></tr>
+<tr>
+<td class="opt_name"><code>-n</code></td>
+<td class="opt_desc">show only jobs that have changed status since the user was
+last notified of their status;</td></tr>
+<tr>
+<td class="opt_name"><code>-r</code></td>
+<td class="opt_desc">show running jobs only;</td></tr>
+<tr>
+<td class="opt_name"><code>-s</code></td>
+<td class="opt_desc">show stopped jobs only;</td></tr>
+<tr>
+<td class="opt_name"><code>-x</code></td>
+<td class="opt_desc">run <kbd">command</kbd> after all job
+specifications that appear in <kbd>args</kbd> have been replaced
+with the process ID of that job's process group leader;</td></tr>
+</table>
+
+
+</div>
+
+</body></html>

@@ -1,0 +1,1795 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference / mail, mkdir, mke2fs</title>
+<meta name="description" content="linux quick reference, mail, mkdir, mke2fs, mkfs, mklost+found, mknod, mkswap, modinfo, modprobe, mount, mv" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<div id="topmenu">
+<p class="menu">
+<a href="#mail">mail</a>&nbsp;|
+<a href="#man">man</a>&nbsp;|
+<a href="#mc">mc</a>&nbsp;|
+<a href="#mkdir">mkdir</a>&nbsp;|
+<a href="#mke2fs">mke2fs</a>&nbsp;|
+<a href="#mkfs">mkfs</a>&nbsp;|
+<a href="#mklost+found">mklost+found</a>&nbsp;|
+<a href="#mknod">mknod</a>&nbsp;|
+<a href="#mkswap">mkswap</a>&nbsp;|
+<a href="#mktemp">mktemp</a>&nbsp;|
+<a href="#modinfo">modinfo</a>&nbsp;|
+<a href="#modprobe">modprobe</a>&nbsp;|
+<a href="#mount">mount</a>&nbsp;|
+<a href="#mtr">mtr</a>&nbsp;|
+<a href="#mv">mv</a></p>
+</div>
+
+<p class="cmdname"><a name="mail">mail</a></p>
+<p>
+sends and receives mail (old classic).</p>
+
+<p class="cmdc">mail</p>
+<p class="desc">check mail box;</p>
+
+<p class="cmdc">mail -f mbox2</p>
+<p class="desc">check mail, open a non-default mail box;</p>
+
+<p class="cmdc">mail joan@wizard.net</p>
+<p class="desc">send mail to <samp>joan@wizard.net</samp>; at the end of the
+message text press <span class="keys">ENTER</span>, then <span class="keys">CTRL+D</span>;</p>
+
+<p class="cmdc">mail joe@nt.com &lt; msg.txt</p>
+<p class="desc">send mail using some prepared text taken from a file named
+<samp>msg.txt</samp>;</p>
+
+<p class="cmdc">mail -s News joe@wizard.net &lt; msg2.txt</p>
+<p class="desc">send mail using a prepared file (<samp>msg2.txt</samp>),
+insert text "<samp>News</samp>" in the subject field;</p>
+
+<p class="cmdc">mail pro8@spb.com ./mesg03.txt</p>
+<p class="desc">send mail, save copy in the file <samp>mesg03.txt</samp>;</p>
+
+<p class="fmt"><code>mail&nbsp;</code>[<code>-iInv</code>] [<code>-s</code> <kbd>subj</kbd>] [<code>-c</code> <kbd>cc-addr</kbd>] [<code>-b</code> <kbd>bcc-addr</kbd>]<kbd>&nbsp;to-addr</kbd></p>
+
+<p class="fmt"><code>mail&nbsp;</code>[<code>-iInNv</code>]<code>&nbsp;-f</code> [<kbd>name</kbd>]</p>
+
+<p class="fmt"><code>mail&nbsp;</code>[<code>-iInNv</code>] [<code>-u</code> <kbd>user</kbd>]</p>
+
+
+
+<h5>Some options</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-c</code></td>
+<td class="opt_desc">send carbon copies to users (<kbd>cc-addr</kbd> is
+a comma-separated list of names);</td></tr>
+<tr>
+<td class="opt_name"><code>-b</code></td>
+<td class="opt_desc">send blind carbon copies to users (<kbd>bcc-addr</kbd>
+is a comma-separated list of names);</td></tr>
+<tr>
+<td class="opt_name"><code>-f</code></td>
+<td class="opt_desc">read in the contents of your mbox (or specified file)
+for processing; when you quit, undeleted messages will be written back to
+this file;</td></tr>
+<tr>
+<td class="opt_name"><code>-i</code></td>
+<td class="opt_desc">ignore tty interrupt signals (useful for noisy phone lines);</td></tr>
+<tr>
+<td class="opt_name"><code>-I</code></td>
+<td class="opt_desc">force interactive mode, even when input isn’t a terminal;</td></tr>
+<tr>
+<td class="opt_name"><code>-n</code></td>
+<td class="opt_desc">don’t read <samp>/etc/mail.rc</samp> at the startup;</td></tr>
+<tr>
+<td class="opt_name"><code>-N</code></td>
+<td class="opt_desc">don’t show message header when reading mail or editing
+a mail folder;</td></tr>
+<tr>
+<td class="opt_name"><code>-s</code></td>
+<td class="opt_desc">specify subject on the cmd line; quote subjects
+containing spaces;</td></tr>
+<tr>
+<td class="opt_name"><code>-u</code></td>
+<td class="opt_desc">equivalent to
+<code>mail –f /var/spool/mail/</code><kbd>user</kbd>;</td></tr>
+<tr>
+<td class="opt_name"><code>-v</code></td>
+<td class="opt_desc">verbose;</td></tr>
+</table>
+<p>
+Tilde/Escapes are used when composing messages to perform special functions
+(only recognized at the beginning of lines);</p>
+
+<p class="fmtc"><code>~!</code><kbd>cmd</kbd></p>
+<p class="desc">execute a shell cmd, then return to msg;</p>
+
+<p class="fmtc"><code>~b</code><kbd>name</kbd></p>
+<p class="desc">add the given name(s) to the list of <samp>cc</samp>
+recipients, but don't make it visible in the <samp>cc</samp> line;</p>
+
+<p class="fmtc"><code>~c</code><kbd>name</kbd></p>
+<p class="desc">add the given name(s) to the list of <samp>cc</samp> recipients;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>~e</code></td>
+<td class="opt_desc">invoke the text editor; after quiting editor you may
+continue appending text to the message;</td></tr>
+</table>
+
+<p class="fmtc"><code>~f</code><kbd>msgs</kbd></p>
+<p class="desc">read the named msgs into the message being sent; if no msgs
+are specified, read in the current msg;</p>
+
+<p class="fmtc"><code>~F</code><kbd>msgs</kbd></p>
+<p class="desc">identical to <code>~f</code>, except all msg headers are
+included;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>~h</code></td>
+<td class="opt_desc">edit the message header fields;</td></tr>
+</table>
+
+<p class="fmtc"><code>~m</code><kbd>msgs</kbd></p>
+<p class="desc">read the named msgs into the message being sent, indented
+by a tab; if no msgs are specified read in the current msg;</p>
+
+<p class="fmtc"><code>~M</code><kbd>msgs</kbd></p>
+<p class="desc">identical to <code>~m</code>, except all msg headers are
+included;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>~p</code></td>
+<td class="opt_desc">print out (refresh) the message collected so far,
+prefaced by the header fields;</td></tr>
+<tr>
+<td class="opt_name"><code>~q</code></td>
+<td class="opt_desc">abort the message being sent, save contents to
+<samp>dead.letter</samp> (if properly configured);</td></tr>
+</table>
+
+<p class="fmtc"><code>~r</code><kbd>file</kbd></p>
+<p class="desc">read the named file into the message;</p>
+
+<p class="fmtc"><code>~s</code><kbd>string</kbd></p>
+<p class="desc">cause the named string to become the current subject field;</p>
+
+<p class="fmtc"><code>~t</code><kbd>name</kbd></p>
+<p class="desc">add the given name(s) to the recipient list;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>~v</code></td>
+<td class="opt_desc">invoke the editor defined by the <samp>VISUAL</samp>
+option (usually <a href="#vi"><code>vi</code></a>; in this case finish
+editing with <samp>zz</samp>);</td></tr>
+</table>
+
+<p class="fmtc"><code>~w</code><kbd>file</kbd></p>
+<p class="desc">write message to the named file;</p>
+
+<p class="fmtc"><code>~|</code><kbd>cmd</kbd></p>
+<p class="desc">pipe the message through <kbd>cmd</kbd> as a filter;</p>
+
+<p class="fmtc"><code>~:</code><kbd>mail-cmd</kbd></p>
+<p class="desc">exec the given mail cmd (not all cmds are allowed);</p>
+
+<p class="fmtc"><code>~~</code><kbd>string</kbd></p>
+<p class="desc">insert the string in the message prefaced by a single '<samp>~</samp>';</p>
+
+
+
+<h5>Some commands</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>h</code></td>
+<td class="opt_desc">show message headers;</td></tr>
+<tr>
+<td class="opt_name"><code>h</code> <kbd>n</kbd></td>
+<td class="opt_desc">show msg headers starting with # <kbd>n</kbd>;</td></tr>
+<tr>
+<td class="opt_name"><code>p</code></td>
+<td class="opt_desc">display current message;</td></tr>
+</table>
+
+<p class="fmtc"><code>p</code> <kbd>n m</kbd></p>
+<p class="desc">display messages <kbd>n</kbd> and <kbd>m</kbd>;</p>
+
+<p class="fmtc"><code>p</code> <kbd>n</kbd><code>-</code><kbd>m</kbd>
+<p class="desc">display messages in the range from <kbd>n</kbd> to <kbd>m</kbd>;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>+</code></td>
+<td class="opt_desc">display next message (also, <code>n</code> or <span class="keys">Enter</span>);</td></tr>
+
+<tr><td class="opt_name"><code>-</code></td>
+<td class="opt_desc">display previous message;</td></tr>
+</table>
+
+<p class="fmtc"><code>d</code> <kbd>n</kbd><code>-</code><kbd>m</kbd></p>
+<p class="desc">delete messages in the range from <kbd>n</kbd> to <kbd>m</kbd>;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>u</code> <kbd>n</kbd></td>
+<td class="opt_desc">undelete (restore) message <kbd>n</kbd>;</td></tr>
+<tr>
+<td class="opt_name"><code>R</code> <kbd>n</kbd></td>
+<td class="opt_desc">reply to sender of message <kbd>n</kbd>;</td></tr>
+<tr>
+<td class="opt_name"><code>m</code></td>
+<td class="opt_desc">compose and send a new message;</td></tr>
+</table>
+
+<p class="fmtc"><code>s</code> <kbd>n file</kbd></p>
+<p class="desc">save message <kbd>n</kbd> to <kbd>file</kbd>
+(including header);</p>
+
+<p class="fmtc"><code>w</code> <kbd>n file</kbd></p>
+<p class="desc">write message <kbd>n</kbd> to <kbd>file</kbd> (msg text only);</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>q</code></td>
+<td class="opt_desc">quit;</td></tr>
+<tr>
+<td class="opt_name"><code>x</code></td>
+<td class="opt_desc">quit, but don’t delete msgs marked for deletion;</td></tr>
+</table>
+
+<p class="fmtc"><code>folder</code> <kbd>box</kbd></p>
+<p class="desc">move to another mail box;</p>
+
+<p class="fmtc"><code>folder %</code></p>
+<p class="desc">return to the default mail box;</p>
+
+
+
+<h5>Message status</h5>
+<p class="indent">
+<samp>N</samp> (new), <samp>U</samp> (unread), <samp>R</samp>
+(read in current session), <samp>P</samp> (read in prev session),
+<samp>D</samp> (deleted), <samp>O</samp> (old), <samp>*</samp>
+(written to another mail box);</p>
+
+
+
+
+
+<p class="cmdname"><a name="man">man</a></p>
+<p>
+formats and displays the on-line manual pages. <code>~</code> exits after
+displaying the first man page found unless <code>-a</code> is specified.
+If you give a section number, <code>~</code> only looks in that section.</p>
+
+<p class="cmdc">man 2 chmod</p>
+<p class="desc">show man page for <code>chmod</code> (search in section 2 only);</p>
+
+<p class="cmdc">man -a passwd</p>
+<p class="desc">show man page for <code>passwd</code> (search in all sections);</p>
+
+<p class="fmt"><code>man&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;name</kbd></p>
+<p>
+Usually <kbd>name</kbd> is the name of cmd, func, file.
+It may be interpreted as a file specification, if contains
+a slash '<code>/</code>'.</p>
+<p>
+Default man page sections and search order may be set
+by <samp>MANSECT</samp> env var or <code>-S</code> option.
+Otherwise config file is used (<samp>/etc/man.config</samp>).</p>
+
+
+
+<h5>Some options</h5>
+
+<p class="fmt"><code>-h</code> &nbsp;&nbsp; <code>--help</code>
+&nbsp;&nbsp; <code>--version</code></p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-a</code></td>
+<td class="opt_desc">show all pages matching name (by default <code>~</code>
+exits after displaying the first man page found);</td></tr>
+</table>
+
+<p class="fmtc"><code>-C</code> <kbd>file</kbd></p>
+<p class="desc">use <kbd>file</kbd> as a config file instead of default;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-f</code></td>
+<td class="opt_desc">equivalent to whatis;</td></tr>
+<tr>
+<td class="opt_name"><code>-k</code></td>
+<td class="opt_desc">like
+<a href="cmds_a-c.html#apropos"><code>apropos</code></a>;</td></tr>
+</table>
+
+<p class="fmtc"><code>-K</code> <kbd>str</kbd></p>
+<p class="desc">search for the specified string in all man pages;</p>
+
+<p class="fmtc"><code>-M</code> <kbd>path</kbd></p>
+<p class="desc">use a colon-separated list if dirs to be searched for man
+pages; alternatively, <samp>MANPATH</samp> env variable can be used;
+if none of the above, <code>~</code> generates its own path list based on
+the contents of <samp>/etc/man.config</samp>;</p>
+
+<p class="fmtc"><code>-S</code> <kbd>list</kbd></p>
+<p class="desc">use a colon-separated list of sections to be searched;</p>
+
+<table class="exit">
+<a name="man_sections">
+<caption>Man sections</caption></a>
+<tr>
+<td class="exit_code">1</td>
+<td class="code_desc">User commands (executable programs or shell commands)</td></tr>
+<tr>
+<td class="exit_code">2</td>
+<td class="code_desc">System calls (functions provided by the kernel)</td></tr>
+<tr>
+<td class="exit_code">3</td>
+<td class="code_desc">Library calls (functions within program libraries)</td></tr>
+<tr>
+<td class="exit_code">4</td>
+<td class="code_desc">Special files (usually found in <samp>/dev</samp>)</td></tr>
+<tr>
+<td class="exit_code">5</td>
+<td class="code_desc">File formats and conventions (e.g., <samp>/etc/passwd</samp>)</td></tr>
+<tr>
+<td class="exit_code">6</td>
+<td class="code_desc">Games</td></tr>
+<tr>
+<td class="exit_code">7</td>
+<td class="code_desc">Miscellaneous (including macro packages and conventions)</td></tr>
+<tr>
+<td class="exit_code">8</td>
+<td class="code_desc">System administration commands (usually only for <samp>root</samp>)</td></tr>
+<tr>
+<td class="exit_code">9</td>
+<td class="code_desc">Kernel routines [Non-standard]</td></tr>
+</table>
+
+
+
+
+
+<p class="cmdname"><a name="mc">mc</a></p>
+<p>
+<b>GNU Midnight Commander</b> is a <samp>ncurses</samp>-based text mode
+file manager similar to old DOS <i>Norton Commander</i>.</p>
+
+<p class="cmdc">mc</p>
+<p class="desc">start Midnight Commander [with default options];</p>
+
+<p class="cmdc">mc -V</p>
+<p class="desc">besides version, this cmd also displays some useful build info;</p>
+
+
+
+<h5>Some options</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-a</code></td>
+<td class="opt_desc">disable usage of graphic chars for line drawing;</td></tr>
+<tr>
+<td class="opt_name"><code>-b</code></td>
+<td class="opt_desc">force black &amp; white display;</td></tr>
+<tr>
+<td class="opt_name"><code>-c</code></td>
+<td class="opt_desc">force color mode;</td></tr>
+<tr>
+<td class="opt_name"><code>-d</code></td>
+<td class="opt_desc">disable mouse support;</td></tr>
+<tr>
+<td class="opt_name"><code>-s</code></td>
+<td class="opt_desc">turn on the slow terminal mode;</td></tr>
+<tr>
+<td class="opt_name"><code>-V</code></td>
+<td class="opt_desc">version;</td></tr>
+<tr>
+<td class="opt_name"><code>-x</code></td>
+<td class="opt_desc">force xterm mode;</td></tr>
+</table>
+<p>
+See also <a href="keys.html#commander">Keys &amp; key combinations</a>.</p>
+
+
+
+
+
+<p class="cmdname"><a name="mkdir">mkdir</a></p>
+<p>
+creates new directories.</p>
+
+<p class="cmdc">mkdir old_files</p>
+<p class="desc">create new dir <samp>old_files</samp> in the current dir;</p>
+
+<p class="cmdc">mkdir proj007 &amp;&amp; cd $_</p>
+<p class="desc">create new dir <samp>proj007</samp> in the current dir, and move
+in;</p>
+
+<p class="cmdc">mkdir -m 700 pr_data</p>
+<p class="desc">create new dir <samp>pr_data</samp> with the specified
+permissions (<samp>700</samp>, i.e. <samp>drwx------</samp>);</p>
+
+<p class="cmdc">mkdir -p proj/doc/html</p>
+<p class="desc">create new dir <samp>html</samp>; if <samp>proj</samp>
+or <samp>doc</samp> don't exist, they will be also created;</p>
+
+<p class="fmt"><code>mkdir&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;directory ...</kbd></p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code>
+&nbsp;&nbsp; <code>-v</code> &nbsp;&nbsp; <code>--verbose</code></p>
+
+<p class="fmtc"><code>-m</code> <kbd>mode</kbd>,
+<code>--mode=</code><kbd>mode</kbd></p>
+<p class="desc">set the specified permissions on new dir
+(as in <a href="cmds_a-c.html#chmod"><code>chmod</code></a>);</p>
+
+<p class="fmtc"><code>-p</code>, <code>--parents</code></p>
+<p class="desc">create parent dirs if they don't exist;</p>
+
+<p class="fmtc"><code>-Z</code> <kbd>ctxt</kbd>,
+<code>--context=</code><kbd>ctxt</kbd></p>
+<p class="desc">set security context to <kbd>ctxt</kbd>;</p>
+
+
+
+
+
+<p class="cmdname"><a name="mke2fs">mke2fs</a></p>
+<p>
+creates an <samp>ext2</samp>/<samp>ext3</samp>/<samp>ext4</samp> filesystem.</p>
+
+<p class="fmt"><code>mke2fs&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;device&nbsp;</kbd>[<kbd>blocks</kbd>]</p>
+<p>
+<kbd>device</kbd> is the name of a device special file
+(e.g., <samp>/dev/sda2</samp>), <kbd>blocks</kbd> is the number of blocks
+on the device (if omitted, will be calculated automatcally).</p>
+
+<p class="cmdc">mkfs.ext4 /dev/sda3</p>
+<p class="desc">create an<samp> ext4 </samp>fs in<samp> /dev/sda3 </samp>using
+default params;</p>
+
+<p class="cmdc">mke2fs -t ext4 -b 4096 /dev/sdb1</p>
+<p class="desc">create an<samp> ext4 </samp>fs in<samp> /dev/sdb1 </samp>using
+4K block size;</p>
+
+<p class="cmdc">mke2fs -t ext4 -O ^has_journal /dev/sdf1</p>
+<p class="desc">create an<samp> ext4 </samp>filesystem with the journaling
+turned off, because<samp> /dev/sdf1 </samp>is USB Flash Drive, and it allows
+a limited number of writes; journaling causes many writes at the same
+location (where the journal is stored);<samp> ext4 </samp>without
+journaling is better for USB Flash than<samp> ext2/ext3</samp>: the use of
+extents reduces the number of read/write ops;</p>
+
+<p class="cmdc">mke2fs -t ext3 -c -j -T news /dev/sda1</p>
+<p class="desc">check<samp> /dev/sda1 </samp>for bad blocks
+(read-only test) and create an<samp> ext3 </samp>filesystem with 4K inodes;</p>
+
+<p class="cmdc">mke2fs -t ext3 -c -j -T news -L / /dev/sda4</p>
+<p class="desc">check<samp> /dev/sda4 </samp>for bad blocks, create
+an<samp> ext3 </samp>filesystem with 4K inodes, assign label '<samp>/</samp>'
+to this filesystem;</p>
+
+<p class="cmdc">mke2fs -t ext3 -c -j -T largefile -L /u02 /dev/sdb2</p>
+<p class="desc">check<samp> /dev/sdb2 </samp>for bad blocks, create
+an<samp> ext3 </samp>fs with 1M inodes, assign label '<samp>/u02</samp>'
+to this filesystem;</p>
+
+<p class="cmdc">mke2fs -t ext2 -m 0 /dev/fd0</p>
+<p class="desc">create an<samp> ext2 </samp>filesystem on a floppy disk;</p>
+
+
+
+<h5>Some options</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-b</code> <kbd>n</kbd></td>
+<td class="opt_desc">the block size in bytes (1024, 2048, 4096);
+if omitted, <code>~</code> derives it from fs size and the supposed usage
+(see <code>-T</code>);</td></tr>
+<tr>
+<td class="opt_name"><code>-c</code></td>
+<td class="opt_desc">check device for bad blocks (read-only) before
+creating fs;</td></tr>
+<tr>
+<td class="opt_name"><code>-cc</code></td>
+<td class="opt_desc">check device for bad blocks (read-write) before
+creating fs (destructive and slow);</td></tr>
+</table>
+
+<p class="fmtc"><code>-E </code><kbd>extended-options</kbd></p>
+<p class="desc">set extended options (comma-separated list);
+in the past <code>-R</code> was used (and is still supported
+for backward compatibility); there are following options:</p>
+
+<p class="desc_ex"><code>stride=</code><kbd>n</kbd> &nbsp; &nbsp;
+configure fs for a RAID array with the stride size <kbd>n</kbd> fs blocks;
+this is the number of blocks read or written to disk before moving to the
+next disk of array (aka "chunk size");</p>
+
+<p class="desc_ex"><code>stripe-width=</code><kbd>n</kbd> &nbsp; &nbsp;
+configure fs for a RAID array with the stride width <kbd>n</kbd> fs blocks
+per stripe; this is usually "stride size" * "number of data-bearing disks
+in the RAID";</p>
+
+<p class="desc_ex"><code>resize=</code><kbd>n</kbd> &nbsp; &nbsp;
+reserve enough space so that the block group descriptor table can grow
+to support a filesystem that has <kbd>n</kbd> blocks;</p>
+
+<p class="desc_ex"><code>lazy_itable_init</code>[<code>=</code><kbd>n</kbd>] &nbsp; &nbsp;
+if <samp>uninit_bg</samp> is enabled and <kbd>n</kbd> = <samp>1</samp>
+(or value is missing), the inode table will not be fully initialized by
+<code>~</code>; this speeds up fs initialization, but it requires the kernel
+to finish init in the background when fs is first mounted; negative values
+disable this option;</p>
+
+<p class="desc_ex"><code>test_fs</code> &nbsp; &nbsp;
+set flag in the filesystem superblock indicating that it may be mounted
+using experimental kernel code, such as the <samp>ext4dev</samp> fs;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-f</code> <kbd>n</kbd></td>
+<td class="opt_desc">the size of fragments in bytes;</td></tr>
+<tr>
+<td class="opt_name"><code>-F</code></td>
+<td class="opt_desc">force fs creation, even if the specified
+device is not a [block special device] partition, or if other params do not
+make sense; to force <code>~</code> to create a filesystem even if it appears
+to be in use or mounted, specify <code>-FF</code> (but <b>this is
+dangerous!</b>);</td></tr>
+<tr>
+<td class="opt_name"><code>-g</code> <kbd>n</kbd></td>
+<td class="opt_desc">the number of blocks in a block group; you should
+<b>never set this param</b>, it is for developers only!;</td></tr>
+<tr>
+<td class="opt_name"><code>-G</code> <kbd>n</kbd></td>
+<td class="opt_desc">the number of block groups that will be packed together
+to create one large virtual block group on an <samp>ext4</samp> fs; this
+improves meta-data locality and performance on meta-data heavy workloads;
+<kbd>n</kbd> must be a power of 2 and may only be specified if
+<samp>flex_bg</samp> is enabled;</td></tr>
+<tr>
+<td class="opt_name"><code>-i</code> <kbd>n</kbd></td>
+<td class="opt_desc">bytes per inode ratio (should not be smaller than
+the blocksize); <code>~</code> creates an inode for every <kbd>n</kbd>
+bytes; the larger the ratio, the fewer inodes will be created; note, that
+you cannot increase the number of inodes without re-creating fs;</td></tr>
+<tr>
+<td class="opt_name"><code>-I</code> <kbd>n</kbd></td>
+<td class="opt_desc">the size of an inode in bytes (default is 256, min
+is 128; <kbd>n</kbd> must be a power of 2); larger inodes can be used to store
+extended attribs for improved performance, but very large inodes reduce
+the usable space in fs and can negatively impact performance; <b>this
+param cannot be changed after fs creation!</b>;</td></tr>
+<tr>
+<td class="opt_name"><code>-j</code></td>
+<td class="opt_desc">create fs with an <samp>ext3</samp> journal;
+if <code>-J</code> is not specified, the default journal params will be used
+to create an appropriately sized journal stored within the filesystem;</td></tr>
+</table>
+
+<p class="fmtc"><code>-J</code> <kbd>params</kbd></p>
+<p class="desc">create fs with an <samp>ext3</samp> journal using
+the specified options (they are mutually exclusive):</p>
+
+<p class="desc_ex"><code>size=</code><kbd>n</kbd> &nbsp; &nbsp;
+create an internal journal (stored inside fs) of size <kbd>n</kbd>
+MB; the size of the journal must be at least 1024 fs blocks (i.e., 1MB
+if using 1k blocks, 4MB if using 4k blocks, etc.) and may be no more
+than 102,400 fs blocks;</p>
+
+<p class="desc_ex"><code>device=</code><kbd>ext_journal</kbd> &nbsp; &nbsp;
+attach fs to the external journal block dev located on <kbd>ext_journal</kbd>;
+instead of a dev name you can give <code>LABEL=</code><kbd>label</kbd>
+or <code>UUID=</code><kbd>uuid</kbd>; external journal must be created
+beforehand using cmd like<br>
+<code>mke2fs -O journal_dev </code><kbd>ext_journal</kbd><br>
+<kbd>ext_journal</kbd> must have the same block size as the new fs;
+note that while there is support for attaching multiple filesystems to
+a single external journal, the Linux kernel and <code>e2fsck</code> do not
+support shared external journals yet;</p>
+
+<p class="fmtc"><code>-l</code> <kbd>file</kbd></p>
+<p class="desc">read the bad blocks list from <kbd>file</kbd>;
+block numbers in the bad block list must be generated using the same
+block size as the filesystem being created (<code>-c </code> is simpler
+and less error-prone method of checking a disk for the bad blocks);</p>
+
+<p class="fmtc"><code>-L</code> <kbd>label</kbd></p>
+<p class="desc">set volume label for fs (max length is 16 bytes);</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-m</code> <kbd>n</kbd></td>
+<td class="opt_desc">set the percentage of fs blocks reserved for
+the superuser to prevent fragmentation and allow root-owned daemons
+(e.g., <code>syslogd</code>) to function correctly when non-priv processes
+are not allowed to write due to lack of space in the filesystem;
+the default is 5%;</td></tr>
+<tr>
+<td class="opt_name"><code>-M</code></td>
+<td class="opt_desc">set the last mounted dir for the filesystem;</td></tr>
+<tr>
+<td class="opt_name"><code>-n</code></td>
+<td class="opt_desc">do not create fs, just show what would be done
+if you have chosen to create it; this can also be used to determine the
+location of the backup superblocks for a particular fs, so long as the params
+that were passed when the filesystem was originally created are used again;</td></tr>
+<tr>
+<td class="opt_name"><code>-N</code> <kbd>n</kbd></td>
+<td class="opt_desc">override the default calculation of the number of inodes
+(that is based on the total number of blocks and bytes/inode ratio), and set
+the value directly (if you think you know better);</td></tr>
+</table>
+
+<p class="fmtc"><code>-o</code> <kbd>creator-os</kbd></p>
+<p class="desc">override the default value of the "creator operating system"
+field of the filesystem; by default this field is set to the name of the OS
+the <code>~</code> was compiled for;</p>
+
+<p class="fmtc"><code>-O</code> <kbd>features</kbd></p>
+<p class="desc">create fs with the given features [overriding defaults];
+currently <samp>sparse_super</samp> and <samp>filetype</samp> are set on
+by default; to switch them off, prefix option with <code>^</code>;
+available options are:</p>
+
+<p class="desc_ex"><code>dir_index</code> &nbsp; &nbsp;
+use hashed B-trees to speed up lookups in large dirs;</p>
+
+<p class="desc_ex"><code>extent</code> &nbsp; &nbsp;
+use extents instead of traditional indirect block
+scheme for storing data block locations in the inodes;</p>
+
+<p class="desc_ex"><code>filetype</code> &nbsp; &nbsp;
+store file type info in dir entries;</p>
+
+<p class="desc_ex"><code>flex_bg</code> &nbsp; &nbsp;
+allow bitmaps and inode tables for a block group to
+be placed anywhere on the storage media;</p>
+
+<p class="desc_ex"><code>has_journal</code> &nbsp; &nbsp;
+create an <samp>ext3</samp> journal (as with <code>-j</code>);</p>
+
+<p class="desc_ex"><code>journal_dev</code> &nbsp; &nbsp;
+create an external <samp>ext3</samp> journal on the given device;</p>
+
+<p class="desc_ex"><code>large_file</code> &nbsp; &nbsp;
+fs can contain files that are &gt; <samp>2GB</samp> (modern kernels set this
+feature auto when a file &gt; <samp>2GB</samp> is created);</p>
+
+<p class="desc_ex"><code>resize_inode</code> &nbsp; &nbsp;
+reserve space so the block group descriptor table may grow in the future;
+it's useful for online resizing (<code>resize2fs</code>); by default
+<code>~</code> will attempt to reserve enough space so that fs may grow to
+<samp>1024</samp> times its initial size; this can be changed using the
+<samp>resize</samp> extended option;</p>
+
+<p class="desc_ex"><code>sparse_super</code> &nbsp; &nbsp;
+create fs with fewer superblock backup copies (saves space on large fs);</p>
+
+<p class="desc_ex"><code>uninit_bg</code> &nbsp; &nbsp;
+(<samp>ext4</samp> only) create fs without initializing all of the block
+groups; this feature also enables checksums and
+<samp>highest-inode-used</samp> stats in each blk grp; this feature can
+speed up fs creation (if <samp>lazy_itable_init</samp> is enabled),
+and can also reduce <code>e2fsck</code> time essentially;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-q</code></td>
+<td class="opt_desc">quiet execution (useful in scripts);</td></tr>
+</table>
+
+<p class="fmtc"><code>-r</code> <kbd>rev</kbd></p>
+<p class="desc">(rare) set fs revision (default is 1; 0 - for old kernels);</p>
+
+<p class="fmtc"><code>-R stripe=</code><kbd>n</kbd></p>
+<p class="desc">(?) set stripe-size to <kbd>n</kbd> filesystem blocks
+per stripe (this is for RAID filesystems);</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-S</code></td>
+<td class="opt_desc">write superblock and group descriptors only,
+do not touch inode table, block and inode bitmaps; this may have sense
+in the situation when all superblock copies are corrupted and you attempt
+to perform last-ditch recovery; it is very important in this case to specify
+correct block size, and run <a href="cmds_e.html#e2fsck"><code>e2fsck</code></a>
+immediately after <code>~</code>; anyway, there is no guarantee of success;</td></tr>
+</table>
+
+<p class="fmtc"><code>-t</code> <kbd>fs-type</kbd></p>
+<p class="desc">set fs type (<samp>ext2</samp>, <samp>ext3</samp>,
+<samp>ext4</samp>); otherwise <code>~</code> will use defaults from
+<samp>/etc/mke2fs.conf</samp>; invocation mode (<code>mkfs.ext4</code>)
+is another way to set fs type;</p>
+
+<p class="fmtc"><code>-T</code> <kbd>usage-type</kbd></p>
+<p class="desc">set fs usage style:</p>
+<table class="opts" style="margin-left:3.6em;width:80%">
+<tr>
+<td class="opts">news</td>
+<td class="opt_desc">one inode per 4Kb block;</td></tr>
+<tr>
+<td class="opts">largefile</td>
+<td class="opt_desc">one inode per 1 megabyte;</td></tr>
+<tr>
+<td class="opts">largefile4 &nbsp;</td>
+<td class="opt_desc">one inode per 4 megabyte;</td></tr>
+</table>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-V</code></td>
+<td class="opt_desc">version;</td></tr>
+<tr>
+<td class="opt_name"><code>-v</code></td>
+<td class="opt_desc">verbose;</td></tr>
+</table>
+
+
+
+
+
+<p class="cmdname"><a name="mkfs">mkfs</a></p>
+<p>
+is a front-end for the various filesystem builders (<code>mkfs.</code><kbd>fstype</kbd>).</p>
+
+<p class="fmt"><code>mkfs&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;filesys&nbsp;</kbd>[<kbd>blocks</kbd>]</p>
+<p>
+<kbd>filesys</kbd> is either the device name (e.g. <samp>/dev/sda2</samp>)
+or the mount point (e.g. <samp>/u03</samp>) for a filesystem.
+<kbd>blocks</kbd> is the number of blocks to be used for fs.
+The exit code is 0 on success and 1 on failure.</p>
+
+<p class="cmdc">mkfs.btrfs /dev/sda2</p>
+<p class="desc">create <samp>BTRFS</samp> filesystem in HDD partition
+<samp>/dev/sda2</samp>;</p>
+
+<p class="cmdc">mkfs -t ext3 /dev/sda5</p>
+<p class="desc">create <samp>ext3</samp> filesystem in HDD partition
+<samp>/dev/sda5</samp>;</p>
+
+<p class="cmdc">mkfs.ext3 /dev/sda5</p>
+<p class="desc">like previous (create an <samp>ext3</samp> fs
+in <samp>/dev/sda5</samp>);</p>
+
+<p class="cmdc">mkfs.vfat -F 32 -n SYSRESC /dev/sdf1</p>
+<p class="desc">create FAT32 filesystem on a USB Flash Drive;
+<code>&nbsp;-F&nbsp;</code>is fs-specific option specifying FAT size
+(<samp>12</samp>, <samp>16</samp>, <samp>32</samp>); <code>&nbsp;-n&nbsp;</code>is
+fs-specific option to set volume name (label) (max 11 chars);</p>
+
+<p class="cmdc">mkfs.exfat -n FLASH01 /dev/sdf1</p>
+<p class="desc">create exFAT filesystem on a USB Flash Drive; set volume
+label as <samp>FLASH01</samp>; NOTE! Sometimes <b>exFAT</b> support is not
+installed by default; see <a href="storage.html#usb_flash_fs">USB flash</a>;</p>
+
+<p class="cmdc">mkfs -t ext2 /dev/fd0 1440</p>
+<p class="desc">create <samp>ext2</samp> filesystem on a floppy disk;</p>
+
+
+
+<h5>Some options</h5>
+
+<table class="options">
+<tr><td class="opt_name"><code>-c</code></td>
+<td class="opt_desc">check device for bad blocks before creating fs;</td></tr>
+</table>
+
+<p class="fmtc"><code>-l</code> <kbd>file</kbd></p>
+<p class="desc">read the bad blocks list from <kbd>file</kbd>;</p>
+
+<p class="fmtc"><code>-t</code> <kbd>fstype</kbd></p>
+<p class="desc">the type of the filesystem to be created;
+otherwise, use default;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-v</code></td>
+<td class="opt_desc">verbose;</td></tr>
+
+<tr><td class="opt_name"><code>-V</code></td>
+<td class="opt_desc">verbose output, including all fs-specific
+cmds that are executed; specifying this option more than once inhibits
+execution of any file system-specific cmds;</td></tr>
+</table>
+<p>
+All generic options must precede and not be combined with fs-specific
+options. Some fs-specific programs do not automatically detect the device
+size and require the <kbd>blocks</kbd> param to be specified.</p>
+
+
+
+
+
+
+<p class="cmdname"><a name="mklost+found">mklost+found</a></p>
+<p>
+creates a <samp>lost+found</samp> dir in the current working dir
+on a Linux ext2/ext3/ext4 filesystem. <code>~</code> pre-allocates disk
+blocks to the <samp>lost+found</samp> dir so that when
+<a href="cmds_e.html#e2fsck"><code>e2fsck</code></a> is used to
+recover a filesystem, it does not need to allocate blocks for
+unlinked files.</p>
+
+<p class="cmd">mklost+found</p>
+<p>
+The root dir of each fs should have a <samp>lost+found</samp> subdir.
+Usually, it is created automatically during fs creation.</p>
+
+
+
+
+
+<p class="cmdname"><a name="mknod">mknod</a></p>
+<p>
+creates a block or a character special file of the given type.</p>
+
+<p class="cmdc">mknod /dev/ttyS0 c 4 64</p>
+<p class="desc">create a character special file for the device
+<samp>ttyS0</samp> with major number <samp>4</samp> and minor number <samp>64</samp>;</p>
+
+<p class="fmt"><code>mknod&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;dev_name dev_type&nbsp;</kbd>[<kbd>major minor</kbd>]</p>
+
+<p class="warn">Note!</p>
+<p class="indent">The preferred way of creating device files is
+<code>MAKEDEV</code> script.</p>
+
+<p class="cmdc">MAKEDEV /dev/md1</p>
+<p class="desc">create a special file for the device <samp>md1</samp>
+(<code>MAKEDEV</code> knows details);</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>-m</code> <kbd>mode</kbd>,
+<code>--mode=</code><kbd>mode</kbd></p>
+<p class="desc">set permission mode
+(as in <a href="cmds_c.html#chmod"><code>chmod</code></a>);</p>
+
+<p class="fmtc"><code>-Z</code> <kbd>str</kbd>,
+<code>--context=</code><kbd>str</kbd></p>
+<p class="desc">set security context (quoted string);</p>
+
+
+
+<h5>Type</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><samp>b</samp></td>
+<td class="opt_desc">block (buffered) special device;</td></tr>
+<tr>
+<td class="opt_name"><samp>c</samp>, <samp>u</samp></td>
+<td class="opt_desc">character (unbuffered) special device;</td></tr>
+<tr>
+<td class="opt_name"><samp>p</samp></td>
+<td class="opt_desc">FIFO (pipe);</td></tr>
+</table>
+<p>
+Both <kbd>major</kbd> and <kbd>minor</kbd> must be specified when type is
+<samp>b c u</samp>, and they must be omitted when type is <samp>p</samp>.
+If <kbd>major</kbd> or <kbd>minor</kbd> begins with <samp>0x</samp> or
+<samp>0X</samp>, it is interpreted as hexadecimal; if it begins with
+<samp>0</samp>, as octal; otherwise, as decimal. The correct values of
+major and minor numbers for all supported devices can be found in kernel
+source <samp>Documentation/devices.txt</samp> file.</p>
+
+
+
+
+
+<p class="cmdname"><a name="mkswap">mkswap</a></p>
+<p>
+sets up a Linux swap area on a device or in a file.</p>
+
+<p class="fmt"><code>mkswap&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;device&nbsp;</kbd>[<kbd>size</kbd>]</p>
+<p>
+<kbd>device</kbd> is either a disk partition or file. Swap size is defined
+by the size of the chosen disk partition, optional param
+<kbd>size</kbd> is retained for backward compatibility only and should
+not be used unless you know exactly what you’re doing. Linux kernels since
+2.4.10 support up to 32 swap areas (old limit was 8). Once created,
+swap area must be properly activated
+(see <a href="cmds_s.html#swapon"><code>swapon</code></a>).</p>
+
+<p class="cmdc">mkswap -c /dev/sdc2</p>
+<p class="desc">check disk partition for bad blocks, and create a swap area;</p>
+
+<p class="cmdc">swapon /dev/sdc2</p>
+<p class="desc">enable the earlier created swap area for use;</p>
+<p>
+Swap file should be considered as a temporary solution only,
+because it works too slow in comparision to swap partition.
+Swap file must not contain holes, so use the following procedure:</p>
+
+<p class="cmdc">dd if=/dev/zero of=swpfile bs=1024 count=65536</p>
+<p class="desc">create a contiguous file that can be later used for swapping;</p>
+
+<p class="cmdc">mkswap swpfile</p>
+<p class="desc">create a swap file <samp>swpfile</samp>;</p>
+
+<p class="cmdc">swapon swpfile</p>
+<p class="desc">enable swap file for use;</p>
+
+
+
+<h5>Options</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-c</code></td>
+<td class="opt_desc">check device for bad blocks before creating a swap area;</td></tr>
+<tr>
+<td class="opt_name"><code>-f</code></td>
+<td class="opt_desc">force creation even if cmd seems wrong;
+it allows to create a swap area larger than the target file or partition;</td></tr>
+<tr>
+<td class="opt_name"><code>-p</code> <kbd>n</kbd></td>
+<td class="opt_desc">use the specified page size (usually unneccesary and
+not recommended);</td></tr>
+<tr>
+<td class="opt_name"><code>-v0</code></td>
+<td class="opt_desc">create an old style swap area (bad idea unless your kernel
+is older than 2.2 or <samp>PAGE_SIZE</samp> is less than 2048 bytes);</td></tr>
+<tr>
+<td class="opt_name"><code>-v1</code></td>
+<td class="opt_desc">create a new style swap area (default);</td></tr>
+</table>
+
+
+
+
+
+<p class="cmdname"><a name="mktemp">mktemp</a></p>
+<p>
+creates a temporary file or directory and prints its name.</p>
+
+<p class="cmdc">mktemp temp.XXXXX</p>
+<p class="desc">create a temporary file (something like
+<samp>temp.wGBBe</samp>);</p>
+
+<p class="fmt"><code>mktemp&nbsp;</code>[<kbd>options</kbd>] [<kbd>template</kbd>]</p>
+<p>
+<kbd>template</kbd> must contain at least 3 consecutive <samp>X</samp>s
+in last component. If <kbd>template</kbd> is not specified, the default
+<samp>tmp.XXXXXXXXXX</samp> is used, and <code>--tmpdir</code> is implied.
+In general, <kbd>template</kbd> can be an absolute name, but not with
+<code>--tmpdir</code>.</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>-d</code>, <code>--directory</code></p>
+<p class="desc">create dir, not a file;</p>
+
+<p class="fmtc"><code>-q</code>, <code>--quiet</code></p>
+<p class="desc">suppress diagnostics about creation failure;</p>
+
+<p class="fmtc"><code>--suffix=</code><kbd>str</kbd></p>
+<p class="desc">append suffix <kbd>str</kbd> to <kbd>template</kbd>;
+suffix must not contain slash; this option is implied if template does
+not end in <samp>X</samp>;</p>
+
+<p class="fmtc"><code>--tmpdir</code>[<code>=</code><kbd>dir</kbd>]</p>
+<p class="desc">interpret <kbd>template</kbd> relative to <kbd>dir</kbd>;
+if <kbd>dir</kbd> is not specified, use <samp>$TMPDIR</samp> if set, else
+use <samp>/tmp</samp>;</p>
+
+<p class="fmtc"><code>-u</code>, <code>--dry-run</code></p>
+<p class="desc">do not create anything, just print a name (unsafe);</p>
+
+
+
+
+
+<p class="cmdname"><a name="modinfo">modinfo</a></p>
+<p>
+extracts info from the Linux kernel modules.</p>
+
+<p class="fmt"><code>modinfo&nbsp;</code>[<kbd>options</kbd>] [<kbd>mod_name</kbd> | <kbd>file</kbd>]</p>
+<p>
+If arg is <kbd>mod_name</kbd>, then <samp>/lib/modules/version</samp>
+dir is searched. By default <code>~</code> lists each attrib
+of the module in form <kbd>name</kbd> : <kbd>value</kbd>.</p>
+
+<p class="cmdc">modinfo sis900</p>
+<p class="desc">list all attributes of the module <samp>sis900</samp>;</p>
+
+<p class="cmdc">modinfo -F author sis900</p>
+<p class="desc">list the "author" field of the module <samp>sis900</samp>;</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-h</code> &nbsp;&nbsp;
+<code>-V</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>-F</code> <kbd>field</kbd></p>
+<p class="desc">output the value of the specified field only
+(useful for scripts); field can be one of the following: <samp>alias</samp>,
+<samp>author</samp>, <samp>depends</samp>, <samp>description</samp>,
+<samp>filename</samp>, <samp>license</samp>, <samp>param</samp>;</p>
+
+<p class="fmtc"><code>-O</code>, <code>--null</code></p>
+<p class="desc">use the ASCII zero char to separate field values,
+instead of a new line (useful for scripts);</p>
+
+
+
+
+
+<p class="cmdname"><a name="modprobe">modprobe</a></p>
+<p>
+adds / removes kernel modules to / from Linux kernel.</p>
+
+<p class="cmdc">modprobe irda-usb</p>
+<p class="desc">load module <samp>irda-usb</samp>;</p>
+
+<p class="fmt"><code>modprobe&nbsp;</code>[<kbd>options</kbd>] [<kbd>mod_spec</kbd>]</p>
+<p>
+There is no difference between '<code>_</code>' and '<code>-</code>'
+in modules names. <code>~</code> looks in
+<samp>/lib/modules/`uname –r`</samp> for all modules and files except
+optional <samp>/etc/modprobe.conf</samp>. It also expects an up-to-date
+<samp>modules.dep</samp> file which describes modules dependencies.</p>
+
+
+
+<h5>Some options</h5>
+
+<p class="fmt"><code>-V</code> &nbsp;&nbsp; <code>--version</code>
+&nbsp;&nbsp; <code>-v</code> &nbsp;&nbsp; <code>--verbose</code></p>
+
+<p class="fmtc"><code>-C</code> <kbd>conf_file</kbd>,
+<code>--config=</code><kbd>conf_file</kbd></p>
+<p class="desc">use the specified file instead of the default
+<samp>/etc/modprobe.conf</samp>;</p>
+
+<p class="fmtc"><code>-c</code>, <code>--showconfig</code></p>
+<p class="desc">dump out the config file and exit;</p>
+
+<p class="fmtc"><code>-f</code>, <code>--force</code></p>
+<p class="desc">(dangerous!) try to strip any versioning info from module;
+this option can help if kernel rejects the module;</p>
+
+<p class="fmtc"><code>-i</code>, <code>--ignore-install --ignore-remove</code></p>
+<p class="desc">ignore install / remove cmds in the config file (if any)
+for the module on the cmd line (does not affect dependent modules);</p>
+
+<p class="fmtc"><code>-n</code>, <code>--dry-run</code></p>
+<p class="desc">do everything except actually inserting / removing modules;
+with <code>-v</code> may be useful for debugging;</p>
+
+<p class="fmtc"><code>-o</code> <kbd>name</kbd>,
+<code>--name=</code><kbd>name</kbd></p>
+<p class="desc">try to rename the module which is being inserted;
+this may have sense for testing only, because kernel does not accept
+two modules of the same name;</p>
+
+<p class="fmtc"><code>-q</code>, <code>--quiet</code></p>
+<p class="desc">quiet mode, silently ignore incorrect cmds;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-r</code></td>
+<td class="opt_desc">remove a module from kernel; if modules it depends
+on are also unused, an attempt will be done to remove them as well;
+several modules simultaneously can be specified on the cmd line for the
+removal; in fact, there is usually no reason to remove modules manually,
+unless you are developing or testing them;</td></tr>
+</table>
+
+<p class="fmtc"><code>-s</code>, <code>--syslog</code></p>
+<p class="desc">send error messages to the <samp>syslog</samp> mechanism
+(as <samp>LOG_DAEMON</samp> with level <samp>LOG_NOTICE</samp>)
+instead of <samp>stderr</samp>;</p>
+
+<p class="fmtc"><code>--first-time</code></p>
+<p class="desc">normally, <code>~</code> returns success and does nothing,
+when you try to load a module which is already present, or remove a module
+which is not loaded; this option causes <code>~</code> to return failure,
+if nothing was done;</p>
+
+<p class="fmtc"><code>--force-vermagic</code></p>
+<p class="desc">(dangerous!) every module contains some important info
+like kernel / compiler versions, etc; if kernel rejects module
+complaining that "version magic" does not match, you can use this option;</p>
+
+<p class="fmtc"><code>--force-modversion</code></p>
+<p class="desc">(dangerous!) if a module is compiled with
+<samp>CONFIG_MODVERSION</samp> set, it has a section detailing the versions
+of every interface used; if kernel reject the module comlaining that the
+module disagrees about a version of some interface, you can use this option
+to remove the version info;</p>
+
+<p class="fmtc"><code>--set-version</code></p>
+<p class="desc">set the kernel version, rather than using
+<a href="cmds_u.html#uname"><code>uname</code></a>
+(it defines where to find the modules);</p>
+
+<p class="fmtc"><code>--show-depends</code></p>
+<p class="desc">list module (or alias) dependencies; it does not run any
+install cmds; <a href="#modinfo"><code>modinfo</code></a> provides the same
+info, but knows nothing about aliases;</p>
+
+
+
+
+
+<p class="cmdname"><a name="mount">mount</a></p>
+<p>
+mounts filesystems.</p>
+
+<p class="cmdc">mount</p>
+<p class="desc">list all mounted filesystems;</p>
+
+<p class="cmdc">mount -l</p>
+<p class="desc">list all mounted filesystems and their labels;</p>
+
+<p class="fmt"><code>mount&nbsp;</code>[<kbd>options</kbd>] [<code>-t</code> <kbd>type</kbd>]<kbd>&nbsp;device dir</kbd></p>
+<p>
+<kbd>device</kbd> can be one of the following:</p>
+<ul style="margin-left:2%">
+<li>a device special file (e.g., <samp>/dev/sda2</samp>),</li>
+<li>a device's UUID (see <samp>/etc/fstab</samp>),</li>
+<li>a device's label (see <samp>/etc/fstab</samp>).,</li>
+<li>an ISO image file;</li>
+</ul>
+You can get UUIDs and labels using following cmds:</p>
+
+<p class="cmdc">blkid</p>
+<p class="cmd">blkid /dev/sda5</p>
+<p>
+<kbd>dir</kbd> is a mount point, i.e., some directory (should be
+empty, though it's not mandatory). The removable devices (CD, DVD, USB Flash)
+are usually auto mounted in <samp>/media</samp> dir. For random and rare
+tasks use <samp>/mnt</samp> (unless already occupied), or create some temporary
+mount point (<samp>/tmp</samp> dir is one of possible locations).</p>
+<p>
+Note that <samp>/boot</samp>, <samp>/home</samp>, <samp>/opt</samp>,
+<samp>/var</samp> can be mount points for the corresponding HDD partitions.
+Also, <samp>/tmp</samp>, <samp>/var/run</samp>, <samp>/var/lock</samp> can be
+mount points for the <samp>tempfs</samp> filesystems.</p>
+<p>
+Option <code>-t</code> <kbd>type</kbd> is not usually required, however,
+you can find currently supported fs types, with one of the following cmds:</p>
+
+<p class="cmdc">cat /proc/filesystems</p>
+<p class="cmd">cat /etc/filesystems</p>
+<p>
+File <samp>/etc/fstab</samp> defines what filesystems should be mounted
+at the system startup and how. Normally, only root can mount filesystems,
+however, option user in <samp>/etc/fstab</samp> gives permission to mount
+corresponding fs to other people. File <samp>/etc/mtab</samp> contains
+the list of currently mounted filesystems. Note that
+<a href="cmds_d.html#df"><code>df</code></a> (disk free) also gives info
+about mounted filesystem.</p>
+
+<p class="cmdc">mount /dev/sdc2 /u02</p>
+<p class="desc">mount device <samp>/dev/sdc2</samp> on <samp>/u02</samp> dir;</p>
+
+<p class="cmdc">mount UUID="547afe78-e77f-4af2-b2b1-89607efd153e" /mnt</p>
+<p class="desc">mount device on <samp>/mnt</samp> dir using device's UUID;</p>
+
+<p class="cmdc">mount -o remount,rw /</p>
+<p class="desc">remount the root filesystem in read/write mode;</p>
+
+<p class="cmdc">mount /dev/hda /media</p>
+<p class="desc">mount CD/DVD (ATAPI/IDE) on <samp>/media</samp> dir;</p>
+
+<p class="fmt"><code>mount -av</code> &nbsp; &nbsp;
+mount all filesystems listed in <samp>/etc/fstab</samp>;</p>
+
+<p class="cmdc">mount /dev/cdrom</p>
+<p class="desc">mount CD (provided there is a proper line
+for <samp>/dev/cdrom</samp> in <samp>/etc/fstab</samp> file);</p>
+
+<p class="cmdc">mount -t ext2 /dev/fd0 /mnt/floppy</p>
+<p class="desc">mount floppy disk with ext2 filesystem (old style);</p>
+
+<p class="cmdc">mount -t udf /dev/hdb /media/cdrw</p>
+<p class="desc">mount CD-RW with UDF filesystem on dir <samp>/media/cdrw</samp>;</p>
+
+<p class="cmdc">mount -t vfat -r /dev/sda2 /c</p>
+<p class="desc">mount FAT32 partition on dir <samp>/c</samp> read-only;</p>
+
+<p class="cmdc">mount -t vfat -o umask=000 /dev/hda5 /d</p>
+<p class="desc">mount FAT32 partition on <samp>/d</samp> read-write for all;
+<samp>umask</samp> is valid not for all fs types, it sets permissions for
+files and dirs residing on fs which knows nothing about permissions;
+there are also <samp>dmask</samp> (for dirs only) and <samp>fmask</samp>
+(for files only), default is <samp>umask</samp> of the current process;</p>
+
+<p class="cmdc">mount -t cifs //srv3/user /mnt -o rw,user=alex%tcs4xEm6</p>
+<p class="desc">mount Windows Server share read-write;</p>
+
+<p class="cmdc">mount -t cifs //srv3/user /mnt -o user=alex,password=tcs4xEm6,iocharset=utf8,ro</p>
+<p class="desc">mount Windows Server share read-only;</p>
+
+<p class="cmdc">mount -t cifs //srv3/user /mnt -o user=alex,iocharset=utf8,ro</p>
+<p class="desc">mount Windows Server share read-only (you'll be prompted
+for the user's Active Directory password);</p>
+
+<p class="cmdc">mount -o loop cdimage.iso /tmp/cdrom</p>
+<p class="desc">mount CD image on <samp>/tmp/cdrom</samp> (you should first
+create this dir);</p>
+
+<p class="cmdc">mount -o loop,exec LiveCD.iso /mnt</p>
+<p class="desc">mount CD image on <samp>/mnt</samp> with permission to run
+apps from the mounted media (by default it's forbidden);</p>
+
+
+
+<h5>Some options</h5>
+
+<p class="fmt"><code>-h</code> &nbsp;&nbsp; <code>-V</code></p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-a</code></td>
+<td class="opt_desc">mount all fs of the given type listed in <samp>/etc/fstab</samp>;</td></tr>
+<tr>
+<td class="opt_name"><code>-F</code></td>
+<td class="opt_desc">fork a new instance of <code>mount</code> for each
+device, and perform all mounts in parallel (may be used with <code>-a</code>
+to speed up process); note that mount order is to some extent random in this
+case;</td></tr>
+<tr>
+<td class="opt_name"><code>-i</code></td>
+<td class="opt_desc">don’t call <code>/sbin/mount.filesystem</code> helper;</td></tr>
+</table>
+
+<p class="fmtc"><code>-L</code> <kbd>label</kbd></p>
+<p class="desc">mount the partition with the specified label;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-l</code></td>
+<td class="opt_desc">add fs label in the mount output
+(see <a href="cmds_e.html#e2label"><code>e2label</code></a>);</td></tr>
+<tr>
+<td class="opt_name"><code>-n</code></td>
+<td class="opt_desc">mount without writing in <samp>/etc/mtab</samp>;</td></tr>
+</table>
+
+<p class="fmtc"><code>-o</code> <kbd>list</kbd></p>
+<p class="desc">mount using a comma-separated list of options
+(see below options used in <samp>/etc/fstab</samp>);</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-p</code> <kbd>n</kbd></td>
+<td class="opt_desc">in case of a loop mount with encryption, read the
+passphrase from the file descriptor <kbd>n</kbd> instead of the terminal;</td></tr>
+<tr>
+<td class="opt_name"><code>-r</code></td>
+<td class="opt_desc">mount filesystem read only;</td></tr>
+<tr>
+<td class="opt_name"><code>-s</code></td>
+<td class="opt_desc">tolerate sloppy options (ignore options not supported
+by this filesystem type); this exists mainly for support of Linux
+autofs-based automounter;</td></tr>
+</table>
+
+<p class="fmtc"><code>-t</code> <kbd>fstype</kbd></p>
+<p class="desc">mount fs assuming it has the specified type:</p>
+<table class="opts" style="margin-left:4.8rem">
+<tr><td class="opt_name" style="width:6rem"><samp>cifs</samp></td><td class="opt_desc">Common Internet Filesystem (Microsoft);</td></tr>
+<tr><td class="opt_name"><samp>ext2</samp></td><td class="opt_desc">standard linux fs (also, <samp>ext3</samp>, <samp>ext4</samp>);</td></tr>
+<tr><td class="opt_name"><samp>iso9660</samp></td><td class="opt_desc">ISO 9660 (CD ROM);</td></tr>
+<tr><td class="opt_name"><samp>msdos</samp></td><td class="opt_desc">old DOS FAT;</td></tr>
+<tr><td class="opt_name"><samp>nfs</samp></td><td class="opt_desc">NFS;</td></tr>
+<tr><td class="opt_name"><samp>ntfs</samp></td><td class="opt_desc">NTFS (Windows NT/XP/200x/7);</td></tr>
+<tr><td class="opt_name"><samp>vfat</samp></td><td class="opt_desc">FAT32 (Windows 95/98/Me);</td></tr>
+<tr><td class="opt_name"><samp>udf</samp></td><td class="opt_desc">DVD (or CD-RW written in packet mode);</td></tr>
+</table>
+<p class="desc">Also supported: adfs, affs, autofs, code, coherent,
+cramfs, devpts, efs, hfs, hpfs, jfs, minix, ncpfs, nfs4, proc,
+qnx4, ramfs, reiserfs, romfs, smbfs, sysv, tmpfs, ufs, umsdos, xenix,
+xfs, xiafs;</p>
+<p class="desc">
+<span class="warn"><b>Note</b></span> that some fs (<samp>cifs</samp>,
+<samp>nfs</samp>) may require additional pkgs to be installed
+(see <a href="misc.html#smb_client">SMB Client Setup</a>,
+<a href="misc.html#nfs_client">NFS Client Setup</a>).</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-w</code></td>
+<td class="opt_desc">mount filesystem read/write (default);</td></tr>
+</table>
+
+
+
+<h5>Options that can be used in <samp>/etc/fstab</samp></h5>
+
+<p class="fmtc"><code>async</code></p>
+<p class="desc">all I/O to fs should be done asynchronously;</p>
+
+<p class="fmtc"><code>atime</code></p>
+<p class="desc">update inode access time for each access (default);</p>
+
+<p class="fmtc"><code>auto</code></p>
+<p class="desc">can be mounted with <code>-a</code> option;</p>
+
+<p class="fmtc"><code>compress=no</code></p>
+<p class="fmtc"><code>compress=lzo</code></p>
+<p class="fmtc"><code>compress=zlib</code></p>
+<p class="desc">
+(<b>btrfs</b>) compression method: disable / faster / better (linux kernel
+must be at least 2.6.38; <samp>no</samp> requires 3.6);</p>
+
+<p class="fmtc"><code>compress-force=lzo</code></p>
+<p class="fmtc"><code>compress-force=zlib</code></p>
+<p class="desc">
+(<b>btrfs</b>) enable compression even for files that don't compress well,
+e.g., video (linux kernel must be at least 2.6.38);</p>
+
+<p class="fmtc"><code>defaults&nbsp;</code></p>
+<p class="desc">combination of <code>rw,suid,dev,exec,auto,nouser,async</code>;</p>
+
+<p class="fmtc"><code>dev</code></p>
+<p class="desc">interpret char or block special device on fs;</p>
+
+<p class="fmtc"><code>discard</code></p>
+<p class="desc">(<b>ext4</b>, <b>btrfs</b>) enable discard/TRIM on freed blocks;</p>
+
+<p class="fmtc"><code>exec</code></p>
+<p class="desc">permit execution of binaries;</p>
+
+<p class="fmtc"><code>_netdev</code></p>
+<p class="desc">resides on a device that requires network accerss;</p>
+
+<p class="fmtc"><code>noatime</code></p>
+<p class="desc">do not update inode access time;</p>
+
+<p class="fmtc"><code>noauto</code></p>
+<p class="desc">can only be mounted explicitly (that is, ignore <code>-a</code>);</p>
+
+<p class="fmtc"><code>nodatacow</code></p>
+<p class="desc">(<b>btrfs</b>) do not copy-on-write data for newly created
+files, existing files are unaffected; it also implies <code>nodatasum</code>;</p>
+
+<p class="fmtc"><code>nodatasum</code></p>
+<p class="desc">(<b>btrfs</b>) do not checksum data for newly created files;
+on most modern CPUs this does not result in any reasonable performance
+improvement, while bad bits might go undetected;</p>
+
+<p class="fmtc"><code>nodev</code></p>
+<p class="desc">do not interpret char or block special device on fs;</p>
+
+<p class="fmtc"><code>noexec</code></p>
+<p class="desc">do not allow execution of binaries from mounted fs;</p>
+
+<p class="fmtc"><code>nosuid</code></p>
+<p class="desc">do not allow suid/sgid bits to take effect;</p>
+
+<p class="fmtc"><code>nouser</code></p>
+<p class="desc">do not allow non-root users to mount this fs (default);</p>
+
+<p class="fmtc"><code>remount</code></p>
+<p class="desc">attempt to remount an already mounted fs (with different
+flags; for example, to change from <code>ro</code> to <code>rw</code>);</p>
+
+<p class="fmtc"><code>ro</code></p>
+<p class="desc">mount filesystem read-only;</p>
+
+<p class="fmtc"><code>rw</code></p>
+<p class="desc">mount filesystem read-write;</p>
+
+<p class="fmtc"><code>ssd</code></p>
+<p class="desc">(<b>btrfs</b>) turns on SSD optimized behaviour
+(is enabled auto if <samp>/sys/block/sd<span class="arg">X</span>/queue/rotational</samp>
+keeps <samp>0</samp>); this does not enable discard/TRIM!</p>
+
+<p class="fmtc"><code>suid</code></p>
+<p class="desc">allow suid/sgid bits to take effect;</p>
+
+<p class="fmtc"><code>sync</code></p>
+<p class="desc">all i/o to this fs should be done synchronously;</p>
+
+<p class="fmtc"><code>dirsync</code></p>
+<p class="desc">all dir updates within the filesystem should be done
+synchronously;</p>
+
+<p class="fmtc"><code>user</code></p>
+<p class="desc">allow ordinary users to mount this fs; it implicitly
+applies other options: <code>noexec,nosuid,nodev</code>;</p>
+
+<p class="fmtc"><code>users</code></p>
+<p class="desc">like previous, but allows all users to unmount fs;
+with previous option only mounter can unmount fs;</p>
+
+
+
+
+
+<p class="cmdname"><a name="mtr">mtr</a></p>
+<p>
+is a network diagnostic tool that combines the functionality
+of<code><a href="cmds_p.html#ping"> ping
+</a></code>and<code><a href="cmds_t.html#traceroute"> traceroute</a></code>.
+It investigates the network connection between <i>our computer</i> and the
+specified <i>remote host</i> by sending packets with <i>purposely low</i>
+TTLs. It continues to send pkts with low TTL, noting the response time of the
+intervening routers. This allows<code> mtr </code>to show the response percentage
+and response times of the internet route to the specified host. A sudden increase
+of pkt loss or response time may be an indication of a bad (or overloaded) link.</p>
+<p>
+Note that<code> mtr </code>runs continuously, like <code>ping</code>, unless
+you put it in the <i>report mode</i> using<code> -r </code>option. See all
+<code>mtr</code> <a href="#mtr_options">Options</a> below.</p>
+<p>
+To test connection to some Internet server:</p>
+
+<p class="cmd">mtr somesite.com</p>
+<p>
+The same cmd though without name resolution (numeric IPs only):</p>
+
+<p class="cmd">mtr -n somesite.com</p>
+<p>
+Once again the same cmd, but display both names and numeric IPs:</p>
+
+<p class="cmd">mtr -b somesite.com</p>
+<p>
+Send 10 packets to the specified host and display results (report):</p>
+
+<p class="cmd">mtr -r -c 10 192.168.100.1</p>
+<p>
+Similar to prev, but save data to a file:</p>
+
+<p class="cmdc">mtr -r -c 10 somesite.com &gt; mtr-report.txt</p>
+<p class="cmd">mtr -rw -c 10 somesite.com &gt; mtr-report.txt</p>
+<p>
+The<code> -w </code>option in the last cmd enables wide report format.</p>
+<p>
+The following cmd waits <samp>10</samp> sec before sending next ICMP echo request:</p>
+
+<p class="cmd">mtr -i 10 somesite.com</p>
+<p>
+You can limit the route length (num of hops) using<code> -m </code>option:</p>
+
+<p class="cmd">mtr -m 30 212.59.220.34</p>
+
+<p>
+You can set packet size (in bytes, count in IP and ICMP headers):</p>
+
+<p class="cmd">mtr -s 50 212.59.220.34</p>
+<p>
+Since some [badly configured] hosts and routers block ICMP echo, you can try to
+send UDP datagrams or TCP <samp>SYN</samp> packets. The<code> -P </code>option
+specifies dest port, but you don't have to use it:</p>
+
+<p class="cmdc">mtr -u somesite.com</p>
+<p class="cmdc">mtr --udp somesite.com</p>
+<p class="cmdc">mtr -T somesite.com</p>
+<p class="cmdc">mtr --tcp somesite.com</p>
+<p class="cmdc">mtr -r -c 4 --tcp somesite.com</p>
+<p class="cmd">mtr -r -c 4 --tcp --port 443 somesite.com</p>
+
+<!--
+mtr --csv google.com
+mtr --xml google.com
+mtr -o "LSDR NBAW JMXI" 216.58.223.78
+-->
+
+
+<h5>
+<a name="mtr_options">Options</a></h5>
+
+<p class="fmt"><code>-h</code>, <code>--help</code>,
+<code>-v</code>, <code>--version</code></p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-4</code></td>
+<td class="opt_desc">use IPv4 only;</td></tr>
+<tr>
+<td class="opt_name"><code>-6</code></td>
+<td class="opt_desc">use IPv6 only (though IPV4 may be used for DNS lookups);</td></tr>
+</table>
+
+<p class="fmtc"><code>-a</code> <kbd>addr</kbd>, <code>--address</code> <kbd>addr</kbd></p>
+<p class="desc">bind the outgoing socket to a specified address, so that all
+packets will be sent with that address as <i>src address</i>; this option doesn't
+apply to DNS requests (usually it's what you need, but sometimes it's not);</p>
+
+<p class="fmtc"><code>-B</code> <kbd>n</kbd>, <code>--bitpattern</code> <kbd>n</kbd></p>
+<p class="desc">specify a bit pattern to use in payload; the range is
+<samp>0-255</samp>; if <samp><kbd>n</kbd> &gt; 255</samp>, a random
+pattern will be used;</p>
+
+<p class="fmtc"><code>-b</code>, <code>--show-ips</code></p>
+<p class="desc">show both the host names and numeric IP; in split mode this adds
+an extra field to the output; in report mode use<code> -rw </code>(wide report),
+otherwise IPs may be truncated due to lack of space on the screen;</p>
+
+<p class="fmtc"><code>-C</code>, <code>--csv</code></p>
+<p class="desc">use the CSV (comma-separated-value) output format
+(actually, the separator is '</samp>;</samp>', not comma);</p>
+
+<p class="fmtc"><code>-c</code> <kbd>n</kbd>, <code>--report-cycles</code> <kbd>n</kbd></p>
+<p class="desc">number of pings (echo requests) to send;</p>
+
+<p class="fmtc"><code>--displaymode</code> <kbd>n</kbd></p>
+<p class="desc">initial display mode: <samp>0</samp> statistics (default),
+<samp>1</samp> stripchart without latency info, <samp>2</samp> stripchart
+with latency info;</p>
+
+<p class="fmtc"><code>-e</code>, <code>--mpls</code></p>
+<p class="desc">display info from ICMP extensions for MPLS that are encoded
+in the response packets (RFC 4950, MPLS - ICMP Extensions for Multiprotocol
+Label Switching permits Label Switching Routers to append MPLS info to ICMP
+messages);</p>
+
+<p class="fmtc"><code>-F</code> <kbd>filename</kbd>,
+<code>--filename</code> <kbd>filename</kbd></p>
+<p class="desc">read the list of hostnames from the specified file;</p>
+
+<p class="fmtc"><code>-f</code> <kbd>n</kbd>, <code>--first-ttl</code> <kbd>n</kbd></p>
+<p class="desc">initial TTL, default is <samp>1</samp> (see also<samp> -m</samp>);</p>
+
+<p class="fmtc"><code>-G</code> <kbd>n</kbd>, <code>--gracetime</code> <kbd>n</kbd></p>
+<p class="desc">the number of seconds to wait for responses after the final
+request; the default is<samp> 5s</samp>;</p>
+
+<p class="fmtc"><code>-g</code>, <code>--gtk</code></p>
+<p class="desc">use the GTK+ based X11 Window interface (if available);</p>
+
+<p class="fmtc"><code>-i</code> <kbd>sec</kbd>, <code>--interval</code> <kbd>sec</kbd></p>
+<p class="desc">the number of seconds between echo requests, by default it's
+<samp>1s</samp>; <i>superuser</i> can use values between zero and one;</p>
+
+<p class="fmtc"><code>-j</code>, <code>--json</code></p>
+<p class="desc">use the JSON output format (Java Script Object Notation);</p>
+
+<p class="fmtc"><code>-L</code> <kbd>port</kbd>,
+<code>--localport</code> <kbd>port</kbd></p>
+<p class="desc">source port number for UDP traces;</p>
+
+<p class="fmtc"><code>-l</code>, <code>--raw</code></p>
+<p class="desc">use the raw output format;</p>
+
+<p class="fmtc"><code>-M</code> <kbd>n</kbd>, <code>--mark</code> <kbd>n</kbd></p>
+<p class="desc">set the mark for each packet sent through this socket similar
+to the <i>netfilter</i><samp> MARK </samp>target but socket-based; <i>mark</i>
+is <samp>32</samp>-bit unsigned integer; see <i>socket(7)</i> for full
+description of this socket option;</p>
+
+<p class="fmtc"><code>-m</code> <kbd>n</kbd>, <code>--max-ttl</code> <kbd>n</kbd></p>
+<p class="desc">max number of hops (max TTL), default is <samp>30</samp>;</p>
+
+<p class="fmtc"><code>-n</code>, <code>--no-dns</code></p>
+<p class="desc">do not try to resolve host names, show numeric IPs;</p>
+
+<p class="fmtc"><code>-o</code> <kbd>fields</kbd>, <code>--no-dns</code> <kbd>fields</kbd></p>
+<p class="desc" style="padding-bottom:0">specifies which fields to display
+and their order; you can use one or more <i>Space</i> chars to separate
+fields; (<b>RTT</b> : Round Trip Time)</p>
+
+<table class="grid_2" style="margin-left:3.6em">
+<tr>
+<td class="grid_2_cen" style="width:2em"><samp>L</samp></td>
+<td class="grid_2">Loss ratio</td></tr>
+<tr>
+<td class="grid_2_cen"><samp>D</samp></td><td class="grid_2">Dropped packets</td></tr>
+<tr>
+<td class="grid_2_cen"><samp>R</samp></td><td class="grid_2">Received packets</td></tr>
+<tr>
+<td class="grid_2_cen"><samp>S</samp></td><td class="grid_2">Sent Packets</td></tr>
+<tr>
+<td class="grid_2_cen"><samp>N</samp></td><td class="grid_2">Newest RTT (ms)</td></tr>
+<tr>
+<td class="grid_2_cen"><samp>B</samp></td><td class="grid_2">Min/Best RTT (ms)</td></tr>
+<tr>
+<td class="grid_2_cen"><samp>A</samp></td><td class="grid_2">Average RTT (ms)</td></tr>
+<tr>
+<td class="grid_2_cen"><samp>W</samp></td><td class="grid_2">Max/Worst RTT (ms)</td></tr>
+<tr>
+<td class="grid_2_cen"><samp>V</samp></td><td class="grid_2">Standard Deviation</td></tr>
+<tr>
+<td class="grid_2_cen"><samp>G</samp></td><td class="grid_2">Geometric Mean</td></tr>
+<tr>
+<td class="grid_2_cen"><samp>J</samp></td><td class="grid_2">Current Jitter</td></tr>
+<tr>
+<td class="grid_2_cen"><samp>M</samp></td><td class="grid_2">Jitter Mean/Avg</td></tr>
+<tr>
+<td class="grid_2_cen"><samp>X</samp></td><td class="grid_2">Worst Jitter</td></tr>
+<tr>
+<td class="grid_2_cen"><samp>I</samp></td><td class="grid_2">Interarrival Jitter</td></tr>
+</table>
+
+<p class="fmtc"><code>-P</code> <kbd>port</kbd>, <code>--port</code> <kbd>port</kbd></p>
+<p class="desc">the target port number for TCP/SCTP/UDP traces;</p>
+
+<p class="fmtc"><code>-p</code>, <code>--split</code></p>
+<p class="desc">use format that is suitable for a split-user interface;</p>
+
+<p class="fmtc"><code>-Q</code> <kbd>n</kbd>, <code>--tos</code> <kbd>n</kbd></p>
+<p class="desc">value for type of service field in IP header (<samp>0-255</samp>);</p>
+
+<p class="fmtc"><code>-r</code>, <code>--report</code></p>
+<p class="desc">use report mode; in this mode,<code> mtr </code> runs
+for the num of cycles specified by the<code> -c </code>option, outputs
+stats and exits;</p>
+
+<p class="fmtc"><code>-S</code>, <code>--sctp</code></p>
+<p class="desc">use SCTP (Stream Control Transmission Protocol) packets
+instead of ICMP echo;</p>
+
+<p class="fmtc"><code>-s</code> <kbd>n</kbd>, <code>--psize</code> <kbd>n</kbd></p>
+<p class="desc">set probing packet's size (number of bytes); note that it must
+include ICMP header which is <samp>8</samp> bytes, and IP header which is
+<samp>20..40</samp> bytes for IPv4 and even bigger for IPv6; if <kbd>n</kbd>
+is <b>negative</b>, then a random packet size will be used for each iteration,
+however it won't exceed the absolute value of <kbd>n<kbd>;</p>
+
+<p class="fmtc"><code>-T</code>, <code>--tcp</code></p>
+<p class="desc">use TCP<samp> SYN </samp>packets instead of ICMP; the packet
+size (if specified) will be ignored, since<samp> SYN </samp>packets cannot
+contain data;</p>
+
+<p class="fmtc"><code>-t</code>, <code>--curses</code></p>
+<p class="desc">use the <i>curses</i>-based terminal interface (if available);
+the<span class="keys"> + </span>and<span class="keys"> - </span>keys allow you
+to scroll up and down half a page,<span class="keys"> Ctrl+L </span>clears
+spurious error messages that may overwrite parts of the screen;</p>
+
+<p class="fmtc"><code>-U</code> <kbd>n</kbd>, <code>--max-unknown</code> <kbd>n</kbd></p>
+<p class="desc">maximum unknown hosts, default is <samp>5</samp>;</p>
+
+<p class="fmtc"><code>-u</code>, <code>--udp</code></p>
+<p class="desc">use UDP datagrams instead of ICMP echo;</p>
+
+<p class="fmtc"><code>-w</code>, <code>--report-wide</code></p>
+<p class="desc">use wide report mode (does not cut hostnames in the report);</p>
+
+<p class="fmtc"><code>-x</code>, <code>--xml</code></p>
+<p class="desc">use XML output format (may be good for automated processing);</p>
+
+<p class="fmtc"><code>-y</code> <kbd>n</kbd>, <code>--ipinfo</code> <kbd>n</kbd></p>
+<p class="desc" style="padding-bottom:0">show info about each IP hop; <kbd>n</kbd> can be:</p>
+
+<table class="grid_2" style="margin-left:3.6em">
+<tr>
+<td class="grid_2_cen" style="width:2em"><samp>0</samp></td><td class="grid_2">display
+AS number (equivalent to<code> -z</code>)</td></tr>
+<tr>
+<td class="grid_2_cen"><samp>1</samp></td><td class="grid_2">display IP prefix</td></tr>
+<tr>
+<td class="grid_2_cen"><samp>2</samp></td><td class="grid_2">display country code
+of the origin AS</td></tr>
+<tr>
+<td class="grid_2_cen"><samp>3</samp></td><td class="grid_2">display RIR
+(ripencc, arin, ...)</td></tr>
+<tr>
+<td class="grid_2_cen"><samp>4</samp></td><td class="grid_2">display the allocation
+date of the IP prefix</td></tr>
+</table>
+
+<p class="desc">It's possible to cycle between these fields at runtime
+(using<span class="keys"> y </span>key).<br>
+<b>AS</b> : Autonomous System,<br>
+<b>RIR</b> : Regional Internet Registry.</p>
+
+<p class="fmtc"><code>-Z</code> <kbd>n</kbd>, <code>--timeout</code> <kbd>n</kbd></p>
+<p class="desc">num of seconds to keep probe sockets open before giving up on
+the connection; large values combined with a short interval, will use up a lot
+of file descriptors;</p>
+
+<p class="fmtc"><code>-z</code>, <code>--aslookup</code></p>
+<p class="desc">show AS number alongside each hop (like<code> --ipinfo 0</code>);</p>
+
+
+
+
+
+<p class="cmdname"><a name="mv">mv</a></p>
+<p>
+moves/renames files.</p>
+
+<p class="cmdc">mv index.htm index.html</p>
+<p class="desc">rename <samp>index.htm</samp> to <samp>index.html</samp>;</p>
+
+<p class="cmdc">mv proc.txt proc220719.t</p>
+<p class="desc">rename <samp>proc.txt</samp> to <samp>proc220719.t</samp>;</p>
+
+<p class="cmdc">mv -f *.html ./tmp/</p>
+<p class="desc">move (without questions) all files with <samp>html</samp>
+extension from the current dir to the subdir <samp>tmp</samp>;</p>
+
+<p class="cmdc">mv -f --backup=none *.html ./tmp/</p>
+<p class="desc">move (without questions) all files with <samp>html</samp>
+ext from the current dir to a subdir, make no backup copies of overwritten
+files;</p>
+
+<p class="fmt"><code>mv&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;src dst</kbd></p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp;
+<code>--version</code> &nbsp;&nbsp; <code>-v</code>
+&nbsp;&nbsp;<code>--verbose</code></p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-b</code></td>
+<td class="opt_desc">make a backup of each existing destination file;</td></tr>
+</table>
+
+<p class="fmtc"><code>--backup=</code><kbd>mode</kbd></p>
+<p class="desc">make a backup of each existing dest file, set backup
+version control mode, which can be:</p>
+
+<table class="opts" style="margin-left:8%;width:90%">
+<tr><td class="opts">none, off</td><td class="opt_desc">never make backups;</td></tr>
+<tr><td class="opts">numbered, t</td><td class="opt_desc">make numbered backups;</td></tr>
+<tr><td class="opts">existing, nil</td><td class="opt_desc">make numbered if numbered exist, simple otherwise;</td></tr>
+<tr><td class="opts">simple, never</td><td class="opt_desc">always make simple backups;</td></tr>
+</table>
+
+<p class="fmtc"><code>-f</code>, <code>--force</code></p>
+<p class="desc">do not prompt before overwriting;</p>
+
+<p class="fmtc"><code>-i</code>, <code>--interactive</code></p>
+<p class="desc">prompt before overwriting;</p>
+
+<p class="fmtc"><code>--reply=yes</code></p>
+<p class="desc">always overwrite existing files (like <code>-f</code>);</p>
+
+<p class="fmtc"><code>--reply=query</code></p>
+<p class="desc">prompt before overwriting (like <code>-i</code>);</p>
+
+<p class="fmtc"><code>--reply=no</code></p>
+<p class="desc">never overwrite existing files;</p>
+
+<p class="fmtc"><code>-S</code> <kbd>sfx</kbd>, <code>--suffix=</code><kbd>sfx</kbd></p>
+<p class="desc">set backup suffix; default is '<samp>~</samp>';</p>
+
+<p class="fmtc"><code>--strip-trailing-slashes</code></p>
+<p class="desc">remove any trailing slashes from each src argument;</p>
+
+<p class="fmtc"><code>--target-directory=</code><kbd>dir</kbd></p>
+<p class="desc">move files into <kbd>dir</kbd>;</p>
+
+<p class="fmtc"><code>-u</code>, <code>--update</code></p>
+<p class="desc">move only if src is newer than dest, or dest is missing;</p>
+
+<p>
+There are also env variables <samp>SIMPLE_BACKUP_SUFFIX</samp>
+and <samp>VERSION_CONTROL</samp>, which can affect behaviour
+of this program.</p>
+
+</div>
+
+</body></html>

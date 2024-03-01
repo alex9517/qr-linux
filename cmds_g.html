@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (gdisk, gpg, grep, groupadd, groupdel, groupmod, gzip)</title>
+<meta name="description" content="linux quick reference, gdisk, GnuPG, gpg, grep, groupadd, groupdel, groupmod, gzip, gunzip" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<div id="topmenu">
+<p class="menu">
+<a href="#gdisk">gdisk</a>&nbsp;|
+<a href="#gpg">gpg</a>&nbsp;|
+<a href="#gpgv">gpgv</a>&nbsp;|
+<a href="#grep">grep</a>&nbsp;|
+<a href="#groupadd">groupadd</a>&nbsp;|
+<a href="#groupdel">groupdel</a>&nbsp;|
+<a href="#groupmod">groupmod</a>&nbsp;|
+<a href="#groups">groups</a>&nbsp;|
+<a href="#gzip">gzip</a></p>
+</div>
+
+<p class="cmdname"><a name="gdisk"></a>gdisk</p>
+<p>
+(GPT fdisk) is an interactive partition table manipulator
+similar to <code><a href="cmds_f.html#fdisk">fdisk</a></code>. The main
+advantage of <code>~</code> is the ability to work with
+<a href="mbr_and_gpt.html#gpt">GPT</a> disks (relatively new partitioning
+standard). Currently (Jan, 2012) <b>GPT fdisk</b> is beta (0.8.*) and not
+included in major distributions. You can download from Internet the source
+code, or <samp>.rpm</samp> or <samp>.deb</samp> pkg:</p>
+
+<p class="cmd">sudo gdisk</p>
+<p>
+(the <samp>root</samp> privilege is required, of course), give device name
+when prompted (e.g., <samp>/dev/sda</samp>), and after that use simple cmds
+like <code>?</code> (show menu of available cmds), <code>p</code> (print
+partition table), <code>q</code> (quit without modifying), etc. Here is
+one non-interactive example:</p>
+
+<p class="cmdc">sudo gdisk -l /dev/sda</p>
+<p class="desc">show partition table of the specified disk;</p>
+<p>
+MBR and GPT partition tables can be saved and restored using
+<code><a href="cmds_d.html#dd">dd</a></code>, though with GPT it's
+non-trivial. Also, you can use <code>sgdisk</code> (usually comes with
+<code>gdisk</code>):</p>
+
+<p class="cmdc">sudo sgdisk -b sda-part.gpt /dev/sda</p>
+<p class="desc">save partition data to <samp>sda-part.gpt</samp>
+file (some consistency in naming would be good); Note! you should keep
+multiple copies of this file in diff locations, excluding, may be, target
+drive (<samp>/dev/sda</samp>);</p>
+
+<p class="cmdc">sudo sgdisk -l sda-part.gpt /dev/sda</p>
+<p class="desc">restore <samp>/dev/sda</samp> partitions from a file;</p>
+
+
+
+
+<p class="cmdname"><a name="gpg"></a>gpg</p>
+<p>
+or GnuPG (GNU Privacy Guard) is a free implementation of the OpenPGP
+standard (and replacement of PGP). <code>~</code> provides public key
+encryption and signing, key management, etc.</p>
+<p class="fmt"><code>gpg&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;cmd&nbsp;</kbd>[<kbd>args</kbd>]</p>
+<p>
+If no <kbd>cmd</kbd> is given, <code>~</code> performs a reasonable action
+depending on the type of the input file. In all cases when a passphrase is
+required, use reasonably long (7+) hard-to-guess char sequencies
+(inclusion of non-alphanumeric symbols is recommended). The default file
+extension for an encrypted file is <samp>.gpg</samp>.</p>
+
+<p class="cmdc">gpg --version</p>
+<p class="desc">show version info and list of supported cipher algorythms;</p>
+
+
+
+<h5>Symmetric encryption</h5>
+<p>
+is very simple: no PKI, no keys (in fact, the key is created and used
+implicitly), the user only has to type a password (passphrase) that must be
+the same for both encryption and decryption.</p>
+
+<p class="cmdc">gpg -o mesg.dat -c mesg.doc</p>
+<p class="desc">encrypt<samp> mesg.doc</samp>,
+write result to<samp> mesg.dat </samp>(<code>~</code> prompts you for
+a passphrase twice);</p>
+
+<p class="cmdc">gpg -o priv_data.txt -d priv_data.arc</p>
+<p class="desc">decrypt<samp> priv_data.gpg</samp>, save result
+to<samp> priv_data.txt</samp>;</p>
+
+<p class="cmdc">gpg -o - -d priv_data.arc | less</p>
+<p class="desc">display the decrypted contents of the encrypted text
+file<samp> priv_data.gpg </samp>without creating a plain text file;
+
+
+
+<h5>Public key encryption</h5>
+<p>
+involves two keys: public and private. <strong>Public key</strong> can
+be made available to everybody through all sorts of media.
+<strong>Private key</strong> must be secret and available to the owner only.
+The sender crypts his/her file or message with the public key of the
+receiver. The receiver decrypts file/msg using his/her private key.</p>
+
+<p class="cmdc">gpg -e anna mesg.txt</p>
+<p class="desc">encrypt file <samp>mesg.txt</samp> using public key of <samp>anna</samp>;
+
+<p class="cmdc">gpg -se -r max  mesg2.txt</p>
+<p class="desc">sign and encrypt <samp>mesg2.txt</samp> for <samp>max</samp>;
+
+<p class="cmdc">gpg --encrypt --armor letter7.txt</p>
+<p class="desc">encrypt <samp>letter7.txt</samp> saving output as text
+(by default an encrypted file is binary); this may have sense for mail;</p>
+
+<p class="cmdc">gpg -d letter.gpg -o letter.doc</p>
+<p class="desc">decrypt <samp>letter.gpg</samp> and save to <samp>letter.doc</samp>;</p>
+
+<p class="cmdc">gpg letter4 -o letter4.doc</p>
+<p class="desc">decrypt <samp>letter4.gpg</samp> and save to <samp>letter4.doc</samp>;</p>
+
+<p class="cmdc">gpg messg2</p>
+<p class="desc">decrypt <samp>messg2.gpg</samp> and display (send to stdout);</p>
+
+
+
+<h5>Key-management</h5>
+
+<p class="cmdc">gpg --gen-key</p>
+<p class="desc">create a new key-pair (public key + secret key); you’ll be
+prompted for algorithm (DSA/ElGamal, unless you know better), key length
+(1024 is standard, 2048 is safer, though resource consuming), passphrase,
+etc;</p>
+
+<p class="fmtc"><code>gpg --gen-revoke</code></p>
+<p class="desc">create a revocation certificate;</p>
+
+<p class="fmtc"><code>gpg --list-keys</code></p>
+<p class="desc">list all keys in the public keyrings;</p>
+
+<p class="cmdc">gpg --list-sigs</p>
+<p class="desc">list all signatures and all keys in the public keyrings;</p>
+
+<p class="fmtc"><code>gpg --fingerprints</code></p>
+<p class="desc">show fingerprints;</p>
+
+<p class="fmtc"><code>gpg --list-secret-keys</code></p>
+<p class="desc">show all secret keys;</p>
+
+<p class="cmdc">gpg --delete-key joe</p>
+<p class="desc">remove key for <samp>joe</samp> from the public keyring;</p>
+
+<p class="cmdc">gpg --delete-secret-key alex2</p>
+<p class="desc">remove key from secret and public keyring;</p>
+
+<p class="cmdc">gpg --edit-key anna</p>
+<p class="desc">edit public key for <samp>anna</samp> (starts an interactive
+procedure allowing you to perform miscellaneous key-related tasks: signing
+key, changing expiration date, passphrase, etc);</p>
+
+<p class="cmdc">gpg --export</p>
+<p class="desc">export all public keys (will be output to stdout);</p>
+
+<p class="cmdc">gpg --export max -a -o max-pubkey.asc</p>
+<p class="desc">export public key for <samp>max</samp> and save it to a file
+<samp>max-pubkey.asc</samp> in ASCII format (<code>-a</code>);</p>
+
+<p class="fmtc"><code>gpg --import</code></p>
+<p class="desc">import public key (from stdin);</p>
+
+<p class="cmdc">gpg --import 0x517D0F0E</p>
+<p class="desc">import public key from the file <samp>0x517D0F0E</samp>;</p>
+
+<p class="cmdc">gpg --keyserver wwwkeys.pgp.net --recv-keys 0x517D0F0E</p>
+<p class="desc">import public key from the Internet (kernel.org pk);</p>
+
+<p class="cmdc">gpg --recv-keys 0x517D0F0E</p>
+<p class="desc">same as previous, assuming you have some appropriate
+keyserver lines in <samp>~/.gnupg/options</samp>;</p>
+<p>
+In order to download and import public keys automatically you may add to
+<samp>~./gnupg/options</samp> some well-known key servers:</p>
+<div class="file">
+<pre>keyserver wwwkeys.pgp.net
+keyserver search.keyserver.net
+keyserver pgp.ai.mit.edu</pre>
+</div>
+
+
+
+<h5>Digital signature</h5>
+
+<p class="cmdc">gpg -s letter24.txt</p>
+<p class="desc">sign <samp>letter24.txt</samp> with my key (the resulting
+file is compressed and unreadable);</p>
+
+<p class="cmdc">gpg --clearsign letter25</p>
+<p class="desc">make a clear text signature (file stays readable);</p>
+
+<p class="cmdc">gpg -sba prog4.tar.gz</p>
+<p class="desc">create a detached signature in ASCII armored format
+(recommended for binary files);</p>
+
+<p class="cmdc">gpg --verify letter25</p>
+<p class="desc">check the signature of the specified file;</p>
+
+<p class="cmdc">gpg --verify linux-2.6.14.bz2.sign linux-2.6.14.bz2</p>
+<p class="desc">check the signature of the linux kernel archive (assuming
+you have already imported public key for <samp>kernel.org</samp>);</p>
+
+
+
+<h5>Some commands</h5>
+
+<p class="fmtc"><code>-b</code>, <code>--detach-sign</code></p>
+<p class="desc">make a detached signature;</p>
+
+<p class="fmtc"><code>-c</code>, <code>--symmetric</code></p>
+<p class="desc">encrypt with a symmetric cipher using a passphrase;
+the default symmetric cipher is CAST5, though other may be chosen by
+<code>--cipher-algo</code>;</p>
+
+<p class="fmtc"><code>-d</code>, <code>--decrypt</code></p>
+<p class="desc">decrypt file (stdin by default) and write it to the stdout
+(if there is no <code>--output</code> option); if the decrypted file is signed,
+the signature is verified;</p>
+
+<p class="fmtc"><code>-e</code>, <code>--encrypt</code></p>
+<p class="desc">encrypt data;</p>
+
+<p class="fmtc"><code>-K</code> [<kbd>names</kbd>], <code>--list-secret-keys</code> [<kbd>names</kbd>]</p>
+<p class="desc">list the specified keys from the secret keyrings (list all if
+no names given); '<samp>#</samp>' after <samp>sec</samp> means that the key is
+not usable;</p>
+
+<p class="fmtc"><code>-s</code>, <code>--sign</code></p>
+<p class="desc">make a signature;</p>
+
+<p class="fmtc"><code>--check-sigs</code> [<kbd>names</kbd>]</p>
+<p class="desc">same as <code>--list-sigs</code>, but the signatures are
+verified;</p>
+
+<p class="fmtc"><code>--clearsign</code></p>
+<p class="desc">make a clear text signature;</p>
+
+<p class="fmtc"><code>--fingerprint</code> [<kbd>names</kbd>]</p>
+<p class="desc">list keys with their fingerprints;</p>
+
+<p class="fmtc"><code>--send-keys</code> [<kbd>name</kbd>]</p>
+<p class="desc">like export, but sends public keys to a keyserver
+(<code>--keyserver</code> must be used to specify server);</p>
+
+<p class="fmtc"><code>--sign-key</code> <kbd>name</kbd></p>
+<p class="desc">sign a public key with your secret key;</p>
+
+<p class="fmtc"><code>--store</code></p>
+<p class="desc">store only (make a simple RFC1991 packet);</p>
+
+<p class="fmtc"><code>--verify</code> [[<kbd>sigfile</kbd>][<kbd>signed_files</kbd>]]</p>
+<p class="desc">verify the signature; without args the signature packet is
+read from sdtin; the file with <samp>.sig</samp> extension (or just first file,
+if there are many) is taken as a detached signature;</p>
+
+<p class="fmtc"><code>--verify-files</code> [<kbd>files</kbd>]</p>
+<p class="desc">is identical to <code>--multifile --verify</code>;</p>
+
+
+
+<h5>Some options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>-v</code> &nbsp;&nbsp;
+<code>--verbose</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>-a</code>, <code>--armor</code></p>
+<p class="desc">create ASCII armored output;</p>
+
+<p class="fmtc"><code>-i</code>, <code>--interactive</code></p>
+<p class="desc">prompt before overwriting any file;</p>
+
+<p class="fmtc"><code>-o</code> <kbd>file</kbd>,
+<code>--output</code> <kbd>file</kbd></p>
+<p class="desc">write output to the specified file;</p>
+
+<p class="fmtc"><code>-q</code>, <code>--quiet</code></p>
+<p class="desc">try to be as quiet as possible;</p>
+
+<p class="fmtc"><code>-r</code> <kbd>name</kbd>,
+<code>--recipient</code> <kbd>name</kbd></p>
+<p class="desc">encrypt for user id <kbd>name</kbd>;</p>
+
+<p class="fmtc"><code>-t</code>, <code>--textmode</code></p>
+<p class="desc">treat input file as text and store it in the OpenPGP canonical
+text form with CRLF endings; this also sets the necessary flags to inform the
+recipient that the encrypted or signed data is text and may need its line
+endings converted back to whatever the local system uses;</p>
+
+<p class="fmtc"><code>-u</code> <kbd>name</kbd>,
+<code>--local-user</code> <kbd>name</kbd></p>
+<p class="desc">use <kbd>name</kbd> as the key to sign with; this option
+overrides <code>--default-key</code>;</p>
+
+<p class="fmtc"><code>-z</code> <kbd>n</kbd>,</p>
+<p class="fmtc"><code>--compress-level</code> <kbd>n</kbd>,</p>
+<p class="fmtc"><code>--bzip2-compress-level</code> <kbd>n</kbd></p>
+<p class="desc">set compression level for <code>zip</code>,
+<code>zlib</code>, <code>bzip2</code> (default is 6, 0 disables compression);</p>
+
+<p class="fmtc"><code>--compress-algo</code> <kbd>name</kbd></p>
+<p class="desc">use the specified compression algorithm
+(<samp>none</samp>, <samp>zip</samp>, <samp>zlib</samp>, <samp>bzip2</samp>);
+for compatibility with <code>PGP</code> use <samp>zip</samp>; zlib gives better
+compression than zip, bzip2 is better than zlib, but takes too much memory;
+without this option <code>~</code> selects algo according to the recipient's
+key preferences; if there are no hints <samp>zip</samp> is used (as most
+compatible);</p>
+
+<p class="fmtc"><code>--default-key</code> <kbd>name</kbd></p>
+<p class="desc">use <kbd>name</kbd> as the default key to sign with; otherwise
+the first key in the secret keyring is default;</p>
+
+<p class="fmtc"><code>--default-recipient</code> <kbd>name</kbd></p>
+<p class="desc">use <kbd>name</kbd> as the default recipient;</p>
+
+<p class="fmtc"><code>--keyserver</code> <kbd>name</kbd></p>
+<p class="desc">use <kbd>name</kbd> as your keyserver; <kbd>name</kbd> is
+a URI: <kbd>scheme</kbd>:[//]<kbd>keyserver-name</kbd>[:<kbd>port</kbd>],
+where scheme is <samp>hkp</samp> for HTTP keyserver, <samp>ldap</samp>
+for NAI LDAP, <samp>mailto</samp> for Graff email keyserver;</p>
+
+<p class="fmtc"><code>--no-textmode</code></p>
+<p class="desc">disables <code>-t</code> option (this is default);</p>
+
+<p class="fmtc"><code>--no</code></p>
+<p class="desc">assume "no" on most questions;</p>
+
+<p class="fmtc"><code>--yes</code></p>
+<p class="desc">assume "yes" on most questions;</p>
+
+
+
+
+<p class="cmdname"><a name="gpgv"></a>gpgv</p>
+<p>
+is OpenPGP signature verification tool, a stripped down version of
+<a href="#gpg"><code>gpg</code></a> (GnuPG) which is only able to check
+signatures. By default it uses <samp>$HOME/.gnupg/trustedkeys.gpg</samp>
+keyring, and assumes that all keys in the keyring are trustworthy.</p>
+
+<p class="fmt"><code>gpgv&nbsp;</code>[<kbd>options</kbd>] [<kbd>signed_files</kbd>]</p>
+<p>
+<code>~</code> returns 0 (everything is OK), 1 (at least one signature is
+bad), and other codes for fatal errors.</p>
+
+<p class="cmdc">gpgv letter.doc</p>
+<p class="desc">check signature of the specified file
+(assuming that you have a public key);</p>
+
+<p class="cmdc">gpgv linux-2.6.14.bz2.sign linux-2.6.14.bz2</p>
+<p class="desc">check the signature of the linux kernel archive; you must
+have the corresponding public key, otherwise download it from
+<samp>wwwkeys.pgp.net</samp>, import (see <code>gpg --import</code>) and
+copy <samp>pubring.gpg</samp> to <samp>trustedkeys.gpg</samp>);</p>
+
+<p class="cmdc">gpgv --keyring pubring.gpg linux-2.6.14.bz2.sign linux-2.6.14.bz2</p>
+<p class="desc">like previous, but use non-default keyring
+(<samp>pubring.gpg</samp>) instead of <samp>trustedkeys.gpg</samp>;</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp;
+<code>-v</code> &nbsp;&nbsp; <code>--verbose</code></p>
+
+<p class="fmtc"><code>-q</code>, <code>--quiet</code></p>
+<p class="desc">be as quiet as possible;</p>
+
+<p class="fmtc"><code>--keyring</code> <kbd>file</kbd></p>
+<p class="desc">add <kbd>file</kbd> to the list of keyrings;</p>
+
+<p class="fmtc"><code>--homedir</code> <kbd>dir</kbd></p>
+<p class="desc">set the name of the home directory (by default
+<samp>~/.gnupg</samp>); this also overrides env var <samp>GNUPGHOME</samp>;</p>
+
+<p class="fmtc"><code>--status-fd</code> <kbd>n</kbd></p>
+<p class="desc">write special status strings to the file with descriptor
+<kbd>n</kbd>;</p>
+
+<p class="fmtc"><code>--logger-fd</code> <kbd>n</kbd></p>
+<p class="desc">write log output to the file with descriptor <kbd>n</kbd>;</p>
+
+<p class="fmtc"><code>--ignore-time-conflict</code></p>
+<p class="desc">bypass time checks (GnuPG usually checks keys/signatures
+to have plausible timestamps; sometimes signature seems to be older than
+key due to clock problems; with this option you will see only warning);</p>
+
+
+
+
+
+<p class="cmdname"><a name="grep"></a>grep, egrep, fgrep</p>
+<p>
+searches the named input file(s) or stdin for lines containing a match
+to the given pattern. By default <code>grep</code> prints the matching lines.</p>
+
+<p class="fmtc"><code>grep&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;pattern&nbsp;</kbd>[<kbd>file...</kbd>]</p>
+<p class="fmt"><code>grep&nbsp;</code>[<kbd>options</kbd>] [<code>-e</code><kbd>pattern</kbd> | <code>-f</code> <kbd>file</kbd>] [<kbd>file...</kbd>]</p>
+
+<p class="fmtc"><code>grep</code> understands basic (default) and extended <a href="regexp.html">regexp</a>;</p>
+<p class="fmtc"><code>egrep</code> (deprecated, use <code>grep -E</code>) supports extended regexp;</p>
+<p class="fmt"><code>fgrep</code> (deprecated, use <code>grep -F</code>) gets patterns (BRE) from a file;</p>
+
+<p class="cmdc">grep -Ril "choreography" /home/alex/public_html/notes/</p>
+<p class="desc">show me the files where the word "choreography" is present; use
+following search params: ignore case (<samp>-i</samp>), traverse dir subtree
+recursively (<samp>-R</samp>), show the filenames only (<samp>-l</samp>), start
+at <samp>/home/...</samp>;</p>
+
+<p class="cmdc">grep usb README</p>
+<p class="desc">output all lines of the file<samp> README </samp>containing
+word<samp> usb</samp>;</p>
+
+<p class="cmdc">grep -v '^-.*' flist.txt</p>
+<p class="desc">read text file<samp> flist.txt </samp>and output all lines
+except those beginning with '<samp>-</samp>';</p>
+
+<p class="cmdc">grep -n TEMP_LEN *.cpp</p>
+<p class="desc">output all lines containing<samp> TEMP_LEN</samp>,
+consider only files with<samp> cpp </samp>extension in the current dir;
+each line in the output begins with file name and line number;</p>
+
+<p class="cmdc">grep -n -r ' SOCKET' /usr/include</p>
+<p class="desc">output all lines containing words beginning
+with<samp> SOCKET</samp>; search in all files
+in<samp> /usr/include </samp> recursively (i.e., including subdirs),
+add line numbers;</p>
+
+<p class="cmdc">ps ax | grep .*_orcl$</p>
+<p class="desc">show processes whose names have<samp> _orcl </samp>at the end;</p>
+
+<p class="cmdc">ls | grep temp</p>
+<p class="desc">show all files and subdirs in the current dir
+having<samp> temp </samp>in their names;</p>
+
+
+<h5>Some options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp;
+<code>-V</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>-a</code>, <code>--text</code></p>
+<p class="desc">process a binary file as if it were text;</p>
+
+<p class="fmtc"><code>-b</code>, <code>--byte-offset</code></p>
+<p class="desc">print the byte offset within input file before each line of
+output;</p>
+
+<p class="fmtc"><code>-c</code>, <code>--count</code></p>
+<p class="desc">suppress normal output, instead print a count of matching
+lines for each input file; with <code>-v</code> or <code>--invert-match</code>
+count non-matching lines;</p>
+
+<p class="fmtc"><code>-E</code>, <code>--extended-regexp</code></p>
+<p class="desc">interpret a pattern as an extended regexp;</p>
+
+<p class="fmtc"><code>-e</code> <kbd>pattern</kbd></p>
+<p class="desc">use this option when pattern begins with "-" and in other
+dubuous situations to avoid misinterpretation;</p>
+
+<p class="fmtc"><code>-F</code>, <code>--fixed-strings</code></p>
+<p class="desc">interpret pattern as a list of fixed strings, separated by
+newline, any of which is to be matched;</p>
+
+<p class="fmtc"><code>-f</code> <kbd>file</kbd>,
+<code>--file=</code><kbd>file</kbd></p>
+<p class="desc">get patterns from <kbd>file</kbd>, one per line;</p>
+
+<p class="fmtc"><code>-G</code>, <code>--basic-regexp</code></p>
+<p class="desc">interpret pattern as basic regexp;</p>
+
+<p class="fmtc"><code>-H</code>, <code>--with-filename</code></p>
+<p class="desc">print the filename for each match;</p>
+
+<p class="fmtc"><code>-h</code>, <code>--no-filename</code></p>
+<p class="desc">suppress prefixing of filenames on output when multiple
+files are searched;</p>
+
+<p class="fmtc"><code>-I</code>, <code>--binary-files=without-match</code></p>
+<p class="desc">ignore the binary files (process a binary file as if it did not
+contain matching data);</p>
+
+<p class="fmtc"><code>-i</code>, <code>--ignore-case</code></p>
+<p class="desc">ignore case in pattern and input files;</p>
+
+<p class="fmtc"><code>-n</code>, <code>--line-numbers</code></p>
+<p class="desc">prefix each  output line with the line num
+within its input file;</p>
+
+<p class="fmtc"><code>-P</code>, <code>--perl-regexp</code></p>
+<p class="desc">interpret pattern as a PERL regexp;</p>
+
+<p class="fmtc"><code>-q</code>, <code>--quiet</code></p>
+<p class="desc">write nothing to stdout, exit with zero status if any match is found;</p>
+
+<p class="fmtc"><code>-R</code>, <code>-r</code>, <code>--recursive</code></p>
+<p class="desc">read all files recursively;</p>
+
+<p class="fmtc"><code>-v</code>, <code>--invert-match</code></p>
+<p class="desc">invert the sense of matching to select the non-matching lines;</p>
+
+<p class="fmtc"><code>-w</code>, <code>--word-regexp</code></p>
+<p class="desc">select only those lines containing matches that form whole
+words;</p>
+
+<p class="fmtc"><code>-x</code>, <code>--line-regexp</code></p>
+<p class="desc">select only those matches that exactly match the whole lines;</p>
+
+<p class="fmtc"><code>--binary-files=</code><kbd>type</kbd></p>
+<p class="desc">if the frist few bytes indicate that the file contains
+binary data, assume that file has the specified type; by default type is
+<samp>binary</samp>, and <code>grep</code> normally outputs either a msg
+saying that a binary file matches, or no msg, if there is no match;
+if type is <samp>without-match</samp>, <code>grep</code> assumes that
+a binary file does not match; if type is <samp>text</samp>, binary file
+will be processed as a text file (may cause the garbage output and
+bad side effects on the terminal);</p>
+
+
+
+
+<p class="cmdname"><a name="groupadd"></a>groupadd</p>
+<p>
+creates a new group.</p>
+
+<p class="cmdc">groupadd dba</p>
+<p class="desc">create group <samp>dba</samp> using next available id;</p>
+
+<p class="cmdc">groupadd -g 508 dba</p>
+<p class="desc">create group <samp>dba</samp> with the specified numerical
+id = 508;</p>
+
+<p class="fmt"><code>groupadd&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;grp_name</kbd></p>
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-h</code> &nbsp;&nbsp; <code>--help</code></p>
+
+<p class="fmtc"><code>-f</code>, <code>--force</code></p>
+<p class="desc">causes to exit with success status if the specified group
+already exists; with <code>-g</code>, if specified GID already exists,
+other (unique) GID is chosen (i.e., <code>-g</code> is turned off);</p>
+
+<p class="fmtc"><code>-g</code> <kbd>n</kbd>, <code>--gid</code> <kbd>n</kbd></p>
+<p class="desc">create new group with the group ID = <kbd>n</kbd> (must be
+positive, beyond the <a href="#gid_range">system-reserved limit</a>, and
+unique, unless <code>-o</code> is given);</p>
+
+<p class="fmtc"><code>-K</code> <kbd>key</kbd><code>=</code><kbd>val</kbd>,
+<code>--key</code> <kbd>key</kbd><code>=</code><kbd>val</kbd></p>
+<p class="desc">override <samp>/etc/login.defs</samp> defaults
+(<samp>GID_MIN</samp>, <samp>GID_MAX</samp> and others); multiple
+<code>-K</code> options can be specified;</p>
+
+<p class="fmtc"><code>-o</code>, <code>--non-unique</code></p>
+<p class="desc">allows to create groups with duplicate (non-unique) GIDs;</p>
+
+<p class="fmtc"><code>-p</code> <kbd>pass</kbd>,
+<code>--password</code> <kbd>pass</kbd></p>
+<p class="desc">(unsafe) the encrypted password, as returned by
+<code>crypt</code>; the default is to disable the password;</p>
+
+<p class="fmtc"><code>-r</code>, <code>--system</code></p>
+<p class="desc">create a system group;</p>
+
+<a name="group_files"></a>
+<table class="files">
+<caption>Files</caption>
+<tr>
+<td class="file_name">/etc/group</td>
+<td class="file_desc">group account information</td></tr>
+<tr>
+<td class="file_name">/etc/gshadow</td>
+<td class="file_desc">secure group account information</td></tr>
+<tr>
+<td class="file_name">/etc/login.defs</td>
+<td class="file_desc">shadow password suite configuration</td></tr>
+</table>
+
+<table class="exit">
+<caption>Exit values</caption>
+<tr>
+<td class="exit_code">0</td><td class="code_desc">success;</td></tr>
+<tr>
+<td class="exit_code">2</td><td class="code_desc">invalid command syntax;</td></tr>
+<tr>
+<td class="exit_code">3</td><td class="code_desc">invalid argument to option;</td></tr>
+<tr>
+<td class="exit_code">4</td><td class="code_desc">gid not unique (when <code>-o</code> not used);</td></tr>
+<tr>
+<td class="exit_code">9</td><td class="code_desc">group name not unique;</td></tr>
+<tr>
+<td class="exit_code">10</td><td class="code_desc">can’t update group file;</td></tr>
+</table>
+
+<a name="gid_range"></a>
+<table class="grid">
+<caption>GIDs reserved for system accounts</caption>
+<tr>
+<td class="grid">RedHat, Fedora, CentOS</td>
+<td class="grid"><samp>0..499</samp></td></tr>
+<tr>
+<td class="grid">Debian, Ubuntu</td>
+<td class="grid"><samp>0..999</samp></td></tr>
+</table>
+
+
+
+<p class="cmdname"><a name="groupdel"></a>groupdel</p>
+<p>
+deletes an existing group, modifies the system account files,
+removes all entries that refer to the specified group. However, some
+files and dirs referring to the deleted group may still exist in the
+filesystem, you should remove them manually, if it's necessary.</p>
+
+<p class="fmtc"><code>groupdel oper</code></p>
+<p class="desc">delete group <samp>oper</samp>;</p>
+
+<p class="fmt"><code>groupdel <span class="arg">grp_name</span></code></p>
+<p>
+You cannot remove the primary group of any existing user. If nevertheless
+you want to remove such group, delete the user first.</p>
+
+<table class="exit">
+<caption>Exit values</caption>
+<tr>
+<td class="exit_code">0</td><td class="code_desc">success</td></tr>
+<tr>
+<td class="exit_code">2</td><td class="code_desc">invalid command syntax</td></tr>
+<tr>
+<td class="exit_code">6</td><td class="code_desc">specified group doesnt exist</td></tr>
+<tr>
+<td class="exit_code">8</td><td class="code_desc">can’t remove user’s primary group</td></tr>
+<tr>
+<td class="exit_code">10</td><td class="code_desc">can’t update group file</td></tr>
+</table>
+<p>
+See also <a href="#group_files">related files</a> in <code>groupadd</code>
+description.</p>
+
+
+
+<p class="cmdname"><a name="groupmod"></a>groupmod</p>
+<p>
+modifies a group definition in the system.</p>
+
+<p class="cmdc">groupmod -g 520 techserv</p>
+<p class="desc">set numerical id = 520 for an existing group (<samp>techserv</samp>);</p>
+
+<p class="fmt"><code>groupmod&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;grp_name</kbd></p>
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-h</code> &nbsp;&nbsp; <code>--help</code></p>
+
+<p class="fmtc"><code>-g</code> <kbd>n</kbd>, <code>--gid</code> <kbd>n</kbd></p>
+<p class="desc">change the numerical value of the group ID (there are some
+rectrictions, see the corresponding
+<a href="#groupadd"><code>groupadd</code></a> option);</p>
+
+<p class="fmtc"><code>-n</code> <kbd>new_grp_name</kbd>,
+<code>--new-name</code> <kbd>new_grp_name</kbd></p>
+<p class="desc">change the name of the group to <kbd>new_grp_name</kbd>;</p>
+
+<p class="fmtc"><code>-o</code>, <code>--non-unique</code></p>
+<p class="desc">when used with the <code>-g</code>, allows to change the group
+ID to a non-unique value;</td></tr>
+
+<p class="fmtc"><code>-p</code> <kbd>pass</kbd>,
+<code>--password</code> <kbd>pass</kbd></p>
+<p class="desc">(unsafe) the encrypted password, as returned by
+<code>crypt</code>;</p>
+<p>
+When you change the numerical value of GID, files and dirs referring
+to the old GID will not automatically reflect this change.</p>
+
+<table class="exit">
+<caption>Exit values</caption>
+<tr>
+<td class="exit_code">0</td><td class="code_desc">success</td></tr>
+<tr>
+<td class="exit_code">2</td><td class="code_desc">invalid command syntax</td></tr>
+<tr>
+<td class="exit_code">3</td><td class="code_desc">invalid argument to option</td></tr>
+<tr>
+<td class="exit_code">4</td><td class="code_desc">specified group doesn’t exist</td></tr>
+<tr>
+<td class="exit_code">6</td><td class="code_desc">specified group doesn’t exist</td></tr>
+<tr>
+<td class="exit_code">9</td><td class="code_desc">group name already in use</td></tr>
+<tr>
+<td class="exit_code">10</td><td class="code_desc">can’t update group file</td></tr>
+</table>
+<p>
+See also <a href="#group_files">related files</a> in <code>groupadd</code>
+description.</p>
+
+
+
+<p class="cmdname"><a name="groups"></a>groups</p>
+<p>
+outputs the names of the groups a user is member of. To see your groups:</p>
+
+<p class="cmd">groups</p>
+<p>
+To show all existing groups:</p>
+
+<p class="cmd">getent group | cut -d: -f1</p>
+<p>
+To show all users in group <samp>cartoon</samp>:</p>
+
+<p class="cmd">getent group | grep -i '^cartoon'</p>
+
+
+<h5>Some Ubuntu groups</h5>
+
+<table class="grid" style="margin-bottom:0.5em">
+<tr>
+<td class="grid"><samp>adm</samp></td><td class="grid">to monitor system logs</td></tr>
+<tr>
+<td class="grid"><samp>cdrom</samp></td><td class="grid">to use CD-ROM drives</td></tr>
+<tr>
+<td class="grid"><samp>lpadmin</samp></td><td class="grid">to configure printers</td></tr>
+<tr>
+<td class="grid"><samp>sudo</samp></td><td class="grid">to exec privileged cmds</td></tr>
+<tr>
+<td class="grid"><samp>sambashare</samp></td><td class="grid">to share files using SMB protocol</td></tr>
+<tr>
+<td class="grid"><samp>dip</samp></td><td class="grid">to connect to the Internet using a modem</td></tr>
+<tr>
+<td class="grid"><samp>plugdev</samp></td><td class="grid">to access external storage devices</td></tr>
+<tr>
+<td class="grid" style="padding-top:2%;padding-bottom:2%" colspan="2">Some extra groups you might deal with:</td></tr>
+<tr>
+<td class="grid"><samp>dialout</samp></td><td class="grid">ttyS*/Serial/COM1,COM2 ...</td></tr>
+<tr>
+<td class="grid"><samp>vboxusers</samp></td><td class="grid">Virtual Box</td></tr>
+</table>
+<p>
+Typical set of groups of a regular user in Ubuntu 19.04 (<samp>kvm</samp>
+may be required to run emulator in Android Studio):</p>
+<div class="term">
+<pre>alex adm cdrom sudo dip plugdev kvm lpadmin sambashare</pre>
+</div>
+<p>
+This is slightly bigger set of groups of a regular user (<samp>audio</samp>
+may be required to work with professional Audio stuff, e.g., <b>jack</b>; you
+don't need <samp>audio</samp> to listen music and watch movies):</p>
+<div class="term">
+<pre>alex adm cdrom sudo audio dip plugdev kvm lpadmin sambashare libvirtd</pre>
+</div>
+
+
+
+<p class="cmdname"><a name="gzip"></a>gzip, gunzip, zcat</p>
+<p>
+<code>gzip</code> compresses files using Lempel-Ziv algorithm (<samp>LZ77</samp>);<br>
+<code>gunzip</code> decompresses files created by <code>gzip</code>,
+<code>zip</code>, <code>compress</code>, <code>pack</code>;<br>
+<code>zcat</code> is identical to <code>gunzip -c</code>.</p>
+
+<p class="fmt"><code>gzip&nbsp;</code>[<kbd>options</kbd>]
+[<code>-S</code> <kbd>suffix</kbd>] [<kbd>files</kbd>]</p>
+
+<p class="fmt"><code>gunzip&nbsp;</code>[<kbd>options</kbd>]
+[<code>-S</code> <kbd>suffix</kbd>] [<kbd>files</kbd>]</p>
+
+<p class="fmt"><code>zcat&nbsp;</code>[<kbd>options</kbd>] [<kbd>files</kbd>]</p>
+
+<p class="cmdc" style="margin-top:4px">gzip -d myfiles.gz</p>
+<p class="desc">uncompress archive <samp>myfiles.gz</samp>;</p>
+
+<p class="cmdc">gunzip myfiles.gz</p>
+<p class="desc">uncompress archive <samp>myfiles.gz</samp>;</p>
+
+<p class="cmdc">gzip -l myfiles.gz</p>
+<p class="desc">list archive contents;</p>
+
+<p class="cmdc">cat file1 file2 file3 | gzip -c &gt; arc2.gz</p>
+<p class="desc">gives better compression then the next example,
+but is less reliable;</p>
+
+<p class="cmdc">gzip -c file1 file2 file3 &gt; arc2.gz</p>
+<p class="desc">gives worse compression then previous example,
+but is more reliable, because if some archive members are damaged,
+you can still recover the rest by removing the damaged members;</p>
+
+<p class="cmdc">tar cvf - . | gzip -c &gt; ../arc01.tar.gz</p>
+<p class="desc">archive and compress current dir, put archive to the parent dir;</p>
+
+<p class="cmdc">tar cvf - ./proj2 | gzip -c &gt; proj2.tar.gz</p>
+<p class="desc">archive and compress subdir <samp>proj2</samp> with all its subdirs;</p>
+<p>
+See also examples in <a href="cmds_t.html#tar"><code>tar</code></a>
+description, pay attention to those that use <code>gzip</code> and
+<code>gunzip</code> implicitly (<code>-z</code> option).</p>
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-h</code> &nbsp;&nbsp; <code>--help</code> &nbsp;&nbsp;
+<code>-V</code> &nbsp;&nbsp; <code>--version</code> &nbsp;&nbsp;
+<code>-v</code> &nbsp;&nbsp; <code>--verbose</code></p>
+
+<p class="fmtc"><code>-a</code>, <code>--ascii</code></p>
+<p class="desc">convert end-of-lines using local conventions (supported on
+some non-Unix systems only, e.g., for DOS / Windows CR,LF is converted to
+LF when compressing and vise-verse when decompressing;</p>
+
+<p class="fmtc"><code>-c</code>, <code>--stdout</code></p>
+<p class="desc">send output to stdout, src files are not changed;</p>
+
+<p class="fmtc"><code>-d</code>, <code>--decompress</code></p>
+<p class="desc">decompress;</p>
+
+<p class="fmtc"><code>-f</code>, <code>--force</code></p>
+<p class="desc">force compression / decompression even if the file has mutiple links,
+or corresponding file already exists, or if the compressed data is read from
+or written to terminal;</p>
+
+<p class="fmtc"><code>-l</code>, <code>--list</code></p>
+<p class="desc">for each compressed file list compressed / uncompressed size,
+compression ratio, etc;</p>
+
+<p class="fmtc"><code>-L</code>, <code>--license</code></p>
+<p class="desc">display the license and quit;</p>
+
+<p class="fmtc"><code>-n</code>, <code>--no-name</code></p>
+<p class="desc">when compressing do not save the original file name and
+timestamp (original name is always saved if the name had to be truncated);
+when decompessing, do not restore the original name (if present) just remove
+gzip suffix, and do not restore the original timestamp (if present), copy it
+from the compressed file; this is default for decompression;</p>
+
+<p class="fmtc"><code>-N</code>, <code>--name</code></p>
+<p class="desc">when compressing always save the original filename and
+timestamp; when decompessing, restore the original filename and timestamp
+(if present);</p>
+
+<p class="fmtc"><code>-q</code>, <code>--quiet</code></p>
+<p class="desc">suppress all warnings;</p>
+
+<p class="fmtc"><code>-r</code>, <code>--recursive</code></p>
+<p class="desc">if any of the file names specified are directories, descend
+into the directory and compress all files found there (or decompress in the
+case of <code>gunzip</code>);</p>
+
+<p class="fmtc"><code>-S .</code><kbd>sfx</kbd>,
+<code>--suffix .</code><kbd>sfx</kbd></p>
+<p class="desc">use the specified suffix instead of <samp>.gz</samp>; a null
+suffix forces <code>gunzip</code> to try decompression of all given files
+regardless of suffix;</p>
+
+<p class="fmtc"><code>-t</code>, <code>--test</code></p>
+<p class="desc">check the compressed file integrity;</p>
+
+<p class="fmtc"><code>-</code><kbd>n</kbd>,
+<code>--fast</code>, <code>--best</code></p>
+<p class="desc">speed / quality ratio; <code>-1</code> (<code>--fast</code>)
+provides high speed / low compression, <code>-9</code> (<code>--best</code>)
+provides the best compression at the expense of speed; the default is
+<code>-6</code>;</p>
+
+</div>
+
+</body></html>

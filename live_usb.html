@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (Live USB)</title>
+<meta name="description" content="linux quick reference, live usb, ubuntu, kali" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<h1 class="part">
+<a name="live_usb">Live USB</a></h1>
+
+<p class="menu">
+<a href="#ubuntu_usb">Ubuntu Live USB</a>&nbsp;//
+<a href="#kali">Kali Live USB</a></p>
+<p>
+The majority of modern computers support booting from <b>Live USB</b> - a
+special USB flash drive containing the bootable image of the operating system.
+Live USBs have some limitations that you should probably remember about:</p>
+<ul>
+<li>Some systems (e.g., Ubuntu Linux) apply all filesystem writes to a
+<i>casper filesystem overlay</i> (casper-rw) that, once out space, becomes
+unusable and unbootable.</li>
+<li>USB controllers on add-in cards are almost never capable of booting OS.
+In other words, always use the USB port on the motherboard.</li>
+<li>Old computers may not have BIOS support for USB booting.</li>
+</ul>
+<p>
+<b>Persistence</b> in the context of Live USB flash drive means that you
+can save some changes and settings on the same USB flash drive you started
+your system from. Linux Live USBs implement persistence by creating
+a separate partition aside the main partition containing the system image.
+Some Live USBs allow to update their system except kernel and initrd.</p>
+
+
+
+<h4 class="part2">
+<a name="ubuntu_usb">Ubuntu Linux Live USB</a></h4>
+<p>
+Starting with Ubuntu 11.10 release, Ubuntu ISO images became "hybrid",
+i.e., suitable for both CD and USB flash drive creation.</p>
+<p>
+To create a bootable USB flash drive intended for installing Ubuntu
+or using it as a Live USB, exec one of the following cmds (note that
+<b>these cmds delete all data on the USB drive</b>):</p>
+
+<p class="cmdc">sudo dd if=ubuntu-19.04-desktop-amd64.iso of=/dev/sdf bs=1048576</p>
+<p class="or">or</p>
+<p class="cmd">sudo dd if=ubuntu-19.04-desktop-amd64.iso of=/dev/sdf oflag=direct bs=1048576</p>
+<p>
+It can take several minutes and may not display anything except the final
+message. <b>Device name, ISO name may be different!</b>.</p>
+<p>
+To find device name (<b>bad choice may lead to disaster!</b>), insert some
+good USB flash drive into USB port, wait several seconds while its filesystem
+is being mounted, and exec <code>df</code>. If this is the USB flash you're
+going to put ISO image on, you don't have to unmount it before running the
+above cmd. But you should try to unmount it after image writing, if system
+shows it as mounted.</p>
+<p>
+The <samp>oflag=direct</samp> option can speed up the process,
+however it's not always supported.</p>
+<!--
+<p>
+The <b>persistence</b> file in <b>boot partition</b> is <samp>casper-rw</samp>.
+So, if you create a separate persistence partition (hint: primary partition,
+<samp>ext4</samp> without journalling) instead of this file, it must have
+label <samp>casper-rw</samp>. It looks like this fs mounts auto. <b>Don't
+forget to delete casper-rw file!</b></p>
+<p>
+The boot partition is <samp>fat32</samp>, label <samp>UUI</samp>, flags
+<samp>boot,lba</samp>. Use <code>gparted</code> to decrease boot partition
+size and get space for persistence fs.</p>
+
+
+
+<a name="mint17">
+<h4 class="part2">Linux Mint Live USB</h4></a>
+<p>
+Starting with release 12, Linux Mint
+(<a href="http://www.linuxmint.com" target="_top">www.linuxmint.com</a>)
+switched to Hybrid ISO images, that can be written directly to USB drive
+(or to DVD):</p>
+
+<p class="cmd">sudo dd if=linuxmint.iso of=/dev/sd<kbd>x</kbd> bs=1048576</p>
+<p class="ind">or</p>
+<p class="cmd">sudo dd if=linuxmint.iso of=/dev/sd<kbd>x</kbd> oflag=direct bs=1048576</p>
+<p>
+Note, that this method deletes all data on the USB drive, and system is not
+persistent. The <b>persistence</b> is organized the same way as in Ubuntu
+(see prev chapter).</p>
+-->
+
+
+<h4 class="part2">
+<a name="kali">Kali Linux Live USB</a></h4>
+<p>
+Download <i>current stable release</i> from the <b>official sites</b>:</p>
+<p class="menu" style="font-size:110%">
+<a href="https://www.kali.org" target="_top">www.kali.org</a>
+&nbsp;&nbsp;///&nbsp;&nbsp;
+<a href="https://cdimage.kali.org/current">Kali "Live CD Image"</a>.</p>
+<p>
+Simple (without persistence) Kali Live USB requires at least <samp>4Gb</samp>.
+If you're planning persistence, get a USB flash drive with at least
+<samp>8Gb</samp> capacity.</p>
+<ol>
+<li>Download and verify Kali ISO file
+(see <a href="#kali_verify_1">Simple ISO verification procedure</a>).</li>
+
+<li>Plug an appropriate USB flash drive into an available USB port. Don't
+care about erasing, formatting, mounting, unmounting.</li>
+
+<li>Check twice the name of the device you're going to write to, because
+an error can lead to devastating consequencies.</li>
+
+<li>
+Assuming that the target USB flash drive is <samp>/dev/sdf</samp>, and the
+downloaded image file is <samp>kali-linux-2022.1-live-amd64.iso</samp>, the cmd
+should be:</li>
+</ol>
+<p class="cmd">
+sudo dd if=kali-linux-2022.1-live-amd64.iso of=/dev/sdf conv=fsync bs=4M</p>
+<p>
+Notice <code>sudo</code>, - you cannot perform this procedure without root
+privilege. And be patient: in general, it takes ~ 10&#177; minutes for an
+average USB 2.0 drive, and all this time <code>dd</code> outputs nothing
+(unless some error happens). Finally you will get something like (numbers can
+be different):</p>
+<div class="file">
+<pre>
+886+1 records in
+886+1 records out
+3718328320 bytes (3.7 GB, 3.5 GiB) copied, 632.291 s, 5.9 MB/s</pre>
+</div>
+<p>
+Or, you can try to run it with status indicator:</p>
+<p class="cmd">
+sudo dd if=kali-linux-2022.1-live-amd64.iso of=/dev/sdf conv=fsync bs=4M status=progress</p>
+<p>
+When you start Kali from Live USB, make sure your BIOS is set to boot
+from the proper USB device. When the Kali boot screen appears, select "Live
+boot" from the menu. The default root password is "toor" (very funny).</p>
+
+
+<h5>
+<a name="kali_verify_1">Simple ISO verification procedure</a></h5>
+<p>
+Make sure you download ISO image from the official site
+<a href="https://www.kali.org" target="_top">www.kali.org</a>.</p>
+<p>
+Generate the SHA256 checksum from the ISO image you've downloaded using
+the following command:</p>
+
+<p class="cmd">shasum -a 256 kali-linux-2019.1-amd64.iso</p>
+<p>
+The output must be (for this version and this archive):</p>
+
+<p class="fmt"><samp>5596f2b5da66a45a6e6d14510cedc3fc20980f21d01c18059809ef651e6726dd</samp></p>
+<p>
+To be exact, you should compare the result of the above cmd with the
+<b>sha256sum</b> number on the <samp>www.kali.org</samp> web site, and make
+sure you take the number related to the ISO image you've downloaded.</p>
+
+<!--
+<p>
+Latest: Kali Linux 64-bit 2019.1, 3.2G</p>
+<p>
+sha256sum:
+<samp>5596f2b5da66a45a6e6d14510cedc3fc20980f21d01c18059809ef651e6726dd</samp></p>
+-->
+
+
+<h5>
+<a name="kali_verify_2">More reliable ISO verification procedure</a></h5>
+<p>
+For this verification procedure you need three files, or, assuming that
+you've already downloaded ISO image, <b>two files tightly related to that
+ISO image</b>:</p>
+<ul>
+<li><samp>SHA256SUMS</samp>, the file containing the calculated SHA256 hash
+for the ISO (actually, it contains hashes for all images of the same release);</li>
+<li><samp>SHA256SUMS.gpg</samp>, the file containing the digital signature
+protecting the above file from illegal, malicious, etc. modifications;</li>
+</ul>
+<p>
+All files can be downloaded from
+<a href="https://cdimage.kali.org/current">Kali "Live CD Image"</a> site.</p>
+<p>
+As in the prev (simple) case, ISO image is verified with a hash corresponding
+to that image. But in this case the hash is taken from <samp>SHA256SUMS</samp>
+file. To be sure that the file is the "right" one, i.e., the file with hashes
+generated by Kali developers, you have to use a detached digital signature
+contained in <samp>SHA256SUMS.gpg</samp> file.</p>
+<p>
+And, to complicate the situation even more, you need Kali's official key
+downloaded and imported into your keychain. Unless you've already done it
+(for your current system), the command is like this:</p>
+
+<p class="cmdc">wget -q -O - https://www.kali.org/archive-key.asc | gpg --import</p>
+
+<p class="or">or</p>
+
+<p class="cmd">gpg --keyserver hkp://keys.gnupg.net --recv-key 7D8D0BF6</p>
+<p>
+The output will be something like</p>
+<div class="file">
+<pre>
+gpg: key 7D8D0BF6: "Kali Linux Repository &lt;devel@kali.org&gt;" 2 new signatures
+gpg: Total number processed: 1
+gpg:         new signatures: 2
+</pre></div>
+<p>
+Now, you should verify that the key is properly installed:</p>
+
+<p class="cmd">gpg --fingerprint 7D8D0BF6</p>
+<p>
+The output must be something like</p>
+<div class="file">
+<pre>
+pub   4096R/7D8D0BF6 2012-03-05 [expires: 2021-02-03]
+      Key fingerprint = 44C6 513A 8E4F B3D3 0875  F758 ED44 4FF0 7D8D 0BF6
+uid                  Kali Linux Repository &lt;devel@kali.org&gt;
+sub   4096R/FC0D0DCB 2012-03-05 [expires: 2021-02-03]
+</pre></div>
+<p>
+The next step is to check that <samp>SHA256SUMS</samp> is exactly the
+same file that was created by Kali developers and signed with
+<samp>SHA256SUMS.gpg</samp>:</p>
+
+<p class="cmd">gpg --verify SHA256SUMS.gpg SHA256SUMS</p>
+
+<div class="file">
+<pre>
+gpg: Signature made ... ... ... using RSA key ID 7D8D0BF6
+gpg: Good signature from "Kali Linux Repository &lt;devel@kali.org&gt;"</pre>
+</div>
+<!--
+The "not certified with a trusted signature..." message just means that
+you haven't used your own private key to sign the ... key as trusted.
+-->
+<p>
+If you don't get "Good signature", you probably made some mistake, maybe
+downloaded SHA files for some other version of ISO image. Or, maybe, somebody
+tries to trick you and thrust upon you bad files. Let's hope it's not the
+case.</p>
+<p>
+The additional message like</p>
+
+<p class="fmt"><samp>gpg: WARNING: This key is not certified with a trusted
+signature!</samp></p>
+<p>
+can be ignored ... experts say.</p>
+<p>
+If the signature is good, you can verify the downloaded ISO image:</p>
+
+<p class="cmd">grep kali-linux-2019.1-amd64.iso SHA256SUMS | shasum -a 256 -c</p>
+<p>
+and the output must be:</p>
+<div class="file">
+<pre>
+kali-linux-2019.1-amd64.iso: OK
+</pre></div>
+
+
+<h5>Persistence</h5>
+<p>
+is the preservation of data on the Live USB drive across reboots. To use this
+feature, you need a USB flash drive with at least <samp>8GB</samp>: the system
+image will take <samp>3GB+</samp>, and <samp>4GB</samp> will be used by
+separate partition for the persistent data.</p>
+<p>
+If you created Kali Live USB as described above, that USB flash drive already
+has two partitions. Assuming that your USB flash drive is
+<samp>/dev/sdf</samp>, you can check it with:</p>
+
+<p class="cmd">sudo fdisk -l /dev/sdf</p>
+<p>
+Now you must create and format one more partition, a new Linux partition,
+code <samp>83</samp> with <samp>ext3</samp> filesystem. Here is the standard
+way:</p>
+
+<p class="cmd">sudo fdisk /dev/sdf</p>
+<p>
+(see <code><a href="cmds_f.html#fdisk">fdisk</a></code> for details)</p>
+<p>
+Use all available space, don't forget to write changes, and probably you will
+have to unmount, eject (unplug) flash drive, then plug it again to refresh
+kernel's partition table. After that, create filesystem:</p>
+
+<p class="cmd">sudo mkfs.ext3 -L persistence /dev/sdf3</p>
+<p>
+You can use the following (optional) cmd to make sure that fs is OK,
+and fs label is "persistence":</p>
+
+<p class="cmd">sudo e2label /dev/sdf3</p>
+<p>
+The last step is to create <samp>persistence.conf</samp> file in that new
+filesystem. Do it as you like, just be careful with the simple content of that
+file:</p>
+
+<p class="cmdc">sudo -s</p>
+<p class="cmdc">mount /dev/sdf3 /mnt</p>
+<p class="cmdc">cd /mnt</p>
+<p class="cmdc">echo "/ union" &gt; persistence.conf</p>
+<p class="cmdc">cd</p>
+<p class="cmd">umount /dev/sdf3</p>
+
+<!--
+<p>
+Plug the USB stick into the computer you want to boot up. Make sure your
+BIOS is set to boot from the proper USB device. When the Kali boot screen
+appears, select "Live boot" from the menu
+(don't press <span class="keys">Enter</span>), and press the
+<span class="keys">Tab</span> button. This will allow you to edit the boot
+params. Add the word "persistence" to the end of the boot param line each
+time you want to mount your persistent storage.</p>
+-->
+
+</div>
+
+</body></html>

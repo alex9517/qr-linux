@@ -1,0 +1,2184 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (internet protocols, tcp/ip, ipv4, ipv6)</title>
+<meta name="description" content="linux quick reference, tcp/ip, ipv4, ipv6, tcp, udp, icmp, ttl, packet header, sequence number, syn, rst, ack, cidr, source address, destination" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<h1 class="part">
+<a name="tcpip">TCP/IP protocols</a></h1>
+
+<p class="menu">
+<a href="#cidr">CIDR</a>&nbsp;//
+<a href="#datagram">Datagram</a>&nbsp;//
+<a href="#ip_addr">IP&nbsp;addr</a>&nbsp;//
+<a href="#ip_prot">IP&nbsp;proto</a>&nbsp;//
+<a href="#netmask">Mask/Prefix</a>&nbsp;//
+<a href="#mtu">MTU/MSS</a>&nbsp;//
+<a href="#reserved">Reserved</a>&nbsp;//
+<a href="#socket">Socket</a>&nbsp;//
+<a href="#tcp_prot">TCP&nbsp;proto</a>&nbsp;//
+<a href="#udp_prot">UDP&nbsp;proto</a>
+</p>
+<p class="center3">
+TCP/IP layers:</p>
+<p class="menu">
+<a href="#app_layer">Application</a>&nbsp;//
+<a href="#transport_layer">Transport</a>&nbsp;//
+<a href="#internet_layer">Internet</a>&nbsp;//
+<a href="#link_layer">Link</a>
+</p>
+<p class="center3">
+Packet formats:</p>
+<p class="menu">
+<a href="#ip">IPv4</a>&nbsp;//
+<a href="#ip6">IPv6</a>&nbsp;//
+<a href="#icmp">ICMP</a>&nbsp;//
+<a href="#tcp">TCP</a>&nbsp;//
+<a href="#udp">UDP</a>
+</p>
+
+<!--
+<hr style="width:10%;margin-top:1%">
+
+<p class="center">
+<i>The following information was gathered from miscellaneous sources,
+mostly from Wikipedia!</i></p>
+-->
+
+<p>
+<b>TCP</b> (Transmission Control Protocol) and <b>IP</b> (Internet Protocol)
+are the foundational protocols of the <b>Internet protocol suite</b>. In the
+past it was known as <i>DoD model</i> because it was developed by the US
+Department of Defense project agency.</p>
+<p>
+<b>OSI</b> (Open System Interconnect) is rather theoretical (conceptual)
+model, some experts call it <i>a reference model used for understanding and
+designing the system architecture</i>.</p>
+
+<a name="network_arch"></a>
+<table style="margin-left:auto;margin-right:auto">
+<tr><td>
+<pre>
+  OSI model          TCP/IP model
+==============    =================
+ Application
+--------------
+ Presentation       Application
+--------------
+   Session
+--------------    -----------------
+  Transport          Transport
+--------------    -----------------
+   Network            Internet
+--------------    -----------------
+  Data Link
+--------------       Link Layer
+  Physical
+--------------    -----------------</pre>
+</td></tr></table>
+
+<p class="warn">Note!</p>
+<p class="indent">
+<i>Experts have some disagreements concerning TCP/IP architecture,
+relations of TCP/IP layers to OSI layers, naming of layers, etc.</i></p>
+
+
+<h5>
+<a name="app_layer">TCP/IP : Application layer</a></h5>
+<p>
+includes protocols like:</p>
+<ul>
+<li>DNS - Domain Name System (<samp>udp/53</samp>),</li>
+<li>FTP - the File Transfer Protocol (<samp>tcp/21</samp>),</li>
+<li>HTTP - the Hypertext Transfer Protocol (<samp>tcp/80</samp>),</li>
+<li>HTTPS - the Hypertext Transfer Protocol Secure (<samp>tcp/443</samp>),</li>
+<li>IMAP - the Internet Message Access Protocol; there are just IMAP
+(<samp>tcp/143</samp>) and IMAPS (IMAP over SSL) (<samp>tcp/993</samp>),</li>
+<li>LDAP - the Lightweight Directory Access Protocol (<samp>tcp/389</samp>,
+<samp>udp/389</samp>) or LDAPS (LDAP over SSL) (<samp>tcp/636</samp>),</li>
+<li>NTP - the Network Time Protocol (<samp>udp/123</samp>),</li>
+<li>POP - the Post Office Protocol; there are POP3 (<samp>tcp/110</samp>)
+and secure (TLS/SSL) POP3S (<samp>tcp/995</samp>),</li>
+<li>SMTP - the Simple Mail Transfer Protocol (<samp>tcp/25</samp>),</li>
+<li>SSH - Secure Shell (<samp>tcp/22</samp>),</li>
+<li>TFTP - the Trivial File Transfer Protocol (<samp>udp/69</samp>),</li>
+<li>etc</li>
+</ul>
+<p>
+Application layer also includes some basic network support services such as
+protocols for routing (e.g., RIP, the Routing Information Protocol,
+<samp>udp/520</samp>) and host configuration (e.g., DHCP, the Dynamic Host
+Configuration Protocol, <samp>udp/67</samp>, <samp>udp/68</samp>).</p>
+<p>
+The TCP/IP model does not consider the specifics of formatting and presenting
+data, and does not define additional layers between the application and
+transport layers as in the OSI model. Such functions are supposed to be
+provided by libraries and APIs. Application layer protocols treat the
+transport layer (and lower) protocols as black boxes, though apps are usually
+aware of key qualities of the transport layer connection such as the endpoint
+IP addresses and port numbers.</p>
+<p>
+The transport and lower layers are unconcerned with the specifics of app layer,
+routers and switches do not typically examine the encapsulated traffic.
+However, some firewall and bandwidth throttling apps must interpret app data.
+It is also sometimes necessary for NAT (Network Address Translator) traversal
+to consider the application payload.</p>
+
+
+<h5>
+<a name="transport_layer">TCP/IP : Transport layer</a></h5>
+<p>
+The transport layer in TCP/IP model (aka <i>host-to-host layer</i>)
+roughly corresponds to the 4th layer in the OSI model. It provides host-to-host
+connectivity and end-to-end message transfer services that are independent of
+the user data structure or of the underlying network. The main protocols of the
+transport layer:</p>
+<ul>
+<li><b>TCP</b> Transmission Control Protocol, reliable,
+<i>connection-oriented</i> protocol.</li>
+<li><b>UDP</b>, User Datagram Protocol, less reliable, light-weight,
+<i>connectionless</i> protocol.</li>
+<li><b>SCTP</b>, Stream Control Transmission Protocol, reliable,
+<i>connection-oriented</i> transport mechanism; it's a message-stream-oriented
+(unlike TCP which is byte-stream-oriented); it provides multiple streams
+multiplexed over a single connection and multi-homing support (a connection
+endpoint can be represented by multiple IP addresses representing multiple
+physical interfaces, if one iface fails, the connection is not interrupted).</li>
+</ul>
+<p>
+The transport layer establishes the concept of the <b>network port</b> -
+a numbered logical construct allocated specifically for each of the
+communication channels an application needs.</p>
+
+
+<h5>
+<a name="internet_layer">TCP/IP : Internet layer</a></h5>
+<p>
+is responsible for sending packets across potentially multiple networks.
+The process of sending data from the source network to the destination network
+is called <b>routing</b>. The Internet Protocol performs two basic functions:</p>
+<ul>
+<li><b>Host addressing and identification</b> - provided by a hierarchical IP
+addressing system.</li>
+<li><b>Packet routing</b> - the basic task of sending packets of data
+(datagrams) from source to destination by forwarding them to the next
+network router closer to the final destination.</li>
+</ul>
+<p>
+The main protocols of Internet layer are:</p>
+<ul>
+<li><b>IP</b>, the Internet Protocol - the fundamental protocol in the
+Internet protocol suite responsible for relaying datagrams across network
+boundaries. Its routing function enables internetworking, and essentially
+establishes the Internet.</li>
+<li><b>ICMP</b>, the Internet Control Message Protocol is a supporting
+protocol. It's used by network devices, including routers, to send error
+messages and operational info indicating, for example, that a requested
+service is not available or that a host or router could not be reached.
+Unlike transport layer protocols ICMP is not typically used for data exchange,
+nor is it regularly employed by end-user network apps except some diagnostic
+tools like <code><a href="cmds_p.html#ping">ping</a></code> and
+<code><a href="cmds_t.html#traceroute">traceroute</a></code>.</li>
+<li><b>IGMP</b>, the Internet Group Management Protocol is a communications
+protocol used by hosts and adjacent routers on IPv4 networks to establish
+multicast group memberships. IGMP is an integral part of IP multicast. It can
+be used for one-to-many networking apps such as online streaming video and
+gaming, and allows more efficient use of resources when supporting these types
+of apps. Note that IGMP is used on IPv4 networks only. Multicast management on
+IPv6 networks is handled by Multicast Listener Discovery (MLD) which is a part
+of ICMPv6 in contrast to IGMP's bare IP encapsulation.</li>
+</ul>
+
+
+<h5>
+<a name="link_layer">TCP/IP : Link layer</a></h5>
+<p>
+The <b>link layer</b> in the TCP/IP model corresponds to the <b>physical</b>
+(layer 1) and <b>data link</b> (layer 2) layers of the OSI model.</p>
+<p>
+The link layer is a realm of networking protocols that operate <i>only on the
+local network segment</i> (link) that a host is connected to. The packets of
+these protocols are not routed to other networks. The link layer includes the
+protocols that define communication between local network nodes which fulfill
+the purpose of maintaining link states between the local nodes, such as the
+local network topology, and that usually use protocols that are based on the
+framing of packets specific to the link types (e.g., Ethernet).</p>
+<p>
+The processes of transmitting and receiving packets on a given link can be
+controlled by the software <b>device driver</b> for the network card, as well
+as by the <b>firmware</b> or <b>specialized chipsets</b>.</p>
+<p>
+The TCP/IP model includes specs of translating the network addressing methods
+used in the Internet Protocol to link layer addresses, such as Media Access
+Control (MAC) addresses. All other aspects below that level, however, are
+implicitly assumed to exist in the link layer, but are not explicitly defined.</p>
+<p>
+The core protocols in this layer:</p>
+<ul>
+<li><b>ARP</b>, the Address Resolution Protocol is used for discovering the
+link layer address, such as a MAC address, associated with a given internet
+layer address, typically an IPv4 address. This mapping is a critical function
+in the Internet protocol suite. ARP was defined in 1982 by RFC 826, which is
+Internet Standard STD 37.</li>
+<li><b>RARP</b>, the Reverse Address Resolution Protocol is an <b>obsolete</b>
+protocol used by a client computer to request its IPv4 address from a computer
+network, when all it has available is its link layer or hardware address (MAC).
+The client broadcasts the request and does not need prior knowledge of the
+network topology or the identities of servers capable of fulfilling its
+request. It has been rendered obsolete by the Bootstrap Protocol (BOOTP) and
+the modern DHCP, which both support a much greater feature set than RARP.</li>
+<li><b>NDP</b>, the Neighbor Discovery Protocol is an IPv6 replacement for
+ARP. It operates at the Link Layer and is responsible for gathering various
+info required for internet communication, including the configuration of local
+connections and the domain name servers and gateways used to communicate with
+more distant systems. The protocol defines five different ICMPv6 packet types
+to perform functions similar to IPv4 ARP, ICMP, Router Discovery and Router
+Redirect protocols. The Inverse Neighbor Discovery (<b>IND</b>) protocol
+extension allows nodes to determine and advertise an IPv6 addr corresponding
+to a given link-layer addr (like IPv4 RARP). The Secure Neighbor Discovery
+Protocol (<b>SEND</b>), a security extension of NDP, uses Cryptographically
+Generated Addresses (CGA) and the Resource Public Key Infrastructure (RPKI)
+to provide an alternative mechanism for securing NDP with a cryptographic
+method that is independent of IPsec. Neighbor Discovery Proxy (<b>ND Proxy</b>)
+provides a service similar to IPv4 Proxy ARP and allows bridging multiple
+network segments within a single subnet prefix when bridging cannot be done
+at the link layer.</li>
+<li>...</li>
+</ul>
+<p>
+LAN standards like Ethernet and IEEE 802 specs use terminology from the OSI
+model rather than the TCP/IP model, because the TCP/IP model in general does
+not consider physical specs, it just assumes that network infrastructure
+exists and works and can deliver <i>media level frames</i> on the link.
+Therefore, RFC 1122 and RFC 1123 (the definition of the TCP/IP model) do not
+consider hardware issues and physical data transmission and set no standards
+for those aspects.</p>
+
+
+
+<h3>
+<a name="datagram">Datagram, packet, segment, frame, octet</a></h3>
+<p>
+By definition, a <b>datagram</b> is a self-contained, independent entity of
+data carrying sufficient information to be routed from source to destination
+without reliance on earlier exchanges between source, destination, and the
+transporting network (RFC 1594).</p>
+<p>
+The idea of <i>datagram</i> is widely used in communiction, and TCP/IP is
+just a case where the term "datagram" is used for the <i>packets of unreliable
+services</i>, which cannot notify the sender if delivery fails, while the term
+"packet" applies to any packet, reliable or not.</p>
+<p>
+The <a href="#internet_layer">internet layer</a> of TCP/IP (<i>Layer 3</i> of
+OSI) is a datagram service provided by an IP protocol. That is, all IP packets
+are datagrams, because IP is a connectionless, best effort, unreliable, message
+delivery service.</p>
+<table class="grid_2_cen">
+<tr>
+<th class="grid_2_cen" style="width:7em">OSI&nbsp;layer</th>
+<th class="grid_2">Name</th></tr>
+<tr>
+<td class="grid_2_cen"><samp>Layer 4</samp></td><td class="grid_2">Data segment</td></tr>
+<tr>
+<td class="grid_2_cen"><samp>Layer 3</samp></td><td class="grid_2">Data packet</td></tr>
+<tr>
+<td class="grid_2_cen"><samp>Layer 2</samp></td><td class="grid_2">Frame (Ethernet, Wi-Fi);
+Cell (ATM)</td></tr>
+<tr>
+<td class="grid_2_cen"><samp>Layer 1</samp></td><td class="grid_2">Chip (CDMA)</td></tr>
+</table>
+<p>
+Note these subtle terminological nuances: a TCP/UDP packet can be called
+a <b>segment</b>, but an IP packet is always a <i>packet</i>. On the other
+hand, IP and UDP packets are <i>datagrams</i>, while TCP packet should not
+be called "datagram" (notice "without reliance on earlier exchanges" in
+the above definition).</p>
+<p>
+<a name="frame"><b>Frame</b></a> is a <i>unit of transmission</i> in the
+<a href="#link_layer">link layer</a> protocol. Frames are the result of the
+final layer of encapsulation before the data is transmitted over the physical
+layer.</p>
+<p>
+Each frame is a series of bits composed of <i>header</i>, <i>payload</i>,
+<i>frame check sequence</i> (FCS), and <i>interframe gap</i> which semantically
+is not the part of the frame, but sometimes is counted in. See
+<a href="#ethernet_frame">Ethernet frame</a> for details.</p>
+<p>
+In computing and telecommunications, the <a name="octet"><b>octet</b></a>
+is a unit of digital information that consists of <b>eight bits</b>. The term
+is used when the term <i>byte</i> might be ambiguous. Usually, there is no
+difference between octet and byte, but historically byte was not always 8-bit.</p>
+<!--
+The term <b>octet</b> is
+often used in a network context because techically network device (e.g.,
+network card) transmits a stream of bits, and there are no visible borders
+dividing this stream into bytes (or octets). So it's important to be sure that
+at some point this stream of bits will be correctly divided into groups of
+eight.
+-->
+
+<h5>
+<a name="ethernet_frame">Ethernet frame</a></h5>
+<p>
+There are at least three different types of Ethernet frames.</p>
+<p>
+Current Ethernet standard (since 1982), known as <b>Ethernet II</b> or
+<b>Ethernet Version 2</b> or <b>DIX 2.0</b> (DEC, Intel, Xerox) has
+<samp>1518</samp>-octet frame length:</p>
+<pre>
+  header (14 octets) + payload (1500 octets) + FCS (4 octets)</pre>
+<p>
+This count does not include a <i>preamble</i> (<samp>8</samp> octets,
+synchronization sequence) and an <i>interframe gap</i> (at least
+<samp>12</samp> octets). Anyway, MTU is <samp>1500</samp> bytes.</p>
+
+<table class="grid_mc" style="width:100%;margin-top:0.6em;margin-bottom:1em;font-size:90%;color:navy">
+<tr>
+<td class="gridcen_mc" style="width:12%">DA</td>
+<td class="gridcen_mc" style="width:12%">SA</td>
+<td class="gridcen_mc" style="width:10%">Type</td>
+<td class="gridcen_mc">Payload</td>
+<td class="gridcen_mc" style="width:10%">FCS</td></tr></table>
+<pre>
+  DA      Destination MAC addr    (6 bytes)
+  SA      Source MAC addr         (6 bytes)
+  Type    Protocol type           (2 bytes)
+  Data    Protocol data           (46 - 1500 bytes)
+  FCS     Frame check sequence    (4 bytes)</pre>
+
+<table class="grid">
+<caption>Protocol types (EtherType)</caption>
+<tr>
+<td class="grid_2"><samp>0x0800</samp></td><td class="grid_2"> Internet Protocol, Version 4 (IPv4)</td></tr>
+<tr>
+<td class="grid_2"><samp>0x0806</samp></td><td class="grid_2">Address Resolution Protocol (ARP)</td></tr>
+<tr>
+<td class="grid_2"><samp>0x8035</samp></td><td class="grid_2">Reverse Address Resolution Protocol (RARP)</td></tr>
+<tr>
+<td class="grid_2"><samp>0x8100</samp></td><td class="grid_2">VLAN-tagged frame (IEEE 802.1Q)</td></tr>
+<tr>
+<td class="grid_2"><samp>0x814C</samp></td><td class="grid_2">Simple Network Management Protocol (SNMP)</td></tr>
+<tr>
+<td class="grid_2"><samp>0x86DD</samp></td><td class="grid_2">Internet Protocol, Version 6 (IPv6)</td></tr>
+<tr>
+<td class="grid_2"><samp>0x8847</samp></td><td class="grid_2">MPLS unicast</td></tr>
+<tr>
+<td class="grid_2"><samp>0x8848</samp></td><td class="grid_2">MPLS multicast</td></tr>
+<tr>
+<td class="grid_2"><samp>0x8870</samp></td><td class="grid_2">Jumbo Frames</td></tr>
+<tr>
+<td class="grid_2"><samp>0x888E</samp></td><td class="grid_2">EAP over LAN (IEEE 802.1X)</td></tr>
+<tr>
+<td class="grid_2"><samp>0x88E5</samp></td><td class="grid_2">MAC security (IEEE 802.1AE)</td></tr>
+<tr>
+<td class="grid_2"><samp>0x88F7</samp></td><td class="grid_2">Precision Time Protocol (IEEE 1588)</td></tr>
+</table>
+<p>
+Frame Check Sequence uses a 32-bit CRC for error detection.</p>
+<p>
+In 1983, the IEEE introduced the <samp>802.3</samp> <i>Ethernet standard</i>
+to standardize the protocol across all networking equipment, regardless of the
+manufacturer. It is also known as "IEEE <samp>802.3</samp> Ethernet with IEEE
+<samp>802.2</samp> LLC" (Logical Link Control). It's less popular, and its
+format is more complicated. For example, it has <samp>2</samp>-octet "length"
+field instead of "protocol type" (EtherType), and network cards use this field
+to find the type of Ethernet frame: if the value in this field is less then
+<samp>0x05DC</samp> (this hex number is equal to decimal <samp>1500</samp>
+which is Ethernet's MTU), then this is an <i>IEEE 802.3</i> frame, and the
+value is payload's length. Otherwise, it's <i>Ethernet Version 2</i>, and the
+field is protocol type (EtherType).</p>
+<a name="jumbo_frame"></a>
+<p>
+Many Gigabit Ethernet switches and Gigabit Ethernet NICs (network interface
+card) support larger <b>jumbo frames</b> with payload up to <samp>9000</samp>
+octets.</p>
+
+
+
+<h3>
+<a name="mtu">MTU, MSS</a></h3>
+<pre>
+  Frame &gt; MTU &gt; MSS</pre>
+<p>
+<b>Maximum Transmission Unit</b> (MTU) is the size of the largest
+<b>protocol data unit</b> (PDU) that can be communicated in a single
+transaction on the <a href="#internet_layer">network layer</a> (Internet
+Layer, OSI Layer 3).</p>
+<p>
+In case of TCP/IP, the PDU is <b>IP datagram</b>, and MTU is the max possible
+size of that datagram. Since the <a href="#link_layer">link layer</a> adds some
+overhead,</p>
+
+<p class="fmt"><samp>MTU = maximum_frame_size - overhead</samp></p>
+<p>
+<a href="#frame">Frame</a> size depends on the communication media.
+For example, typical Ethernet frame allows <samp>1500</samp>
+<a href="#octet">octets</a> of payload, and it means that MTU is
+<samp>1500</samp> bytes.</p>
+<!--
+<p>
+Wi-Fi MTU is <samp>2304</samp> bytes.</p>
+-->
+<p>
+<b>Maximum Segment Size</b> (MSS) is the largest amount of data (in bytes),
+that a network device (computer, router, etc) can handle as a single piece,
+i.e., without fragmentation. For optimum communications,</p>
+
+<p class="fmt"><samp>segment_size + header_size &lt;= MTU</samp></p>
+<p>
+The Ethernet's default MTU is <samp>1500</samp> bytes, IPv4 header is
+at least <samp>20</samp> bytes, max <samp>60</samp> bytes, so, the MSS can
+be <samp>1440..1480</samp> bytes. Usually each side of connection derives
+MSS from MTU and informs the other side. MSS does not have to be the same in
+both directions. If, due to some reasons (e.g., low memory) one side wants to
+receive packets with smaller MSS, it's not a problem.</p>
+
+
+<h5>
+<a name="pmtud">Path MTU Discovery</a></h5>
+<p>
+When the packets are routed over the Internet, they may pass through a number
+of routers and networks of different architecture. Ideally, each data segment
+should traverse the networks without fragmentation.</p>
+<p>
+<b>Path MTU Discovery</b> (PMTUD) is a standard technique for determining
+the optimal MTU size on the network path between two Internet hosts. In IPv4
+it was originally intended for routers, but all modern operating systems use
+it on endpoints. In IPv6, this function has been explicitly delegated to the
+endpoints.</p>
+<p>
+For <b>IPv4</b> packets, PMTUD works when sender (source) sets the DF
+("Don't Fragment") flag in the IP headers of the outgoing packets. Any device
+along the path whose MTU is smaller than MTU of the packet, drops that packet,
+and sends back an ICMP message <i>Fragmentation Needed</i> (Type 3, Code 4)
+containing its MTU. The process can be repeated several times at several points
+until the source sets MTU to a sufficiently small size allowing to transfer the
+packets without fragmentation.</p>
+<p>
+<b>IPv6 routers do not support fragmentation</b> at all, and PMTUD works by
+initially assuming the path MTU is the same as the MTU on the link layer
+interface where the traffic originates. Then, similar to IPv4, any device along
+the path whose MTU is smaller than that of the packet, just drops the packet
+and sends back an ICMPv6 message <i>Packet Too Big</i> (Type 2) containing its
+MTU, ... until the MTU is small enough to traverse the entire path without
+fragmentation.</p>
+<p>
+The packets can follow different paths, and diff paths may require diff MTUs.
+If the <i>Path MTU</i> changes after connection was set up, and this changed
+MTU is lower than the previously determined Path MTU (probably because the
+last path was not the best), then OS will periodically send probes to see if
+the path has changed (became better) and now allows larger packets. Linux and
+Windows by default set this timer to <samp>10</samp> minutes.</p>
+<p>
+Note that PMTUD uses ICMP protocol, and excessive filtering/blocking can
+cause problems. For example, TCP handshake goes without problems, but data
+transfer fails because some router drops large packets and sends ICMP messages
+to the sender, but sender does not receive these messages.</p>
+
+
+
+<h3>
+<a name="socket">Socket</a></h3>
+<p>
+A <b>network socket</b> is an internal <b>endpoint</b> created within
+a <b>node</b> (network host), for sending and receiving data on a computer
+network. The term <i>socket</i> comes from the hardware terminology where
+a <i>female socket</i>, which is usually the part of equipment, is used to
+insert a <i>male connector</i> of a communication cable.</p>
+<p>
+The networking software uses the idea of a socket in the <b>Socket API</b>
+to hide the complexities of the network protocol stack.</p>
+<p>
+The term <i>socket</i> is also used in IPC (inter-process communication),
+not directly related to networks.</p>
+
+
+<h5>Internet socket</h5>
+<p>
+In TCP/IP context, <b>socket</b> usually means an <b>Internet socket</b>.
+Technically, it's a programmatic structure hidden somewhere within network
+software and accessible for software developers through the <i>Socket API</i>.</p>
+<p>
+Sockets are used by TCP and UDP protocols, and each socket is associated with
+a specific <b>socket address</b> (IP address + Port number) for the local node. Associating a
+<i>socket</i> with a <i>socket address</i> is called <b>binding</b>.</p>
+<p>
+If you are a software developer, you have to deal with:</p>
+<ul>
+<li><b>socket</b> (internal representation),</li>
+<li><b>socket descriptor</b> (abstract identifier),</li>
+<li><b>socket address</b> (see above)</li>
+</ul>
+<p>
+And though there is no strict definition of <i>Internet socket</i>,
+experts agree that it must be characterized by at least two params:</p>
+<ul>
+<li>local socket address</li>
+<li>protocol</li>
+</ul>
+<p>
+The <i>protocol</i> in this case means <i>transport protocol</i> which is
+usually TCP or UDP, but can also be raw IP. <i>Remember that IP protocol does
+not have ports!</i> As for TCP and UDP,</p>
+
+<p class="fmt"><samp>Local socket address = Local IP address + Port number</samp></p>
+<p>
+The <b>port number</b> is just an integer number (<samp>1..65535</samp>) used
+by software to discern one communication channel from another (similar to TV
+channels). Thus, the endpoint with TCP port <samp>53</samp>, and the endpoint
+with UDP port <samp>53</samp>, are totally different.</p>
+<p>
+Also, a socket connected to another socket [usually, but not always, created
+on the other network host], has both <b>local socket address</b> and <b>remote
+socket address</b>.</p>
+
+
+<h5>Socket types</h5>
+<p>
+There are following Internet socket types:</p>
+<ul>
+<li><b>Stream sockets</b> (<i>connection-oriented sockets</i>), which use
+TCP, SCTP (Stream Control Transmission Protocol) or DCCP (Datagram Congestion
+Control Protocol).</li>
+<li><b>Datagram sockets</b> (<i>connectionless sockets</i>), using UDP.</li>
+<li><b>Raw sockets</b> (<i>Raw IP sockets</i>), typically available in
+routers and other network equipment; these sockets don't use the transport
+layer, the packet headers are made accessible to app, and there is no port
+number, just an IP address; raw sockets are used by ICMP, IGMPv4, OSPF,
+and by misc network utilities like
+<code><a href="cmds_p.html#ping">ping</a></code> and
+<code><a href="cmds_n.html#nmap">nmap</a></code>.</li>
+</ul>
+
+
+
+<h3>
+<a name="ip_prot">IP protocol
+(<a href="#ip">IPv4</a> / <a href="#ip6">IPv6</a> / <a href="ip_proto_nums.html">IP proto nums</a>)</a></h3>
+<p>
+IP has the task of delivering packets from the source host to the destination
+host solely based on the IP addresses in the packet headers. For this purpose,
+IP defines packet structures that encapsulate the data to be delivered. It also
+defines addressing methods that are used to label the datagram with source and
+destination info.</p>
+<p>
+The first major version, Internet Protocol Version 4 (IPv4) is still the
+dominant protocol of the Internet. Its successor, Internet Protocol Version 6
+(IPv6), is growing (~20% of the Internet traffic as of 2018).</p>
+<p>
+The Internet Protocol is responsible for addressing hosts, encapsulating data
+into datagrams (including fragmentation and reassembly) and routing datagrams
+from a source host to a destination host across one or more IP networks. For
+these purposes, the Internet Protocol defines the <a href="#ip">format of
+packets</a> and provides an addressing system.</p>
+<p>
+Each datagram has (1) header and (2) payload. The IP header includes src
+IP, dest IP, and other metadata needed to route and deliver the datagram.
+The payload is the data that is transported.</p>
+<p>
+IP addressing entails the assignment of IP addresses and associated params
+to host interfaces. The address space is divided into subnetworks, involving
+the designation of network prefixes. IP routing is performed by all hosts, as
+well as routers, whose main function is to transport packets across network
+boundaries. Routers communicate with one another via specially designed
+routing protocols, either interior gateway protocols or exterior gateway
+protocols, as needed for the topology of the network.</p>
+
+
+<h5>
+<a name="ip_addr">IP address</a></h5>
+<p>
+An IP address (Internet Protocol address) is a numerical label assigned to
+each device connected to a computer network that uses the Internet Protocol
+for communication.</p>
+<p>
+The canonical representation of IPv4 addr (<b>dotted-decimal notation</b>)
+consists of four decimal numbers, each ranging from <samp>0</samp> to
+<samp>255</samp>, separated by dots. Each part is an <a href="#octet">octet</a>
+(a group of <samp>8</samp> bits). However, you can also consider an IP address
+as consisting of two groups of bits:</p>
+<ul>
+<li><b>network prefix</b> - the most significant bits which identify a whole
+network or subnet,</li>
+<li><b>host identifier</b> - the least significant bits which specify a
+particular host (or, to be exact, a particular network interface) on that
+network</li>
+</ul>
+<p>
+The actual division (how many bits comprise network prefix, and how many
+are used for host identification) is defined by the network mask which may
+be set explicitly like <samp>255.255.0.0</samp> or implicitly like
+<samp>/16</samp> in <a href="#cidr">CIDR</a> notation.</p>
+<div class="file"><pre>
+          IP address
+  172   .   16   .  254   .   1
+10101100.00010000.11111110.00000001
+
+          Network mask
+  255   .  255   .   0    .    0
+11111111.11111111.00000000.00000000
+</pre></div>
+<p style="margin-top:1em">
+<i>This division is used as the basis of traffic routing between IP networks
+and for address allocation policies.</i></p>
+<p>
+Technically, IP addresses are <i>binary numbers</i>, but users usually deal
+with a <i>textual representation</i> of IPv4</p>
+
+<p class="fmt"><samp>172.16.254.1</samp></p>
+<p>
+or IPv6:</p>
+<p class="fmt"><samp>2001:db8:0:1234:0:567:8:1</samp></p>
+<p>
+<b>Internet Protocol Version 4</b> (IPv4) address length is <samp>32</samp>
+bits, which limits the address space to <samp>~4</samp> billions
+(<samp>4,294,967,296</samp> or <samp>2<sup>32</sup></samp>) unique addresses.
+Besides, some quantity of these addresses are <a href="#reserved">reserved</a>
+for special purposes, e.g., private networks (<samp>~18</samp> millions),
+<a href="#multicast">multicast addresses</a> (<samp>~270</samp> millions).</p>
+
+<img class="centered" src="images/Ipv4_address.png" />
+<p>
+<b>Internet Protocol Version 6</b> (IPv6) address length is <samp>128</samp>
+bits, or <samp>16</samp> octets. It provides <samp>2<sup>128</sup></samp>, or
+about <samp>3.403×10<sup>38</sup></samp> unique addresses which is supposed to
+be sufficient for the foreseeable future.</p>
+
+<img class="centered" src="images/Ipv6_address.png" />
+<p>
+IPv6 was officially released in 1995 because the rapid exhaustion of IPv4
+address space prompted IETF (Internet Engineering Task Force) to redesign the
+Internet Protocol itself.</p>
+<p>
+Besides providing an awful quantity of addresses, IPv6 also allows efficient
+aggregation of subnet routing prefixes at routing nodes. As a result, routing
+tables are smaller, and the smallest possible individual allocation is a subnet
+for <samp>2<sup>64</sup></samp> hosts. The new design also provides the
+opportunity to separate the addressing infrastructure of a network segment
+from the addressing prefix used to route external traffic for a network.
+IPv6 has facilities that auto change the routing prefix of entire networks,
+should the global connectivity or the routing policy change, without
+requiring internal redesign or renumbering.</p>
+<p>
+The large number of IPv6 addresses allows large blocks to be assigned for
+specific purposes and, where appropriate, to be aggregated for efficient
+routing. With a large address space, there is no need to have complex
+address conservation methods like those used in CIDR.</p>
+
+
+<h5>
+<a name="classful">Classful addressing (IPv4)</a></h5>
+<p>
+The old <b>classful network addressing architecture</b> was used in the
+Internet since 1981 until the introduction of CIDR in 1993. It divides the IP
+address space for IPv4 into five address classes based on the leading four
+address bits. Classes A, B, and C provide unicast addresses for networks of
+three different network sizes. Class D is for multicast networking and the
+class E address range was reserved for future/experimental purposes.
+
+<table class="grid" style="font-size:90%">
+<tr>
+<th class="grid_2_cen">Cls</th>
+<th class="grid_2_cen">Net part, bits</th>
+<th class="grid_2_cen">Number of networks</th>
+<th class="grid_2_cen">Addresses per network</th>
+<th class="grid_2_cen">Addr range</th>
+<th class="grid_2_cen">Default subnet mask in dot-dec notation</th>
+<th class="grid_2_cen">CIDR</th></tr>
+<tr>
+<td class="grid_2_cen">A</td>
+<td class="grid_2_right"><samp>8</samp></td>
+<td class="grid_2_right"><samp>128</samp></td>
+<td class="grid_2_right"><samp>16,777,216</samp> (<samp>2<sup>24</sup></samp>)</td>
+<td class="grid_2_cen"><samp>0.0.0.0 - 127.0.0.0</samp></td>
+<td class="grid_2_cen"><samp>255.0.0.0</samp></td>
+<td class="grid_2_cen"><samp>/8</samp></td></tr>
+<tr>
+<td class="grid_2_cen">B</td>
+<td class="grid_2_right"><samp>16</samp></td>
+<td class="grid_2_right"><samp>16,384</samp></td>
+<td class="grid_2_right"><samp>65,536</samp> (<samp>2<sup>16</sup></samp>)</td>
+<td class="grid_2_cen"><samp>128.0.0.0 - 191.255.0.0</samp></td>
+<td class="grid_2_cen"><samp>255.255.0.0</samp></td>
+<td class="grid_2_cen"><samp>/16</samp></td></tr>
+<tr>
+<td class="grid_2_cen">C</td>
+<td class="grid_2_right"><samp>24</samp></td>
+<td class="grid_2_right"><samp>2,097,152</samp></td>
+<td class="grid_2_right"><samp>256</samp> (<samp>2<sup>8</sup></samp>)</td>
+<td class="grid_2_cen"><samp>192.0.0.0 - 223.255.255.0</samp></td>
+<td class="grid_2_cen"><samp>255.255.255.0</samp></td>
+<td class="grid_2_cen"><samp>/24</samp></td></tr>
+<tr>
+<td class="grid_2_cen">D</td>
+<td class="grid_2_cen">n/a</td>
+<td class="grid_2_cen">n/a</td>
+<td class="grid_2_cen">n/a</td>
+<td class="grid_2_cen"><samp>224.0.0.0 - 239.255.255.255</samp></td>
+<td class="grid_2_cen">n/a</td>
+<td class="grid_2_cen">n/a</td></tr>
+<tr>
+<td class="grid_2_cen">E</td>
+<td class="grid_2_cen">n/a</td>
+<td class="grid_2_cen">n/a</td>
+<td class="grid_2_cen">n/a</td>
+<td class="grid_2_cen"><samp>240.0.0.0 - 255.255.255.255</samp></td>
+<td class="grid_2_cen">n/a</td>
+<td class="grid_2_cen">n/a</td></tr>
+</table>
+
+
+<h5>
+<a name="cidr">CIDR (IPv4)</a></h5>
+<p>
+<i>Note that CIDR is IPv4 only, there is no CIDR in IPv6!</i><p>
+<p>
+Classless Inter-Domain Routing /ˈsaɪdər, ˈsɪ-/ is a slightly different
+[compared to <a href="#classful">classful addressing</a>] method for
+allocating IP addresses and IP routing. It was introduced to replace the
+classful network design in the Internet with the goal to slow the growth
+of routing tables on routers and the fast exhaustion of IPv4 addresses.</p>
+<p>
+CIDR is based on the <b>variable-length subnet masking</b> technique, which
+allows the specification of arbitrary-length prefixes. <b>CIDR notation</b>
+represents an IP address as a routing prefix (address) with a suffix indicating
+the number of bits of the prefix, such as <samp>192.0.2.0/24</samp> (IPv4), or
+<samp>2001:db8::/32</samp> (IPv6).</p>
+<p>
+CIDR also introduced an administrative process of allocating address blocks
+to organizations based on their actual and short-term projected needs. The
+aggregation of multiple contiguous prefixes resulted in supernets in the
+larger Internet, which whenever possible are advertised as aggregates, thus
+reducing the number of entries in the global routing table.</p>
+
+<table class="grid">
+<a name="netmask">
+<caption>Netmask and CIDR prefix length</caption></a>
+<tr>
+<th class="grid_2" style="width:3em">CIDR</th>
+<th class="grid_2" style="width:11em">Netmask</th>
+<th class="grid_2">Hosts in subnet</th></tr>
+<tr>
+<td class="grid_2_cen"><samp>/31</samp></td><td class="grid_2_cen"><samp>255.255.255.254</samp></td><td class="grid_2"><samp>2</samp> (point-to-point link; rare)</td></tr>
+<tr>
+<td class="grid_2_cen"><samp>/30</samp></td><td class="grid_2_cen"><samp>255.255.255.252</samp></td><td class="grid_2"><samp>2</samp> (point-to-point link)</td></tr>
+<tr>
+<td class="grid_2_cen"><samp>/29</samp></td><td class="grid_2_cen"><samp>255.255.255.248</samp></td><td class="grid_2"><samp>6</samp></td></tr>
+<tr>
+<td class="grid_2_cen"><samp>/28</samp></td><td class="grid_2_cen"><samp>255.255.255.240</samp></td><td class="grid_2"><samp>14</samp></td></tr>
+<tr>
+<td class="grid_2_cen"><samp>/27</samp></td><td class="grid_2_cen"><samp>255.255.255.224</samp></td><td class="grid_2"><samp>30</samp></td></tr>
+<tr>
+<td class="grid_2_cen"><samp>/26</samp></td><td class="grid_2_cen"><samp>255.255.255.192</samp></td><td class="grid_2"><samp>62</samp></td></tr>
+<tr>
+<td class="grid_2_cen"><samp>/25</samp></td><td class="grid_2_cen"><samp>255.255.255.128</samp></td><td class="grid_2"><samp>126</samp></td></tr>
+<tr>
+<td class="grid_2_cen"><samp>/24</samp></td><td class="grid_2_cen"><samp>255.255.255.0</samp></td><td class="grid_2"><samp>254&nbsp;</samp>(Class C)</td></tr>
+<tr>
+<td class="grid_2_cen"><samp>/23</samp></td><td class="grid_2_cen"><samp>255.255.254.0</samp></td><td class="grid_2"><samp>510</samp></td></tr>
+<tr>
+<td class="grid_2_cen"><samp>/22</samp></td><td class="grid_2_cen"><samp>255.255.252.0</samp></td><td class="grid_2"><samp>1022</samp></td></tr>
+<tr>
+<td class="grid_2_cen"><samp>/21</samp></td><td class="grid_2_cen"><samp>255.255.248.0</samp></td><td class="grid_2"><samp>2046</samp></td></tr>
+<tr>
+<td class="grid_2_cen"><samp>/20</samp></td><td class="grid_2_cen"><samp>255.255.240.0</samp></td><td class="grid_2"><samp>4094</samp></td></tr>
+<tr>
+<td class="grid_2_cen"><samp>/19</samp></td><td class="grid_2_cen"><samp>255.255.224.0</samp></td><td class="grid_2"><samp>8190</samp></td></tr>
+<tr>
+<td class="grid_2_cen"><samp>/18</samp></td><td class="grid_2_cen"><samp>255.255.192.0</samp></td><td class="grid_2"><samp>16382</samp></td></tr>
+<tr>
+<td class="grid_2_cen"><samp>/17</samp></td><td class="grid_2_cen"><samp>255.255.128.0</samp></td><td class="grid_2"><samp>32766</samp></td></tr>
+<tr>
+<td class="grid_2_cen"><samp>/16</samp></td><td class="grid_2_cen"><samp>255.255.0.0</samp></td><td class="grid_2"><samp>65534&nbsp;</samp>(Class B)</td></tr>
+<tr>
+<td class="grid_2_cen"><samp>/15</samp></td><td class="grid_2_cen"><samp>255.254.0.0</samp></td><td class="grid_2"><samp>131070</samp></td></tr>
+<tr>
+<td class="grid_2_cen"><samp>/14</samp></td><td class="grid_2_cen"><samp>255.252.0.0</samp></td><td class="grid_2"><samp>262142</samp></td></tr>
+<tr>
+<td class="grid_2_cen"><samp>/13</samp></td><td class="grid_2_cen"><samp>255.248.0.0</samp></td><td class="grid_2"><samp>524286</samp></td></tr>
+<tr>
+<td class="grid_2_cen"><samp>/12</samp></td><td class="grid_2_cen"><samp>255.240.0.0</samp></td><td class="grid_2"><samp>1048574</samp></td></tr>
+<tr>
+<td class="grid_2_cen"><samp>/11</samp></td><td class="grid_2_cen"><samp>255.224.0.0</samp></td><td class="grid_2"><samp>2097150</samp></td></tr>
+<tr>
+<td class="grid_2_cen"><samp>/10</samp></td><td class="grid_2_cen"><samp>255.192.0.0</samp></td><td class="grid_2"><samp>4194302</samp></td></tr>
+<tr>
+<td class="grid_2_cen"><samp>/9</samp></td><td class="grid_2_cen"><samp>255.128.0.0</samp></td><td class="grid_2"><samp>8388606</samp></td></tr>
+<tr>
+<td class="grid_2_cen"><samp>/8</samp></td><td class="grid_2_cen"><samp>255.0.0.0</samp></td><td class="grid_2"><samp>16777214&nbsp;</samp>(Class A)</td></tr>
+</table>
+
+<p>
+<b>Example:</b></p>
+
+<p class="fmt"><samp>192.168.1.0/24</samp></p>
+<p>
+Network address is <samp>192.168.1.0</samp>. CIDR prefix length
+<samp>24</samp> bits means that netmask is <samp>255.255.255.0</samp>.
+The max num of hosts allowed in this network is <samp>254</samp>, because
+<samp>192.168.1.0</samp> is the network address, and <samp>192.168.1.255</samp>
+is the broadcast address.</p>
+
+<table class="grid" style="margin-top:0.5em">
+<a name="reserved">
+<caption>Reserved address blocks</caption></a>
+<tr>
+<th class="grid_2">CIDR addr block</th>
+<th class="grid_2">Description</th>
+<th class="grid_2">Reference</th></tr>
+<tr>
+<td class="grid_2"><samp>0.0.0.0/8</samp></td>
+<td class="grid_2">Current net (source addr only)</td>
+<td class="grid_2">RFC 1700</td></tr>
+<tr>
+<td class="grid_2"><samp>10.0.0.0/8</samp></td>
+<td class="grid_2">Private network (Class A)</td>
+<td class="grid_2">RFC 1918</td></tr>
+<tr>
+<td class="grid_2"><samp>127.0.0.0/8</samp></td>
+<td class="grid_2">Loopback</td>
+<td class="grid_2">RFC 5735</td></tr>
+<tr>
+<td class="grid_2"><samp>169.254.0.0/16</samp></td>
+<td class="grid_2">Link-Local</td>
+<td class="grid_2">RFC 3927</td></tr>
+<tr>
+<td class="grid_2"><samp>172.16.0.0/12</samp></td>
+<td class="grid_2">Private network (Class B)</td>
+<td class="grid_2">RFC 1918</td></tr>
+<tr>
+<td class="grid_2"><samp>192.0.0.0/24</samp></td>
+<td class="grid_2">Reserved (IANA)</td>
+<td class="grid_2">RFC 5735</td></tr>
+<tr>
+<td class="grid_2"><samp>192.0.2.0/24</samp></td>
+<td class="grid_2">TEST-NET-1, Doc and examples</td>
+<td class="grid_2">RFC 5735</td></tr>
+<tr>
+<td class="grid_2"><samp>192.88.99.0/24</samp></td>
+<td class="grid_2">IPv6 to IPv4 relay</td>
+<td class="grid_2">RFC 3068</td></tr>
+<tr>
+<td class="grid_2"><samp>192.168.0.0/16</samp></td>
+<td class="grid_2">Private network (Class C)</td>
+<td class="grid_2">RFC 1918</td></tr>
+<tr>
+<td class="grid_2"><samp>198.18.0.0/15</samp></td>
+<td class="grid_2">Network benchmark tests</td>
+<td class="grid_2">RFC 2544</td></tr>
+<tr>
+<td class="grid_2"><samp>198.51.100.0/24</samp></td>
+<td class="grid_2">TEST-NET-2, Doc and examples</td>
+<td class="grid_2">RFC 5737</td></tr>
+<tr>
+<td class="grid_2"><samp>203.0.113.0/24</samp></td>
+<td class="grid_2">TEST-NET-3, Doc and examples</td>
+<td class="grid_2">RFC 5737</td></tr>
+<tr>
+<td class="grid_2"><samp>224.0.0.0/4</samp></td>
+<td class="grid_2">Multicasts (former Class D)</td>
+<td class="grid_2">RFC 3171</td></tr>
+<tr>
+<td class="grid_2"><samp>240.0.0.0/4</samp></td>
+<td class="grid_2">Reserved (former Class E)</td>
+<td class="grid_2">RFC 1700</td></tr>
+<tr>
+<td class="grid_2"><samp>255.255.255.255</samp></td>
+<td class="grid_2">Broadcast</td>
+<td class="grid_2">RFC 919</td></tr>
+</table>
+
+
+<h5>
+<a name="multicast">IP multicast</a></h5>
+<p>
+A <b>multicast address</b> is a logical identifier for a group of hosts in
+a computer network that are available to process datagrams or frames intended
+to be multicast for a designated network service. Multicast addressing can be
+used:</p>
+<ul>
+<li>in the link layer (OSI model, layer 2), such as <i>Ethernet multicast</i>,</li>
+<li>at the internet layer (OSI model, layer 3) for <i>IP multicast</i>.</li>
+</ul>
+<p>
+<b>IP multicast</b> (i.e., IP-specific form of multicast) is a technique
+for <b>one-to-many</b> and <b>many-to-many</b> real-time communication over
+an IP infrastructure using [in most cases] <b>UDP protocol</b> because it does
+not require to establish connection with the receiving side. This is a method
+of sending datagrams to a group of interested receivers in a single
+transmission.</p>
+<p>
+IP multicast uses specially reserved multicast address blocks
+<samp>224.0.0.0/4</samp> for IPv4 and <samp>ff00::/8</samp> for IPv6.
+The subrange <samp>224.0.0.0/24</samp> (<samp>ffx2::/16</samp>) is used
+for multicasting on the local subnetworks only, routers do not (or at least,
+must not) forward pkts with addresses belonging to this range.</p>
+<p>
+An <b>IP multicast group address</b> is used by sources and the receivers
+to send and receive multicast messages. Sources use the group address as the
+<i>IP destination address</i> in their data packets. Receivers use this group
+address to inform the network that they are interested in receiving packets
+sent to that group. For example, if some content is associated with the group
+<samp>224.0.0.251</samp>, the source will send data packets destined to
+<samp>224.0.0.251</samp>. Receivers for that content inform the network that
+they are interested in receiving data packets sent to the group
+<samp>224.0.0.251</samp>. In other words, <i>receivers join</i>
+<samp>224.0.0.251</samp>.</p>
+<p>
+The protocol typically used by receivers to join a group is called <b>IGMP</b>,
+the Internet Group Management Protocol (IPv4). Multicast management on IPv6
+networks is handled by <b>MLD</b> (Multicast Listener Discovery) which is a
+part of <b>ICMPv6</b> in contrast to IGMP's bare IP encapsulation.</p>
+<p>
+Some notable multicast addresses:</p>
+<table class="grid_2">
+<tr>
+<th class="grid_2">IPv4</th>
+<th class="grid_2">IPv6</th>
+<th class="grid">&nbsp;</th></tr>
+<tr>
+<td class="grid_2"><samp>224.0.0.1</samp></td>
+<td class="grid_2"><samp>ff02::3</samp></td>
+<td class="grid_2"><i>All Hosts</i> multicast group addresses all hosts on the
+same network segment</td></tr>
+<tr>
+<td class="grid_2"><samp>224.0.0.2</samp></td>
+<td class="grid_2"><samp>ff02::2</samp></td>
+<td class="grid_2"><i>All Routers</i> multicast group addresses all routers on
+the same network segment</td></tr>
+<tr>
+<td class="grid_2"><samp>224.0.0.22</samp></td>
+<td class="grid_2_cen">n/a</td>
+<td class="grid_2">IGMP (Internet Group Management Protocol version 3);
+IPv4 only</td></tr>
+<tr>
+<td class="grid_2_cen">n/a</td>
+<td class="grid_2"><samp>ff02::16</samp></td>
+<td class="grid_2">MLDv2, Multicast Listener Discovery, a component of the
+IPv6 suite, is used by IPv6 routers for discovering multicast listeners on
+a directly attached link</td></tr>
+<tr>
+<td class="grid_2"><samp>224.0.0.251</samp></td>
+<td class="grid_2"><samp>ff0x::fb</samp></td>
+<td class="grid_2">Multicast DNS (mDNS) address</td></tr>
+<tr>
+<td class="grid_2"><samp>224.0.0.252</samp></td>
+<td class="grid_2"><samp>ff02::1:3</samp></td>
+<td class="grid_2">Link-local Multicast Name Resolution (LLMNR) address</td></tr>
+</table>
+
+
+
+<h4>
+<a name="ip">IPv4 packet</a></h4>
+
+<table class="grid_mc" style="margin-top:1em;margin-bottom:1em;font-family:Open-Sans;font-size:80%">
+<tr>
+<th class="gridcen_small_mc1">0</th>
+<th class="gridcen_small_mc1">1</th>
+<th class="gridcen_small_mc1">2</th>
+<th class="gridcen_small_mc1">3</th>
+<th class="gridcen_small_mc1">4</th>
+<th class="gridcen_small_mc1">5</th>
+<th class="gridcen_small_mc1">6</th>
+<th class="gridcen_small_mc1">7</th>
+
+<th class="gridcen_small_mc2">0</th>
+<th class="gridcen_small_mc2">1</th>
+<th class="gridcen_small_mc2">2</th>
+<th class="gridcen_small_mc2">3</th>
+<th class="gridcen_small_mc2">4</th>
+<th class="gridcen_small_mc2">5</th>
+<th class="gridcen_small_mc2">6</th>
+<th class="gridcen_small_mc2">7</th>
+
+<th class="gridcen_small_mc1">0</th>
+<th class="gridcen_small_mc1">1</th>
+<th class="gridcen_small_mc1">2</th>
+<th class="gridcen_small_mc1">3</th>
+<th class="gridcen_small_mc1">4</th>
+<th class="gridcen_small_mc1">5</th>
+<th class="gridcen_small_mc1">6</th>
+<th class="gridcen_small_mc1">7</th>
+
+<th class="gridcen_small_mc2">0</th>
+<th class="gridcen_small_mc2">1</th>
+<th class="gridcen_small_mc2">2</th>
+<th class="gridcen_small_mc2">3</th>
+<th class="gridcen_small_mc2">4</th>
+<th class="gridcen_small_mc2">5</th>
+<th class="gridcen_small_mc2">6</th>
+<th class="gridcen_small_mc2">7</th></tr>
+<tr>
+<td class="gridcen_mc" colspan="4" style="width:12.5%">Version</td>
+<td class="gridcen_mc" colspan="4" style="width:12.5%">IHL</td>
+<td class="gridcen_mc" colspan="8" style="width:25%">Type of Service</td>
+<td class="gridcen_mc" colspan="16" style="width:50%">Total Length</td></tr>
+<tr>
+<td class="gridcen_mc" colspan="16" style="width:50%">Identification</td>
+<td class="gridcen_mc" colspan="3">Flags</td>
+<td class="gridcen_mc" colspan="13" style="width:40.6%">Fragment Offset</td></tr>
+<tr>
+<td class="gridcen_mc" colspan="8">Time to Live</td>
+<td class="gridcen_mc" colspan="8">Protocol</td>
+<td class="gridcen_mc" colspan="16" style="width:50%">Header Checksum</td></tr>
+<tr>
+<td class="gridcen_mc" colspan="32">Source Address</td></tr>
+<tr>
+<td class="gridcen_mc" colspan="32">Destination Address</td></tr>
+<tr>
+<td class="gridcen_mc" colspan="32">Options (variable length, 0..40 bytes)</td></tr>
+<tr>
+<td class="gridcen_mc" colspan="32" style="background:#add8fa">Data (variable length)</td></tr>
+</table>
+
+<p class="fmt" style="padding-top:12px"><samp>Version (4 bits)</samp></p>
+<p class="desc">The version of IP used to generate the datagram. For IPv4,
+this is <samp>4</samp>. The purpose is to ensure compatibility between
+devices that may be running diff IP versions. In general, a device running
+an older version will reject datagrams created by newer implementations,
+as it may not be able to interpret them correctly.</p>
+
+<p class="fmt"><samp>IHL (4 bits)</samp></p>
+<p class="desc">Internet Header Length in 32-bit words, including the length
+of any options fields and padding. The normal length without options is 20 bytes.</p>
+
+<p class="fmt"><samp>TOS (8 bits)</samp></p>
+<p class="desc">Type of Service. It was supposed to provide the quality of
+service features, such as prioritized delivery for IP datagrams. Later its
+meaning has been redefined for use by a technique called Differentiated
+Services (<samp>DS</samp>).</p>
+
+<p class="fmt"><samp>TL (16 bits)</samp></p>
+<p class="desc">Total Length of the IP datagram, in bytes. The max length
+of an IP datagram is 65,535 bytes, though most are much smaller.</p>
+
+<p class="fmt"><samp>Identification (16 bits)</samp></p>
+<p class="desc">This field contains a 16-bit value that is common to each
+of the fragments belonging to a particular message; for datagrams originally
+sent unfragmented it is still filled in, so it can be used if the datagram
+must be fragmented by a router during delivery. This field is used by the
+recipient to reassemble messages (IP datagrams can be received out of order).</p>
+
+<p class="fmt"><samp>Flags (3 bits)</samp></p>
+
+<table class="grid_2" style="margin-left:3.6em;margin-bottom:1em">
+<tr>
+<td class="grid_2">Bit&nbsp;1</td>
+<td class="grid_2">Reserved.</td></tr>
+<tr>
+<td class="grid_2">Bit&nbsp;2</td>
+<td class="grid_2">DF (Don't Fragment). <samp>1</samp> means that the datagram
+should not be fragmented. Since fragmentation process is usually invisible
+to higher layers, the majority of protocols don't care and don't set this
+flag. However, it is used to test link's MTU (maximum transmission unit).</td></tr>
+<tr>
+<td class="grid_2">Bit&nbsp;3</td>
+<td class="grid_2">MF (More Fragments). <samp>0</samp> indicates the last
+fragment in a message; <samp>1</samp> indicates that more fragments are
+to come. Unfragmented message has MF = <samp>0</samp>.</td></tr>
+</table>
+
+<p class="fmt" style="padding-top:4px"><samp>Fragment Offset (13 bits)</samp></p>
+<p class="desc">If a msg is fragmented, this field specifies position in
+the overall msg where the data in this fragment goes. It is specified in
+units of 8 bytes (64 bits). The first fragment has an offset of 0.</p>
+
+<p class="fmt"><samp>TTL (8 bits)</samp></p>
+<p class="desc">Time To Live. Specifies how long the datagram is allowed to
+"live" on the network, in terms of router hops. Each router decrements the
+value of the TTL field by one prior to re-transmitting it. If the TTL field
+drops to zero, the datagram is assumed to have taken too long a route and is
+discarded.</p>
+
+<a name="prot_type_codes">
+<p class="fmt"><samp>Protocol (8 bits)</samp></p></a>
+<p class="desc">Identifies the higher-layer protocol (either a transport
+layer prot or encapsulated network layer prot) carried in the datagram. Here
+is a small fragment of the <a href="ip_proto_nums.html">IP protocol numbers</a>
+list.</p>
+
+<table class="grid_2" style="margin-left:3.6em;margin-bottom:1em">
+<tr>
+<th class="grid_2">Hex</th>
+<th class="grid_2">Dec</th>
+<th class="grid_2">Protocol</th></tr>
+<tr>
+<td class="grid_2_cen"><samp>00</samp></td>
+<td class="grid_2_cen"><samp>0</samp></td>
+<td class="grid_2">Reserved</td></tr>
+<tr>
+<td class="grid_2_cen"><samp>01</samp></td>
+<td class="grid_2_cen"><samp>1</samp></td>
+<td class="grid_2">ICMP</td></tr>
+<tr>
+<td class="grid_2_cen"><samp>02</samp></td>
+<td class="grid_2_cen"><samp>2</samp></td>
+<td class="grid_2">IGMP</td></tr>
+<tr>
+<td class="grid_2_cen"><samp>03</samp></td>
+<td class="grid_2_cen"><samp>3</samp></td>
+<td class="grid_2">GGP</td></tr>
+<tr>
+<td class="grid_2_cen"><samp>04</samp></td>
+<td class="grid_2_cen"><samp>4</samp></td>
+<td class="grid_2">IP-in-IP Encapsulation</td></tr>
+<tr>
+<td class="grid_2_cen"><samp>06</samp></td>
+<td class="grid_2_cen"><samp>6</samp></td>
+<td class="grid_2">TCP</td></tr>
+<tr>
+<td class="grid_2_cen"><samp>08</samp></td>
+<td class="grid_2_cen"><samp>8</samp></td>
+<td class="grid_2">EGP</td></tr>
+<tr>
+<td class="grid_2_cen"><samp>11</samp></td>
+<td class="grid_2_cen"><samp>17</samp></td>
+<td class="grid_2">UDP</td></tr>
+<tr>
+<td class="grid_2_cen"><samp>32</samp></td>
+<td class="grid_2_cen"><samp>50</samp></td>
+<td class="grid_2">Encapsulating Security Payload (ESP) Extension Header</td></tr>
+<tr>
+<td class="grid_2_cen"><samp>33</samp></td>
+<td class="grid_2_cen"><samp>51</samp></td>
+<td class="grid_2">Authentication Header (AH) Extension Header</td></tr>
+</table>
+
+<p class="fmt" style="padding-top:4px"><samp>Header Checksum (16 bits)</samp></p>
+<p class="desc">A 16-bit checksum computed over the header to provide basic
+protection against corruption in transmission. It is calculated by dividing
+the header bytes into two-byte words and then adding them together. The data
+is not checksummed, only the header.</p>
+
+<p class="fmt"><samp>Source Address (32 bits)</samp></p>
+<p class="desc">The 32-bit IP address of the originator of the datagram.
+Though intermediate devices such as routers may handle the datagram, they
+do not normally put their address into this field, it is always the device
+that originally sent the datagram.</p>
+
+<p class="fmt"><samp>Destination Address (32 bits)</samp></p>
+<p class="desc">The 32-bit IP address of the intended recipient of the
+datagram.</p>
+
+<p class="fmt"><samp>Options (variable length)</samp></p>
+<p class="desc">One or more of several types of options may be included
+after the standard headers in certain IP datagrams. If the number of bits
+is not a multiple of 32, zero bits are added to the header to a multiple
+of 32 bits (4 bytes).</p>
+
+<p class="fmt"><samp>Data (variable length)</samp></p>
+<p class="desc" style="padding-bottom:8px">Either an entire higher-layer message or a fragment of one.</p>
+
+
+
+<h4>
+<a name="ip6">IPv6 packet</a></h4>
+<p>
+The control information in IPv6 packets is subdivided into a <i>mandatory</i>
+<b>fixed header</b> and <i>optional</i> <b>extension headers</b>. The payload
+of an IPv6 packet is typically a datagram or segment of the
+<a href="#transport_layer">Transport Layer</a> protocol, but may be data
+for an <a href="#internet_layer">Internet Layer</a> (e.g., ICMPv6) or
+<a href="#link_layer">Link Layer</a> (e.g., OSPF).</p>
+<p>
+<b>Routers do not fragment IPv6 packets</b>, as they do for IPv4. Hosts are
+"strongly recommended" to implement <a href="#pmtud">Path MTU Discovery</a> to
+take advantage of MTUs greater than the smallest MTU of <samp>1280</samp>
+octets. A node may use the IPv6 Fragment header to fragment the packet at the
+source and have it reassembled at the destination(s).</p>
+
+<table class="grid_mc" style="margin-top:1em;margin-bottom:1em;font-family:Open-Sans;font-size:80%">
+<caption>IPv6 fixed header</caption>
+<tr>
+<th class="gridcen_small_mc1">0</th>
+<th class="gridcen_small_mc1">1</th>
+<th class="gridcen_small_mc1">2</th>
+<th class="gridcen_small_mc1">3</th>
+<th class="gridcen_small_mc1">4</th>
+<th class="gridcen_small_mc1">5</th>
+<th class="gridcen_small_mc1">6</th>
+<th class="gridcen_small_mc1">7</th>
+
+<th class="gridcen_small_mc2">0</th>
+<th class="gridcen_small_mc2">1</th>
+<th class="gridcen_small_mc2">2</th>
+<th class="gridcen_small_mc2">3</th>
+<th class="gridcen_small_mc2">4</th>
+<th class="gridcen_small_mc2">5</th>
+<th class="gridcen_small_mc2">6</th>
+<th class="gridcen_small_mc2">7</th>
+
+<th class="gridcen_small_mc1">0</th>
+<th class="gridcen_small_mc1">1</th>
+<th class="gridcen_small_mc1">2</th>
+<th class="gridcen_small_mc1">3</th>
+<th class="gridcen_small_mc1">4</th>
+<th class="gridcen_small_mc1">5</th>
+<th class="gridcen_small_mc1">6</th>
+<th class="gridcen_small_mc1">7</th>
+
+<th class="gridcen_small_mc2">0</th>
+<th class="gridcen_small_mc2">1</th>
+<th class="gridcen_small_mc2">2</th>
+<th class="gridcen_small_mc2">3</th>
+<th class="gridcen_small_mc2">4</th>
+<th class="gridcen_small_mc2">5</th>
+<th class="gridcen_small_mc2">6</th>
+<th class="gridcen_small_mc2">7</th></tr>
+<tr>
+<td class="gridcen_mc" colspan="4" style="width:12.5%">Version</td>
+<td class="gridcen_mc" colspan="8" style="width:25%">Traffic Class</td>
+<td class="gridcen_mc" colspan="20">Flow Label</td></tr>
+<tr>
+<td class="gridcen_mc" colspan="16" style="width:50%">Payload Length</td>
+<td class="gridcen_mc" colspan="8">Next Header</td>
+<td class="gridcen_mc" colspan="8" style="width:25%">Hop Limit</td></tr>
+<tr>
+<td class="gridcen_mc" colspan="32">S o u r c e &nbsp; A d d r e s s (p a r t # 1)</td></tr>
+<tr>
+<td class="gridcen_mc" colspan="32">S o u r c e &nbsp; A d d r e s s (p a r t # 2)</td></tr>
+<tr>
+<td class="gridcen_mc" colspan="32">S o u r c e &nbsp; A d d r e s s (p a r t # 3)</td></tr>
+<tr>
+<td class="gridcen_mc" colspan="32">S o u r c e &nbsp; A d d r e s s (p a r t # 4)</td></tr>
+<tr>
+<td class="gridcen_mc" colspan="32">D e s t i n a t i o n &nbsp; A d d r e s s (p a r t # 1)</td></tr>
+<tr>
+<td class="gridcen_mc" colspan="32">D e s t i n a t i o n &nbsp; A d d r e s s (p a r t # 2)</td></tr>
+<tr>
+<td class="gridcen_mc" colspan="32">D e s t i n a t i o n &nbsp; A d d r e s s (p a r t # 3)</td></tr>
+<tr>
+<td class="gridcen_mc" colspan="32">D e s t i n a t i o n &nbsp; A d d r e s s (p a r t # 4)</td></tr>
+</table>
+
+<p class="fmt"><samp>Version (4 bits)</samp></p>
+<p class="desc">The constant value <samp>6</samp> represented by bit sequence
+<samp>0110</samp>.</p>
+
+<p class="fmt"><samp>Traffic Class (6+2 bits)</samp></p>
+<p class="desc">The bits of this field hold two values.
+The <samp>6</samp> most-significant bits hold the <i>Differentiated Services</i>
+(DS) field, which is used to classify packets. Currently, all standard DS
+fields end with a <samp>0</samp> bit. Any DS field that ends with two
+<samp>1</samp> bits is intended for local or experimental use.</p>
+<p class="desc">The remaining two bits are used for <i>Explicit Congestion
+Notification</i> (ECN); priority values subdivide into ranges: traffic where
+the source provides congestion control and non-congestion control traffic.</p>
+
+<p class="fmt"><samp>Flow Label (20 bits)</samp></p>
+<p class="desc">Originally it was created for real-time apps: when set to
+a non-zero value, it's a hint to routers and switches with multiple outbound
+paths that these packets should stay on the same path to avoid reordering.
+Later it was suggested that this label can be used to detect spoofed packets.</p>
+
+<p class="fmt"><samp>Payload Length (16 bits)</samp></p>
+<p class="desc">The size of the payload in octets, including any extension
+headers. The length is set to zero when a <i>Hop-by-Hop</i> extension header
+carries a <i>Jumbo Payload</i> option.</p>
+
+<p class="fmt"><samp>Next Header (8 bits)</samp></p>
+<p class="desc">The type of the next header. Usually it specifies the transport
+layer protocol used by a packet's payload. When extension headers are present
+in the packet this field indicates which extension header follows. The values
+are shared with those used for the IPv4 "Protocol" field, as both fields have
+the same function (see <a href="ip_proto_nums.html">IP protocol numbers</a>).</p>
+
+<p class="fmt"><samp>Hop Limit (8 bits)</samp></p>
+<p class="desc">Replaces the TTL field of IPv4. This value is decremented
+by one at each forwarding node, and when it becomes <samp>0</samp> the packet
+is discarded. However, the dest node must process the packet normally even if
+hop limit becomes <samp>0</samp>.</p>
+
+<p class="fmt"><samp>Source Address (128 bits)</samp></p>
+<p class="desc">The IPv6 address of the sending node.</p>
+
+<p class="fmt"><samp>Destination Address (128 bits)</samp></p>
+<p class="desc">The IPv6 address of the destination node(s).</p>
+<p>
+In order to increase performance, and since current link layer technology
+and transport or application layer protocols are assumed to provide sufficient
+error detection, the <b>IPv6 header has no checksum!</b></p>
+
+
+<h5>IPv6 Extension Headers</h5>
+<p>
+follow the <i>fixed header</i> and carry optional Internet Layer info.
+These headers form a chain, using the "Next Header" fields. The <i>Next
+Header</i> field in the <i>fixed header</i> indicates the type of the first
+extension header. The <i>Next Header</i> field of the last ext header
+indicates the type of the <i>upper-layer protocol header</i> which immediately
+follows the last ext header and is the part of the packet's payload.</p>
+<p>
+Extension headers are supposed to be examined and processed at the packet's
+destination only, except for "Hop-by-Hop Options", which are processed at every
+node on the path including sender and receiver.</p>
+<p>
+All extension headers are optional and should only appear once, except for
+the "Destination Options" header, which may appear twice. The size of any ext
+header is a multiple of <samp>8</samp> (sometimes internal padding is required).</p>
+<p>
+The following table shows the extension headers currently defined. New
+extension headers may be defined in the future.</p>
+
+
+<table class="grid_2">
+<caption>Types of extension headers</caption>
+<tr>
+<th class="grid_2">Extension Header</th>
+<th class="grid_2">Type</th>
+<th class="grid_2">Description</th></tr>
+<tr>
+<td class="grid_2"><samp>Hop-by-Hop Options</samp></td>
+<td class="grid_2_cen"><samp>0</samp></td>
+<td class="grid_2">Options that need to be examined by all devices on the path.</td></tr>
+<tr>
+<td class="grid_2"><samp>Destination Options</samp> (before routing header)</td>
+<td class="grid_2_cen"><samp>60</samp></td>
+<td class="grid_2">Options that need to be examined only by the destination of
+the packet.</td></tr>
+<tr>
+<td class="grid_2"><samp>Routing</samp></td>
+<td class="grid_2_cen"><samp>43</samp></td>
+<td class="grid_2">Methods to specify the route for a datagram (used with
+Mobile IPv6).</td></tr>
+<tr>
+<td class="grid_2"><samp>Fragment</samp></td>
+<td class="grid_2_cen"><samp>44</samp></td>
+<td class="grid_2">Contains parameters for fragmentation of datagrams.</td></tr>
+<tr>
+<td class="grid_2"><samp>Authentication Header (AH)</samp></td>
+<td class="grid_2_cen"><samp>51</samp></td>
+<td class="grid_2">Contains info used to verify the authenticity of most parts
+of the packet.</td></tr>
+<tr>
+<td class="grid_2"><samp>Encapsulating Security Payload (ESP)</samp></td>
+<td class="grid_2_cen"><samp>50</samp></td>
+<td class="grid_2">Carries encrypted data for secure communication.</td></tr>
+<tr>
+<td class="grid_2"><samp>Destination Options</samp> (before upper-layer header)</td>
+<td class="grid_2_cen"><samp>60</samp></td>
+<td class="grid_2">Options that need to be examined only by the destination of
+the packet.</td></tr>
+<tr>
+<td class="grid_2"><samp>Mobility</samp> (currently without upper-layer header)</td>
+<td class="grid_2_cen"><samp>135</samp></td>
+<td class="grid_2">Parameters used with Mobile IPv6.</td></tr>
+<tr>
+<td class="grid_2"><samp>Host Identity Protocol</samp></td>
+<td class="grid_2_cen"><samp>139</samp></td>
+<td class="grid_2">Used for Host Identity Protocol version 2 (HIPv2).</td></tr>
+<tr>
+<td class="grid_2"><samp>Shim6 Protocol</samp></td>
+<td class="grid_2_cen"><samp>140</samp></td>
+<td class="grid_2">Used for Shim6.</td></tr>
+<tr>
+<td class="grid_2"><samp>Reserved</samp></td>
+<td class="grid_2_cen"><samp>253</samp></td>
+<td class="grid_2">Used for experimentation and testing.</td></tr>
+<tr>
+<td class="grid_2"><samp>Reserved</samp></td>
+<td class="grid_2_cen"><samp>254</samp></td>
+<td class="grid_2">Used for experimentation and testing.</td></tr>
+</table>
+<p>
+<b>MIP</b> (Mobile IP) is an IETF standard communications protocol which
+is designed to allow mobile device users to move from one network to another
+while maintaining a permanent IP address.</p>
+<p>
+<b>AH</b> (Authentication Header) and <b>ESP</b> (Encapsulating Security
+Payload) are the parts of <i>IPsec</i> and are used identically in IPv6 and
+in IPv4.</p>
+<p>
+<b>HIPv2</b> is the Host Identity Protocol providing secure methods for IP
+multihoming and mobile computing.</p>
+<p>
+<b>Shim6</b> is Site Multihoming by IPv6 Intermediation protocol.</p>
+
+
+
+<h3>
+<a name="tcp_prot">TCP protocol (see <a href="#tcp">packet format</a>)</a></h3>
+<p>
+<b>Transmission Control Protocol</b> is one of the main protocols
+of the Internet protocol suite. It provides host-to-host connectivity
+at the <a href="#transport_layer">transport layer</a>
+of the <a href="#network_arch">Internet model</a>. An application does
+not have to care about the particular details for sending data via a link
+to another host, TCP handles all handshaking, transmission control, and
+presents an abstraction of the network connection to the app typically
+through a <a href="#socket">network socket</a> interface.</p>
+<p>
+Due to network congestion, traffic load balancing, or unpredictable network
+behaviour, IP packets may be lost, duplicated, or delivered out of order. TCP
+detects and solves these problems providing a reliable delivery service which
+guarantees that all bytes received will be identical to bytes sent and in the
+correct order.</p>
+<p>
+However, retransmissions and the necessity to reorder arriving packets
+(sometimes) can introduce latency on the order of seconds. Therefore, TCP
+is not good for real-time apps like VoIP (Voice over IP) or streaming video.</p>
+<p>
+In other words, <i>TCP is optimized for accurate delivery</i> rather than
+<i>timely delivery</i>.</p>
+
+
+<h5>Connecting</h5>
+<p>
+TCP initializes and maintains certain status info for each data stream.
+The combination of this information, including sockets, sequence numbers,
+and window sizes, is called a <b>connection</b>. Each connection is uniquely
+specified by a pair of <a href="#socket">sockets</a> identifying its two
+sides.</p>
+<p>
+To establish a connection, TCP uses a three-way (or 3-step) handshake.
+First of all, the server must bind to a specific (i.e., defined by server's
+config) port known to clients, and start listening at this port (<b>passive
+open</b>). Only after that a client can initiate an <b>active open</b>:</p>
+<ol>
+<li><samp>SYN</samp>: The active open is performed by the client sending a
+<samp>SYN</samp> [packet] to the server. The client sets the segment's
+<b>sequence number</b> to a random value <samp>M</samp>.</li>
+
+<li><samp>SYN-ACK</samp>: In response, the server replies with a
+<samp>SYN-ACK</samp> [packet]. The <b>acknowledgment number</b> is set to one
+more than the received sequence number (<samp>M+1</samp>), and the <b>sequence
+number</b> that the server chooses for the packet is another random number,
+<samp>N</samp>.</li>
+
+<li><samp>ACK</samp>: Finally, the client sends an <samp>ACK</samp> back to
+the server. The sequence number is set to the received acknowledgment value
+(<samp>M+1</samp>), and the acknowledgment number is set to one more than the
+received sequence number (<samp>N+1</samp>).</li>
+</ol>
+<img class="centered" src="images/tcp_handshake.png" />
+<p>
+At this point, both the client and server have received an acknowledgment of
+the connection. The steps 1, 2 establish the connection parameter (sequence
+number) for one direction and it is acknowledged. The steps 2, 3 establish the
+connection parameter (sequence number) for the other direction and it is
+acknowledged. Thus, a full-duplex communication is established.</p>
+
+
+<h5>Disconnecting</h5>
+<p>
+The connection termination requires a <b>four-way handshake</b>, with each
+side of the connection terminating independently. When an endpoint decides to
+stop its half of the connection, it transmits a <samp>FIN</samp> packet. The
+other side acknowledges it with an <samp>ACK</samp>. Therefore, a typical
+tear-down requires a pair of <samp>FIN</samp> and <samp>ACK</samp> segments
+from each TCP endpoint. After the side that sent the first <samp>FIN</samp>
+has responded with the final <samp>ACK</samp>, it waits for a timeout before
+finally closing the connection, and at this time the local port is already
+unavailable for new connections - this prevents confusion due to delayed
+packets being delivered during subsequent connections.</p>
+
+<img class="centered" src="images/tcp_terminate.png" />
+<p>
+A connection can be <b>half-open</b> if one side has terminated its end, but
+the other has not. The side that has terminated can no longer send any data
+into the connection, but the other side can. So, the terminating side should
+continue reading the data until the other side terminates as well.</p>
+<p>
+It's possible to terminate connection by a 3-way handshake, when host <b>A</b>
+sends a <samp>FIN</samp> and host <b>B</b> replies with a
+<samp>FIN &amp; ACK</samp> (i.e., combines 2 steps into 1) and host <b>A</b>
+replies with an <samp>ACK</samp>.</p>
+<p>
+Some TCP stacks (e.g., Linux) may implement a <b>half-duplex close
+sequence</b>. In this case, if host actively closes a connection but still has
+not read all the incoming data the stack already received from the link, this
+host sends a <samp>RST</samp> instead of a <samp>FIN</samp>. This allows a TCP
+app to be sure that the remote app has read all the data the former sent -
+waiting the <samp>FIN</samp> from the remote side, when it actively closes the
+connection. But the remote TCP stack cannot distinguish between a <i>Connection
+Aborting</i> <samp>RST</samp> and <i>Data Loss</i> <samp>RST</samp>. Both cause
+the remote stack to lose all the data received.</p>
+
+
+
+<h4>
+<a name="tcp_data_transfer">Data transfer</a></h4>
+<p>
+TCP can transfer a continuous stream of <samp>8</samp>-bit
+<a href="#octet">octets</a> in each direction between the two sides of
+connection. Some important differences between TCP and UDP are:</p>
+<ul>
+<li>TCP is a <b>connection-oriented</b> protocol, while UDP is
+<b>connectionless</b> protocol.</li>
+<li>TCP performs <b>ordered data transfer</b>: the dest host rearranges
+received packets according to the sequence numbers.</li>
+<li>TCP provides <b>retransmission of lost packets</b>: any cumulative stream
+not acknowledged by receiver is retransmitted by sender.</li>
+<li>TCP is <b>error-free data transfer</b>: each TCP packet includes a 16-bit
+checksum used for error-checking.</li>
+<li>TCP performs <a href="#flow_control">flow control</a>: receiver
+continuously hints the sender on how much data it is ready to receive.</li>
+<li>TCP provides <a href="#congest_control">congestion control</a>.</li>
+</ul>
+<p>
+Both TCP and UDP break app's data into a sequence of packets.</p>
+
+
+<h5>Reliability</h5>
+<p>
+Both sides of communication have buffers, queues, timers, counters, etc.</p>
+<p>
+The TCP protocol uses <a href="#tcp">sequence numbers</a> to identify each
+packet. It allows to detect packet loss or wrong order of delivery, and to
+reconstruct the data on the receiving side of the communication.</p>
+<p>
+Technically, both sides are <i>sender</i> and <i>recever</i> at some point,
+but it's usually assumed that the <b>sender</b> (or <b>transmitter</b>) is the
+side that sends the data, and the <b>receiver</b> is the side requesting and
+receiving data. Regardless of this, each side of the connection uses its own
+<i>sequence</i> and generates the <b>initial sequence number</b> independently,
+trying to make it as random and unpredictable as possible - it reduces the
+possibility of the hacker attacks based on TCP sequence prediction.</p>
+<p>
+The <a href="#tcp">acknowledgment number</a> of each side is related to the
+sequence number of the opposite side. When receiver sends an acknowledgment,
+the <i>acknowledgment number</i> field is set to the sequence number of the
+next data octet it expects to receive. If two packets arrive with the same
+sequence number, the TCP timestamp value is used to select one and discard
+another.</p>
+<p>
+There are two methods to detect data loss:</p>
+<ul>
+<li><b>RTO</b> (retransmission timeout),</li>
+<li><b>DupAcks</b> (duplicate cumulative acknowledgments)</li>
+</ul>
+<p>
+On the transmission side, each TCP segment (packet) has a <b>retransmission
+timer</b> bound to it. When a packet is sent, the sender sets this timer to a
+value that is a <i>conservative estimate</i> of the time when that packet
+should be acknowledged. If ACK arrives before this timer would fire, sender
+clears the timer (and probably other stuff related to that packet). Otherwise,
+timer fires, and this means that the packet must be retransmitted. After each
+unsuccessful retransmission of the same packet the timer value is doubled (up
+to a certain threshold).</p>
+<p>
+The <a name="dup_acks"><b>duplicate ACK</b></a> is "duplicate" because it's
+an exact copy of the prev ACK. While data flow is smooth, i.e., no pkt loss,
+no pkt reordering, each ACK [from the receiver] contains new, higher then prev
+<i>acknowledment number</i> related to the sequence number of the sender.
+However, if the packet that just arrived has the wrong sequence number (higher
+then expected), because the "right packet" was lost, or, because packets were
+swapped somewhere within the network (traffic congestion, load balancing, etc),
+the receiver cannot acknowledge this new seq number, because it cannot allow
+the gap in the stream to exist, it needs the "right packet" to solve this
+inconsistency. So, the receiver just repeats the prev ACK packet, then again,
+and again, until it gets the "right packet" to fill the gap. The sender does
+not react immediately and continues to transmit according to its plan, hoping
+that may be the "right packet" will arrive after the wrong one, and the next
+ACK from the receiver will acknowledge all packets that were already sent. But
+if <i>two dup ACKs</i> arrive one after another, sender has to return back and
+to retransmit the lost packet. This is also known as <i>Fast Retransmit</i>,
+i.e., faster than waiting for <i>retransmission timer</i> expiration.</p>
+<p>
+Thus, <i>sequence numbers</i> allow receiver to discard duplicate packets and
+properly sequence reordered packets. <i>Acknowledgments</i> allow sender to
+determine when to retransmit lost packets.</p>
+
+
+<h5>
+<a name="flow_control">Flow control</a></h5>
+<p>
+TCP uses <i>sliding window flow control protocol</i> to slow down
+the data transfer when the receiver cannot keep up with the sender.</p>
+<p>
+In each TCP segment, the receiver sets the <i>receive window</i> field to the
+number of data bytes it's ready to receive. The sending host can send only up
+to that amount of data, then it stops and waits for ACK with new window size.</p>
+<p>
+When receiver advertises a window size = <samp>0</samp>, the sender stops
+transmission and starts the <b>persist timer</b> which  is used to prevent
+a deadlock situation that could happen if a subsequent window size update
+from the receiver is lost, and sender cannot send more data until receiving
+a new window size update from the receiver. When the persist timer expires,
+sender transmits a small packet hoping that receiver will respond with ACK
+containing the new window size.</p>
+<p>
+If receiver is processing incoming data in small increments, it may repeatedly
+advertise a small receive window. This situation is called the <i>silly window
+syndrome</i>, because it's inefficient to send packets with a few bytes of data.</p>
+
+
+<h5>
+<a name="congest_control">Congestion control</a></h5>
+<p>
+<b>Congestive collapse</b> (or congestion collapse) is the network state
+in which congestion prevents or limits normal communication. When it happens
+a network falls into a stable mode whith high traffic demand but little useful
+throughput causing very bad quality of service with essential packet delays and
+losses.</p>
+<p>
+Congestion collapse generally occurs at choke points in the network, where
+incoming traffic exceeds outgoing bandwidth. Connection points between a LAN
+and a WAN are common choke points.</p>
+<p>
+To prevent congestion collapse, TCP uses a multi-faceted <i>congestion
+control</i> and/or <i>network congestion avoidance</i> strategy</i>.
+Acknowledgments for data sent, or lack of them, are used by senders to infer
+network conditions between the sender and receiver. Coupled with timers, TCP
+senders and receivers can alter the behavior of the flow of data.</p>
+<p>
+For each connection, TCP maintains a <b>congestion window</b> (CRWND),
+limiting the total number of unacknowledged packets that may be in transit
+end-to-end. The <i>slow start</i> mechanism is used to increase the congestion
+window after a connection is initialized or after a timeout. At first, CRWND is
+a small multiple of the MSS (1, 2, 4 or 10), but with each ACK received, CRWND
+effectively doubles for every round-trip time (RTT).</p>
+<p>
+When the congestion window exceeds the slow-start threshold (<i>ssthresh</i>),
+the algorithm enters a state called <i>congestion avoidance</i>. In this state,
+as long as non-duplicate ACKs are received, the congestion window is additively
+increased by one MSS every round-trip time.</p>
+
+
+<h5>TCP timers</h5>
+<p>
+<b>Keep-alive timer</b> is used to check the integrity and validity of
+a connection. When <i>keep-alive time</i> expires, the host sends a probe to
+check if the connection still exists.</p>
+<p>
+<b>Retransmission timer</b> is set by sender when it transmits a packet. If
+the acknowledgment of reception does not arrive within the <i>Retransmission
+time</i>, the packet is sent again. The <i>time-out</i> value is dynamically
+determined for each connection, based on round-trip time.</p>
+<p>
+<b>Persist timer</b>. Sender stops data transmission when it receives the
+ACK packet with <samp>window size = 0</samp>. To resume transmission sender
+must receive a packet with <samp>window size &gt; 0</samp>. If this does not
+happen, both sides just wait. The <i>Persist timer</i> allows to avoid
+deadlocks. When it expires, receiver must send a new window size.</p>
+<p>
+<b>Timed-Wait</b>. When one side sends a connection termination request,
+both sides wait for some time before terminating the connection completely.
+This is necessary to make sure that the initiator receives the acknowledgement
+of its connection termination request. The max timeout is <samp>240</samp> sec
+(<samp>4</samp> minutes).</p>
+
+
+
+<h4>
+<a name="tcp">TCP packet</a></h4>
+<p>
+A TCP header follows IP header, supplying info
+specific to the TCP protocol. The <em>minimal</em> length of a TCP header
+is 20 bytes.</p>
+<table class="grid_mc" style="margin-top:1em;margin-bottom:1em;font-family:Open-Sans;font-size:80%">
+<tr>
+<th class="gridcen_small_mc1">0</th>
+<th class="gridcen_small_mc1">1</th>
+<th class="gridcen_small_mc1">2</th>
+<th class="gridcen_small_mc1">3</th>
+<th class="gridcen_small_mc1">4</th>
+<th class="gridcen_small_mc1">5</th>
+<th class="gridcen_small_mc1">6</th>
+<th class="gridcen_small_mc1">7</th>
+<th class="gridcen_small_mc2">0</th>
+<th class="gridcen_small_mc2">1</th>
+<th class="gridcen_small_mc2">2</th>
+<th class="gridcen_small_mc2">3</th>
+<th class="gridcen_small_mc2">4</th>
+<th class="gridcen_small_mc2">5</th>
+<th class="gridcen_small_mc2">6</th>
+<th class="gridcen_small_mc2">7</th>
+<th class="gridcen_small_mc1">0</th>
+<th class="gridcen_small_mc1">1</th>
+<th class="gridcen_small_mc1">2</th>
+<th class="gridcen_small_mc1">3</th>
+<th class="gridcen_small_mc1">4</th>
+<th class="gridcen_small_mc1">5</th>
+<th class="gridcen_small_mc1">6</th>
+<th class="gridcen_small_mc1">7</th>
+<th class="gridcen_small_mc2">0</th>
+<th class="gridcen_small_mc2">1</th>
+<th class="gridcen_small_mc2">2</th>
+<th class="gridcen_small_mc2">3</th>
+<th class="gridcen_small_mc2">4</th>
+<th class="gridcen_small_mc2">5</th>
+<th class="gridcen_small_mc2">6</th>
+<th class="gridcen_small_mc2">7</th>
+</tr>
+<tr>
+<td class="gridcen_mc" colspan="16" style="width:50%">Source Port</td>
+<td class="gridcen_mc" colspan="16">Destination Port</td></tr>
+<tr>
+<td class="gridcen_mc" colspan="32">Sequence Number</td></tr>
+<tr>
+<td class="gridcen_mc" colspan="32">Acknowledgment Number</td></tr>
+<tr>
+<td class="gridcen_mc" colspan="4" style="width:12.5%">Data ofs</td>
+<td class="gridcen_mc" colspan="3">Rsrv</td>
+<td class="gridcen_mc" colspan="9" style="width:28%">Control bits</td>
+<td class="gridcen_mc" colspan="16" style="width:50%">Window</td></tr>
+<tr>
+<td class="gridcen_mc" colspan="16">Checksum</td>
+<td class="gridcen_mc" colspan="16">Urgent Pointer</td></tr>
+<tr>
+<td class="gridcen_mc" colspan="24">Options</td>
+<td class="gridcen_mc" colspan="8">Padding</td></tr>
+<tr>
+<td class="gridcen_mc" colspan="32" style="background:#add8fa">D a t a</td></tr>
+</table>
+
+<p class="fmt" style="padding-top:12px">
+<samp>Sequence Number (32 bits)</samp></p>
+<p class="desc">If SYN flag is set, then this is the <i>initial sequence
+number</i>, and the first data octet is ISN+1. If SYN is <samp>0</samp>, then
+this is the accumulated sequence number of the first data byte of this segment
+for the current session.</p>
+
+<p class="fmt"><samp>Acknowledgment Number (32 bits)</samp></p>
+<p class="desc">If ACK bit is set, then this field contains the next sequence
+number the sender of this ACK is expecting. This acknowledges the successful
+receipt of all prior bytes (if any). The first ACK sent by each side
+acknowledges the other side's initial sequence number.</p>
+
+<p class="fmt"><samp>Data Offset (4 bits)</samp></p>
+<p class="desc">The size of TCP header, i.e., the number of 32-bit words
+in TCP header (<samp>5..15</samp> words or <samp>20..60</samp> bytes). It can
+also be considered as offset from the start of the TCP segment to the actual
+data.</p>
+
+<p class="fmt"><samp>Reserved (3 bits)</samp></p>
+<p class="desc">Reserved for future use. Must be zero.</p>
+
+<p class="fmt"><samp>Control Bits (9 bits)</samp></p>
+<table class="grid_2" style="margin-left:3.6em;margin-bottom:1em">
+<tr>
+<td class="grid_2"><samp>NS</samp></td>
+<td class="grid_2">ECN-nonce - concealment protection (experimental)</td></tr>
+<tr>
+<td class="grid_2"><samp>CWR</samp></td>
+<td class="grid_2">Congestion Window Reduced flag is set by the sending host
+to indicate that it received a TCP segment with the ECE flag set and had
+responded in congestion control mechanism</td></tr>
+<tr>
+<td class="grid_2"><samp>ECE</samp></td>
+<td class="grid_2">ECN-Echo. If SYN is set, than ECE=1 means that TCP peer
+is ECN capable. If SYN is clear, than ECE=1 means that a pkt with Congestion
+Experienced flag set (ECN=11) in IP header was received during normal
+transmission, and it indicates network congestion (or impending congestion)
+to the TCP sender.</td></tr>
+<tr>
+<td class="grid_2"><samp>URG</samp></td>
+<td class="grid_2">Urgent Pointer field is significant.</td></tr>
+<tr>
+<td class="grid_2"><samp>ACK</samp></td>
+<td class="grid_2">Acknowledgment field is significant. All pkts sent by the
+client after initial SYN pkt, should have this flag set.</td></tr>
+<tr>
+<td class="grid_2"><samp>PSH</samp></td>
+<td class="grid_2">Push Function. Asks to push the buffered data to the
+receiving app.</td></tr>
+<tr>
+<td class="grid_2"><samp>RST</samp></td>
+<td class="grid_2">Reset the connection.</td></tr>
+<tr>
+<td class="grid_2"><samp>SYN</samp></td>
+<td class="grid_2">Synchronize sequence numbers. Only the first pkt sent from
+each end should have it set. Some other flags and fields change meaning based
+on this flag, and some are only valid when it is set, and others when it is
+clear.</td></tr>
+<tr>
+<td class="grid_2"><samp>FIN</samp></td>
+<td class="grid_2">Last packet, no more data from sender.</td></tr>
+</table>
+
+<p class="fmt"><samp>Window (16 bits)</samp></p>
+<p class="desc">The number of data octets beginning with the one
+indicated in the acknowledgment field which the sender of this segment
+wants to receive.</p>
+
+<p class="fmt"><samp>Checksum (16 bits)</samp></p>
+<p class="desc">The 16-bit checksum used for error-checking of the header,
+the Payload and a Pseudo-Header. The Pseudo-Header consists of the Source IP
+addr, the Destination IP addr, the protocol number (<samp>0x0006</samp> for
+TCP) and the length of the TCP-Headers including Payload (in bytes).</p>
+
+<p class="fmt"><samp>Urgent Pointer (16 bits)</samp></p>
+<p class="desc">If URG flag is set, this 16-bit field is an offset from the
+sequence number indicating the last urgent data byte.</p>
+
+<p class="fmt"><samp>Options (variable length, 0..320 bits, divisible by 32)</samp></p>
+<p class="desc">The length of this field is determined by the data offset
+field. It can have up to three fields: <i>Option-Kind</i> (1 byte),
+<i>Option-Length</i> (1 byte), <i>Option-Data</i> (variable). The Option-Kind
+field indicates the type of option, and unlike other two is not optional.
+Depending on this field, the Option-Length can indicate the total length of
+the option, and the Option-Data can contain the value of the option, if
+applicable. An Option-Kind <samp>0x01</samp> indicates that this is a
+<i>No-Op</i> option used only for padding.</p>
+
+<p class="fmt"><samp>Padding</samp></p>
+<p class="desc">If TCP header does not end on a 32-bit boundary, as it should,
+then padding composd of zeros is added.</p>
+
+
+
+<h3>
+<a name="udp_prot">UDP (see <a href="#udp">packet format</a>)</a></h3>
+<p>
+<b>User Datagram Protocol</b> (RFC 768) is a simple <b>connectionless</b>
+message-oriented <a href="#network_arch">transport layer</a> protocol.
+It's suitable for apps that need fast, efficient transmission, like games
+and VoIP. The <b>stateless</b> nature of UDP is convenient for server apps
+with a very large number of clients, such as in <i>streaming media</i> (IPTV).
+The <b>transaction-oriented</b> nature of UDP is suitable for simple
+query-response protocols such as the Domain Name System (DNS) or the Network
+Time Protocol (NTP). Also, UDP is used by DHCP, TFTP, SNMP, RIP, ...</p>
+<p>
+With UDP, apps can send messages (<a href="#datagram">datagrams</a>) to
+other hosts/apps over the network using simple connectionless communication
+model with a minimum of overhead.</p>
+<p>
+UDP is fast because it's lightweight: short fixed length header
+(<samp>8</samp> octets), no handshaking, no flow control, no acknowledgments,
+no reordering, no error recovery, no guarantee that the packet sent would reach
+destination. In other words, UDP is a "best effort" protocol, its reliability
+depends on the reliability of the underlying network. It's supposed that error
+checking/correction is either not necessary or will be probided at higher
+levels/layers, probably by application itself. To be fair, UDP does error
+checking, but erroneous packets are simply discarded.</p>
+<p>
+Apps can use <i>datagram <a href="#socket">sockets</a></i> to establish
+host-to-host communications. An application binds a socket to its endpoint
+of data transmission, which is a combination <samp>IP address +
+<a name="port">port</a></samp>. In this way UDP provides application
+multiplexing.</p>
+<p>
+Technically, <b>port</b> is a <i>software structure</i> that is identified by
+the <i>port number</i>, a 16-bit int value in the range <samp>0..65535</samp>.
+Port <samp>0</samp> is reserved but can be used as a source port if the
+sending process does not expect messages in response.</p>
+<p>
+The Internet Assigned Numbers Authority (IANA) has divided port numbers into
+three ranges:</p>
+<ul>
+<li>port numbers <samp>0-1023</samp> are used for common, well-known services.
+On Unix-like operating systems, using one of these ports requires superuser
+operating permission;</li>
+<li>port numbers <samp>1024-49151</samp> are the registered ports used for
+IANA-registered services;</li>
+<li>port numbers <samp>49152-65535</samp> are dynamic ports not officially
+designated for any specific service and may be used for any purpose; these
+ports may also be used as <i>ephemeral ports</i>, i.e., ports used by software
+to dynamically create communication endpoints as needed</li>
+</ul>
+
+
+
+<h4>
+<a name="udp">UDP packet</a></h4>
+
+<table class="grid_mc" style="margin-top:1em;margin-bottom:1em;font-family:Open-Sans;font-size:80%">
+<tr>
+<th class="gridcen_small_mc1">0</th>
+<th class="gridcen_small_mc1">1</th>
+<th class="gridcen_small_mc1">2</th>
+<th class="gridcen_small_mc1">3</th>
+<th class="gridcen_small_mc1">4</th>
+<th class="gridcen_small_mc1">5</th>
+<th class="gridcen_small_mc1">6</th>
+<th class="gridcen_small_mc1">7</th>
+<th class="gridcen_small_mc2">0</th>
+<th class="gridcen_small_mc2">1</th>
+<th class="gridcen_small_mc2">2</th>
+<th class="gridcen_small_mc2">3</th>
+<th class="gridcen_small_mc2">4</th>
+<th class="gridcen_small_mc2">5</th>
+<th class="gridcen_small_mc2">6</th>
+<th class="gridcen_small_mc2">7</th>
+<th class="gridcen_small_mc1">0</th>
+<th class="gridcen_small_mc1">1</th>
+<th class="gridcen_small_mc1">2</th>
+<th class="gridcen_small_mc1">3</th>
+<th class="gridcen_small_mc1">4</th>
+<th class="gridcen_small_mc1">5</th>
+<th class="gridcen_small_mc1">6</th>
+<th class="gridcen_small_mc1">7</th>
+<th class="gridcen_small_mc2">0</th>
+<th class="gridcen_small_mc2">1</th>
+<th class="gridcen_small_mc2">2</th>
+<th class="gridcen_small_mc2">3</th>
+<th class="gridcen_small_mc2">4</th>
+<th class="gridcen_small_mc2">5</th>
+<th class="gridcen_small_mc2">6</th>
+<th class="gridcen_small_mc2">7</th>
+</tr>
+<tr>
+<td class="gridcen_mc" colspan="16" style="width:50%">Source Port</td>
+<td class="gridcen_mc" colspan="16">Destination Port</td></tr>
+<tr>
+<td class="gridcen_mc" colspan="16">Length</td>
+<td class="gridcen_mc" colspan="16">Checksum</td></tr>
+<tr>
+<td class="gridcen_mc" colspan="32" style="background:#add8fa">D a t a</td></tr>
+</table>
+
+<p class="fmt" style="padding-top:12px"><samp>Source Port (16 bits)</samp></p>
+<p class="desc">The port number of the process that originated
+the UDP msg on the src device. This will normally be an ephemeral
+(client) port number for a request sent by a client to a server,
+or a well-known / registered (server) port number for a reply sent by
+a server to a client.</p>
+
+<p class="fmt"><samp>Destination Port (16 bits)</samp></p>
+<p class="desc">The port number of the process that is the
+ultimate intended recipient of the msg on the dest device. This will
+usually be a well-known / registered (server) port number for a client
+request, or an ephemeral (client) port number for a server reply.</p>
+
+<p class="fmt"><samp>Length (16 bits)</samp></p>
+<p class="desc">The length of the entire UDP datagram,
+including both header and data fields.</p>
+
+<p class="fmt"><samp>Checksum (16 bits)</samp></p>
+<p class="desc">An optional 16-bit checksum computed over the
+entire UDP datagram plus a special "pseudo header" of fields.</p>
+
+
+
+<h3>
+<a name="icmp">ICMP packet</a></h3>
+
+<table class="grid_mc" style="margin-bottom:1em;font-family:Open-Sans;font-size:80%">
+<tr>
+<th class="gridcen_small_mc1">0</th>
+<th class="gridcen_small_mc1">1</th>
+<th class="gridcen_small_mc1">2</th>
+<th class="gridcen_small_mc1">3</th>
+<th class="gridcen_small_mc1">4</th>
+<th class="gridcen_small_mc1">5</th>
+<th class="gridcen_small_mc1">6</th>
+<th class="gridcen_small_mc1">7</th>
+<th class="gridcen_small_mc2">0</th>
+<th class="gridcen_small_mc2">1</th>
+<th class="gridcen_small_mc2">2</th>
+<th class="gridcen_small_mc2">3</th>
+<th class="gridcen_small_mc2">4</th>
+<th class="gridcen_small_mc2">5</th>
+<th class="gridcen_small_mc2">6</th>
+<th class="gridcen_small_mc2">7</th>
+<th class="gridcen_small_mc1">0</th>
+<th class="gridcen_small_mc1">1</th>
+<th class="gridcen_small_mc1">2</th>
+<th class="gridcen_small_mc1">3</th>
+<th class="gridcen_small_mc1">4</th>
+<th class="gridcen_small_mc1">5</th>
+<th class="gridcen_small_mc1">6</th>
+<th class="gridcen_small_mc1">7</th>
+<th class="gridcen_small_mc2">0</th>
+<th class="gridcen_small_mc2">1</th>
+<th class="gridcen_small_mc2">2</th>
+<th class="gridcen_small_mc2">3</th>
+<th class="gridcen_small_mc2">4</th>
+<th class="gridcen_small_mc2">5</th>
+<th class="gridcen_small_mc2">6</th>
+<th class="gridcen_small_mc2">7</th>
+</tr>
+<tr>
+<td class="gridcen_mc" colspan="8" style="width:25%">Type</td>
+<td class="gridcen_mc" colspan="8" style="width:25%">Code</td>
+<td class="gridcen_mc" colspan="16">Checksum</td></tr>
+<tr>
+<td class="gridcen_mc" colspan="32">Message Body</td></tr>
+</table>
+
+<p class="fmt" style="padding-top:12px"><samp>Type (8 bits)</samp>
+<p class="desc">Message type. For ICMPv6, values from
+0 to 127 are error msgs and values 128 to 255 are informational msgs.</p>
+
+<p class="fmt"><samp>Code (8 bits)</samp>
+<p class="desc">Message subtype.</p>
+
+<p class="fmt"><samp>Checksum (16 bits)</samp></p>
+<p class="desc">The 16-bit checksum field that is calculated in a manner
+similar to the IP header checksum in IPv4. It provides error detection
+coverage for the entire ICMP msg. In ICMPv6, a pseudo-header of IPv6
+header fields is prepended for checksum calculation.</p>
+
+<p>
+In general, there are 2 types of ICMP msgs:
+1) error msgs, 2) information (query) msgs;
+Many ICMP msg types are now obsolete and are no longer seen in the Internet.
+So, the following table is incomplete.</p>
+
+<table class="grid" style="margin-top:0.5em;margin-bottom:1em">
+<tr>
+<th class="grid_2">Type</th>
+<th class="grid_2">Name</th>
+<th class="grid_2">Reference</th></tr>
+<tr>
+<td class="grid_2_right"><samp>0</samp></td>
+<td class="grid_2">Echo Reply</td>
+<td class="grid_2">[RFC792]</td></tr>
+<tr>
+<td class="grid_2_right"><samp>3</samp></td>
+<td class="grid_2">Destination Unreachable // Codes:</p>
+<p class="ext"><samp>&nbsp;0&nbsp;</samp>Net Unreachable</p>
+<p class="ext"><samp>&nbsp;1&nbsp;</samp>Host Unreachable</p>
+<p class="ext"><samp>&nbsp;2&nbsp;</samp>Protocol Unreachable</p>
+<p class="ext"><samp>&nbsp;3&nbsp;</samp>Port Unreachable</p>
+<p class="ext"><samp>&nbsp;4&nbsp;</samp>Fragmentation Needed and Don't Fragment was Set</p>
+<p class="ext"><samp>&nbsp;5&nbsp;</samp>Source Route Failed</p>
+<p class="ext"><samp>&nbsp;6&nbsp;</samp>Destination Network Unknown</p>
+<p class="ext"><samp>&nbsp;7&nbsp;</samp>Destination Host Unknown</p>
+<p class="ext"><samp>&nbsp;8&nbsp;</samp>Source Host Isolated</p>
+<p class="ext"><samp>&nbsp;9&nbsp;</samp>Communication with Dest Network is Administratively Prohibited</p>
+<p class="ext"><samp>10&nbsp;</samp>Communication with Dest Host is Administratively Prohibited</p>
+<p class="ext"><samp>11&nbsp;</samp>Dest Network Unreachable for Type of Service</p>
+<p class="ext"><samp>12&nbsp;</samp>Dest Host Unreachable for Type of Service</p>
+<p class="ext"><samp>13&nbsp;</samp>Communication Administratively Prohibited</p>
+<p class="ext"><samp>14&nbsp;</samp>Host Precedence Violation</p>
+<p class="ext"><samp>15&nbsp;</samp>Precedence cutoff in effect</p>
+</td>
+<td class="grid_2">[RFC792]</td></tr>
+<tr>
+<td class="grid_2_right"><samp>4</samp></td>
+<td class="grid_2">Source Quench</td>
+<td class="grid_2">[RFC792]</td></tr>
+<tr>
+<td class="grid_2_right"><samp>5</samp></td>
+<td class="grid_2">Redirect // Codes:</p>
+<p class="ext"><samp>&nbsp;0&nbsp;</samp>Redirect Datagram for the Network (or subnet)</p>
+<p class="ext"><samp>&nbsp;1&nbsp;</samp>Redirect Datagram for the Host</p>
+<p class="ext"><samp>&nbsp;2&nbsp;</samp>Redirect Datagram for the Type of Service and Network</p>
+<p class="ext"><samp>&nbsp;3&nbsp;</samp>Redirect Datagram for the Type of Service and Host</p>
+</td>
+<td class="grid_2">[RFC792]</td></tr>
+<tr>
+<td class="grid_2_right"><samp>6</samp></td>
+<td class="grid_2">Alternate Host Address</td>
+<td class="grid_2">[JBP]</td></tr>
+<tr>
+<td class="grid_2_right"><samp>8</samp></td>
+<td class="grid_2">Echo</td>
+<td class="grid_2">[RFC792]</td></tr>
+<tr>
+<td class="grid_2_right"><samp>9</samp></td>
+<td class="grid_2">Router Advertisement</td>
+<td class="grid_2">[RFC1256]</td></tr>
+<tr>
+<td class="grid_2_right"><samp>10</samp></td>
+<td class="grid_2">Router Selection</td>
+<td class="grid_2">[RFC1256]</td></tr>
+<tr>
+<td class="grid_2_right"><samp>11</samp></td>
+<td class="grid_2">Time Exceeded // Codes:</p>
+<p class="ext"><samp>&nbsp;0&nbsp;</samp>Time to Live exceeded in Transit</p>
+<p class="ext"><samp>&nbsp;1&nbsp;</samp>Fragment Reassembly Time Exceeded</p>
+</td>
+<td class="grid_2">[RFC792]</td></tr>
+<tr>
+<td class="grid_2_right"><samp>12</samp></td>
+<td class="grid_2">Parameter Problem // Codes:</p>
+<p class="ext"><samp>&nbsp;0&nbsp;</samp>Pointer indicates the error</p>
+<p class="ext"><samp>&nbsp;1&nbsp;</samp>Missing a Required Option</p>
+<p class="ext"><samp>&nbsp;2&nbsp;</samp>Bad Length</p>
+</td>
+<td class="grid_2">[RFC792]</td></tr>
+<tr>
+<td class="grid_2_right"><samp>13</samp></td>
+<td class="grid_2">Timestamp</td>
+<td class="grid_2">[RFC792]</td></tr>
+<tr>
+<td class="grid_2_right"><samp>14</samp></td>
+<td class="grid_2">Timestamp Reply</td>
+<td class="grid_2">[RFC792]</td></tr>
+<tr>
+<td class="grid_2_right"><samp>15</samp></td>
+<td class="grid_2">Information Request</td>
+<td class="grid_2">[RFC792]</td></tr>
+<tr>
+<td class="grid_2_right"><samp>16</samp></td>
+<td class="grid_2">Information Reply</td>
+<td class="grid_2">[RFC792]</td></tr>
+<tr>
+<td class="grid_2_right"><samp>17</samp></td>
+<td class="grid_2">Address Mask Request</td>
+<td class="grid_2">[RFC950]</td></tr>
+<tr>
+<td class="grid_2_right"><samp>18</samp></td>
+<td class="grid_2">Address Mask Reply</td>
+<td class="grid_2">[RFC950]</td></tr>
+<tr>
+<td class="grid_2_right"><samp>30</samp></td>
+<td class="grid_2">Traceroute</td>
+<td class="grid_2">[RFC1393]</td></tr>
+<tr>
+<td class="grid_2_right"><samp>31</samp></td>
+<td class="grid_2">Datagram Conversion Error</td>
+<td class="grid_2">[RFC1475]</td></tr>
+<tr>
+<td class="grid_2_right"><samp>32</samp></td>
+<td class="grid_2">Mobile Host Redirect</td>
+<td class="grid_2">[David Johnson]</td></tr>
+<tr>
+<td class="grid_2_right"><samp>33</samp></td>
+<td class="grid_2">IPv6 Where-Are-You</td>
+<td class="grid_2">[Bill Simpson]</td></tr>
+<tr>
+<td class="grid_2_right"><samp>34</samp></td>
+<td class="grid_2">IPv6 I-Am-Here</td>
+<td class="grid_2">[Bill Simpson]</td></tr>
+<tr>
+<td class="grid_2_right"><samp>35</samp></td>
+<td class="grid_2">Mobile Registration Request</td>
+<td class="grid_2">[Bill Simpson]</td></tr>
+<tr>
+<td class="grid_2_right"><samp>36</samp></td>
+<td class="grid_2">Mobile Registration Reply</td>
+<td class="grid_2">[Bill Simpson]</td></tr>
+<tr>
+<td class="grid_2_right"><samp>37</samp></td>
+<td class="grid_2">Domain Name Request</td>
+<td class="grid_2">[RFC1788]</td></tr>
+<tr>
+<td class="grid_2_right"><samp>38</samp></td>
+<td class="grid_2">Domain Name Reply</td>
+<td class="grid_2">[RFC1788]</td></tr>
+<tr>
+<td class="grid_2_right"><samp>39</samp></td>
+<td class="grid_2">SKIP</td>
+<td class="grid_2">[Markson]</td></tr>
+<tr>
+<td class="grid_2_right"><samp>40</samp></td>
+<td class="grid_2">Photuris // Codes:</p>
+<p class="ext"><samp>&nbsp;0&nbsp;</samp>Bad SPI</p>
+<p class="ext"><samp>&nbsp;1&nbsp;</samp>Authentication Failed</p>
+<p class="ext"><samp>&nbsp;2&nbsp;</samp>Decompression Failed</p>
+<p class="ext"><samp>&nbsp;3&nbsp;</samp>Decryption Failed</p>
+<p class="ext"><samp>&nbsp;4&nbsp;</samp>Need Authentication</p>
+<p class="ext"><samp>&nbsp;5&nbsp;</samp>Need Authorization</p>
+</td>
+<td class="grid_2">[RFC2521]</td></tr>
+</table>
+<p>
+Types <samp>1</samp>, <samp>2</samp>, <samp>7</samp> are "Unassigned".<br>
+Type <samp>19</samp> is "Reserved (for Security)".<br>
+Types <samp>20-29</samp> are "Reserved (for Robustness Experiment)".<br>
+Types <samp>41-255</samp> are "Reserved for future use".</p>
+<p>
+To avoid the infinite regress of messages about messages etc., no ICMP
+messages are sent about ICMP messages. Also ICMP messages are only sent
+about errors in handling fragment zero of fragemented datagrams.</p>
+
+</div>
+
+</body></html>

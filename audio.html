@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference / audio</title>
+<meta name="description" content="linux quick reference, audio, alsa, pulseaudio, mp3, wav, cdparanoia, mpg123, ogg123, lame, mplayer" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<h1 class="part">
+<a name="audio">Audio</a></h1>
+
+<p class="menu">
+<a href="#alsa">ALSA</a>&nbsp;//
+<a href="#ripping">Audio CD ripping</a>&nbsp;//
+<a href="#cmdline">Playing audio</a>&nbsp;//
+<a href="#pulse_audio">PulseAudio</a>&nbsp;//
+<a href="video.html">Video</a>&nbsp;//
+<a href="#wav2mp3">WAV to MP3</a>
+</p>
+<p>
+For <b>audio file editing</b> see <a href="video.html#ffmpeg">ffmpeg</a>.</p>
+
+<a name="audio_stack">
+<img class="centered" src="images/linux_sound_stack.png" /></a>
+<p class="center2">Linux audio stack (Linux audio framework)</p>
+
+
+<h4>Professional vs amateur</h4>
+<p>
+Professionals want audio framework to provide:</p>
+<ul>
+<li>Low latency;</li>
+<li>Bit-perfect (accurate) playback;</li>
+</ul>
+<p>
+These things are not default in Linux and require some efforts.
+If we take a popular Linux distro, the typical out-of-the-box config is
+usually O.K. for those who just wants to listen MP3, watch movies, play games.
+Seriously, why to stress a regular user with the latency problems if he's not
+going to use a MIDI keyboard or perform high quality audio recording?</p>
+
+
+
+<h4 class="part3">
+<a name="alsa">ALSA</a></h4>
+<p>
+(Advanced Linux Sound Architecture) is a Linux kernel component providing
+device drivers and low-level support for audio hardware.</p>
+<p>
+Technically, ALSA is a set of kernel modules, so you don't have to install
+it specifically. However, you may want to install <samp>alsa-utils</samp> pkg
+including:</p>
+
+<p class="cmdc">alsamixer</p>
+<p class="cmdc">amixer</p>
+<p class="cmdc">aplay</p>
+<p class="cmdc">aplaymidi</p>
+<p class="cmd">speaker-test</p>
+<p>
+ALSA settings are stored in</p>
+
+<p class="fmt"><samp>/var/lib/alsa/asound.state</samp>.</p>
+<p>
+Usually your soundcard is <samp>hw:0</samp>, unless you have more then one.
+Many audio apps try to use <samp>hw:0</samp> by default. If app fails, may
+be you should specify the device explicitly. To find audio device names:</p>
+
+<p class="cmd">cat /proc/asound/cards</p>
+<p>
+There may be multiple devices per card, so names like <samp>hw:0,2</samp>
+are normal. In fact, the general form is:</p>
+
+<p class="fmt"><samp>hw:<span class="arg">card</span>,<span class="arg">device</span>,<span class="arg">subdevice</span></samp></p>
+<p>
+If you omit device or subdevice, it's supposed to be <samp>0</samp>. You can
+get some useful info with the following cmd:</p>
+
+<p class="cmd">aplay -l</p>
+<p>
+To test audio you need some good <samp>.wav</samp> file:</p>
+
+<p class="cmd">aplay -D hw:0 snd_test_01.wav</p>
+<p>
+If this fails with some error (e.g., "Device or resource busy"),
+it's possible that <b>soundcard is monopolized by PulseAudio</b>.
+You can suspend / unsuspend PulseAudio using
+<a href="cmds_p.html#pacmd"><code>pacmd</code></a> or you can exclude
+this soundcard from PulseAudio config (see prev chapter). Remember that
+both methods may have side effects!</p>
+<p>
+Here is an example with MPlayer bypassing PulseAudio and sending output
+directly to ALSA device:</p>
+
+<p class="cmd">mplayer -ao alsa:device=hw1.0 song022.mp3</p>
+<p>
+Note that ALSA device is <samp>hw1.0</samp> which is probably second
+soundcard.</p>
+<p>
+You can reload ALSA layer with the following cmd:</p>
+
+<p class="cmd">sudo alsa force-reload</p>
+<p>
+After this, to return to the shell prompt,
+press<span class="keys"> CTRL+C</span>. To restart the whole
+sound service:</p>
+
+<p class="cmd">pulseaudio -k &amp;&amp; sudo alsa force-reload</p>
+<p>
+Sometimes, to clean errors, messed config, etc, you have to re-install
+the basic sound software:</p>
+
+<p class="cmdc">sudo apt remove alsa-base pulseaudio</p>
+<p class="cmd">sudo apt install alsa-base pulseaudio</p>
+<p>
+But do not overuse it! Good knowledge and experience will help you to solve
+problems without such drastic measures.</p>
+
+
+
+<h4 class="part3">
+<a name="cmdline">Playing audio files with cmdline apps</a></h4>
+<p>
+Some popular cmdline apps you may want to install to play or process audio:</p>
+
+<table class="grid">
+<tr>
+<td class="grid"><code>mpg123</code></td>
+<td class="grid">MP3 audio player; free / LGPL 2.1;</td></tr>
+<tr>
+<td class="grid"><code>mpg321</code></td>
+<td class="grid">MP3 audio player; it was created as
+replacement for <code>mpg123</code> when the last was not free;</td></tr>
+<tr>
+<td class="grid"><code>mplayer</code></td>
+<td class="grid">powerful audio/video player; can be used as cmdline
+tool or with GUI (MP3, WAV, OGG, MP4, AVI, FLV, VOB, etc);</td></tr>
+<tr>
+<td class="grid"><code>ogg123</code></td>
+<td class="grid">Ogg Vorbis audio player;</td></tr>
+<tr>
+<td class="grid"><code>lame</code></td>
+<td class="grid">MP3 encoder;</td></tr>
+<tr>
+<td class="grid"><code>cdparanoia</code></td>
+<td class="grid">Audio CD ripper;</td></tr>
+</table>
+<p>
+Usage examples:</p>
+
+<p class="cmdc">mpg123 flute.mp3</p>
+<p class="cmdc">mpg123 -o pulse flute.mp3</p>
+<p class="cmdc">mpg123 -o alsa flute.mp3</p>
+<p class="cmdc">mpg123 -o alsa -a hw:1.0 flute.mp3</p>
+<p class="cmdc">mpg123 -o alsa09 flute.mp3</p>
+<p class="cmd">mpg123 --gain 25 -o alsa09 flute.mp3</p>
+<p>
+The first cmd uses a default output device. The last cmd plays with lower
+volume (25%). You can use these cmds in scripts (e.g., to produce warning
+sounds) or with<samp> cron </samp>to simulate an alarm clock
+(redirect stdout to <samp>/dev/null </samp> to suppress screen msgs):</p>
+
+<p class="cmd">mpg123 warn01.mp3 1&gt; /dev/null 2&gt; /dev/null</p>
+<p>
+Cutting a fragment from MP3 file:</p>
+
+<p class="cmd">mpg123 -v --skip 11720<br>--frames 19760 --wav solo.wav CrazyDiamond.mp3</p>
+<p>
+This cmd plays a fragment of the specified MP3 file and writes it to
+<samp>solo.wav</samp> file.</p>
+
+
+<h5>Some options:</h5>
+
+<p class="cmdc">-a <span class="arg">devname</span></p>
+<p class="desc">audio output device name (for ALSA it's like <samp>hw:0,0</samp>);</p>
+
+<p class="fmtc"><code>-g <span class="arg">n</span></code>, <code>--gain <span class="arg">n</span></code></p>
+<p class="desc">set volume (gain); the range is 1..100;</p>
+
+<p class="cmdc">-o <span class="arg">devtype</span></p>
+<p class="desc">output device (<samp>alsa</samp>, <samp>oss</samp>, <samp>pulse</samp>, ...);</p>
+
+<p class="cmdc">--skip <span class="arg">n</span></p>
+<p class="desc">start playing at frame <kbd>n+1</kbd>;</p>
+
+<p class="cmdc">--frames <span class="arg">m</span></p>
+<p class="desc">stop playing at frame <kbd>m</kbd>;</p>
+
+<p class="cmdc">--wav <span class="arg">file</span></p>
+<p class="desc">save decoded data to a specified WAV file;</p>
+<p>
+<samp><a href="video.html#mplayer">MPlayer</a></samp> is usually considered
+as a video player, but it is good for audio too.</p>
+
+<p class="cmdc">mplayer -volume 50 Good_song_1.wav</p>
+<p class="cmd">mplayer -af volume=-12 Good_song_2.wav</p>
+<p>
+First cmd sets volume to <samp>50%</samp> of master volume,
+second cmd decreases volume by <samp>12dB</samp>. MPlayer has a rich set
+of keyboard cmds.</p>
+
+
+
+<h4>
+<a name="pulse_audio">PulseAudio sound server</samp></a></h4>
+<p>
+Currently (2019) PulseAudio is a std Linux sound server functioning as
+a proxy for sound apps. That is, when an app wants to make some sound, it asks
+PulseAudio - the legal representative of Linux sound system. The problem with
+PulseAudio is that it violates the "bit-perfect" principle, e.g., resamples,
+mixes sounds, etc.</p>
+<p>
+Experts advice to have a separate soundcard for music (preferably an external
+USB soundcard) and configure your music player to send audio directly to ALSA
+(i.e., bypass PulseAudio). Some PulseAudio cmds:</p>
+
+<p class="cmdc">pulseaudio -h</p>
+<p class="cmdc">pulseaudio --help</p>
+<p class="cmdc">pulseaudio --version</p>
+<p class="cmdc">pulseaudio --check</p>
+<p class="desc"> returns 0 if PulseAudio daemon is already running for
+the calling user; non-zero otherwise;</p>
+<p class="cmdc">pulseaudio -k</p>
+<p class="desc">kill PulseAudio daemon of the calling user (<code>--kill</code>);</p>
+<p class="cmdc">pulseaudio --start</p>
+<p class="desc">start PulseAudio as a daemon;</p>
+<p>
+The main user tool for PulseAudio is a GUI app <samp>pavucontrol</samp> -
+<b>Pulse Audio Volume Control</b>. It looks like this:</p>
+
+<img class="centered" src="images/pavucontrol.png" /></a>
+<p>
+There are also <code><a href="cmds_p.html#pacmd">pacmd</a></code>,
+a live shell to the PulseAudio sound server, and
+<code>pactl</code> (a simplified non-interactive version of the prev)
+supposed to be used to issue control cmds to PA. For example:</p>
+
+<p class="cmdc">pactl info</p>
+<p class="desc">shows the most basic info about PulseAudio server;</p>
+
+<p class="cmdc">pactl stat</p>
+<p class="desc">shows simple stat about PulseAudio memory usage;</p>
+
+<p class="cmdc">pactl list short</p>
+<p class="desc">displays all currently loaded modules, available sinks,
+sources, streams, etc (even with "short" this list is actually quite long);</p>
+
+<p class="cmdc">pactl exit</p>
+<p class="desc">signals PA daemon to terminate;</p>
+<p>
+Other typical cmds:</p>
+
+<p class="cmdc">pactl move-sink-input 16 '1'</p>
+<p class="cmdc">pactl set-sink-input-volume '16' 30%</p>
+<p class="cmd">pactl suspend-sink '1'</p>
+<p>
+<b>PulseAudio config files:</b></p>
+
+<p class="fmtc"><samp>~/.config/pulse/daemon.conf</samp></p>
+<p class="fmtc"><samp>/etc/pulse/daemon.conf</samp></p>
+<p class="desc">daemon settings; user's config file has precedence over
+system-wide (global);</p>
+
+<p class="fmtc"><samp>~/.config/pulse/default.pa</samp></p>
+<p class="fmtc"><samp>/etc/pulse/default.pa</samp></p>
+<p class="desc">default config script that executes when daemon starts;</p>
+
+<p class="fmtc"><samp>~/.config/pulse/client.conf</samp></p>
+<p class="fmtc"><samp>/etc/pulse/client.conf</samp></p>
+<p class="desc">settings for PulseAudio client apps;</p>
+
+
+<h5>
+<a name="exclude_dev">Excluding external USB soundcard from PulseAudio config</a></h5>
+<p>
+Stopping/killing/removing PulseAudio server is a bad idea, unless you are
+an expert with special demands. In most cases PulseAudio and average level
+soundcard (e.g., built-in soundcard) make a good couple. However, high quality
+external USB soundcard deserves to be excluded from this union.</p>
+<p>
+There is a way to tell PulseAudio to ignore a specific device.</p>
+<p class="warn">Note!</p>
+<p class="indent">
+To perform the following procedure you need root privs
+(see <a href="cmds_s.html#sudo"><code>sudo</code></a>).</p>
+
+<p>
+First find device IDs:</p>
+
+<p class="cmd">lsusb</p>
+<p class="cmd">lsusb -v -s<span class="arg">bus_no</span>:<span class="arg">dev_no</span></p>
+<p>
+Look for <samp>idVendor</samp> and <samp>idProduct</samp>.</p>
+<p>
+Now check <samp>/lib/udev/rules.d/</samp> just to be sure there is
+PulseAudio rules file:</p>
+
+<p class="fmt"><samp>/lib/udev/rules.d/90-pulseaudio.rules</samp</p>
+<p>
+but there is no files with name like <samp>89-xxxxx</samp>.
+Do not touch anything in this dir [<span class="warn">!</span>]
+because your specific config file must be created in other place:</p>
+
+<p class="cmdc">cd /etc/udev/rules.d</p>
+<p class="cmd">&gt; 89-pulseaudio-usb.rules</p>
+<p>
+The last cmd creates an empty file
+<samp>/etc/udev/rules.d/89-pulseaudio-usb.rules</samp>. Open this file and
+insert a line like following:</p>
+<div class="file">
+<pre>
+ATTRS{idVendor}=="041e", ATTRS{idProduct}=="3f19", ENV{PULSE_IGNORE}="1"</pre>
+</div>
+<p>
+(you should use <samp>idVendor</samp> &amp; <samp>idProduct</samp>
+of your device)</p>
+<p>
+Restart system.</p>
+
+
+
+<h4 class="part3">
+<a name="ripping">Audio CD ripping</a></h4>
+<p>
+Insert an Audio CD and run <code>cdparanoia</code>.
+It reads the specified track, converts it to a <code>wav</code>,
+and saves this file to the current dir:</p>
+
+<p class="fmt"><code>cdparanoia </code><kbd>n </kbd>[<kbd>fname</kbd>]</p>
+<p>
+<kbd>n</kbd> - track number; the default output filename <code>cdda.wav</code>:</p>
+
+<p class="cmdc">cdparanoia 2</p>
+<p class="desc">extracts the track # 2 and saves to <code>cdda.wav</code>;</p>
+
+<p class="cmdc">cdparanoia 5 LivingNextDoorToA.wav</p>
+<p class="desc">extracts the track # 5 and saves to <code>LivingNextDoorToA.wav</code>;</p>
+
+
+
+<h4 class="part3">
+<a name="wav2mp3">Converting WAV to MP3</a></h4>
+<p>
+You can use <code>lame</code> to convert <samp>wav</samp> files to
+<samp>mp3</samp>. The syntax is:</p>
+
+<p class="fmt"><code>lame </code>[<kbd>options</kbd>]<kbd> inpfile </kbd>[<kbd>outfile</kbd>]</p>
+<p>
+The <b>joint stereo</b> (jstereo) mode (<code>-m j</code>) implies the use
+of some tricks that allow to increase the bandwidth. It's default for CBR
+with bitrates <samp>&lt;=</samp> 160 kbps, and for VBR with <code>-V5</code>
+or more. Other modes are: <code>s</code> (simple stereo), <code>m</code>
+(mono), <code>f</code> (forced MS stereo), <code>d</code> (dual mono),
+<code>l</code> (left channel only), <code>r</code> (right channel only).</p>
+<p>
+The <code>-h</code> (high quality) option forces the internal algorithm
+quality setting <code>-q</code><kbd>n</kbd>, where <kbd>n</kbd> lies within
+the range <samp>0..9</samp> (speed/quality ratio: from <i>slow/high quality</i>
+to <i>fast/low quality</i>). In practice, <samp>0</samp> and <samp>1</samp> do
+not provide essential quality improvements, so <code>-h</code> is equivalent
+to <code>-q 2</code> (which is recommended). The option <code>-f</code> (fast)
+is equivalent to <code>-q 7</code>.</p>
+<p>
+The CBR (constant bitrate encoding) mode is default, <code>-b</code> sets the
+bitrate, but the values are limited to the predefined sets. For MPEG-1:</p>
+<div class="file"><pre>  32, 40, 48, 56, 64, 80, 96, 112,
+        128, 160, 192, 224, 256, 320</pre></div>
+<p>
+For MPEG-2</p>
+<div class="file"><pre>  8, 16, 24, 32, 40, 48, 56, 64,
+        80, 96, 112, 128, 144, 160</pre></div>
+<p>
+Default is <samp>128</samp> for MPEG1 and <samp>64</samp> for MPEG2.</p>
+<p>
+The <code>-v</code> option turns on VBR (variable bitrate encoding),
+<code>--abr</code> defines the targeted average bit rate.</p>
+<p>
+The <code>-V</code> enables VBR and specifies the value of VBR quality
+from <samp>0</samp> (the highest quality) to <samp>9</samp> (the lowest),
+default is <samp>4</samp> (reasonably high quality).</p>
+
+<p class="cmdc">lame song01.wav song01.mp3</p>
+<p class="desc">convert WAV to MP3 using constant bit rate (CBR) encoding,
+bitrate 128 kbps, average quality, jstereo mode (joint stereo);</p>
+
+<p class="cmdc">lame -h song02.wav song02.mp3</p>
+<p class="desc">convert using CBR encoding, 128 kbps, high quality,
+jstereo mode;</p>
+
+<p class="cmdc">lame -b 192 -h song03.wav song03.mp3</p>
+<p class="desc">CBR encoding, 192 kbps, high quality, stereo;</p>
+
+<p class="cmdc">lame -m m song04.wav song04.mp3</p>
+<p class="desc">CBR encoding, 128 kbps, average quality, mono sound;</p>
+
+<p class="cmdc">lame -h --abr 192 song05.wav song05.mp3</p>
+<p class="desc">convert using variable bit rate encoding (ABR type), 192 kbps
+(average bit rate), high quality;</p>
+
+<p class="cmdc">lame -V2 song06.wav song06.mp3</p>
+<p class="desc">convert using variable bit rate encoding (VBR type), very high
+quality (~ 200 kbps);</p>
+
+</div>
+
+</body></html>

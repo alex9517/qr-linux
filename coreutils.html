@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference / Coreutils</title>
+<meta name="description" content="linux quick reference, chcon, chgrp, chown, chmod, dd, df, dir, install, ln, ls, shred, sync, cut, fmt, join" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<h1 class="part">Coreutils</h1>
+<p>
+The <b>GNU Core Utilities</b> is a package of GNU software containing
+the basic tools for Unix-like operating systems.</p>
+
+
+<h4 class="part3">File utilities</h4>
+
+<p class="fmtc"><code>chcon</code></p>
+<p class="desc">changes file security context (SELinux);</p>
+
+<p class="fmtc"><code><a href="cmds_c.html#chgrp">chgrp</a></code></p>
+<p class="desc">changes file group ownership;</p>
+
+<p class="fmtc"><code><a href="cmds_c.html#chown">chown</a></code></p>
+<p class="desc">changes file ownership;</p>
+
+<p class="fmtc"><code><a href="cmds_c.html#chmod">chmod</a></code></p>
+<p class="desc">changes the permissions of a file or directory;</p>
+
+<p class="fmtc"><code><a href="cmds_c.html#cp">cp</a></code></p>
+<p class="desc">copies a file or directory;</p>
+
+<p class="fmtc"><code><a href="cmds_d.html#dd">dd</a></code></p>
+<p class="desc">copies and converts a file;</p>
+
+<p class="fmtc"><code><a href="cmds_d.html#df">df</a></code></p>
+<p class="desc">shows disk free space on filesystems;</p>
+
+<p class="fmtc"><code>dir</code></p>
+<p class="desc">is exactly like<code>&nbsp;ls -C -b&nbsp;</code>(files are
+by default listed in columns and sorted vertically);</p>
+
+<p class="fmtc"><code>dircolors</code></p>
+<p class="desc">setup color for <code>ls</code>;</p>
+
+<p class="fmtc"><code>install</code></p>
+<p class="desc">copies files and sets attributes;</p>
+
+<p class="fmtc"><code><a href="cmds_l.html#ln">ln</a></code></p>
+<p class="desc">creates a link to a file;</p>
+
+<p class="fmtc"><code><a href="cmds_l.html#ls">ls</a></code></p>
+<p class="desc">lists directory contents;</p>
+
+<p class="fmtc"><code><a href="cmds_m.html#mkdir">mkdir</a></code></p>
+<p class="desc">creates a directory;</p>
+
+<p class="fmtc"><code>mkfifo</code></p>
+<p class="desc">makes named pipes (FIFOs);</p>
+
+<p class="fmtc"><code><a href="cmds_m.html#mknod">mknod</a></code></p>
+<p class="desc">makes block or character special files;</p>
+
+<p class="fmtc"><code><a href="cmds_m.html#mktemp">mktemp</a></code></p>
+<p class="desc">creates a temporary file or directory;</p>
+
+<p class="fmtc"><code><a href="cmds_m.html#mv">mv</a></code></p>
+<p class="desc">moves or renames files;</p>
+
+<p class="fmtc"><code><a href="cmds_r.html#rm">rm</a></code></p>
+<p class="desc">removes (deletes) files;</p>
+
+<p class="fmtc"><code><a href="cmds_r.html#rmdir">rmdir</a></code></p>
+<p class="desc">removes empty directories;</p>
+
+<p class="fmtc"><code>shred</code></p>
+<p class="desc">overwrites a file to hide its contents, and optionally
+deletes it (may be not effective in some cases or with some filesystems,
+e.g., ext3, ext4, btrfs, reiser, xfs, ...);</p>
+
+<p class="fmtc"><code>sync</code></p>
+<p class="desc">flushes file system buffers;</p>
+
+<p class="fmtc"><code><a href="cmds_t.html#touch">touch</a></code></p>
+<p class="desc">changes file's timestamps;</p>
+
+<p class="fmtc"><code>truncate</code></p>
+<p class="desc">shrinks or extends the size of a file to the specifed size;</p>
+
+<p class="fmtc"><code>vdir</code></p>
+<p class="desc">is exactly like<code>&nbsp;ls -l -b&nbsp;</code>(files are
+by default listed in long format);</p>
+
+
+
+<h4 class="part3">Text utilities</h4>
+
+<p class="fmtc"><code><a href="cmds_b.html#base64">base64</a></code></p>
+<p class="desc">base64 encode/decode data and print to standard output;</p>
+
+<p class="fmtc"><code><a href="cmds_c.html#cat">cat</a></code></p>
+<p class="desc">concatenates and prints files on the stdout;</p>
+
+<p class="fmtc"><code><a href="cmds_c.html#cksum">cksum</a></code></p>
+<p class="desc">checksums and count the bytes in a file;</p>
+
+<p class="fmtc"><code><a href="cmds_c.html#comm">comm</a></code></p>
+<p class="desc">compares two sorted files line by line;</p>
+
+<p class="fmtc"><code>csplit</code></p>
+<p class="desc">splits a file into sections determined by context lines;</p>
+
+<p class="fmtc"><code>cut</code></p>
+<p class="desc">removes sections from each line of files;</p>
+
+<p class="fmtc"><code><a href="cmds_e.html#expand">expand</a></code></p>
+<p class="desc">converts tabs to spaces;</p>
+
+<p class="fmtc"><code>fmt</code></p>
+<p class="desc">simple optimal text formatter;</p>
+
+<p class="fmtc"><code>fold</code></p>
+<p class="desc">wraps each input line to fit in specified width;</p>
+
+<p class="fmtc"><code><a href="cmds_h.html#head">head</a></code></p>
+<p class="desc">outputs the first 10 lines of a file to stdout;</p>
+
+<p class="fmtc"><code>join</code></p>
+<p class="desc">joins lines of two files on a common field;</p>
+
+<p class="fmtc"><code>md5sum</code></p>
+<p class="desc">computes and checks MD5 message digest;</p>
+
+<p class="fmtc"><code>nl</code></p>
+<p class="desc">numbers lines of files;</p>
+
+<p class="fmtc"><code><a href="cmds_o.html#od">od</a></code></p>
+<p class="desc">dumps files in octal and other formats;</p>
+
+<p class="fmtc"><code>paste</code></p>
+<p class="desc">merges lines of files;</p>
+
+<p class="fmtc"><code>ptx</code></p>
+<p class="desc">produces a permuted index of file contents;</p>
+
+<p class="fmtc"><code>pr</code></p>
+<p class="desc">converts text files for printing;</p>
+
+<p class="fmtc"><code>sha1sum</code></p>
+<p class="fmtc"><code>sha224sum</code></p>
+<p class="fmtc"><code>sha256sum</code></p>
+<p class="fmtc"><code>sha384sum</code></p>
+<p class="fmtc"><code>sha512sum</code></p>
+<p class="desc">computes and checks SHA-1, SHA-224, SHA-256,
+SHA-384, SHA-512 message digest;</p>
+
+<p class="fmtc"><code>shuf</code></p>
+<p class="desc">generates random permutations;</p>
+
+<p class="fmtc"><code><a href="cmds_s.html#sort">sort</a></code></p>
+<p class="desc">sorts lines of text files;</p>
+
+<p class="fmtc"><code><a href="cmds_s.html#split">split</a></code></p>
+<p class="desc">splits a file into pieces;</p>
+
+<p class="fmtc"><code>sum</code></p>
+<p class="desc">checksums and counts the blocks in a file;</p>
+
+<p class="fmtc"><code>tac</code></p>
+<p class="desc">concatenates and prints files in reverse;</p>
+
+<p class="fmtc"><code><a href="cmds_t.html#tail">tail</a></code></p>
+<p class="desc">outputs the last 10 lines of a file;</p>
+
+<p class="fmtc"><code>tr</code></p>
+<p class="desc">translates or deletes characters;</p>
+
+<p class="fmtc"><code>tsort</code></p>
+<p class="desc">performs a topological sort;</p>
+
+<p class="fmtc"><code><a href="cmds_u.html#unexpand">unexpand</a></code></p>
+<p class="desc">converts spaces to tabs;</p>
+
+<p class="fmtc"><code><a href="cmds_u.html#uniq">uniq</a></code></p>
+<p class="desc">removes duplicate lines from a sorted file;</p>
+
+<p class="fmtc"><code><a href="cmds_w.html#wc">wc</a></code></p>
+<p class="desc">prints the number of bytes, words, and lines in a file;</p>
+
+
+
+<h4 class="part3">Shell utilities</h4>
+
+<p class="fmtc"><code>arch</code></p>
+<p class="desc">prints machine hardware name (like<code> uname -m</code>);</p>
+
+<p class="fmtc"><code>basename</code></p>
+<p class="desc">strips path prefix (directory) and suffix from filenames;</p>
+
+<p class="fmtc"><code>chroot</code></p>
+<p class="desc">changes the root dir (i.e., allows to run cmd or interactive
+shell with special root dir);</p>
+
+<p class="fmtc"><code><a href="cmds_d.html#date">date</a></code></p>
+<p class="desc">prints/sets the system date and time;</p>
+
+<p class="fmtc"><code>dirname</code></p>
+<p class="desc">strips last component (non-directory suffix) from the file name;</p>
+
+<p class="fmtc"><code><a href="cmds_d.html#du">du</a></code></p>
+<p class="desc">shows disk space usage on file systems;</p>
+
+<p class="fmtc"><code>echo</code></p>
+<p class="desc">displays a specified line of text;</p>
+
+<p class="fmtc"><code><a href="cmds_e.html#env">env</a></code></p>
+<p class="desc">displays and modifies environment variables;</p>
+
+<p class="fmtc"><code>expr</code></p>
+<p class="desc">evaluates expressions;</p>
+
+<p class="fmtc"><code>factor</code></p>
+<p class="desc">factors numbers (e.g.,<code> factor 20
+</code>gives<samp> 2 2 5</samp>);</p>
+
+<p class="fmtc"><code>false</code></p>
+<p class="desc">does nothing, but exits unsuccessfully
+(C lang defines<samp> EXIT_SUCCESS = 0</samp>, <samp> EXIT_FAILURE = 1</samp>);</p>
+
+<p class="fmtc"><code>groups</code></p>
+<p class="desc">prints the groups of which the user is a member;</p>
+
+<p class="fmtc"><code>hostid</code></p>
+<p class="desc">prints the numeric identifier for the current host (HEX);</p>
+
+<p class="fmtc"><code><a href="cmds_i.html#id">id</a></code></p>
+<p class="desc">prints real/effective UID and GID;</p>
+
+<p class="fmtc"><code>link</code></p>
+<p class="desc">creates a link to a file;</p>
+
+<p class="fmtc"><code>logname</code></p>
+<p class="desc">prints the user's login name;</p>
+
+<p class="fmtc"><code><a href="cmds_n.html#nice">nice</a></code></p>
+<p class="desc">modifies the scheduling priority;</p>
+
+<p class="fmtc"><code>nohup</code></p>
+<p class="desc">allows a cmd to continue running after logging out;</p>
+
+<p class="fmtc"><code>pathchk</code></p>
+<p class="desc">checks whether file names are valid or portable;</p>
+
+<p class="fmtc"><code>pinky</code></p>
+<p class="desc">a lightweight version of<code> finger</code>;</p>
+
+<p class="fmtc"><code>printenv</code></p>
+<p class="desc">prints environment variables (e.g.,<code> printenv PATH</code>);</p>
+
+<p class="fmtc"><code><a href="cmds_p.html#printf">printf</a></code></p>
+<p class="desc">formats and prints data;</p>
+
+<p class="fmtc"><code>pwd</code></p>
+<p class="desc">prints the current working directory;</p>
+
+<p class="fmtc"><code>readlink</code></p>
+<p class="desc">displays value of a symbolic link;</p>
+
+<p class="fmtc"><code>runcon</code></p>
+<p class="desc">run cmd with the specified security context;</p>
+
+<p class="fmtc"><code>seq</code></p>
+<p class="desc">prints a sequence of numbers;</p>
+
+<p class="fmtc"><code><a href="cmds_s.html#sleep">sleep</a></code></p>
+<p class="desc">delays for a specified amount of time;</p>
+
+<p class="fmtc"><code><a href="cmds_s.html#stat">stat</a></code></p>
+<p class="desc">returns data about an inode;</p>
+
+<p class="fmtc"><code>stty</code></p>
+<p class="desc">changes and prints terminal line settings;</p>
+
+<p class="fmtc"><code><a href="cmds_s.html#su">su</a></code></p>
+<p class="desc">runs a shell or cmd with substitute user and group IDs;</p>
+
+<p class="fmtc"><code><a href="cmds_t.html#tee">tee</a></code></p>
+<p class="desc">sends output to multiple files;</p>
+
+<p class="fmtc"><code>test</code></p>
+<p class="desc">evaluates an expression;</p>
+
+<p class="fmtc"><code>timeout</code></p>
+<p class="desc">runs cmd with a time limit;</p>
+
+<p class="fmtc"><code>true</code></p>
+<p class="desc">does nothing, but exits successfully
+(<samp>EXIT_SUCCESS = 0</samp>);</p>
+
+<p class="fmtc"><code>tty</code></p>
+<p class="desc">prints terminal name;</p>
+
+<p class="fmtc"><code><a href="cmds_u.html#uname">uname</a></code></p>
+<p class="desc">prints misc system information;</p>
+
+<p class="fmtc"><code>unlink</code></p>
+<p class="desc">removes the specified file using the <samp>unlink</samp>
+function (e.g., <code> unlink msg2.txt</code>);</p>
+
+<p class="fmtc"><code>uptime</code></p>
+<p class="desc">tells how long the system has been running;</p>
+
+<p class="fmtc"><code>users</code></p>
+<p class="desc">prints the user names of users currently logged in
+to the current host;</p>
+
+<p class="fmtc"><code><a href="cmds_w.html#who">who</a></code></p>
+<p class="desc">prints a list of all users currently logged in;</p>
+
+<p class="fmtc"><code>whoami</code></p>
+<p class="desc">prints the effective userid;</p>
+
+<p class="fmtc"><code><a href="cmds_y.html#yes">yes</a></code></p>
+<p class="desc">outputs a string repeatedly until killed
+by<span class="keys"> CTRL+C</span>;</p>
+
+</div>
+
+</body></html>

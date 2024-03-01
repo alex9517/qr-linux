@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (tail, tar, tee, time, top, touch, traceroute, tune2fs)</title>
+<meta name="description" content="linux quick reference, tail, tar, tee, time, tmpwatch, top, touch, traceroute, tune2fs" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<div id="topmenu">
+<p class="menu">
+<a href="#tail">tail</a>&nbsp;|
+<a href="#tar">tar</a>&nbsp;|
+<a href="#tee">tee</a>&nbsp;|
+<a href="#time">time</a>&nbsp;|
+<a href="#tmpwatch">tmpwatch</a>&nbsp;|
+<a href="#top">top</a>&nbsp;|
+<a href="#touch">touch</a>&nbsp;|
+<a href="#traceroute">traceroute</a>&nbsp;|
+<a href="#tune2fs">tune2fs</a></p>
+</div>
+
+
+
+<p class="cmdname"><a name="tail">tail</a></p>
+<p>
+outputs the last (by default 10) lines of the specified file to stdout.</p>
+
+<p class="cmdc">tail /var/log/syslog</p>
+<p class="desc">show the last 10 lines of <samp>syslog</samp>;</p>
+
+<p class="cmdc">tail -22 /var/log/httpd/access.log</p>
+<p class="desc">show the last 22 lines of <samp>access.log</samp> (Apache web-server);</p>
+
+<p class="cmdc">tail -f /var/log/messages</p>
+<p class="desc">output the last appended lines continuously;</p>
+
+<p class="cmdc">dmesg | tail -20</p>
+<p class="desc">show the last 20 lines of <samp>dmesg</samp> (kernel ring buffer);</p>
+
+<p class="fmt" style="margin-top:3%"><code>tail&nbsp;</code>[<kbd>options</kbd>] [<kbd>file</kbd>]<kbd>&nbsp;...</kbd></p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code>
+&nbsp;&nbsp; <code>-v</code> &nbsp;&nbsp; <code>--verbose</code></p>
+
+<p class="fmtc"><code>-c</code> <kbd>n</kbd>,
+<code>--bytes=</code><kbd>n</kbd></p>
+<p class="desc">print the last <kbd>n</kbd> bytes of a file;</p>
+
+<p class="fmtc"><code>-f</code>, <code>--follow</code></p>
+<p class="desc">continuously output the appended data as <kbd>file</kbd> grows;
+note that if the name of the <kbd>file</kbd> is changed while <code>~</code>
+is running, the data will be taken from the old file, because <code>~</code>
+follows descriptor, not filename;</p>
+
+<p class="fmtc"><code>-n</code> <kbd>m</kbd>,
+<code>--lines=</code><kbd>m</kbd></p>
+<p class="desc">print the last <kbd>m</kbd> lines;</p>
+
+<p class="fmtc"><code>-q</code>,
+<code>--quiet</code>, <code>--silent</code></p>
+<p class="desc">never print headers giving file names;</p>
+
+<p class="fmtc"><code>-s</code> <kbd>n</kbd>,
+<code>--sleep-interval=</code><kbd>n</kbd></p>
+<p class="desc">(with <code>-f</code>, <code>--follow=</code> <kbd>fname</kbd>)
+sleep approximately <kbd>n</kbd> sec between iterations (default is 1 sec);</p>
+
+<p class="fmtc"><code>--follow=</code> <kbd>fname</kbd></p>
+<p class="desc">like <code>-f</code>, but <code>~</code> follows the
+explicitly specified filename, not file descriptor (it has sense in case
+of log rotation);</p>
+
+<p class="fmtc"><code>--max-unchanged-stats=</code><kbd>n</kbd></p>
+<p class="desc">(with <code>--follow=</code><kbd>fname</kbd>) reopen
+a <kbd>file</kbd> which has not changed size after <kbd>n</kbd> (default is 5)
+iterations to see if it has been unlinked or renamed (this is the usual case
+of rotated log files);</p>
+
+<p class="fmtc"><code>--pid=</code><kbd>n</kbd></p>
+<p class="desc">(with <code>-f</code>, <code>--follow=</code> <kbd>fname</kbd>)
+terminate after the process with the specified ID has finished;</p>
+
+<p class="fmtc"><code>--retry</code></p>
+<p class="desc">(with <code>-f</code>, <code>--follow=</code> <kbd>fname</kbd>)
+keep trying to open a file even if it is inaccessible
+when <code>~</code> starts, or if it becomes inaccessible later;</p>
+
+
+
+
+
+<p class="cmdname"><a name="tar">tar</a></p>
+<p>
+is an archiving program. Its original purpose was to work with tape archives,
+hence the name. <code>~</code> is often used in combination with compressors
+like <a href="cmds_g.html#gzip"><code>gzip</code></a> or
+<a href="cmds_b.html#bzip2"><code> bzip2</code></a> to create
+<samp>.tar.gz</samp>, <samp>.tgz</samp>, <samp>.tar.bz2</samp> archive files.
+Though the above extensions are not mandatory, you should use them to avoid
+chaos. For non-compressed archives use <samp>.tar</samp>.</p>
+
+<p class="fmt"><code>tar&nbsp;</code><kbd>cmd&nbsp;</kbd>[<kbd>options</kbd>]<code>&nbsp;-f</code> <kbd>arc&nbsp;</kbd>[<kbd>target</kbd>]</p>
+<p>
+<kbd>arc</kbd> is the name of an archive file or the name of a device
+where archive should be created or from where it must be extracted,
+<kbd>target</kbd> specifies files or dirs to be archived.</p>
+
+<p class="cmdc">tar tvf notes.tar</p>
+<p class="desc">list contents of the archive <samp>notes.tar</samp>;</p>
+
+<p class="cmdc">tar -cvf ../notes.tar .</p>
+<p class="desc">join all files (including subdirs) in the current dir into
+one big file <samp>notes.tar</samp> and save it one level above (in the parent
+dir);</p>
+
+<p class="cmdc">tar -xvf notes.tar</p>
+<p class="desc">unpack <samp>notes.tar</samp> in the current dir (may be you
+should clean it before running this cmd); the src file (archive) stays as is;</p>
+
+<p class="cmdc">tar -cvf notes.tar ./notes</p>
+<p class="desc">join all files (including subdirs) in the subdir
+<samp>notes</samp> into one big file <samp>notes.tar</samp> and
+save it in the current dir; note that you can unpack this archive using
+prev cmd, but the result will be a little bit different: first, subdir
+<samp>notes</samp> will be created (provided it does not exist), then archive
+contents will be written into that subdir;</p>
+
+<p class="cmdc">tar ztvf info4.tar.gz</p>
+<p class="desc">list contents of the compressed archive <samp>info4.tar.gz</samp>;</p>
+
+<p class="cmdc">tar zxvf info4.tar.gz</p>
+<p class="desc">extract all files from the archive <samp>info4.tar.gz</samp>;
+word "extract" has no special meaning in this case, you can also say "unpack";
+the src file (archive) is not changed;</p>
+
+<p class="cmdc">tar jxvf info5.tar.bz2</p>
+<p class="desc">extract all files from the archive <samp>info5.tar.bz2</samp>;</p>
+
+<p class="cmdc">tar -zxvf exp01.tar.gz ./export.log</p>
+<p class="desc">extract only one specified file (<samp>export.log</samp>)
+from the archive <samp>exp01.tar.gz</samp>;</p>
+
+<p class="cmdc">tar -jxvf /var/inst/exp01.tar.bz2 ./export.log</p>
+<p class="desc">extract the specified file (<samp>export.log</samp>) from
+<samp>exp01.tar.bz2</samp> (the archive is in <samp>/var/inst/</samp> dir,
+<samp>export.log</samp> will be saved in the current dir);</p>
+
+<p class="cmdc">tar -zcvf ../proj1.tar.gz .</p>
+<p class="desc">archive and compress all files (and dirs) in the current dir
+(default compression level = 6); arc file <samp>proj1.tar.gz</samp> will be
+created in the parent dir; note that you <b>should move to the dir you're want
+to archive</b>, and run this cmd;</p>
+
+<p class="cmdc">tar -zcvf proj1.tar.gz ./proj1</p>
+<p class="desc">archive and compress everything in the <samp>proj1</samp>
+subdir; arc file <samp>proj1.tar.gz</samp> will be created in the current dir;
+this is similar to the prev cmd, but you <b>should move to the parent dir of
+the target</b> (the dir we want to archive) and run this cmd; note that this
+cmd (and prev) preserve dir structure;</p>
+
+<p class="cmdc">tar -jcvf proj1.tar.bz2 proj1/</p>
+<p class="desc">archive and compress all files and dirs in <samp>proj1</samp>
+dir; this is like prev, but compression is performed by <code>bzip2</code>;</p>
+
+<p class="cmdc">tar cvf /dev/st0 ./arc</p>
+<p class="desc">archive all contents of <samp>arc</samp> dir to a SCSI tape device;</p>
+
+
+
+<h5>Commands</h5>
+
+<p class="fmtc"><code>-A</code>,
+<code>--catenate</code>, <code>--concatenate</code></p>
+<p class="desc">append files to archive;</p>
+
+<p class="fmtc"><code>-c</code>, <code>--create</code></p>
+<p class="desc">create a new archive;</p>
+
+<p class="fmtc"><code>-d</code>,
+<code>--diff</code>, <code>--compare</code></p>
+<p class="desc">find diffs between archive and fs;</p>
+
+<p class="fmtc"><code>-r</code>, <code>--append</code></p>
+<p class="desc">append files to the end of archive;</p>
+
+<p class="fmtc"><code>-t</code>, <code>--list</code></p>
+<p class="desc">list contents of archive;</p>
+
+<p class="fmtc"><code>-u</code>, <code>--update</code></p>
+<p class="desc">only append files that are newer;</p>
+
+<p class="fmtc"><code>-x</code>,
+<code>--extract</code>, <code>--get</code></p>
+<p class="desc">extract files from archive;</p>
+
+<p class="fmtc"><code>--delete</code></p>
+<p class="desc">delete files from archive (not for tapes);</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-?</code> &nbsp;&nbsp; <code>--help</code>
+&nbsp;&nbsp; <code>--version</code> &nbsp;&nbsp; <code>-v</code>
+&nbsp;&nbsp; <code>--verbose</code></p>
+
+<p class="fmtc"><code>--atime-preserve</code></p>
+<p class="desc">don't change access time on dumped files;</p>
+
+<p class="fmtc"><code>-C</code> <kbd>dir</kbd>,
+<code>--directory</code> <kbd>dir</kbd></p>
+<p class="desc">change to <kbd>dir</kbd> before doing anything;</p>
+
+<p class="fmtc"><code>-b</code> <kbd>n</kbd>,
+<code>--block-size=</code><kbd>n</kbd></p>
+<p class="desc">set block size to <kbd>n</kbd><samp>*512</samp> bytes;
+by default <kbd>n</kbd> <samp>= 20</samp>, that is <samp>10Kb</samp>;</p>
+
+<p class="fmtc"><code>--exclude</code> <kbd>expr</kbd></p>
+<p class="desc">exclude files matching the specified name pattern;</p>
+
+<p class="fmtc"><code>-f</code> <kbd>arc</kbd>,
+<code>--file</code> <kbd>arc</kbd></p>
+<p class="desc">use the specified archive file or device;</p>
+
+<p class="fmtc"><code>-F</code> <kbd>script</kbd>,
+<code>--info-script</code> <kbd>script</kbd></p>
+<p class="desc">run script at the end of each tape; implies <code>-M</code>;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-G</code></td>
+<td class="opt_desc">create/extract/list old GNU-format incremental backup;</td></tr>
+<tr>
+<td class="opt_name"><code>-g</code></td>
+<td class="opt_desc">create/extract/list new GNU-format incremental backup;</td></tr>
+</table>
+
+<p class="fmtc"><code>-h</code>, <code>--dereference</code></p>
+<p class="desc">dereference symlinks, i.e., do not dump symlinks,
+dump files they point to;</p>
+
+<p class="fmtc"><code>--ignore-failed-read</code></p>
+<p class="desc">do not exit with non-zero status on unreadable files;</p>
+
+<p class="fmtc"><code>-i</code>, <code>--ignore-zeros</code></p>
+<p class="desc">ignore blocks of zeros in archive (this usually means end
+of file);</p>
+
+<p class="fmtc"><code>-j</code>, <code>--bzip</code></p>
+<p class="desc">filter archive through <a href="cmds_b.html#bzip2"><code>bzip2</code></a>;</p>
+
+<p class="fmtc"><code>-k</code>, <code>--keep-old-files</code></p>
+<p class="desc">keep existing files, do not overwrite them with archived
+copies when extracting;</p>
+
+<p class="fmtc"><code>-L</code> <kbd>n</kbd>,
+<code>--tape-length</code> <kbd>n</kbd></p>
+<p class="desc">set tape length to <kbd>n</kbd><samp>*1024</samp> bytes;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-m</code></td>
+<td class="opt_desc">do not extract file modification time;</td></tr>
+<tr>
+<td class="opt_name"><code>-M</code></td>
+<td class="opt_desc">create/extract/list multi-volume archive;</td></tr>
+</table>
+
+<p class="fmtc"><code>-N</code> <kbd>date</kbd>,
+<code>--newer</code> <kbd>date</kbd></p>
+<p class="desc">only store files newer than <kbd>date</kbd>;</p>
+
+<p class="fmtc"><code>--numeric-owner</code></p>
+<p class="desc">always use numbers for user/group names;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-p</code></td>
+<td class="opt_desc">extract with original permissions;</td></tr>
+</table>
+
+<p class="fmtc"><code>-P</code>, <code>--absolute-paths</code></p>
+<p class="desc">preserve absolute paths, don't remove leading
+'<samp>/</samp>' from file names;</p>
+
+<p class="fmtc"><code>--remove</code></p>
+<p class="desc">remove files after adding them to archive;</p>
+
+<p class="fmtc"><code>--same-owner</code></p>
+<p class="desc">create extracted files with original ownership;</p>
+
+<p class="fmtc"><code>-S</code>, <code>--sparse</code></p>
+<p class="desc">handle sparse files efficiently;</p>
+
+<p class="fmtc"><code>-V</code> <kbd>name</kbd>,
+<code>--label</code> <kbd>name</kbd></p>
+<p class="desc">create archive with volume name <kbd>name</kbd>;</p>
+
+<p class="fmtc"><code>-W</code>, <code>--verfy</code></p>
+<p class="desc">attempt to verify archive after writing it;</p>
+
+<p class="fmtc"><code>-X</code> <kbd>file</kbd>,
+<code>--exclude-from</code> <kbd>file</kbd></p>
+<p class="desc">exclude files listed in <kbd>file</kbd>;</p>
+
+<p class="fmtc"><code>-z</code>, <code>--gzip</code></p>
+<p class="desc">filter archive through <a href="cmds_g.html#gzip"><code>gzip</code></a>;</p>
+
+
+
+
+
+<p class="cmdname"><a name="tee">tee</a></p>
+<p>
+reads from <samp>stdin</samp> and writes to <samp>stdout</samp> and to a file
+(i.e., displays on the screen, and simultaneously writes to a specified file).</p>
+
+<p class="cmdc">ps ax | tee proc.txt | more</p>
+<p class="desc">output the list of the currently running processes and
+at the same time write the output to the file <samp>proc.txt</samp>;</p>
+
+<p class="fmt"><code>tee&nbsp;</code>[<kbd>options</kbd>] [<kbd>file</kbd>]<kbd>&nbsp;...</kbd></p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>-a</code>, <code>--append</code></p>
+<p class="desc">append to the specified file, do not overwrite it;</p>
+
+<p class="fmtc"><code>-i</code>, <code>--ignore-interrupts</code></p>
+<p class="desc">ignore interrupt signals;</p>
+
+
+
+
+
+<p class="cmdname"><a name="time">time</a></p>
+<p>
+is an application profiler, it provides timing stats for the specified
+cmd (elapsed real time between invocation and termination, user cpu time,
+system cpu time). GNU version also provides info on other resources
+(mem, i/o, ipc calls).</p>
+
+<p class="fmt"><code>time&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;cmd&nbsp;</kbd>[<kbd>args ...</kbd>]</p>
+<p>
+Exit status is usually the exit status of the cmd invoked; <samp>126</samp>
+means cmd could not be invoked, <samp>127</samp> means cmd could not be found.</p>
+
+<p class="cmdc">time ls -Al | wc -l</p>
+<p class="desc">show time statistics for the specified cmd
+(<code>ls -Al</code>...) using default output format;</p>
+
+<p class="cmdc">time dd if=/dev/zero of=/tmp/empty.dat<br>bs=1024K count=256</p>
+<p class="desc">estimate disk / filesystem write speed;</p>
+
+<p class="cmdc">time -f "\tKernel: %S\tUser: %U\tWaits: %w"<br>tar ztvf arc2.tar.gz</p>
+<p class="desc">show stats for the specified cmd (<code>tar</code> ...),
+in the specified format (kernel/user cpu times, number of context switches
+due to I/O waits);</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>-V</code>
+&nbsp;&nbsp; <code>--version</code> &nbsp;&nbsp; <code>-v</code>
+&nbsp;&nbsp; <code>--verbose</code></p>
+
+<p class="fmtc"><code>-a</code>, <code>--append</code></p>
+<p class="desc">(used with <code>-o</code>) do not overwrite, append;</p>
+</table>
+
+<p class="fmtc"><code>-f</code> <kbd>frmt</kbd>,
+<code>--format=</code><kbd>frmt</kbd></p>
+<p class="desc">specifies the output format;</p>
+
+<p class="fmtc"><code>-o</code> <kbd>file</kbd>,
+<code>--output=</code><kbd>file</kbd></p>
+<p class="desc">save results to the specified file instead of stderr
+(which is default); overwrite, if such file exists;</p>
+
+<p class="fmtc"><code>-p</code>, <code>--portability</code></p>
+<p class="desc">use the portable output format;</p>
+<p>
+The format string interpretation resembles
+<a href="cmds_p.html#printf"><code>printf</code></a>: newlines, tabs,
+backslashes are specified as <code>\n</code>, <code>\t</code>,
+<code>\\</code>, percent as <code>%%</code> (otherwise it means
+conversion), ordinary chars are directly copied.</p>
+
+
+
+
+<h5>Time format specifications</h5>
+
+<table class="options">
+<tr><td class="opt_name"><code>%E</code></td>
+<td class="opt_desc">elapsed real time ([<kbd>hh</kbd>]<samp>:</samp><kbd>mm</kbd><samp>:</samp><kbd>ss</kbd>);</td></tr>
+
+<tr><td class="opt_name"><code>%e</code></td>
+<td class="opt_desc">elapsed real time in seconds;</td></tr>
+
+<tr><td class="opt_name"><code>%S</code></td>
+<td class="opt_desc">total num of cpu seconds the process spent in kernel mode;</td></tr>
+
+<tr><td class="opt_name"><code>%U</code></td>
+<td class="opt_desc">total num of cpu seconds the process spent in user mode;</td></tr>
+
+<tr><td class="opt_name"><code>%P</code></td>
+<td class="opt_desc">percentage of cpu usage counted as <samp>(%U + %S) / %E</samp>;</td></tr>
+</table>
+
+
+
+<h5>Memory format specifications</h5>
+
+<table class="options">
+<tr><td class="opt_name"><code>%M</code></td>
+<td class="opt_desc">max resident set size of the proc during its lifetime (Kbytes);</td></tr>
+
+<tr><td class="opt_name"><code>%t</code></td>
+<td class="opt_desc">average resident set size of the process (Kbytes);</td></tr>
+
+<tr><td class="opt_name"><code>%K</code></td>
+<td class="opt_desc">average total (data+stack+text) of the process (Kbytes);</td></tr>
+
+<tr><td class="opt_name"><code>%D</code></td>
+<td class="opt_desc">average size of the process’s unshared data area (Kbytes);</td></tr>
+
+<tr><td class="opt_name"><code>%p</code></td>
+<td class="opt_desc">average size of the process’s unshared stack space (Kbytes);</td></tr>
+
+<tr><td class="opt_name"><code>%X</code></td>
+<td class="opt_desc">average size of the process’s shared text space (Kbytes);</td></tr>
+
+<tr><td class="opt_name"><code>%Z</code></td>
+<td class="opt_desc">system’s page size (bytes);</td></tr>
+
+<tr><td class="opt_name"><code>%F</code></td>
+<td class="opt_desc">number of major page faults (page has to be read from
+disk) that occurred while the process was running;</td></tr>
+
+<tr><td class="opt_name"><code>%R</code></td>
+<td class="opt_desc">number of minor (recoverable) page faults (page data
+is still valid, but the system tables must be updated);</td></tr>
+
+<tr><td class="opt_name"><code>%W</code></td>
+<td class="opt_desc">number of times the process was swapped out of memory;</td></tr>
+
+<tr><td class="opt_name"><code>%c</code></td>
+<td class="opt_desc">number of times the process was context-switched
+involuntarily, because the time slice expired;</td></tr>
+
+<tr><td class="opt_name"><code>%w</code></td>
+<td class="opt_desc">number of times the process was context-switched
+voluntarily (for example, waiting for i/o to comlete);</td></tr>
+</table>
+
+
+
+<h5>I/O format specifications</h5>
+
+<table class="options">
+<tr><td class="opt_name"><code>%I</code></td>
+<td class="opt_desc">number of file system inputs by the process;</td></tr>
+
+<tr><td class="opt_name"><code>%O</code></td>
+<td class="opt_desc">number of file system outputs by the process;</td></tr>
+
+<tr><td class="opt_name"><code>%r</code></td>
+<td class="opt_desc">number of socket messages received by the process;</td></tr>
+
+<tr><td class="opt_name"><code>%s</code></td>
+<td class="opt_desc">number of socket messages sent by the process;</td></tr>
+
+<tr><td class="opt_name"><code>%k</code></td>
+<td class="opt_desc">number of signals delivered to the process;</td></tr>
+
+<tr><td class="opt_name"><code>%C</code></td>
+<td class="opt_desc">name and cmd line args of the command being timed;</td></tr>
+
+<tr><td class="opt_name"><code>%x</code></td>
+<td class="opt_desc">exit status of the command;</td></tr>
+</table>
+
+
+
+
+
+<p class="cmdname"><a name="tmpwatch">tmpwatch</a></p>
+<p>
+recursively removes files which haven’t been accessed for a given num
+of hours. Normally, <code>~</code> is used to clean up dirs which are used
+for temporary holding space such as <samp>/tmp</samp>.</p>
+
+<p class="fmt"><code>tmpwatch&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;hours dirs</kbd></p>
+<p>
+<code>~</code> does not follow symlinks in the dirs it’s cleaning,
+does not switch filesystems, skips <samp>lost+found</samp> dirs owned by
+<samp>root</samp>, and only removes empty dirs and regular files. By default,
+<code>~</code> dates files by their <samp>atime</samp>. The dirs to clean up
+must be absolute paths.</p>
+
+<p class="cmdc">tmpwatch -v -t 24 /home/alex/tmp</p>
+<p class="desc">delete nothing, just show what will be removed if this
+cmd is used without <code>-t</code> option;</p>
+
+<p class="cmdc">tmpwatch -v -d 8 /home/alex/tmp</p>
+<p class="desc">delete recursively regular files in
+<samp>/home/alex/tmp</samp> that were accessed more than 8 hours ago,
+do not delete dirs;</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-v</code> &nbsp;&nbsp; <code>--verbose</code></p>
+
+<p class="fmtc"><code>-a</code>, <code>--all</code></p>
+<p class="desc">remove all file types, not just regular files and dirs;</p>
+
+<p class="fmtc"><code>-c</code>, <code>--ctime</code></p>
+<p class="desc">make decision about deleting a file based on the file's
+<samp>ctime</samp> (inode change time); for dirs, base decision
+on <samp>mtime</samp>;</p>
+
+<p class="fmtc"><code>-d</code>, <code>--nodirs</code></p>
+<p class="desc">do not attempt to remove dirs, even if they are empty;</p>
+
+<p class="fmtc"><code>-f</code>, <code>--force</code></p>
+<p class="desc">remove even if <samp>root</samp> doesn't have write access;</p>
+
+<p class="fmtc"><code>-m</code>, <code>--mtime</code></p>
+<p class="desc">make decision about deleting a file based on the file's
+modification time;</p>
+
+<p class="fmtc"><code>-s</code>, <code>--fuser</code></p>
+<p class="desc">attempt to use the
+<a href="cmds_f.html#fuser"><code>fuser</code></a>
+cmd to see if a file is open before removing it;</p>
+
+<p class="fmtc"><code>-t</code>, <code>--test</code></p>
+<p class="desc">go through all steps, but do not remove file;</p>
+
+<p class="fmtc"><code>-u</code>, <code>--atime</code></p>
+<p class="desc">make decision about deleting a file based on the file's
+access time; this is default;</p>
+
+<p class="fmtc"><code>-x</code> <kbd>name</kbd>,
+<code>--exclude=</code><kbd>name</kbd></p>
+<p class="desc">skip the specified files (<kbd>name</kbd> must be an absolute
+path); if <kbd>name</kbd> is a dir, all files in this dir are skipped too;</p>
+<p>
+If <code>--atime</code>, <code>--ctime</code>, <code>--mtime</code> are
+used in combination, the decision is based on the maximum of these times.</p>
+
+
+
+
+
+<p class="cmdname"><a name="top">top</a></p>
+<p>
+provides a dynamic real-time view of running system
+(see also <a href="cmds_h.html#htop">htop</a>).</p>
+
+<p class="fmt"><code>top&nbsp;</code>[<kbd>options</kbd>]</p>
+
+
+
+<h5>Command-line options</h5>
+
+<p class="fmtc"><code>-d</code> <kbd>ss</kbd><code>.</code><kbd>tt</kbd></p>
+<p class="desc">delay time between screen updates (<kbd>seconds.tenths</kbd>);</p>
+
+<p class="fmtc"><code>-h</code>, <code>-v</code></p>
+<p class="desc">show <samp>procps</samp> library version, usage, and quit;</p>
+
+<p class="fmtc"><code>-n</code> <kbd>m</kbd></p>
+<p class="desc">max number of iterations (frames) before exit;</p>
+
+<p class="fmtc"><code>-U</code> <kbd>name</kbd></p>
+<p class="desc">monitor only processes with a UID or user name given
+(matches real, effective, saved, filesystem UIDs);</p>
+
+<p class="fmtc"><code>-u</code> <kbd>name</kbd></p>
+<p class="desc">monitor only processes with an effective UID or user name
+given;</p>
+
+
+
+<h5>Interactive commands (global)</h5>
+<table class="options">
+<tr><td class="opt_name"><code>?</code></td>
+<td class="opt_desc">help (also <code>h</code>);</td></tr>
+
+<tr><td class="opt_name"><code>A</code></td>
+<td class="opt_desc">full-screen / alternate display mode toggle;</td></tr>
+
+<tr><td class="opt_name"><code>B</code></td>
+<td class="opt_desc">bold disable / enable toggle;</td></tr>
+
+<tr><td class="opt_name"><code>d</code></td>
+<td class="opt_desc">change delay time interval; you’ll be prompted to enter
+value in seconds; fractional values are allowed; values less than 1 sec
+are not reasonable, because <code>~</code> itself creates too much load on the system;</td></tr>
+
+<tr><td class="opt_name"><code>G</code></td>
+<td class="opt_desc">choose another window / field group; you’ll be prompted
+to enter a number 1..4;</td></tr>
+
+<tr><td class="opt_name"><code>I</code></td>
+<td class="opt_desc">Irix / Solaris mode toggle; in Solaris mode task’s
+CPU usage is divided by the total number of CPUs;</td></tr>
+
+<tr><td class="opt_name"><code>k</code></td>
+<td class="opt_desc">kill a task; you’ll be prompted for PID; by default
+<samp>SIGTERM</samp> is sent; if you want to cancel, press <span class="keys">ENTER</span>
+at the PID prompt or 0 at the signal prompt;</td></tr>
+
+<tr><td class="opt_name"><code>q</code></td>
+<td class="opt_desc">quit;</td></tr>
+
+<tr><td class="opt_name"><code>r</code></td>
+<td class="opt_desc">renice a task; you’ll be prompted for PID and value;
+positive value will cause the process to lose priority, negative will cause
+a process to be viewed more favorably by the kernel;</td></tr>
+
+<tr><td class="opt_name"><code>u</code></td>
+<td class="opt_desc">select user; you’ll be prompted for a username or
+effective UID; only processes of this user will be displayed; later,
+if you wish to monitor all tasks again, re-issue this cmd and press
+<span class="keys">ENTER</span> when prompted for username;</td></tr>
+
+<tr><td class="opt_name"><code>U</code></td>
+<td class="opt_desc">select user; you’ll be prompted for a username or UID
+(real, effective, saved, filesystem); only processes belonging to this user
+will be displayed;</td></tr>
+
+<tr><td class="opt_name"><code>W</code></td>
+<td class="opt_desc">write the configuration file (saves your options,
+toggles, etc);</td></tr>
+
+<tr><td class="opt_name"><code>Z</code></td>
+<td class="opt_desc">change color mapping;</td></tr>
+</table>
+
+
+
+<h5>Interactive commands (summary area)</h5>
+<table class="options">
+<tr><td class="opt_name"><code>l</code></td>
+<td class="opt_desc">toggle load average / uptime;</td></tr>
+
+<tr><td class="opt_name"><code>m</code></td>
+<td class="opt_desc">toggle memory / swap usage;</td></tr>
+
+<tr><td class="opt_name"><code>t</code></td>
+<td class="opt_desc">toggle task / cpu states;</td></tr>
+
+<tr><td class="opt_name"><code>1</code></td>
+<td class="opt_desc">(one, digit) toggle single / separate cpu states;</td></tr>
+</table>
+
+
+
+<h5>Interactive commands (task area)</h5>
+<table class="options">
+<tr><td class="opt_name"><code>b</code></td>
+<td class="opt_desc">bold / reverse toggle;</td></tr>
+
+<tr><td class="opt_name"><code>c</code></td>
+<td class="opt_desc">cmd line / program name toggle;</td></tr>
+
+<tr><td class="opt_name"><code>i</code></td>
+<td class="opt_desc">idle processes toggle; display all, or just active tasks;</td></tr>
+
+<tr><td class="opt_name"><code>f</code>,<code>o</code></td>
+<td class="opt_desc">this keys display separate screens where you can change
+which fields are displayed and their order;</td></tr>
+
+<tr><td class="opt_name"><code>S</code></td>
+<td class="opt_desc">cumulative time mode toggle; if on, the cpu time of
+children (already gone) is added to the cpu time of process itself;</td></tr>
+
+<tr><td class="opt_name"><code>n</code>,<code>#</code></td>
+<td class="opt_desc">set max tasks; you will be prompted to enter the number;</td></tr>
+
+<tr><td class="opt_name"><code>x</code></td>
+<td class="opt_desc">column highlight toggle (highlights current sort field,
+if on);</td></tr>
+
+<tr><td class="opt_name"><code>y</code></td>
+<td class="opt_desc">row highlight toggle (highlights running tasks, if on);</td></tr>
+
+<tr><td class="opt_name"><code>z</code></td>
+<td class="opt_desc">color / mono toggle;</td></tr>
+</table>
+
+
+
+<h5>Sorting of task window</h5>
+<table class="options">
+<tr><td class="opt_name"><span class="keys">Shift + M &nbsp;</span></td>
+<td class="opt_desc">sort by <samp>%MEM</samp> (obsolete);</td></tr>
+
+<tr><td class="opt_name"><span class="keys">Shift + N &nbsp;</span></td>
+<td class="opt_desc">sort by <samp>PID</samp> (obsolete);</td></tr>
+
+<tr><td class="opt_name"><span class="keys">Shift + P &nbsp;</span></td>
+<td class="opt_desc">sort by <samp>%CPU</samp> (obsolete);</td></tr>
+
+<tr><td class="opt_name"><span class="keys">Shift + T &nbsp;</span></td>
+<td class="opt_desc">sort by <samp>TIME+</samp> (obsolete);</td></tr>
+</table>
+<p>
+The following interactive cmds will only be honored when the current sort
+field is visible:</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>&lt;</code></td>
+<td class="opt_desc">move sort field left;</td></tr>
+
+<tr><td class="opt_name"><code>&gt;</code></td>
+<td class="opt_desc">move sort field right;</td></tr>
+</table>
+<p>
+The following interactive cmds will always be honored whether or not the
+current sort field is visible:</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>F</code>,<code>O</code></td>
+<td class="opt_desc">select sort field (separate screen will be displayed);</td></tr>
+
+<tr><td class="opt_name"><code>R</code></td>
+<td class="opt_desc">reverse / normal sort field toggle (switches between
+high-to-low and low-to-high order);</td></tr>
+</table>
+
+
+
+<h5>Description of fields</h5>
+
+<table class="options">
+<tr><td class="opt_name"><samp>PID</samp></td>
+<td class="opt_desc">process ID;</td></tr>
+
+<tr><td class="opt_name"><samp>PPID</samp></td>
+<td class="opt_desc">parent process ID;</td></tr>
+
+<tr><td class="opt_name"><samp>RUSER</samp></td>
+<td class="opt_desc">real user name;</td></tr>
+
+<tr><td class="opt_name"><samp>UID</samp></td>
+<td class="opt_desc">user ID;</td></tr>
+
+<tr><td class="opt_name"><samp>USER</samp></td>
+<td class="opt_desc">user name;</td></tr>
+
+<tr><td class="opt_name"><samp>GROUP</samp></td>
+<td class="opt_desc">group name;</td></tr>
+
+<tr><td class="opt_name"><samp>TTY</samp></td>
+<td class="opt_desc">controlling <samp>tty</samp>; this is usually the device
+(serial port, pty, etc) from which the proc was started;</td></tr>
+
+<tr><td class="opt_name"><samp>PR</samp></td>
+<td class="opt_desc">kernel scheduling priority of the task;</td></tr>
+
+<tr><td class="opt_name"><samp>NI</samp></td>
+<td class="opt_desc">the <samp>nice</samp> value of the task; negative means
+higher priority, positive means lower priority; zero means that priority will
+not be ajusted in determinig a task’s dispatchability;</td></tr>
+
+<tr><td class="opt_name"><samp>#C</samp></td>
+<td class="opt_desc">last used CPU (SMP);</td></tr>
+
+<tr><td class="opt_name"><samp>%CPU</samp></td>
+<td class="opt_desc">CPU usage, %;</td></tr>
+
+<tr><td class="opt_name"><samp>TIME</samp></td>
+<td class="opt_desc">total cpu time the task has used since it started;</td></tr>
+
+<tr><td class="opt_name"><samp>TIME+</samp></td>
+<td class="opt_desc">the same as <samp>TIME</samp>, but reflecting more
+granularity through hundreths of a second;</td></tr>
+
+<tr><td class="opt_name"><samp>%MEM</samp></td>
+<td class="opt_desc">task’s current share of the available physical memory;</td></tr>
+
+<tr><td class="opt_name"><samp>VIRT</samp></td>
+<td class="opt_desc">the total amount of virtual memory used by the task
+(Kb); it includes code, data, shared libraries and pages that have been
+swapped out;</td></tr>
+
+<tr><td class="opt_name"><samp>SWAP</samp></td>
+<td class="opt_desc">the swapped out portion of a tasks’s virtual mem image;</td></tr>
+
+<tr><td class="opt_name"><samp>RES</samp></td>
+<td class="opt_desc">the non-swapped physical memory a task has used;</td></tr>
+
+<tr><td class="opt_name"><samp>CODE</samp></td>
+<td class="opt_desc">code size, Kb; also known as <samp>TRS</samp>,
+text resident set size;</td></tr>
+
+<tr><td class="opt_name"><samp>DATA</samp></td>
+<td class="opt_desc">data + stack size, Kb (<samp>DRS</samp>, data resident
+set size);</td></tr>
+
+<tr><td class="opt_name"><samp>SHR</samp></td>
+<td class="opt_desc">shared memory size, Kb;</td></tr>
+
+<tr><td class="opt_name"><samp>nFLT</samp></td>
+<td class="opt_desc">page fault count;</td></tr>
+
+<tr><td class="opt_name"><samp>nDRT</samp></td>
+<td class="opt_desc">dirty page count;</td></tr>
+
+<tr><td class="opt_name"><samp>S</samp></td>
+<td class="opt_desc">process status
+(see <a href="cmds_p.html#ps"><code>ps</code></a>);</td></tr>
+
+<tr><td class="opt_name"><samp>Command</samp></td>
+<td class="opt_desc">command line or program name;</td></tr>
+
+<tr><td class="opt_name"><samp>WCHAN</samp></td>
+<td class="opt_desc">sleeping in function
+(see <a href="cmds_p.html#ps"><code>ps</code></a>);</td></tr>
+
+<tr><td class="opt_name"><samp>Flags</samp></td>
+<td class="opt_desc">task flags
+(see <a href="cmds_p.html#ps"><code>ps</code></a>);</td></tr>
+</table>
+
+
+
+
+
+<p class="cmdname"><a name="touch">touch</a></p>
+<p>
+updates the access and modification time of a file.</p>
+
+<p class="fmt"><code>touch&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;filename</kbd></p>
+<p>
+If file  <kbd>filename</kbd> does not exist, and cmd is invoked without
+<code>-c</code>, an empty file named <kbd>filename</kbd> will be created.</p>
+
+<p class="cmdc">touch msg22.txt</p>
+<p class="desc">set access and modification times of the specified file
+to the current time;</p>
+
+<p class="cmdc">touch --date='Jan 15 2012 14:05:30' chk.dat</p>
+<p class="desc">set access and modification times of the specified file
+(<samp>chk.dat</samp>) to Jan 15, 2012, 14:05:30;</p>
+
+<p class="cmdc">touch -t 1201151405.30 chk.dat</p>
+<p class="desc">works exactly like prev cmd;</p>
+
+<p class="cmdc">touch -t 06301200 *.html</p>
+<p class="desc">set access and mod times of all files with
+<samp>html</samp> extension in this dir to June, 30, 12:00;</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-a</code></td>
+<td class="opt_desc">change only the access time;</td></tr>
+</table>
+
+<p class="fmtc"><code>-c</code>, <code>--no-create</code></p>
+<p class="desc">do not create any files;</p>
+
+<p class="fmtc"><code>-d</code> <kbd>str</kbd>,
+<code>--date=</code><kbd>str</kbd></p>
+<p class="desc">parse <kbd>str</kbd> and use it instead of the current time;</p>
+
+<p class="fmtc"><code>-h</code>, <code>--no-dereference</code></p>
+<p class="desc">affect each symlink instead of any referenced file (useful
+only on systems that can change the timestamps of a symlink);</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-m</code></td>
+<td class="opt_desc">change only the modification time;</td></tr>
+</table>
+
+<p class="fmtc"><code>-r</code> <kbd>file</kbd>,
+<code>--reference=</code><kbd>file</kbd></p>
+<p class="desc">use the times of <kbd>file</kbd> instead of the current time;</p>
+
+<p class="fmtc"><code>-t</code> <kbd>stamp</kbd></p>
+<p class="desc">use [[<samp>CC</samp>]<samp>YY</samp>]<samp>MMDDhhmm</samp>[<samp>.ss</samp>]
+instead of the current time;</p>
+
+<p class="fmtc"><code>--time=</code><kbd>word</kbd></p>
+<p class="desc">same as <code>-a</code>, if <kbd>word</kbd> is
+<samp>atime</samp>, <samp>access</samp>, <samp>use</samp>; same as
+<code>-m</code>, if <kbd>word</kbd> is <samp>mtime</samp>, <samp>modify</samp>;</p>
+
+
+
+
+
+<p class="cmdname"><a name="traceroute">traceroute</a></p>
+<p>
+attempts to trace the route an IP packet would follow to the specified inet host by launching probe pkts with a small <b>ttl</b>,
+then listening for an ICMP "time exceeded" reply from a gateway. <code>~</code> starts with a ttl = <samp>1</samp> and increases it
+by one until ICMP "port unreachable" (or TCP reset) is received: it means we got to the host, or hit a max 30 hops (default). Three
+probes (default) are sent at each ttl and a line is printed showing the ttl, gateway address, round trip time of each probe.
+The address can be followed by additional info when requested. If the probe answers come from different gateways, the address of
+each responding system will be printed. If there is no response within a <samp>5s</samp> (default), an <samp>*</samp> is printed
+for that probe.</p>
+<p>
+Note that <code>traceroute</code> is an old classical tool, and if your system did not install it by default, you should probably
+try something newer, e.g. <code><a href="cmds_m.html#mtr">mtr</a></code>.</p>
+
+<p class="fmt"><code>traceroute </code>[<kbd>options</kbd>]<kbd> host </kbd>[<kbd>pkt_len</kbd>]</p>
+<p>
+The only required param is the name or IP addr of the destination <kbd>host</kbd>. The optional <kbd>pkt_len</kbd> is the total
+size of the probing pkt (default is <samp>60</samp> bytes for IPv4, <samp>80</samp> bytes for IPv6). The specified size can be
+(in some situations) ignored or set to a min value.</p>
+
+<p class="cmdc">traceroute www.acme.net</p>
+<p class="desc">trace the route to the specified web-server; use default
+settings (udp pkts, "unlikely" ports, etc);</p>
+
+<p class="cmdc">traceroute -n www.acme.net</p>
+<p class="desc">trace the route to the specified web-server; use default
+settings, but do not try to map IPs to names (may be faster then previous);</p>
+
+<p class="cmdc">traceroute -T -p 25 mx.acme.net</p>
+<p class="desc">trace the route to the specified mail-server; use tcp/25;</p>
+<p>
+When UDP probe pkts are used (default mode), dest port is set to an unlikely value, i.e., we hope that there is no app listening
+on this port, otherwise the response can be misleading. There are no such problems with ICMP or TCP (for TCP half-open technique
+is used, which prevents the probes to be seen by app on the dest host). TCP tracerouting should be used if firewall blocks the
+"unlikely" UDP ports and ICMP echoes (see the example above).</p>
+
+
+
+<h5>Some options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>-V</code></p>
+
+<p class="fmtc"><code>-4</code>, <code>-6</code></p>
+<p class="desc">explicitly force IPv4 or IPv6 traceouting; by default
+<code>~</code> auto derives the appropriate prot from the name resolution;
+if resolving returns both IPv4 and IPv6 addresses, v4 is used;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-d</code></td>
+<td class="opt_desc">enable socket level debugging (if kernel supports);</td></tr>
+<tr>
+<td class="opt_name"><code>-e</code></td>
+<td class="opt_desc">show ICMP extensions (RFC4884);</td></tr>
+<tr>
+<td class="opt_name"><code>-F</code></td>
+<td class="opt_desc">do not fragment probe pkts (for IPv4 <samp>DF</samp> bit
+is also set, that tells intermediate routers not to fragment remotely
+as well);</td></tr>
+</table>
+
+<p class="fmtc"><code>-f</code> <kbd>first_ttl</kbd></p>
+<p class="desc">set TTL to start with (default is <samp>1</samp>);</p>
+
+<p class="fmtc"><code>-g</code> <kbd>gateway</kbd></p>
+<p class="desc">add an IP src routing option to the outgoing pkt that tells
+the network to route pkt through the specified gateway (most routers disable
+src routing for security); you can also specify a comma separated list of
+gateways; for IPv6, the form of
+<kbd>num</kbd>,<kbd>addr</kbd>,<kbd>addr...</kbd> is allowed, <kbd>num</kbd>
+is a route header type (default is <samp>2</samp>); type <samp>0</samp> route
+header is deprecated;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-I</code></td>
+<td class="opt_desc">use ICMP ECHO for probes (default is UDP);</td></tr>
+</table>
+
+<p class="fmtc"><code>-i</code> <kbd>iface</kbd></p>
+<p class="desc">send pkts through the specified interface; by default,
+interface is selected according to the routing table;</p>
+
+<p class="fmtc"><code>-M</code> <kbd>method</kbd></p>
+<p class="desc">method to be used; <samp>default</samp> means UDP, there are
+also <samp>icmp</samp> and <samp>tcp</samp>; the last two can be also specified
+with <code>-I</code> and <code>-T</code>; method-specific options can be
+passed by <code>-O</code>;</p>
+
+<p class="fmtc"><code>-m</code> <kbd>max_ttl</kbd></p>
+<p class="desc">max time-to-live (max num of hops); the default is
+<samp>30</samp>;</p>
+
+<p class="fmtc"><code>--mtu</code></p>
+<p class="desc">discover MTU along the path (implies <code>-F -N 1</code>);
+new MTU is output once in a form <samp>F=</samp><kbd>n</kbd> at the first
+probe of a router which requires such MTU to be reached (the corresponding
+"frag needed" ICMP msg is sent by the prev router);</p>
+
+<p class="fmtc"><code>-N</code> <kbd>num</kbd></p>
+<p class="desc">the number of probe pkts to be sent out simultaneously
+(default is <samp>16</samp>); a reasonably large num can speed up the whole
+process; but if routers or target host use ICMP rate throttling, large num
+can lead to a loss of some responses;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-n</code></td>
+<td class="opt_desc">
+do not try to map IP addresses to hostnames;</td></tr>
+</table>
+
+<p class="fmtc"><code>-O</code> <kbd>opt</kbd></p>
+<p class="desc">method-specific options (comma-separated list;
+also you can specify <code>-O</code> several times); to get available
+options, try <code>-O help</code>;</p>
+
+<p class="fmtc"><code>-P</code> <kbd>prot</kbd></p>
+<p class="desc">use raw packet of the specified protocol;
+the default prot is <samp>253</samp> (RFC3692);</p>
+
+<p class="fmtc"><code>-p</code> <kbd>port</kbd></p>
+<p class="desc">1) for UDP tracing, <kbd>port</kbd> is a dest port base
+and this num will be incremented by each probe; 2) for ICMP tracing,
+<kbd>port</kbd> is an initial icmp sequence value incremented by each probe;
+3) for TCP tracing this is a usual TCP dest port to connect to (const value);</p>
+
+<p class="fmtc"><code>-q</code> <kbd>num</kbd></p>
+<p class="desc">the number of probe pkts per hop (default is <samp>3</samp>);</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-r</code></td>
+<td class="opt_desc">bypass normal routing tables and send directly to
+a host on an attached network; if the host is not on a directly-attached
+network, an error is returned (can be used to ping a local host through
+an interface that has no route through it);</td></tr>
+</table>
+
+<p class="fmtc"><code>-s</code> <kbd>src_addr</kbd></p>
+<p class="desc">use an alternative source address (it must be the address
+of one of the interfaces); by default, the addr of the outgoing iface is used;</p>
+
+<p class="fmtc"><code>--sport=</code><kbd>port</kbd></p>
+<p class="desc">source port to use; it also implies <samp>-N 1</samp>;
+usually src ports are chosen by the system;</p>
+
+<p class="fmtc"><code>-t</code> <kbd>tos</kbd></p>
+<p class="desc">for IPv4, setType of Service (TOS) and Precedence value;
+useful values are <samp>16</samp> (low delay) and <samp>8</samp>
+(high throughput); some TOS precendence values are available for superuser
+only; for IPv6, set the Traffic Control value;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-U</code></td>
+<td class="opt_desc">
+send UDP probes to a particular dest port (i.e., do not increase port
+num after each probe); the default port is <samp>53</samp>;</td></tr>
+<tr>
+<td class="opt_name"><code>-UL</code></td>
+<td class="opt_desc">
+use UDPLITE; the default port is <samp>53</samp>;</td></tr>
+</table>
+
+
+<p class="fmtc"><code>-w</code> <kbd>time</kbd></p>
+<p class="desc">time (in seconds) to wait for a response to a probe
+(default is <samp>5s</samp>);</p>
+
+<p class="fmtc"><code>-z</code><kbd>time</kbd></p>
+<p class="desc">min time interval between probes (default is <samp>0</samp>);
+if <kbd>time</kbd> > 10, then it's in milliseconds, otherwise it's
+a number of seconds (float point values are valid too);</p>
+
+
+
+<h5>Methods</h5>
+<p class="fmt">
+<samp>default</samp> is an old, traditional method used by default.
+Probe pkts are UDP datagrams with "unlikely" dest ports starting
+at 33434 (first probe), then incremented by one. These ports are expected
+to be unused, so the dest host normally returns "icmp unreach port".
+The result may be strange if some app listens on this port.</p>
+<p class="fmt">
+<samp>icmp</samp> is the most typical method nowdays. It uses ICMP echo
+pkts for probes. If you can <a href="cmds_p.html#ping"><code>ping</code></a>
+the dest host, <samp>icmp</samp> tracerouting is O.K.</p>
+<p class="fmt">
+<samp>tcp</samp> is a modern method to bypass firewalls.
+It uses the constant dest port (default is <samp>80</samp>).
+If some filters are present in the network path, then "unlikely" UDP ports
+and ICMP echoes may be filtered, and tracerouting stops at the firewall.
+In this case you should use some allowed prot/port combinations, like
+tcp/80 (for web servers) or tcp/25 (for mail servers). Note that this method
+uses the "half-open technique", which prevents apps on the dest host from
+seeing probes. We send <samp>TCP SYN</samp>, and receive <samp>RESET</samp>
+for non-listened ports, or <samp>TCP SYN+ACK</samp> for listening ports,
+then we send <samp>RESET</samp> (the remote tcp session is dropped, app sees
+nothing).</p>
+<p class="fmt">
+<samp>tcpconn</samp> is an initial implementation of <samp>tcp</samp> method.
+Do not use! - it opens session and can affect the listening app.</p>
+<p class="fmt">
+<samp>udp</samp> (see <code>-U</code>) uses UDP datagram with a constant
+dest port (by default <samp>53</samp>). Like tcp, it is intended to bypass
+firewalls. However, in this case app on the dest host receives our
+probes (with random data), and can be confused. In most cases it will not
+respond, so we will never see the final hop in the trace.</p>
+<p class="fmt">
+<samp>udplite</samp> (see <code>-UL</code>) uses udplite datagram for probes
+with constant dest port (default is <samp>53</samp>).</p>
+<p class="fmt">
+<samp>raw</samp> sends a raw packet of the specified protocol
+(see <code> -P</code>). No protocol-specific headers are used, IP header only.</p>
+
+
+
+<h5>Notes</h5>
+<p>
+<b>TTL</b> (Time to live) is a mechanism that limits the lifetime
+of data in a computer or network. TTL may be implemented as a counter or
+timestamp attached to or embedded in the data. Once the prescribed event
+count or timespan has elapsed, data is discarded. In computing
+apps, TTL is used to improve caching or privacy. In networking,
+TTL prevents a data pkt from circulating indefinitely.</p>
+<p>
+TTL is an IPv4 term. In IPv6 it is known as <b>Hop Limit</b>. The
+corresponding field specifies a limit on the number of hops a packet is
+allowed before it should be discarded.</p>
+<p>
+A <b>hop</b> takes place each time when the packets are passed from one
+router to another. <b>Next hop</b> is a routing term used for the next
+gateway (router) to which pkts should be forwarded along the path to their
+final destination.</p>
+
+
+
+
+
+<p class="cmdname"><a name="tune2fs">tune2fs</a></p>
+<p>
+adjusts tunable params of
+<samp>ext2</samp>/<samp>ext3</samp>/<samp>ext4</samp> filesystem,
+or displays the current values of those params (<code>-l</code>).
+See also <code><a href="cmds_d.html#dumpe2fs">dumpe2fs</a></code>.</p>
+
+<p class="cmdc">tune2fs -l /dev/sda7</p>
+<p class="desc">list the superblock contents of a filesystem on
+<samp>/dev/sda7</samp>
+(this info you can also get using
+<a href="cmds_d.html#dumpe2fs"><code>dumpe2fs</code></a>);</p>
+
+<p class="cmdc">tune2fs -c 50 -i 1m /dev/hdb3</p>
+<p class="desc">force fs check after 50 mounts or 1 months, whichever comes
+first;</p>
+
+<p class="cmdc">tune2fs -m 1 /dev/sdc2</p>
+<p class="desc">set the percentage of the reserved blocks on the partition
+<samp>/dev/sdc2</samp> to <samp>1%</samp>; it's assumed that the
+filesystem's size is ~<samp>250GB</samp>, and the default <samp>5%</samp> is an
+unreasonable waste of space;</p>
+
+<p class="fmt"><code>tune2fs&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;device</kbd></p>
+
+
+
+<h5>Options</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-c</code> <kbd>n</kbd></td>
+<td class="opt_desc">set max mounts count between two fs checks;
+<samp>0</samp> disables checking; NOTE! That for safety reasons you should
+have either mount-count-based or time-based (see <code>-i</code>) checking;</td></tr>
+<tr>
+<td class="opt_name"><code>-C</code> <kbd>n</kbd></td>
+<td class="opt_desc">set the number of times fs has been mounted;
+use in conjunction with <code>-c</code> to force
+<code><a href="cmds_f.html#fsck">fsck</a></code> at the next reboot;</td></tr>
+</table>
+
+<p class="fmtc"><code>-e</code> <kbd>opt</kbd></p>
+<p class="desc">change the behaviour of the kernel code when errors are
+detected (in any case <code><a href="cmds_e.html#e2fsck">e2fsck</a></code>
+will be started on the next boot); available options:</p>
+
+<table class="opts" style="margin-left:10%">
+<tr><td class="opts">continue</td><td class="desc">continue normal execution;</td></tr>
+<tr><td class="opts">remount-ro&nbsp;</td><td class="desc">remount filesystem read-only;</td></tr>
+<tr><td class="opts">panic</td><td class="desc">cause a kernel panic;</td></tr>
+</table>
+
+<p class="fmtc"><code>-E</code> <kbd>opts</kbd></p>
+<p class="desc">set extended options for the filesystem:</p>
+
+<p class="desc_ex"><code>stride=</code><kbd>stride-size</kbd> &nbsp; &nbsp;
+configure fs for a RAID array with <kbd>stride-size</kbd> fs blocks
+(the num of blocks read or written to disk before moving to next disk);
+this mostly affects placement of fs metadata to avoid placing them on a
+single disk, which can hurt the performance;</p>
+
+<p class="desc_ex"><code>stripe_width=</code><kbd>stripe-width</kbd> &nbsp; &nbsp;
+configure fs for a RAID array with <kbd>stripe-width</kbd> fs blocks per
+stripe; this is typically be <kbd>stride-size</kbd> * <kbd>N</kbd>
+(the number of data disks in the RAID); this allows the block allocator to
+prevent read-modify-write of the parity in a RAID stripe if possible when
+the data is written;</p>
+
+<p class="desc_ex"><code>hash_alg=</code><kbd>algo</kbd> &nbsp; &nbsp;
+set the default hash algorithm used for filesystems with hashed b-tree
+dirs; valid algorithms are: <samp>legacy</samp>, <samp>half_md4</samp>,
+<samp>tea</samp>;</p>
+
+<p class="desc_ex"><code>test_fs</code> &nbsp; &nbsp;
+set a flag in the filesystem superblock indicating that it may be mounted
+using experimental kernel code;</p>
+
+<p class="desc_ex"><code>^test_fs</code> &nbsp; &nbsp;
+clear test flag, indicating the filesystem should only be mounted using
+production-level fs code;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-f</code></td>
+<td class="opt_desc">force <code>~</code> to complete operation even if errors
+are met; useful when removing <code>has_journal</code> feature from
+fs with an external journal that is not available, or fs is so
+corrupted that it appears to have an external journal; NOTE! That removing
+an external journal from fs which was not cleanly unmounted without first
+replaying the external journal can result in severe data loss and fs
+corruption;</td></tr>
+</table>
+
+<p class="fmtc"><code>-g</code> <kbd>grp</kbd></p>
+<p class="desc">set group which can use the reserved filesystem blocks;</p>
+
+<p class="fmtc"><code>-i</code>
+<kbd>n</kbd>[<code>d</code>|<code>w</code>|<code>m</code>]</p>
+<p class="desc">set max time between two fs checks (days, weeks or months);
+<samp>0</samp> disables the time-dependent checks;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-j</code></td>
+<td class="opt_desc">add an ext3 journal to the filesystem; unless
+<code>-J</code> is specified, the default journal params will be used
+to create an appropriately sized journal (based on fs size) stored within
+the filesystem; if this option is used to create a journal on a mounted fs,
+an immutable file <samp>.journal</samp> will be created in the top-level
+dir of fs; while checking unmounted filesystems, <code>e2fsck</code> will
+move <samp>.journal</samp> files to the invisible, reserved journal inode;
+for all filesystems except <samp>/</samp> (root), this happens automatically
+during next reboot; since the root fs is mounted read-only,
+<code>e2fsck</code> must be run from a rescue disk in order to effect this
+transition; on some systems (e.g., Debian), if an initial ramdisk is
+used, the <samp>initrd</samp> scripts will auto convert an ext2 root fs to
+ext3 if <samp>/etc/fstab</samp> specifies ext3 for the root fs;</td></tr>
+</table>
+
+<p class="fmtc"><code>-J</code> <kbd>param</kbd></p>
+<p class="desc">override the default ext3 journal params using one
+of the following options (they are mutually exclusive):</p>
+
+<p class="desc_ex"><code>size=</code><kbd>n</kbd> &nbsp; &nbsp;
+create an internal (stored inside fs) journal of <kbd>n</kbd> MB;
+the size must be at least 1024 fs blocks
+(i.e., <samp>1MB</samp> if using <samp>1k</samp> blocks, <samp>4MB</samp>
+if using <samp>4k</samp> blocks, etc.), but no more than 102,400 fs blocks;</p>
+
+<p class="desc_ex"><code>device=</code><kbd>ext_journal</kbd> &nbsp; &nbsp;
+attach filesystem to the journal block device located on <kbd>ext_journal</kbd>;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-l</code></td>
+<td class="opt_desc">list the contents of the filesystem superblock;</td></tr>
+</table>
+
+<p class="fmtc"><code>-L</code> <kbd>label</kbd></p>
+<p class="desc">set the volume label of the filesystem (16 char max);</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-m</code> <kbd>n</kbd></td>
+<td class="opt_desc">set the percentage of the reserved filesystem blocks
+(default is <samp>5%</samp>);</td></tr>
+</table>
+
+<p class="fmtc"><code>-M</code> <kbd>dir</kbd></p>
+<p class="desc">set the last mounted dir for the filesystem;</p>
+
+<p class="fmtc"><code>-o</code> [<code>^</code>]<kbd>options</kbd></p>
+<p class="desc">set/clear the indicated default mount options in the filesystem
+(a comma-separated list, '<code>^</code>' clears the specified option);
+the following options can be set or cleared using <code>~</code>:</p>
+
+<p class="desc_ex"><code>debug</code> &nbsp; &nbsp;
+enable debugging code for this filesystem;</p>
+<p class="desc_ex"><code>bsdgroups</code> &nbsp; &nbsp;
+emulate BSD behaviour when creating new files (they will take the group-id
+of the dir in which they were created);</p>
+<p class="desc_ex"><code>user_xattr</code> &nbsp; &nbsp;
+enable user-specified extended attributes;</p>
+<p class="desc_ex"><code>acl</code> &nbsp; &nbsp; enable Posix Access Control Lists;</p>
+<p class="desc_ex"><code>uid16</code> &nbsp; &nbsp; disable 32-bit UIDs and GIDs;</p>
+<p class="desc_ex"><code>journal_data</code> &nbsp; &nbsp;
+when the filesystem is mounted with journalling enabled, all data (not just
+metadata) is committed into the journal prior to being written into the main
+fs;</p>
+<p class="desc_ex"><code>journal_data_ordered</code> &nbsp; &nbsp;
+when the filesystem is mounted with journalling enabled, all data is forced
+directly out to the main fs prior to its metadata being committed
+to the journal;</p>
+<p class="desc_ex"><code>journal_data_writeback</code> &nbsp; &nbsp;
+when the filesystem is mounted with journalling enabled, data may be written
+into the main fs after its metadata has been committed to the journal;</p>
+
+<p class="fmtc"><code>-O</code> [<code>^</code>]<kbd>features</kbd></p>
+<p class="desc">set/clear fs feature; multiple features can be specified
+in a comma-separated list, where <code>^</code> clears, <code>+</code>
+(or no prefix) sets the feature. There are:</p>
+
+<p class="desc_ex"><code>dir_index</code> &nbsp; &nbsp;
+use hashed B-trees to speed up lookups in large dirs;</p>
+
+<p class="desc_ex"><code>filetype</code> &nbsp; &nbsp;
+store file type info in the directory entries;</p>
+
+<p class="desc_ex"><code>flex_bg</code> &nbsp; &nbsp;
+(<samp>ext4</samp>) allow bitmaps and inode tables for a block group to be
+placed anywhere
+on the storage media; <code>~</code> does not relocate inode tables and
+allocation bitmaps, as <code><a href="cmds_m.html#mke2fs">mke2fs</a></code>
+does when it creates fs with <code>flex_bg</code> enabled;</p>
+
+<p class="desc_ex"><code>has_journal</code> &nbsp; &nbsp;
+use a journal to ensure fs consistency even across unclean shutdowns
+(equivalent to <code>-j</code> option);</p>
+
+<p class="desc_ex"><code>large_file</code> &nbsp; &nbsp;
+allow files greater than <samp>2GB</samp> (modern kernels auto set
+this feature when a big file is created);</p>
+
+<p class="desc_ex"><code>resize_inode</code> &nbsp; &nbsp;
+reserve space so that the block grp descriptor table may grow up in the future;
+<code>~</code> only clears this feature;</p>
+
+<p class="desc_ex"><code>sparse_super</code> &nbsp; &nbsp;
+limit the number of backup superblocks to save space on large filesystems;</p>
+
+<p class="desc_ex"><code>uninit_bg</code> &nbsp; &nbsp;
+(<samp>ext4</samp>) allow kernel to initialize bitmaps and inode tables and
+keep a high watermark for the unused inodes to reduce
+<code><a href="cmds_e.html#e2fsck">e2fsck</a></code> time; the first check
+after enabling this feature will take the full time, but the subsequent runs
+will be essentially shorter (it actually depends on fs space usage);</p>
+
+<p class="desc">
+<span style="color:red">Note!</span>
+After setting/clearing <code>filetype</code>, <code>resize_inode</code>,
+<code>sparse_super</code>, <code>uninit_bg</code>, run
+<code><a href="cmds_e.html#e2fsck">e2fsck</a></code> to return fs to a
+consistent state; after setting <code>dir_index</code> feature,
+<code>e2fsck -D&nbsp;</code>can be run to convert existing dirs to the hashed
+B-tree; NOTE! enabling certain features may prevent fs from being mounted
+by the kernel that does not support those features;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-r</code> <kbd>n</kbd></td>
+<td class="opt_desc">set the number of the reserved filesystem blocks;</td></tr>
+</table>
+
+<p class="fmtc"><code>-T</code> <kbd>time</kbd></p>
+<p class="desc">set the time fs was last checked by
+<code><a href="cmds_e.html#e2fsck">e2fsck</a></code>; the <kbd>time</kbd>
+format is
+<samp>YYYYMMDD</samp>[<samp>HH</samp>[<samp>MM</samp>[<samp>SS</samp>]]]
+or <samp>now</samp> (curr date/time);</p>
+
+<p class="fmtc"><code>-u</code> <kbd>user</kbd></p>
+<p class="desc">set the user who can use the reserved fs blocks;
+<kbd>user</kbd> can be username or numeric UID (superblock stores UID anyway);</p>
+
+<p class="fmtc"><code>-U</code> <kbd>uuid</kbd></p>
+<p class="desc">set the universally unique identifier (UUID) of the
+filesystem to <kbd>uuid</kbd>, which may be a random series of hex digits
+(see <code><a href="cmds_u.html#uuidgen">uuidgen</a></code>)
+or one of the following options:</p>
+
+<p class="desc_ex"><code>clear</code> &nbsp; &nbsp; clear the filesystem UUID;</p>
+<p class="desc_ex"><code>randim</code> &nbsp; &nbsp; generate a new random UUID;</p>
+<p class="desc_ex"><code>time</code> &nbsp; &nbsp; generate a new time-based UUID;</p>
+
+<p class="desc">with
+<code><a href="cmds_m.html#mount">mount</a></code>,
+<code><a href="cmds_f.html#fsck">fsck</a></code>,
+<samp>/etc/fstab</samp> you can specify <samp>UUID=</samp><kbd>uuid</kbd>,
+instead of a block special device name;</p>
+
+</div>
+
+</body></html>

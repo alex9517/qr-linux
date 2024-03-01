@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (zip)</title>
+<meta name="description" content="linux quick reference, zip" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+
+
+<p class="cmdname"><a name="zip">zip</a></p>
+<p>
+is a compression and file packaging utility compatible with classical
+DOS <code>pkzip</code>. There is also a companion program
+<code><a href="cmds_u.html#unzip">unzip</a></code>.</p>
+
+<p class="fmt"><code>zip&nbsp;</code>[<code>-</code><kbd>options</kbd>]
+[<code>-b</code> <kbd>path</kbd>] [<code>-t</code> <kbd>mmddyyyy</kbd>]<br>
+[<code>-n</code> <kbd>suffixes</kbd>]
+[<kbd>zipfile list</kbd>] [<code>-xi</code> <kbd>list</kbd>]</p>
+<p>
+The default action is to add or replace <kbd>zipfile</kbd> entries from
+<kbd>list</kbd>, which can include the special name '<code>-</code>'
+to compress stdin. If <kbd>zipfile</kbd> and <kbd>list</kbd> are omitted,
+<code>~</code> compresses stdin to stdout.</p>
+
+<p class="cmd">zip last *</p>
+<p class="desc">put all files in the current dir into archive <samp>last.zip</samp>;</p>
+
+<p class="cmd">zip home_dir .* *</p>
+<p class="desc">put all files (including hidden) in the current dir into
+compressed archive <samp>home_dir.zip</samp>;</p>
+
+<p class="cmd">zip -r proj1-dir proj1</p>
+<p class="desc">zip up an entire dir <samp>proj1</samp> recursively;
+zipfile name would be <samp>proj1-dir.zip</samp>;</p>
+
+<p class="cmd">zip -j msgs /opt/news/*</p>
+<p class="desc">put all files in the specified dir (<samp>/opt/news</samp>)
+into archive <samp>msgs.zip</samp> removing paths from the file names;</p>
+
+<p class="cmd">zip -r proj1 proj1 –x tmp</p>
+<p class="desc">zip up an entire dir <samp>proj1</samp> recursively
+excluding subdir <samp>tmp</samp>;</p>
+
+<p class="cmd">zip -r -n mp3 misc tmp2</p>
+<p class="desc">zip up an entire dir <samp>tmp2</samp> recursively,
+however do not compress <samp>mp3</samp> files, just add them to the archvive;</p>
+
+<p class="cmd">find /home/alex/ -newer tstmp.dat -print |<br>
+zip -j backup -@</p>
+<p class="desc">find and compress all files in <samp>/home/alex</samp> that
+are newer than <samp>tstmp.dat</samp>; the archive name would be
+<samp>backup.zip</samp>;</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-?</code> &nbsp;&nbsp; <code>-h</code>
+&nbsp;&nbsp; <code>--help</code> &nbsp;&nbsp; <code>-h2</code>
+&nbsp;&nbsp; <code>--more-help</code> &nbsp;&nbsp; <code>--verbose</code></p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-0</code></td>
+<td class="opt_desc">(zero) do not compress, just store all files;</td></tr>
+
+<tr><td class="opt_name"><code>-</code><kbd>n</kbd></td>
+<td class="opt_desc">set compression ratio; <kbd>n</kbd> must be in the
+range <samp>1..9</samp> (from max speed to max compression), default is
+<samp>6</samp>;</td></tr>
+
+<tr><td class="opt_name"><code>-@</code></td>
+<td class="opt_desc">read names from stdin;</td></tr>
+
+<tr><td class="opt_name"><code>-b</code></td>
+<td class="opt_desc">use the specified path for the temporary archive;</td></tr>
+
+<tr><td class="opt_name"><code>-c</code></td>
+<td class="opt_desc">add one-line comment; you'll be prompted to enter
+comment for each file (press <span class="keys">ENTER</span> for "no comment");</td></tr>
+
+<tr><td class="opt_name"><code>-d</code></td>
+<td class="opt_desc">delete entries in zipfile;</td></tr>
+
+<tr><td class="opt_name"><code>-D</code></td>
+<td class="opt_desc">do not add dir entries (equiv to <code>-x "*/"</code>);</td></tr>
+
+<tr><td class="opt_name"><code>-e</code></td>
+<td class="opt_desc">encrypt (you’ll be prompted for password);</td></tr>
+
+<tr><td class="opt_name"><code>-F</code></td>
+<td class="opt_desc">fix zipfile; you can also use <code>-FF</code> which
+means "try harder";</td></tr>
+
+<tr><td class="opt_name"><code>-f</code></td>
+<td class="opt_desc">freshen archive (add only changed files, ignore new);</td></tr>
+
+<tr><td class="opt_name"><code>-i</code></td>
+<td class="opt_desc">include only the specified names;</td></tr>
+
+<tr><td class="opt_name"><code>-J</code></td>
+<td class="opt_desc">junk zipfile prefix;</td></tr>
+
+<tr><td class="opt_name"><code>-j</code></td>
+<td class="opt_desc">junk mode (strip dir names);</td></tr>
+
+<tr><td class="opt_name"><code>-l</code></td>
+<td class="opt_desc">convert <samp>LF</samp> to <samp>CR+LF</samp>
+(<code>-ll</code> does the opposite);</td></tr>
+
+<tr><td class="opt_name"><code>-m</code></td>
+<td class="opt_desc">move files into the <samp>zip</samp> archive,
+delete sources;</td></tr>
+
+<tr><td class="opt_name"><code>-n</code></td>
+<td class="opt_desc">do not compress the specified suffixes;</td></tr>
+
+<tr><td class="opt_name"><code>-o</code></td>
+<td class="opt_desc">make zipfile as old as the latest entry;</td></tr>
+
+<tr><td class="opt_name"><code>-q</code></td>
+<td class="opt_desc">quiet mode;</td></tr>
+
+<tr><td class="opt_name"><code>-r</code></td>
+<td class="opt_desc">recursive mode (include subdirs);</td></tr>
+
+<tr><td class="opt_name"><code>-T</code></td>
+<td class="opt_desc">test zipfile integrity;</td></tr>
+
+<tr><td class="opt_name"><code>-u</code></td>
+<td class="opt_desc">update archive (add new and changed files);</td></tr>
+
+<tr><td class="opt_name"><code>-v</code></td>
+<td class="opt_desc">(without other args) version + misc internal info;
+otherwise it works like <code>--verbose</code>;</td></tr>
+
+<tr><td class="opt_name"><code>-X</code></td>
+<td class="opt_desc">eXclude eXtra file attributes;</td></tr>
+
+<tr><td class="opt_name"><code>-x</code></td>
+<td class="opt_desc">exclude the specified names;</td></tr>
+
+<tr><td class="opt_name"><code>-y</code></td>
+<td class="opt_desc">store symlinks as symlinks instead of the referenced
+files;</td></tr>
+
+<tr><td class="opt_name"><code>-z</code></td>
+<td class="opt_desc">add one multi-line comment for the whole archive
+(you'll be prompted); to finish comment put a period (<samp>.</samp>) at
+the new line and press <span class="keys">ENTER</span>
+(<span class="keys">CTRL+D</span> also works);</td></tr>
+</table>
+
+</div>
+
+</body></html>

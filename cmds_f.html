@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (fdisk, file, find, free, fromdos, fsck, fuser)</title>
+<meta name="description" content="linux quick reference, fdisk, file, find, free, fromdos, fsck, fuser, sfdisk" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<div id="topmenu">
+<p class="menu">
+<a href="#fdisk">fdisk</a>&nbsp;|
+<a href="#file">file</a>&nbsp;|
+<a href="#find">find</a>&nbsp;|
+<a href="#free">free</a>&nbsp;|
+<a href="#fromdos">fromdos</a>&nbsp;|
+<a href="#fsck">fsck</a>&nbsp;|
+<a href="#fuser">fuser</a></p>
+</div>
+
+<p class="cmdname"><a name="fdisk">fdisk</a></p>
+<p>
+is a hard disk drive partition table manipulator.</p>
+<p>
+Currently (2012,2013) there are 2 major partitioning standards:
+old-style, generally known as <a href="mbr_and_gpt.html#mbr">MBR</a>
+(Master Boot Record), and more advanced <a href="mbr_and_gpt.html#gpt">GPT</a>
+(GUID Partition Table). <code>fdisk</code> does not support GPT. For disks with
+GPT you should use <code>parted</code>, <code>gparted</code> (<b>GNU Parted</b>
+and its GUI version) or <code><a href="cmds_g.html#gdisk">gdisk</a></code> from
+<b>GPT fdisk</b> pkg.</p>
+
+<p class="cmdc">fdisk /dev/sdb</p>
+<p class="desc">start an interactive session to partition the second
+SATA disk (SATA and SCSI drives have similar names: <samp>/dev/sda</samp>,
+<samp>/dev/sdb</samp>, etc);</p>
+
+<p class="cmdc">fdisk -l /dev/hda</p>
+<p class="desc">print partition table of the first IDE/PATA disk;</p>
+
+<p class="cmdc">fdisk -l /dev/sda</p>
+<p class="desc">print partition table of the first SATA disk;</p>
+
+<p class="cmdc">fdisk -s /dev/sda2</p>
+<p class="desc">print the size of the 2nd partition on the first SATA disk;</p>
+
+<p class="fmt"><code>fdisk&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;device</kbd></p>
+
+
+<h5>Options</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-h</code></td>
+<td class="opt_desc">output help info and exit;</td></tr>
+<tr>
+<td class="opt_name"><code>-v</code></td>
+<td class="opt_desc">output version info and exit;</td></tr>
+</table>
+<p class="fmtc"><code>-l</code> <kbd>dev</kbd></p>
+<p class="desc">list partition table on the specified device and exit;</p>
+
+<p class="fmtc"><code>-s</code> <kbd>par</kbd></p>
+<p class="desc">print the size of the partition (in blocks);</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-u</code></td>
+<td class="opt_desc">when listing partition table, give sizes in sectors
+instead of cylinders;</td></tr>
+</table>
+
+
+<h5>Interactive mode commands</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>a</code></td>
+<td class="opt_desc">toggle a bootable flag;</td></tr>
+<tr>
+<td class="opt_name"><code>b</code></td>
+<td class="opt_desc">edit bsd disklabel;</td></tr>
+<tr>
+<td class="opt_name"><code>c</code></td>
+<td class="opt_desc">toggle the dos compatibility flag;</td></tr>
+<tr>
+<td class="opt_name"><code>d</code></td>
+<td class="opt_desc">delete a partition;</td></tr>
+<tr>
+<td class="opt_name"><code>l</code></td>
+<td class="opt_desc">list known partition types;</td></tr>
+<tr>
+<td class="opt_name"><code>m</code></td>
+<td class="opt_desc">print this menu;</td></tr>
+<tr>
+<td class="opt_name"><code>n</code></td>
+<td class="opt_desc">add a new partition;</td></tr>
+<tr>
+<td class="opt_name"><code>o</code></td>
+<td class="opt_desc">create a new empty DOS partition table;</td></tr>
+<tr>
+<td class="opt_name"><code>p</code></td>
+<td class="opt_desc">print the partition table;</td></tr>
+<tr>
+<td class="opt_name"><code>q</code></td>
+<td class="opt_desc">quit without saving changes;</td></tr>
+<tr>
+<td class="opt_name"><code>s</code></td>
+<td class="opt_desc">create a new empty SUN disklabel;</td></tr>
+<tr>
+<td class="opt_name"><code>t</code></td>
+<td class="opt_desc">change a partition’s system id;</td></tr>
+<tr>
+<td class="opt_name"><code>u</code></td>
+<td class="opt_desc">change display/entry units;</td></tr>
+<tr>
+<td class="opt_name"><code>v</code></td>
+<td class="opt_desc">verify the partition table;</td></tr>
+<tr>
+<td class="opt_name"><code>w</code></td>
+<td class="opt_desc">write table to disk and exit;</td></tr>
+<tr>
+<td class="opt_name"><code>x</code></td>
+<td class="opt_desc">extra functionality (experts only);</td></tr>
+</table>
+<p>
+There is also <code>sfdisk</code> utility that may be considered as
+non-interactive version of <code>~</code> to be used in scripts. It can
+also be used to backup/restore partition tables (works with MBR only;
+there is a GPT version named <code>sgdisk</code>, see examples in
+<a href="cmds_g.html#gdisk"><code>gdisk</code></a>).</p>
+
+<p class="cmdc">sfdisk -d /dev/sda &gt; /mnt/backup/sda-part.dat</p>
+<p class="desc">backup the entire partition table, including MBR part data
+(primary partitions) and extended partitions;</p>
+
+<p class="cmdc">sfdisk /dev/sda &lt; /mnt/backup/sda-part.dat</p>
+<p class="desc">recreate the partition table from the backup made earlier;</p>
+
+
+
+<p class="cmdname"><a name="file">file</a></p>
+<p>
+determines file type applying 3 sets of tests: filesystem tests,
+magic number tests, language tests.</p>
+
+<p class="cmdc">file /etc/hosts</p>
+<p class="desc">report the type of <samp>/etc/hosts</samp> file;
+the output would be smth like "<samp>ASCII text</samp>";</p>
+
+<p class="cmdc">file /usr/bin/tar</p>
+<p class="desc">report the type of <samp>/usr/bin/tar</samp>; the output
+would be smth like "<samp>ELF 64-bit LSB shared object ...</samp>";</p>
+
+<p class="cmdc">file bin/chk_param.sh</p>
+<p class="desc">the output would be smth like "<samp>POSIX shell script,
+ASCII text executable</samp>";</p>
+
+<p class="cmdc">file bin/memo2.py</p>
+<p class="desc">the output would be smth like "<samp>/usr/bin/python script,
+ASCII text executable</samp>";</p>
+
+<p class="cmdc">file bin/memo2.txt</p>
+<p class="desc">the output would be smth like "<samp>UTF-8 Unicode text</samp>";</p>
+
+<p class="fmt" style="padding-bottom:4px"><code>file&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;file ...</kbd></p>
+<p>
+The well-known formats are described in <samp>/usr/share/file/magic.mgc</samp>
+and <samp>/usr/share/misc/magic.mgc</samp> which in Ubuntu Linux are just
+symlinks pointing to <samp>/usr/lib/file/magic.mgc</samp> - default compiled
+list of magic.</p>
+
+
+<h5>Some options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>-b</code>, <code>--brief</code></p>
+<p class="desc">do not prepend filenames to output lines;</p>
+
+<p class="fmtc"><code>-f</code> <kbd>file</kbd>,
+<code>--files-from</code> <kbd>file</kbd></p>
+<p class="desc">read file names to be examined from <kbd>file</kbd>
+(one per line) before the arg list;</p>
+
+<p class="fmtc"><code>-L</code>, <code>--dereference</code></p>
+<p class="desc">follow symbolic links;</p>
+
+<p class="fmtc"><code>-n</code>, <code>--no-buffer</code></p>
+<p class="desc">flush stdout after checking each file;</p>
+
+<p class="fmtc"><code>-p</code>, <code>--preserve-date</code></p>
+<p class="desc">preserve access time;</p>
+
+<p class="fmtc"><code>-z</code>, <code>--uncompress</code></p>
+<p class="desc">try to look inside compressed files;</p>
+
+
+
+<p class="cmdname"><a name="find">find</a></p>
+<p>
+searches for files in a directory hierarchy.</p>
+
+<p class="fmt"><code>find&nbsp;</code>[<kbd>where_to_search</kbd>]
+[<kbd>options</kbd>]</p>
+<p>
+The first arg with "<samp>-</samp> <samp>(</samp> <samp>)</samp>
+<samp>,</samp> <samp>!</samp>" is thought to be the beginning
+of an expression, any args before it are paths to search. If no paths
+are given, the current dir is assumed, if no options are given,
+<code>-print</code> is used.</p>
+
+<p class="cmdc">find . -print</p>
+<p class="desc">print the names of all files in the current dir and its
+subdirs;</p>
+
+<p class="cmdc">find . -name main.cpp -print</p>
+<p class="desc">look for <samp>main.cpp</samp> in curr dir and its subdirs;</p>
+
+<p class="cmdc">find . -name "*.html" -print</p>
+<p class="desc">find all files with <samp>html</samp> extension in the
+current dir and its subdirs;</p>
+
+<p class="cmdc">find . -name \*.html -print</p>
+<p class="desc">same as previous;</p>
+
+<p class="cmdc">find . -name '*.html' -print</p>
+<p class="desc">same as previous;</p>
+
+<p class="cmdc">find . -atime +30 -print</p>
+<p class="desc">find all files in the current dir and its subdirs that were
+accessed more than 30 days ago;</p>
+
+<p class="cmdc">find / -mtime -2 -mount -print</p>
+<p class="desc">find all files in the root filesystem that were modified
+within last 48 hours;</p>
+
+<p class="cmdc">find /home -atime +7 -size +20480 -print</p>
+<p class="desc">find all files in home dir and its subdirs that were
+last accessed more than 7 days ago, and all files larger than 10 MB
+(size is given in blocks of 512 bytes: 20480 * 512 = 10MB);</p>
+
+<p class="cmdc">find /home -atime +7 -o -size +20480 -print</p>
+<p class="desc">similar to previous, but condition is OR (<code>-o</code>);</p>
+
+<p class="cmdc">find . -print | wc -l</p>
+<p class="desc">count the number of files including dirs;</p>
+
+<p class="cmdc">find ./tmp -name "*.old" -print | wc -l</p>
+<p class="desc">in dir <samp>tmp</samp> of the current dir, and subdirs
+of <samp>tmp</samp>, count the number of files with the extension
+<samp>.old</samp>;</p>
+
+<p class="cmdc">find . -name 'log*arc' -mtime +7 -print | xargs rm</p>
+<p class="desc">delete from the current dir files matching the specified
+mask and modified more than 7 days ago;</p>
+
+<p class="cmdc">find . -type d -print | wc -l</p>
+<p class="desc">count subdirs of the current dir;</p>
+
+<p class="cmdc">find /usr/local -perm 777 -print</p>
+<p class="desc">look for files having access permissions 777
+(<samp>-rwxrwxrwx</samp>);</p>
+
+<p class="cmdc">find /usr/bin -perm -4000 -print</p>
+<p class="desc">look for files in <samp>/usr/bin</samp> having SUID bit set;</p>
+
+<p class="cmdc">find / -perm -0002 -print</p>
+<p class="desc">look for files in all mounted filesystems having
+"write to all" permission;</p>
+
+<p class="cmdc">find . -type d -name tmp -prune -o -print | cpio -dump /bkp</p>
+<p class="desc">backup all files and dirs in the current dir except
+<samp>tmp</samp>;</p>
+
+
+<h5>Some options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>-depth</code></p>
+<p class="desc">process each dir contents before dir itself;</p>
+
+<p class="fmtc"><code>-follow</code></p>
+<p class="desc">derefernce symbolic links;</p>
+
+<p class="fmtc"><code>-maxdepth</code> <kbd>n</kbd></p>
+<p class="desc">descend at most <kbd>n</kbd> levels of dirs;</p>
+
+<p class="fmtc"><code>-mindepth</code> <kbd>n</kbd></p>
+<p class="desc">do not apply any tests or actions at levels less than
+<kbd>n</kbd> (<samp>0</samp> level is that of cmd line arg);</p>
+
+<p class="fmtc"><code>-mount</code></p>
+<p class="desc">do not descend dirs on other filesystems;</p>
+
+<p class="fmtc"><code>-noleaf</code></p>
+<p class="desc">do not optimize by assuming that dirs contain <samp>2</samp>
+fewer subdirs than their hard link count; this option may be used when
+searching filesystems that do not follow Unix directory-link convention
+(FAT, CD-ROM);</p>
+
+<p class="fmtc"><code>-xdev</code></p>
+<p class="desc">same as <code>-mount</code>;</p>
+
+
+<h5>Tests</h5>
+
+<p class="fmtc"><code>-amin</code> <kbd>n</kbd></p>
+<p class="desc">file was last accessed <kbd>n</kbd> minutes ago;</p>
+
+<p class="fmtc"><code>-anewer</code> <kbd>file</kbd></p>
+<p class="desc">file was last accessed more recently then the specified
+file was modified;</p>
+
+<p class="fmtc"><code>-atime</code> <kbd>n</kbd></p>
+<p class="desc">file was last accessed <kbd>n</kbd>*24 hours ago;</p>
+
+<p class="fmtc"><code>-cmin</code> <kbd>n</kbd></p>
+<p class="desc">file status was last changed <kbd>n</kbd> minutes ago;</p>
+
+<p class="fmtc"><code>-cnewer</code> <kbd>file</kbd></p>
+<p class="desc">file status was last changed more recently then the specified
+file was modified;</p>
+
+<p class="fmtc"><code>-ctime</code> <kbd>n</kbd></p>
+<p class="desc">file status was last changed <kbd>n</kbd>*24 hours ago;</p>
+
+<p class="fmtc"><code>-empty</code></p>
+<p class="desc">file is empty and is either a regular file or directory;</p>
+
+<p class="fmtc"><code>-fstype</code> <kbd>type</kbd></p>
+<p class="desc">file is on a filesystem of type <kbd>type</kbd>;</p>
+
+<p class="fmtc"><code>-gid</code> <kbd>n</kbd></p>
+<p class="desc">file’s numeric group ID is <kbd>n</kbd>;</p>
+
+<p class="fmtc"><code>-group</code> <kbd>name</kbd></p>
+<p class="desc">file belongs to group <kbd>name</kbd>;</p>
+
+<p class="fmtc"><code>-ilname</code> <kbd>pattern</kbd></p>
+<p class="desc">like <code>-lname</code>, but the match is case insensitive;</p>
+
+<p class="fmtc"><code>-iname</code> <kbd>pattern</kbd></p>
+<p class="desc">like <code>-name</code>, but the match is case insensitive;</p>
+
+<p class="fmtc"><code>-lnum</code> <kbd>n</kbd></p>
+<p class="desc">file has inode number <kbd>n</kbd>;</p>
+
+<p class="fmtc"><code>-lpath</code> <kbd>pattern</kbd></p>
+<p class="desc">like <code>-path</code>, but the match is case insensitive;</p>
+
+<p class="fmtc"><code>-iregex</code> <kbd>pattern</kbd></p>
+<p class="desc">like <code>-regex</code>, but the match is case insensitive;</p>
+
+<p class="fmtc"><code>-links</code> <kbd>n</kbd></p>
+<p class="desc">file has <kbd>n</kbd> links;</p>
+
+<p class="fmtc"><code>-lname</code> <kbd>pattern</kbd></p>
+<p class="desc">file is a symbolic link whose contents match shell pattern <kbd>pattern</kbd>;</p>
+
+<p class="fmtc"><code>-mmin</code> <kbd>n</kbd></p>
+<p class="desc">file's data was last modified <kbd>n</kbd> minutes ago;</p>
+
+<p class="fmtc"><code>-mtime</code> <kbd>n</kbd></p>
+<p class="desc">file's data was last modified <kbd>n</kbd>*24  hours ago;</p>
+
+<p class="fmtc"><code>-name</code> <kbd>pattern</kbd></p>
+<p class="desc">base of a filename (leading dirs removed) matches shell
+pattern <kbd>pattern</kbd>; metachars "<samp>* ? [ ]</samp>" do not match
+"<samp>.</samp>" (dot) at the beginning of the base name;</p>
+
+<p class="fmtc"><code>-newer</code> <kbd>file</kbd></p>
+<p class="desc">file was modified more recently than <kbd>file</kbd>;</p>
+
+<p class="fmtc"><code>-path</code> <kbd>pattern</kbd></p>
+<p class="desc">filename matches shell pattern <kbd>pattern</kbd>;</p>
+
+<p class="fmtc"><code>-perm</code> <kbd>mode</kbd></p>
+<p class="desc">file's permission bits are exactly <kbd>mode</kbd>;</p>
+
+<p class="fmtc"><code>-perm -</code><kbd>mode</kbd></p>
+<p class="desc">all of the permission bits <kbd>mode</kbd> are set for file;</p>
+
+<p class="fmtc"><code>-perm +</code><kbd>mode</kbd></p>
+<p class="desc">any of the permission bits <kbd>mode</kbd> are set for file;</p>
+
+<p class="fmtc"><code>-regex</code> <kbd>pattern</kbd></p>
+<p class="desc">filename matches regexp <kbd>pattern</kbd>;</p>
+
+<p class="fmtc"><code>-size</code> <kbd>n</kbd>[<code>ckw</code>]</p>
+<p class="desc">file uses <kbd>n</kbd> units of space (512 byte blocks by
+default; <samp>c</samp> - bytes, <samp>k</samp> - kilobytes, <samp>w</samp>
+- 2-byte words);</p>
+
+<p class="fmtc"><code>-type</code> <kbd>n</kbd></p>
+<p class="desc">file type is one of the following: <samp>b</samp> - block
+(buffered) special file, <samp>c</samp> - char (unbuffered) special file,
+<samp>d</samp> - dir, <samp>p</samp> - named pipe, <samp>f</samp> - regular
+file, <samp>l</samp> - symbolic link, <samp>s</samp> - socket;</p>
+
+<p class="fmtc"><code>-user</code> <kbd>xxx</kbd></p>
+<p class="desc">file is owned by <kbd>xxx</kbd> (name or numeric UID);</p>
+
+
+<h5>Actions</h5>
+
+<p class="fmtc"><code>-exec</code> <kbd>cmd</kbd></p>
+<p class="desc">execute <kbd>cmd</kbd>; all following args are taken as args
+to <kbd>cmd</kbd> until "<samp>;</samp>" is encountered; the string
+"<samp>{}</samp>" is replaced by the current filename being processed;
+<kbd>cmd</kbd> is executed in the starting dir;</p>
+
+<table class="options"><tr>
+<td class="opt_name"><code>-ls</code></td>
+<td class="opt_desc">list current file in <code>ls -dils</code> format on the stdout;</td></tr>
+</table>
+
+<p class="fmtc"><code>-ok</code> <kbd>cmd</kbd></p>
+<p class="desc">like <code>-exec</code> but ask user first; if the response
+doesn't start with <samp>y</samp> or <samp>Y</samp>, do not run <kbd>cmd</kbd>
+and return false;</p>
+
+<p class="fmtc"><code>-print</code></p>
+<p class="desc">output full filename followed by a newline;</p>
+
+<p class="fmtc"><code>-print0</code></p>
+<p class="desc">like prev, but put a null char instead of a newline;</p>
+
+<p class="fmtc"><code>-prune</code></p>
+<p class="desc">do not descend the current dir (no effect if
+<code>-depth</code> is also given);</p>
+
+
+
+<p class="cmdname"><a name="free">free</a></p>
+<p>
+displays the total amount of free/used physycal/swap memory and buffers
+used by the kernel ("shared" mem column is obsolete).</p>
+
+<p class="cmdc">free</p>
+<p class="desc">show free and used memory in kilobytes;</p>
+
+<p class="cmdc">free -m</p>
+<p class="desc">show free and used memory in megabytes;</p>
+
+<p class="cmdc">free -s 5</p>
+<p class="desc">run continuously with 5 sec interval (break with
+<span class="keys">CTRL+C</span>);</p>
+
+<p class="fmt"><code>free&nbsp;</code>[<kbd>options</kbd>]</p>
+
+
+<h5>Options</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-V</code></td>
+<td class="opt_desc">version;</td></tr>
+<tr>
+<td class="opt_name"><code>-b</code></td>
+<td class="opt_desc">show memory in bytes;</td></tr>
+<tr>
+<td class="opt_name"><code>-k</code></td>
+<td class="opt_desc">show memory in kilobytes (default);</td></tr>
+<tr>
+<td class="opt_name"><code>-m</code></td>
+<td class="opt_desc">show memory in megabytes;</td></tr>
+<tr>
+<td class="opt_name"><code>-o</code></td>
+<td class="opt_desc">disable display of a "<samp>buffer ajusted</samp>"
+line; without this option buffer memory is subtracted from the used memory
+and added to the free memory;</td></tr>
+<tr>
+<td class="opt_name"><code>-s</code> <kbd>n</kbd></td>
+<td class="opt_desc">
+activate continuous polling with <kbd>n</kbd> sec interval;</td></td>
+<tr>
+<td class="opt_name"><code>-t</code></td>
+<td class="opt_desc">show the line containing totals;</td></tr>
+</table>
+
+
+
+<p class="cmdname"><a name="fromdos">fromdos, todos</a></p>
+<p>
+convert text files between DOS and Unix formats. This is Ubuntu replacement
+for <a href="cmds_d.html#dos2unix"><code>dos2unix</code></a> and
+<a href="cmds_d.html#dos2unix"><code>unix2dos</code></a>. Actually,
+<code>todos</code> is just a symlink to <code>fromdos</code>.</p>
+
+<p class="cmdc">fromdos notes.txt</p>
+<p class="desc">convert <samp>notes.txt</samp> from DOS/Windows text format
+to Unix text format (i.e., replace each <samp>CR,LF</samp> pair with a single
+<samp>LF</samp>);</p>
+
+<p class="cmdc">todos errors.log</p>
+<p class="desc">convert <samp>errors.log</samp> from Unix text format to
+DOS/Windows text format (i.e., replace each <samp>LF</samp> with a pair
+<samp>CR,LF</samp>);</p>
+
+<p class="fmt"><code>fromdos&nbsp;</code>[<kbd>options</kbd>] [<kbd>file...</kbd>]</p>
+<p class="fmt"><code>todos&nbsp;</code>[<kbd>options</kbd>] [<kbd>file...</kbd>]</p>
+
+
+<h5>Options</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-h</code></td>
+<td class="opt_desc">help;</td></tr>
+<tr>
+<td class="opt_name"><code>-v</code></td>
+<td class="opt_desc">verbose;</td></tr>
+<tr>
+<td class="opt_name"><code>-V</code></td>
+<td class="opt_desc">version;</td></tr>
+<tr>
+<td class="opt_name"><code>-a</code></td>
+<td class="opt_desc">always convert;</td></tr>
+<tr>
+<td class="opt_name"><code>-b</code></td>
+<td class="opt_desc">make backup of original file (<samp>.bak</samp>);</td></tr>
+<tr>
+<td class="opt_name"><code>-d</code></td>
+<td class="opt_desc">convert DOS to Unix;</td></tr>
+<tr>
+<td class="opt_name"><code>-e</code></td>
+<td class="opt_desc">abort processing on error in any file;</td></tr>
+<tr>
+<td class="opt_name"><code>-f</code></td>
+<td class="opt_desc">force conversion even if file is read-only;</td></tr>
+</table>
+
+<p class="fmtc"><code>-l&nbsp;</code><kbd>file</kbd></p>
+<p class="desc">log most errors and verbose messages to <kbd>file</kbd>;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-o</code></td>
+<td class="opt_desc">overwrite original file (no backup; this is default);</td></tr>
+<tr>
+<td class="opt_name"><code>-p</code></td>
+<td class="opt_desc">preserve file ownership and time;</td></tr>
+<tr>
+<td class="opt_name"><code>-u</code></td>
+<td class="opt_desc">convert Unix to DOS;</td></tr>
+</table>
+<p>
+These utilities may not be installed by default. To install:</p>
+
+<p class="cmd">sudo apt-get install tofrodos</p>
+
+
+
+<p class="cmdname"><a name="fsck">fsck</a></p>
+<p>
+checks and optionally repairs filesystems. Technically, it's a front-end
+program for various fs-specific checkers.</p>
+
+<p class="fmt"><code>fsck&nbsp;</code>[<code>-sACVRTNP</code>] [<code>-t</code>
+<kbd>type</kbd>] [<kbd>fs ...</kbd>] [<kbd>fs-specific-options</kbd>]</p>
+<p>
+The <kbd>fs</kbd> arg is either a device name or a mount point.</p>
+
+<p class="cmdc">fsck /dev/sda2</p>
+<p class="desc">check fs on the specified HDD partition;</p>
+
+<p class="cmdc">fsck /dev/fd0</p>
+<p class="desc">check floppy disk filesystem;</p>
+
+<p class="cmdc">fsck -A -a</p>
+<p class="desc">check all filesystems;</p>
+<p>
+Usually <code>fsck</code> tries to run in parallel on different physical
+drives.</p>
+
+
+<h5>Options</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-h</code></td>
+<td class="opt_desc"><i>invalid option</i>, but you will
+get version number and short help message;</td></tr>
+<tr>
+<td class="opt_name"><code>-V</code></td>
+<td class="opt_desc">verbose;</td></tr>
+<tr>
+<td class="opt_name"><code>-A</code></td>
+<td class="opt_desc">walk through <samp>/etc/fstab</samp> and try to check
+all fs in one run (is typically used by system init script); the root fs will
+be checked first unless <code>-P</code> is specified, after that, fs will be
+checked in the order specified by the <samp>fs_passno</samp> (sixth) field in
+<samp>/etc/fstab</samp>; fs with <samp>fs_passno = 0</samp> are not checked;
+fs with lowest <samp>fs_passno</samp> is checked first; multiple fs with the
+same <samp>fs_passno</samp> will be checked in parallel (if possible); hence,
+a very common config in <samp>/etc/fstab</samp> is to set the root fs
+<samp>fs_passno</samp> to <samp>1</samp> and all other fs to
+<samp>2</samp>;</td></tr>
+<tr>
+<td class="opt_name"><code>-C</code></td>
+<td class="opt_desc">display progress bars (not all fs support this);</td></tr>
+<tr>
+<td class="opt_name"><code>-N</code></td>
+<td class="opt_desc">don't execute, just show what would be done;</td></tr>
+<tr>
+<td class="opt_name"><code>-P</code></td>
+<td class="opt_desc">if <code>-A</code> is set, check root fs in parallel
+with others (dangerous!);</td></tr>
+<tr>
+<td class="opt_name"><code>-R</code></td>
+<td class="opt_desc">when checking all filesystems with <code>-A</code>
+flag, skip root fs (in case it's already mounted read-write);</td></tr>
+<tr>
+<td class="opt_name"><code>-s</code></td>
+<td class="opt_desc">serialize <code>fsck</code> operations;</td></tr>
+<tr>
+<td class="opt_name"><code>-T</code></td>
+<td class="opt_desc">don't show the title on startup;</td></tr>
+</table>
+
+<p class="fmtc"><code>-t </code> <kbd>type</kbd></p>
+<p class="desc">specifies the type(s) of filesystem(s) to be checked;
+when <code>-A</code> is specified only filesystems matching <kbd>type</kbd>
+are checked; <kbd>type</kbd> may be a comma-separated list of filesystems and
+option specifiers;</p>
+<p>
+Options which are not understood by <code>~</code> are passed to fs-specific
+checker. Options and args which follow "<code>--</code>" are treated as
+fs-specific options to be passed to the fs-specific checker. Options to
+different fs-specific checkers are not standardized. Although not guaranteed,
+the following options are supported by the most file system checkers.</p>
+
+
+<h5>Fs-specific-options</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-a</code></td>
+<td class="opt_desc">auto repair  fs without any questions
+(not safe!); <a href="cmds_e.html#e2fsck"><code>e2fsck</code></a> maps this
+option to <code>-p</code> which is safe);</td></tr>
+<tr>
+<td class="opt_name"><code>-n</code></td>
+<td class="opt_desc">don’t try to repair, just report problems;</td></tr>
+<tr>
+<td class="opt_name"><code>-r</code></td>
+<td class="opt_desc">repair interactively, ask for confirmations (default
+behaviour for <a href="cmds_e.html#e2fsck"><code>e2fsck</code></a>); avoid this option
+when checking in parallel;</td></tr>
+<tr>
+<td class="opt_name"><code>-y</code></td>
+<td class="opt_desc">assume "yes" to all questions;</td></tr>
+</table>
+<p>
+See <code><a href="cmds_e.html#e2fsck">e2fsck</a></code> for exit codes.</p>
+
+
+
+<p class="cmdname"><a name="fuser">fuser</a></p>
+<p>
+identifies processes using files or sockets; root priv is very desirable,
+unprivileged users cannot see TCP, UDP sockets and some other info.</p>
+
+<p class="cmdc">fuser -n tcp ,srv4,1521</p>
+<p class="desc">find PID of app connected to an Oracle database running on
+<samp>srv4</samp> (assuming ora listener is using default TCP/1521);</p>
+
+<p class="cmdc">fuser -v -n tcp ,srv4,1521</p>
+<p class="desc">who/what (username, PID, application) is currently connected
+to an Oracle database running on <samp>srv4</samp>; comma before
+<samp>srv4</samp> in this and prev cases tells that local port is omitted
+and the following param is a remote host name;</p>
+
+<p class="cmdc">fuser -v 22/tcp</p>
+<p class="desc">show application that occupies TCP port 22;</p>
+
+<p class="cmdc">fuser -v /home/alex</p>
+<p class="desc">show users, PIDs and applications using the specified dir;</p>
+
+<p class="cmdc">fuser -v /media/KINGSTON</p>
+<p class="desc">find who/what keeps busy the specified removable media (USB flash);</p>
+
+<p class="fmt"><code>fuser&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;file</kbd></p>
+<p>
+Processes accessing the same file or file system several times in the same
+way are only shown once. If the same object is specified several times on
+the cmd line, some of those entries may be ignored.
+Each filename may be followed by a letter denoting the type of access:</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><samp>c</samp></td>
+<td class="opt_desc">current directory;</td></tr>
+<tr>
+<td class="opt_name"><samp>e</samp></td>
+<td class="opt_desc">executable being run;</td></tr>
+<tr>
+<td class="opt_name"><samp>f</samp></td>
+<td class="opt_desc">open file (is omitted in default display mode);</td></tr>
+<tr>
+<td class="opt_name"><samp>F</samp></td>
+<td class="opt_desc">open file for writing (is omitted in default display mode);</td></tr>
+<tr>
+<td class="opt_name"><samp>r</samp></td>
+<td class="opt_desc">root directory;</td></tr>
+<tr>
+<td class="opt_name"><samp>m</samp></td>
+<td class="opt_desc">mmap'ed file or shared library;</td></tr>
+</table>
+
+
+<h5>Options</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-V</code></td>
+<td class="opt_desc">version;</td></tr>
+<tr>
+<td class="opt_name"><code>-v</code></td>
+<td class="opt_desc">verbose</td></tr>
+<tr>
+<td class="opt_name"><code>-</code></td>
+<td class="opt_desc">reset all options and set the signal back to
+<samp>SIGKILL</samp>;</td></tr>
+<tr>
+<td class="opt_name"><code>-4</code></td>
+<td class="opt_desc">search only for IPv4 sockets (tcp and udp
+namespaces only);</td></tr>
+<tr>
+<td class="opt_name"><code>-6</code></td>
+<td class="opt_desc">search only for IPv6 sockets (tcp and udp
+namespaces only);</td></tr>
+<tr>
+<td class="opt_name"><code>-a</code></td>
+<td class="opt_desc">show all files specified on cmd line (by default,
+only files that are accessed by at least one process are shown);</td></tr>
+<tr>
+<td class="opt_name"><code>-c</code></td>
+<td class="opt_desc">same as <code>-m</code> (is used for POSIX
+compatibility);</td></tr>
+<tr>
+<td class="opt_name"><code>-f</code></td>
+<td class="opt_desc">silently ignored (is used for POSIX compatibility);</td></tr>
+<tr>
+<td class="opt_name"><code>-k</code></td>
+<td class="opt_desc">kill processes accessing the file (by default sends
+<samp>SIGKILL</samp>);</td></tr>
+<tr>
+<td class="opt_name"><code>-i</code></td>
+<td class="opt_desc">ask user to confirm before killing a process (has sense
+in conjunction with <code>-k</code> only);</td></tr>
+<tr>
+<td class="opt_name"><code>-l</code></td>
+<td class="opt_desc">list all known signal names;</td></tr>
+</table>
+
+<p class="fmtc"><code>-m</code> <kbd>name</kbd></p>
+<p class="desc">list all processes accessing the specified file or mounted
+device; if <kbd>name</kbd> is dir, then '<samp>/.</samp>' is appended to use
+any fs that might be mounted on that dir;</p>
+
+<p class="fmtc"><code>-n</code> <kbd>space</kbd></p>
+<p class="desc">select another namespace: <samp>tcp</samp> (local TCP ports),
+<samp>udp</samp> (local UDP ports), <samp>file</samp> (default);</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-s</code></td>
+<td class="opt_desc">silent operation: <code>-u</code>, <code>-v</code>
+are ignored, <code>-a</code> should not be used;</td></tr>
+<tr>
+<td class="opt_name"><code>-u</code></td>
+<td class="opt_desc">append username of the process owner to each PID;</td></tr>
+</table>
+
+<p class="fmtc"><code>-</code><kbd>signal</kbd></p>
+<p class="desc">use the specified signal instead of <samp>SIGKILL</samp>;</p>
+
+</div>
+
+</body></html>

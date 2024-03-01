@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (vi, visudo, vmstat)</title>
+<meta name="description" content="linux quick reference, vi, vim, visudo, vmstat" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<div id="topmenu">
+<p class="menu">
+<a href="#vi">vi</a>&nbsp;|
+<a href="#visudo">visudo</a>&nbsp;|
+<a href="#vmstat">vmstat</a></p>
+</div>
+
+
+
+<p class="cmdname"><a name="vi">vi, vim</a></p>
+<p>
+<code>vi</code> is an old Unix text editor. Nowdays, it is usually just
+an alias for <code>vim</code> (<code>vi</code> improved), that is upwards
+compatible with <code>vi</code>. Online help is available through
+<code>:help</code> command.</p>
+
+<p class="fmt"><code>vi&nbsp;</code>[<kbd>options</kbd>] [<kbd>files</kbd>]</p>
+<p>
+If filename is missing, <code>~</code> starts with an empty buffer. You can
+also use <code>view</code> (starts <code>~</code> in read only mode),
+<code>gvim</code>, <code>gview</code> (GUI versions), <code>rvim</code>,
+<code>rview</code>, <code>rgvim</code>, <code>rgview</code> (modes with
+restrictions: no shell cmds, no suspend). Besides old <code>vi</code> cmds,
+<code>vim</code> accepts many std key combinations available with other
+editors (like <samp>MS Notepad</samp>).</p>
+
+
+
+<h5>Some options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-V</code></td>
+<td class="opt_desc">verbose;</td></tr>
+<tr>
+<td class="opt_name"><code>+</code>[<kbd>n</kbd>]</td>
+<td class="opt_desc">position cursor on line <kbd>n</kbd> (or last line, if <kbd>n</kbd> is missing);</td></tr>
+</table>
+
+<p class="fmtc"><code>+/</code><kbd>pattern</kbd></p>
+<p class="desc">position cursor on the first occurrence of <kbd>pattern</kbd>;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-b</code></td>
+<td class="opt_desc">binary mode; allows to edit binary or executable files;</td></tr>
+<tr>
+<td class="opt_name"><code>-C</code></td>
+<td class="opt_desc">force compatibility with <code>vi</code>;</td></tr>
+<tr>
+<td class="opt_name"><code>-d</code></td>
+<td class="opt_desc">start in <a href="cmds_d.html#diff"><code>diff</code></a>
+mode (2 or 3 files must be specified);</td></tr>
+<tr>
+<td class="opt_name"><code>-e</code></td>
+<td class="opt_desc">start in <code>ex</code> mode (ancient Unix editor);</td></tr>
+<tr>
+<td class="opt_name"><code>-h</code></td>
+<td class="opt_desc">help (cmd line args and options);</td></tr>
+<tr>
+<td class="opt_name"><code>-m</code></td>
+<td class="opt_desc">disable file modification;</td></tr>
+<tr>
+<td class="opt_name"><code>-n</code></td>
+<td class="opt_desc">do not use a swap file (useful when file is on a very
+slow media); recovery after crash will be impossible;</td></tr>
+</table>
+
+<p class="fmtc"><code>-o</code>[<kbd>n</kbd>]</p>
+<p class="desc">open <kbd>n</kbd> windows stacked; if <kbd>n</kbd>
+is missing, open one window for each file;</p>
+
+<p class="fmtc"><code>-O</code>[<kbd>n</kbd>]</p>
+<p class="desc">open <kbd>n</kbd> windows side by side; if <kbd>n</kbd>
+is missing, open one window for each file;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-R</code></td>
+<td class="opt_desc">read-only mode; can be reset with <code>:set noro</code>;</td></tr>
+<tr>
+<td class="opt_name"><code>-r</code></td>
+<td class="opt_desc">list swap files and info about using them for recovery;</td></tr>
+</table>
+
+<p class="fmtc"><code>-r</code> <kbd>file</kbd></p>
+<p class="desc">recovery mode; use swap file to recover a crashed editing
+session; swap file has the same name as the text file with extension
+<samp>.swp</samp> appended;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-x</code></td>
+<td class="opt_desc">use encryption when writing files
+(you'll be prompted for a crypt key);</td></tr>
+</table>
+
+
+
+<h5>General commands</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><span class="keys">ESC</span></td>
+<td class="opt_desc">switch to the command mode;</td></tr>
+</table>
+
+
+
+<h5>Cursor control</h5>
+
+<p class="fmtc"><span class="keys">&#8592;</span> / <span class="keys">&#8594;</span> /
+<span class="keys">&#8595;</span> / <span class="keys">&#8593;</span></p>
+<p class="desc">move cursor left, right, down, up (<code>h</code> /
+<code>l</code> / <code>j</code> / <code>k</code>);</p>
+
+<p class="fmtc"><code>w</code> / <code>e</code></p>
+<p class="desc">to the beginning / end of the next word;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>b</code></td>
+<td class="opt_desc">to the beginning of the prev word;</td></tr>
+</table>
+
+<p class="fmtc"><span class="keys">Home</span> / <span class="keys">End</span></p>
+<p class="desc">to the beginning / end of line
+(<code>^</code> / <code>$</code>);</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>G</code></td>
+<td class="opt_desc">to the EOF;</td></tr>
+<tr>
+<td class="opt_name"><code>1G</code></td>
+<td class="opt_desc">to the BOF;</td></tr>
+<tr>
+<td class="opt_name"><kbd>n</kbd><code>G</code></td>
+<td class="opt_desc">to the line number <kbd>n</kbd>;</td></tr>
+</table>
+
+<p class="fmtc"><code>H</code> / <code>M</code> / <code>L</code></p>
+<p class="desc">to the top / middle / bottom line;</p>
+
+<p class="fmtc"><span class="keys">CTRL+G</span></p>
+<p class="desc">output current line number;</p>
+
+<p class="fmtc"><span class="keys">CTRL+F</span></p>
+<p class="desc">page down;</p>
+
+<p class="fmtc"><span class="keys">CTRL+B</span></p>
+<p class="desc">page up;</p>
+
+<p class="fmtc"><span class="keys">CTRL+D</span></p>
+<p class="desc">half-screen down;</p>
+
+<p class="fmtc"><span class="keys">CTRL+U</span></p>
+<p class="desc">half-screen up;</p>
+
+
+
+<h5>Add, Insert (command mode)</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>a</code></td>
+<td class="opt_desc">add text;</td></tr>
+<tr>
+<td class="opt_name"><code>i</code></td>
+<td class="opt_desc">insert text;</td></tr>
+<tr>
+<td class="opt_name"><code>o</code></td>
+<td class="opt_desc">insert an empty line below current position;</td></tr>
+</table>
+
+
+
+<h5>Delete (command mode)</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>x</code></td>
+<td class="opt_desc">delete char;</td></tr>
+<tr>
+<td class="opt_name"><code>dw</code></td>
+<td class="opt_desc">delete from curr pos to the end of word;</td></tr>
+<tr>
+<td class="opt_name"><code>dd</code></td>
+<td class="opt_desc">delete current line;</td></tr>
+<tr>
+<td class="opt_name"><code>D</code></td>
+<td class="opt_desc">delete from curr pos to the EOL;</td></tr>
+<tr>
+<td class="opt_name"><kbd>n</kbd><code>x</code></td>
+<td class="opt_desc">delete <kbd>n</kbd> characters;</td></tr>
+<tr>
+<td class="opt_name"><kbd>n</kbd><code>dd</code></td>
+<td class="opt_desc">delete <kbd>n</kbd> lines;</td></tr>
+<tr>
+<td class="opt_name"><kbd>n</kbd><code>dw</code></td>
+<td class="opt_desc">delete <kbd>n</kbd> words;</td></tr>
+<tr>
+<td class="opt_name"><code>dG</code></td>
+<td class="opt_desc">delete from curr pos to the EOF;</td></tr>
+<tr>
+<td class="opt_name"><code>d1G</code></td>
+<td class="opt_desc">delete from curr pos to the BOF;</td></tr>
+<tr>
+<td class="opt_name"><code>u</code></td>
+<td class="opt_desc">undo;</td></tr>
+<tr>
+<td class="opt_name"><code>U</code></td>
+<td class="opt_desc">undo all changes in this line;</td></tr>
+<tr>
+<td class="opt_name"><code>:e!</code></td>
+<td class="opt_desc">restart editing from last save;</td></tr>
+</table>
+
+
+
+<h5>Copy, Paste (command mode)</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>yy</code></td>
+<td class="opt_desc">copy line to the nameless buffer;</td></tr>
+<tr>
+<td class="opt_name"><kbd>n</kbd><code>yy</code></td>
+<td class="opt_desc">copy <kbd>n</kbd> lines to the nameless buffer;</td></tr>
+<tr>
+<td class="opt_name"><code>yw</code></td>
+<td class="opt_desc">copy word to the nameless buffer;</td></tr>
+<tr>
+<td class="opt_name"><kbd>n</kbd><code>yw</code></td>
+<td class="opt_desc">copy <kbd>n</kbd> words to the nameless buffer;</td></tr>
+</table>
+
+<p class="fmtc"><code>"ayy</code></p>
+<p class="desc">copy line to the buffer "a";</p>
+
+<p class="fmtc"><code>"byw</code></p>
+<p class="desc">copy word to the buffer "b";</p>
+
+<p class="fmtc"><code>"Byw</code></p>
+<p class="desc">add word to the contents of the buffer "b";</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>p</code></td>
+<td class="opt_desc">paste from the nameless buffer;</td></tr>
+<tr>
+<td class="opt_name"><code>"ap</code></td>
+<td class="opt_desc">paste from the buffer "a";</td></tr>
+</table>
+
+<p class="fmtc"><code>"add</code></p>
+<p class="desc">delete line to the buffer "a";</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>dw</code></td>
+<td class="opt_desc">delete word to the nameless buffer;</td></tr>
+</table>
+
+
+
+<h5>Find, Search, Replace (command mode)</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>f</code><kbd>c</kbd></td>
+<td class="opt_desc">find next <kbd>c</kbd> char;</td></tr>
+<tr>
+<td class="opt_name"><code>F</code><kbd>c</kbd></td>
+<td class="opt_desc">find prev <kbd>c</kbd> char;</td></tr>
+<tr>
+<td class="opt_name"><code>";"</code></td>
+<td class="opt_desc">repeat last search;</td></tr>
+<tr>
+<td class="opt_name"><code>","</code></td>
+<td class="opt_desc">reverse last search;</td></tr>
+</table>
+
+<p class="fmtc"><code>/</code><kbd>str</kbd></p>
+<p class="desc">find next <kbd>str</kbd>;</p>
+
+<p class="fmtc"><code>?</code><kbd>str</kbd></p>
+<p class="desc">find previous <kbd>str</kbd>;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>n</code></td>
+<td class="opt_desc">repeat last '<code>/</code>' or '<code>?</code>' cmd;</td></tr>
+<tr>
+<td class="opt_name"><code>N</code></td>
+<td class="opt_desc">reverse last '<code>/</code>' or '<code>?</code>' cmd;</td></tr>
+</table>
+
+<p class="fmtc"><code>:</code><kbd>start</kbd><code>,</code><kbd>finish</kbd> <code>s/</code><kbd>find</kbd><code>/</code><kbd>replace</kbd><code>/g</code></p>
+<p class="desc">general cmd syntax;</p>
+
+<p class="cmd">:1,$s/the/The/g</p>
+<p class="desc">replace <samp>the</samp> with <samp>The</samp> (global, all file);</p>
+
+<p class="cmd">:%s/the/The/g %</p>
+<p class="desc">like previous;</p>
+
+<p class="cmd">:.,5s/^.*//g</p>
+<p class="desc">remove all from curr pos to the 5th line;</p>
+
+<p class="cmd">:%s/the/The/gc</p>
+<p class="desc">replace <samp>the</samp> with <samp>The</samp>, ask for acknowledgement;</p>
+
+<p class="cmd">:%s/^....//g</p>
+<p class="desc">remove first 4 characters (global);</p>
+
+<p class="cmd">:1,5s/help/&amp;ing/g</p>
+<p class="desc">replace <samp>help</samp> with <samp>helping</samp> in first 5 lines;</p>
+
+<p class="cmd">:%s/ */&amp;&amp;/g</p>
+<p class="desc">double number of spaces between words;</p>
+
+
+
+<h5>Exit / Save commands</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>:w</code></td>
+<td class="opt_desc">write (save);</td></tr>
+</table>
+
+<p class="fmtc"><code>:w</code> <kbd>file</kbd></p>
+<p class="desc">write to <kbd>file</kbd>;</p>
+
+<p class="fmtc"><code>:r</code> <kbd>file</kbd></p>
+<p class="desc">read <kbd>file</kbd>;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>:q</code></td>
+<td class="opt_desc">quit;</td></tr>
+<tr>
+<td class="opt_name"><code>ZZ</code></td>
+<td class="opt_desc">same as <code>:wq</code> (write and quit);</td></tr>
+</table>
+
+
+
+
+
+<p class="cmdname"><a name="visudo">visudo</a></p>
+<p>
+edits the <samp>sudoers</samp> file (default is <samp>/etc/sudoers</samp>)
+in a safe fashion.</p>
+
+<p class="fmt"><code>visudo&nbsp;</code>[<kbd>options</kbd>]</p>
+<p>
+The file is locked at the start and checked at the exit. If a syntax error
+is found, user gets a warning message and the following alternatives:</p>
+<ul>
+<li>type '<code>e</code>' to return to editing;</li>
+<li>type '<code>x</code>' to discard changes and exit;</li>
+<li> type '<code>Q</code>' to save changes and exit;</li>
+</ul>
+<p>
+The last option is dangerous and should not be used in normal situations!</p>
+<p>
+There is a hard-coded list of editors to be used (set at the compile time).
+Env vars <samp>VISUAL</samp>, <samp>EDITOR</samp> are ignored unless
+they set an editor from that list.</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-h</code> &nbsp;&nbsp; <code>--help</code>
+&nbsp;&nbsp; <code>-V</code> &nbsp;&nbsp; <code>--vesrion</code></p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-c</code></td>
+<td class="opt_desc">enable check-only mode (the existing
+<samp>sudoers</samp> file will be checked for syntax and a message
+detailing its status will be sent to stdout);</td></tr>
+<tr>
+<td class="opt_name"><code>-f</code></td>
+<td class="opt_desc">specify an alternate <samp>sudoers</samp> file location;
+with this option <code>~</code> will edit (or check) the file of your choice,
+instead of <samp>/etc/sudoers</samp>;</td></tr>
+<tr>
+<td class="opt_name"><code>-q</code></td>
+<td class="opt_desc">quiet mode (details about syntax errors are not printed);</td></tr>
+<tr>
+<td class="opt_name"><code>-s</code></td>
+<td class="opt_desc">enable strict checking of the <samp>sudoers</samp> file;</td></tr>
+</table>
+
+
+
+
+
+<p class="cmdname"><a name="vmstat">vmstat</a></p>
+<p>
+reports info about processes, memory, paging, block I/O, traps and CPU
+activity. The first report gives averages since the last reboot, additional
+reports give info on a sampling period. The proc and memory reports are
+instantaneous in either case. <code>~</code> does not count itself.</p>
+
+<p class="fmt"><code>vmstat&nbsp;</code>[<kbd>options</kbd>] [<kbd>period&nbsp;</kbd>[<kbd>count</kbd>]]</p>
+<p>
+<kbd>period</kbd> is an interval between updates (in seconds),
+<kbd>count</kbd> is the number of updates (infinity by default).</p>
+
+<p class="cmdc">vmstat 3 5</p>
+<p class="desc">show <samp>5</samp> updates [of system performance info]
+with an interval of <samp>3s</samp>;</p>
+
+<p class="cmdc">vmstat -S K 5 10</p>
+<p class="desc">show <samp>10</samp> updates [of system performance info]
+with an interval of <samp>5s</samp>, show sizes in kilobytes;</p>
+
+<p class="cmdc">vmstat -d</p>
+<p class="desc">show disk statistics (cumulative);</p>
+
+<p class="cmdc">vmstat -s</p>
+<p class="desc">show event counters and memory stats;</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-h</code> &nbsp;&nbsp; <code>--help</code>
+&nbsp;&nbsp; <code>-V</code> &nbsp;&nbsp; <code>--vesrion</code></p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-a</code></td>
+<td class="opt_desc">display active/inactive memory;</td></tr>
+<tr>
+<td class="opt_name"><code>-f</code></td>
+<td class="opt_desc">display the number of forks since boot;</td></tr>
+<tr>
+<td class="opt_name"><code>-m</code></td>
+<td class="opt_desc">display <a href="kernel.html#slab">slabinfo</a>;</td></tr>
+<tr>
+<td class="opt_name"><code>-n</code></td>
+<td class="opt_desc">display the header only once;</td></tr>
+<tr>
+<td class="opt_name"><code>-s</code></td>
+<td class="opt_desc">display a table of various event counters and
+memory stats;</td></tr>
+<tr>
+<td class="opt_name"><code>-d</code></td>
+<td class="opt_desc">report disk stats;</td></tr>
+</table>
+
+<p class="fmtc"><code>-p</code> <kbd>part</kbd></p>
+<p class="desc">report detailed stats for the specified disk partition;</p>
+
+<p class="fmtc"><code>-S</code> <code>k</code>|<code>K</code>|<code>m</code>|<code>M</code></p>
+<p class="desc">show sizes in <samp>bytes*</samp><kbd>n</kbd>, where
+<kbd>n</kbd> is <samp>1000</samp> (<code>k</code>) or <samp>1024</samp>
+(<code>K</code>) or <samp>1000000</samp> (<code>m</code>) or
+<samp>1048576</samp> (<code>M</code>);</p>
+
+
+
+<h5>Field description</h5>
+
+<p>
+<b><i>Processes</i></b></p>
+
+<table class="options" style="margin-left:30px;width:95%">
+<tr>
+<td class="opt_name"><samp>r</samp></td>
+<td class="opt_desc">the number of processes waiting for run time;</td></tr>
+<tr>
+<td class="opt_name"><samp>b</samp></td>
+<td class="opt_desc">the number of processes in uninterruptible sleep;</td></tr>
+</table>
+
+<p>
+<b><i>Memory</i></b></p>
+
+<table class="options" style="margin-left:30px;width:95%">
+<tr>
+<td class="opt_name"><samp>swpd</samp></td>
+<td class="opt_desc">the amount of virtual memory used;</td></tr>
+<tr>
+<td class="opt_name"><samp>free</samp></td>
+<td class="opt_desc">the amount of idle memory;</td></tr>
+<tr>
+<td class="opt_name"><samp>buff</samp></td>
+<td class="opt_desc">the amount of memory used as buffers;</td></tr>
+<tr>
+<td class="opt_name"><samp>cache</samp></td>
+<td class="opt_desc">the amount of memory used as cache;</td></tr>
+<tr>
+<td class="opt_name"><samp>inact</samp></td>
+<td class="opt_desc">the amount of inactive memory (<code>-a</code>);</td></tr>
+<tr>
+<td class="opt_name"><samp>active&nbsp;</samp></td>
+<td class="opt_desc">the amount of active memory (<code>-a</code>);</td></tr>
+</table>
+
+<p>
+<b><i>Swap</i></b></p>
+
+<table class="options" style="margin-left:30px;width:95%">
+<tr>
+<td class="opt_name"><samp>si</samp></td>
+<td class="opt_desc">the amount of memory swapped in from disk (per sec);</td></tr>
+<tr>
+<td class="opt_name"><samp>so</samp></td>
+<td class="opt_desc">the amount of memory swapped out (per sec);</td></tr>
+</table>
+
+<p>
+<b><i>IO</i></b></p>
+
+<table class="options" style="margin-left:30px;width:95%">
+<tr>
+<td class="opt_name"><samp>bi</samp></td>
+<td class="opt_desc">blocks received from a block device (per sec);</td></tr>
+<tr>
+<td class="opt_name"><samp>bo</samp></td>
+<td class="opt_desc">blocks sent to a block device (per sec);</td></tr>
+</table>
+
+<p>
+<b><i>System</i></b></p>
+
+<table class="options" style="margin-left:30px;width:95%">
+<tr>
+<td class="opt_name"><samp>in</samp></td>
+<td class="opt_desc">the num of interrupts per sec, including clock;</td></tr>
+<tr>
+<td class="opt_name"><samp>cs</samp></td>
+<td class="opt_desc">the number of context switches per sec;</td></tr>
+</table>
+
+<p>
+<b><i>CPU</i></b></p>
+
+<table class="options" style="margin-left:30px;width:95%">
+<tr>
+<td class="opt_name"><samp>us</samp></td>
+<td class="opt_desc">time spent running non-kernel code;</td></tr>
+<tr>
+<td class="opt_name"><samp>sy</samp></td>
+<td class="opt_desc">time spent running kernel code;</td></tr>
+<tr>
+<td class="opt_name"><samp>id</samp></td>
+<td class="opt_desc">time spent idle;</td></tr>
+<tr>
+<td class="opt_name"><samp>wa</samp></td>
+<td class="opt_desc">time spent waiting for IO;</td></tr>
+</table>
+
+
+
+<h5>Field description for disk mode</h5>
+
+<p>
+<b><i>Reads</i></b></p>
+
+<table class="options" style="margin-left:30px;width:95%">
+<tr>
+<td class="opt_name"><samp>total</samp></td>
+<td class="opt_desc">total reads completed successfully;</td></tr>
+<tr>
+<td class="opt_name"><samp>merged</samp></td>
+<td class="opt_desc">grouped reads (resulting in one I/O);</td></tr>
+<tr>
+<td class="opt_name"><samp>sectors&nbsp;</samp></td>
+<td class="opt_desc">sectors read successfully;</td></tr>
+<tr>
+<td class="opt_name"><samp>ms</samp></td>
+<td class="opt_desc">milliseconds spent reading;</td></tr>
+</table>
+
+<p>
+<b><i>Writes</i></b></p>
+
+<table class="options" style="margin-left:30px;width:95%">
+<tr>
+<td class="opt_name"><samp>total</samp></td>
+<td class="opt_desc">total writes completed successfully;</td></tr>
+<tr>
+<td class="opt_name"><samp>merged</samp></td>
+<td class="opt_desc">grouped writes (resulting in one I/O);</td></tr>
+<tr>
+<td class="opt_name"><samp>sectors&nbsp;</samp></td>
+<td class="opt_desc">sectors written successfully;</td></tr>
+<tr>
+<td class="opt_name"><samp>ms</samp></td>
+<td class="opt_desc">milliseconds spent writing;</td></tr>
+</table>
+
+<p>
+<b><i>IO</i></b></p>
+
+<table class="options" style="margin-left:30px;width:95%">
+<tr>
+<td class="opt_name"><samp>cur</samp></td>
+<td class="opt_desc">I/O in progress;</td></tr>
+<tr>
+<td class="opt_name"><samp>s</samp></td>
+<td class="opt_desc">seconds spent for I/O;</td></tr>
+</table>
+
+
+
+<h5>Field description for disk partition mode</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><samp>reads</samp></td>
+<td class="opt_desc">total num of reads issued to this partition;</td></tr>
+<tr>
+<td class="opt_name"><samp>read sectors</samp></td>
+<td class="opt_desc">total read sectors for partition;</td></tr>
+<tr>
+<td class="opt_name"><samp>writes</samp></td>
+<td class="opt_desc">total num of writes issued to this partition;</td></tr>
+<tr>
+<td class="opt_name"><samp>requested writes&nbsp;</samp></td>
+<td class="opt_desc">total num of write requests made for partition;</td></tr>
+</table>
+
+
+
+<h5>Field description for slab mode</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><samp>cache</samp></td>
+<td class="opt_desc">cache name;</td></tr>
+<tr>
+<td class="opt_name"><samp>num</samp></td>
+<td class="opt_desc">num of currently active objects;</td></tr>
+<tr>
+<td class="opt_name"><samp>total</samp></td>
+<td class="opt_desc">total num of available objects;</td></tr>
+<tr>
+<td class="opt_name"><samp>size</samp></td>
+<td class="opt_desc">size of each object;</td></tr>
+<tr>
+<td class="opt_name"><samp>pages</samp></td>
+<td class="opt_desc">num of pages with at least one active object;</td></tr>
+<tr>
+<td class="opt_name"><samp>totpages&nbsp;</samp></td>
+<td class="opt_desc">total num of allocated pages;</td></tr>
+<tr>
+<td class="opt_name"><samp>pslab</samp></td>
+<td class="opt_desc">num of pages per slab;</td></tr>
+</table>
+
+</div>
+
+</body></html>

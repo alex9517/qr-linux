@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (Virtualization, Vmware ESXi, VirtualBox)</title>
+<meta name="description" content="linux quick reference, Vmware, ESXi, VirtualBox" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<h1 class="part">Virtualization</h1>
+
+<p class="menu">
+<a href="#vmware">Vmware</a>&nbsp;&nbsp;//&nbsp;
+<a href="#vbox">Virtual Box</a>
+</p>
+
+<h4>
+<a name="vmware">Vmware / ESXi 5/6</a></h4>
+<p>
+If you cannot connect using <code>ssh</code>, check
+<samp>/etc/ssh/sshd_config</samp>, see/edit line
+<samp>PermitRootLogin = yes</samp> ("no" forbids ssh).
+To get info about VMs:</p>
+
+<p class="cmd">vim-cmd vmsvc/getallvms</p>
+<p>
+The first column of the output shows the <b>vmid</b>. To check the power
+state of the VM (vmid = 2):</p>
+
+<p class="cmd">vim-cmd vmsvc/power.getstate 2</p>
+<p>
+To start (to power on) VM (vmid = 2):</p>
+
+<p class="cmd">vim-cmd vmsvc/power.on 2</p>
+<p>
+To shutdown VM:</p>
+
+<p class="cmd">vim-cmd vmsvc/power.shutdown 2</p>
+<p>
+If the above cmd does not work, use:</p>
+
+<p class="cmd">vim-cmd vmsvc/power.off 2</p>
+
+
+
+<h5>Sending signals on ESXi to power off the virtual machine</h5>
+<p>
+A virtual machine can be halted from the cmd line by sending signals to
+the process. This procedure is potentially hazardous to the ESXi host: if
+you kill the wrong process, it may have unexpected results.</p>
+<p>
+Determine if the virtual machine process is running on the ESXi host:</p>
+
+<p class="cmd">ps | grep vmx</p>
+<p>
+The output looks like this:</p>
+
+<div class="term">
+<pre>7662 7662 vmx /bin/vmx
+7667 7662 vmx /bin/vmx
+7668 7662 mks:VirtualMachineName /bin/vmx
+7669 7662 vcpu-0:VirtualMachineName /bin/vmx</pre>
+</div>
+<p>
+Several rows are returned, one for each vmx process. Identify the
+<b>parent vmx process</b> for the target VM. The first column contains
+the PID, and the second contains the PPID. Ensure you <b>terminate
+only the parent process</b>.
+
+<p class="cmd">kill 7662</p>
+<p>
+Wait 30s and check. If the proc is still running, use:</p>
+
+<p class="cmd">kill -9 7662</p>
+<p>
+There is also <code>esxcli</code> cmd that can be used locally or remotely
+to power off a virtual machine running on ESXi 5.x or later.</p>
+<p>
+To get a list of running VMs, identified by World ID, UUID, Display Name,
+and path to the <samp>.vmx</samp> config file:</p>
+
+<p class="cmd">esxcli vm process list</p>
+<p>
+To power off a running VM:</p>
+
+<p class="cmd">esxcli vm process kill --type=soft
+--world-id=<span class="arg">id</span></p>
+<p>
+Note that besides <code>soft</code> (the most graceful), there are also
+<code>hard</code> (performs an immediate shutdown), and <code>force</code>
+(bad; should only be used as the last resort). You can use <code>-t</code>
+instead of <code>--type</code>, and <code>-w</code> instead of
+<code>--world-id</code>, e.g.:</p>
+
+<p class="cmd">esxcli vm process kill -t soft -w <span class="arg">id</span></p>
+
+
+
+<h5>VM log file</h5>
+<p>
+To review the <samp>vmware.log</samp> for a virtual machine:</p>
+
+<p class="cmd">less /vmfs/volumes/<span class="arg">datastore</span>/<span class="arg">VM_dir</span>/vmware.log</p>
+
+
+
+<h4>
+<a name="vbox">Virtual Box</a></h4>
+<p>
+Some useful cmds:</p>
+
+<p class="cmdc">vboxmanage list vms</p>
+<p class="cmdc">vboxmanage list runningvms</p>
+<p class="cmd">vboxmanage controlvm 'Windows XP' savestate</p>
+
+<p class="fmt"><code>vboxmanage controlvm </code><kbd>vm</kbd>
+{<code>pause</code>|<code>resume</code>|<code>reset</code>|<code>poweroff</code>|<code>savestate</code>}</p>
+<p>
+Note that <samp>reset</samp> and <samp>poweroff</samp> do not provide correct
+shutdown, <samp>savestate</samp> saves the current state of the VM to disk and
+then stops the VM.</p>
+
+
+
+<h5>VM start/stop</h5>
+(as in <samp>/etc/init.d/openmediavault-virtualbox</samp> script)</p>
+
+<p class="cmdc">su - vbox -c VBoxManage startvm $UUID --type headless</p>
+<p class="cmd">su - vbox -c VBoxManage controlvm $UUID savestate</p>
+<p>
+The script actually uses <samp>$OMV_VBOX_USER</samp> variable, which is
+<samp>vbox</samp>:</p>
+
+<p class="cmd">su - $OMV_VBOX_USER -c VBoxManage controlvm $UUID savestate</p>
+
+
+
+<h5>VM export/import</h5>
+<p>
+<b>OVF</b> (Open Virtualization Format) spec provides means of describing the
+properties of a virtual system. It is XML based and describes a single
+VM or virtual appliance. It can contain info about the format of a virtual
+disk image file, a description of the virtual hardware that should be
+emulated to run the OS and application contained on that disk image.</p>
+<p>
+<b>OVA</b> (Open Virtual Appliance) is an OVF file packaged together with all
+supporting files (disk images, etc.). Usually, "OVF" actually means "OVA".</p>
+<p>
+Disk image formats:</p>
+<ul>
+<li><b>VDI</b> - VirtualBox's internal default disk image format.</li>
+<li><b>VMDK</b> - one of the most common formats. VMWare's products use
+various versions and variations of VMDK disk images, so it's important
+to understand which one you're working with and where it can be used.</li>
+<li><b>VHD</b> - mostly used by Microsoft (e.g. for Microsoft Virtual PC).</li>
+<li><b>raw</b> (.img, .raw, etc.) - uncompressed disk image; it can be very
+large, but sometimes is used in certain scenarios for better performance.</li>
+</ul>
+<p>
+<b>Stop VM</b> (poweroff / see above <samp>savestate</samp>)
+before export! This also applies to cloning HD. However, it's
+not necessary to detach the hard drive you are cloning from the VM.
+The export cmd looks like this:</p>
+
+<p class="cmd">VBoxManage export MyServer1 --output MyServer1.ovf</p>
+<p>
+The name of VM is "MyServer1" of course. The export procedure creates
+3 files:</p>
+<ul>
+<li><samp>MyServer1.ovf</samp> contains VM config (XML file);</li>
+<li><samp>MyServer1.mf</samp> contains the UUIDs of VM and the virtual drive;</li>
+<li><samp>MyServer1.vmdk</samp> is a compressed virtual hard drive image; note
+that the name of this file is derived from the actual name of the virtual
+drive, not the name you specified with <code>--output</code> option);</li>
+</ul>
+<p>
+Keep all these files in one directory during import!</p>
+<p>
+Before doing import, you should perform dry-run, and may be add some options
+for real import:</p>
+
+<p class="cmdc">VBoxManage import -n MyServer1.ovf</p>
+<p class="or">or</p>
+<p class="cmd">VBoxManage import --dry-run MyServer1.ovf</p>
+<p>
+Let's, for example, change VM name:</p>
+
+<p class="cmd">VBoxManage import MyServer1.ovf --vsys 0 --vmname MyServer2</p>
+<p>
+The other way to export/import VM is to create a new VM beforehand and then
+to clone the hard drive of the initial VM:</p>
+
+<p class="cmd">VBoxManage clonehd MyServer1.vdi MyServer2.vdi --format VDI --remember</p>
+<p>
+The <code>--remember</code> option auto registers the cloned HD. Run the
+following cmd to be sure:</p>
+
+<p class="cmd">VBoxManage list hdds</p>
+<p>
+You should also attach the cloned drive to a new VM.</p>
+<p>
+After export/import you have to deal with misc minor problems like
+changing hostname, net config, etc. Another problem is that you don't
+have the full control over naming of your virtual hardware.</p>
+
+
+
+<h5>Step 0 - Install VirtualBox on HOST</h5>
+
+<p class="cmdc">sudo apt-get install build-essential dkms module-assistant linux-headers-$(uname -r)</p>
+<p class="cmd">sudo apt-get install virtualbox virtualbox-dkms virtualbox-qt</p>
+<p>
+Virtualbox kernel modules are built via Dynamic Kernel Module Support (DKMS).
+After installing the Virtual Box pkgs the vbox modules should be auto-built
+and auto-loaded ...</p>
+
+<p class="cmd">lsmod | grep vbox</p>
+
+<div class="term">
+<pre>vboxpci     19066  0
+vboxnetadp  13155  0
+vboxnetflt  23571  0
+vboxdrv    190057  4 vboxnetflt,vboxnetadp,vboxpci</pre>
+</div>
+<p>
+To add a username to the <samp>vboxusers</samp> group...</p>
+
+<p class="cmd">sudo adduser <span class="arg">your_username</span> vboxusers</p>
+
+
+
+<h5>Step 1 - Create the Ubuntu GUEST</h5>
+<p>
+The Default Machine Folder where VM images are stored is</p>
+
+<p class="fmt"><samp>$HOME/Virtualbox VMs</samp></p>
+<p>
+(this can be modified in <b>File - Preferences - General</b>).</p>
+
+
+
+<h5>Step 2 - Guest Additions</h5>
+<p>
+Guest Additions provide extra features such as the ability to tweak display
+settings and add a shared folder that can accessed by both HOST and GUEST
+machines.</p>
+<p>
+On the new Ubuntu GUEST run...</p>
+
+<p class="cmdc">sudo apt-get install build-essential module-assistant linux-headers-$(uname -r) dkms
+<p class="cmdc">sudo apt-get install virtualbox-guest-dkms virtualbox-guest-utils virtualbox-guest-x11
+<p class="cmdc">sudo m-a prepare
+<p class="cmd">sudo adduser <span class="arg">your_username</span> vboxsf</p>
+<p>
+If the virtualbox modules need to be rebuilt for the running kernel...</p>
+
+<p class="cmd">uname -r | sudo xargs -n1 /usr/lib/dkms/dkms_autoinstaller start</p>
+<p>
+Reboot Ubuntu GUEST, and vbox drivers should now be loaded...</p>
+
+<p class="cmd">lsmod | grep vbox</p>
+
+<div class="term">
+<pre>vboxguest
+vboxsf
+vboxvideo</pre>
+</div>
+
+
+
+<h5>Adding VirtualBox repository in Ubuntu 14.04</h5>
+<p>
+Here's how to add the official Virtual Box repository and keep it up-to-date
+in Ubuntu 14.04. Edit <samp>/etc/apt/sources.list</samp>, add the following
+line to the EOF and save the file:</p>
+
+<p class="fmt"><samp>deb http://download.virtualbox.org/virtualbox/debian trusty contrib</smap></p>
+<p>
+Then run cmd to download and import key:</p>
+
+<p class="cmd">wget -q http://download.virtualbox.org/virtualbox/debian/oracle_vbox.asc -O- | sudo apt-key add -</p>
+<p>
+Now you can receive updates of vbox via Software Updater.</p>
+
+</div>
+
+</body></html>

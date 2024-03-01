@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference / Binutils</title>
+<meta name="description" content="linux quick reference, binutils, assembler, linker, ld, addr2line, objcopy, objdump, readelf" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<h1 class="part">Binutils</h1>
+<p>
+The <b>Binutils</b> (or the <b>GNU Binary Utilities</b>) is a package
+of programming tools for creating and managing binary programs, object
+files, libraries, profile data, and assembly source code.</p>
+<p>
+Most of these programs use BFD - the Binary File Descriptor library
+(<samp>libbfd</samp>) which provides support for various object file
+formats. Many of them also use the <samp>opcodes</samp> library to assemble
+and disassemble machine instructions.</p>
+<p>
+The <b>main tools</b> in this pkg are:</p>
+
+<p class="fmtc"><code>as</code></p>
+<p class="desc">the <b>GNU Assembler</b>; in fact, it's a family of
+assemblers; even if you never run it explicitly, it's invoked implicitly
+when you run <a href="programming.html#gcc"><code>gcc</code></a>, because
+the main purpose of <code>as</code> is to assemble the output of the
+<b>GNU C compiler</b> for use by <code>ld</code>;</p>
+
+<p class="fmtc"><code>ld</code></p>
+<p class="desc">runs the <b>GNU linker</b> which creates executable files
+(or libraries) from object files created during compilation; <code>~</code>
+combines a number of objects files, relocates their data and ties up symbol
+references; usually it's invoked implicitly when you run
+<a href="programming.html#gcc"><code>gcc</code></a> or <code>make</code>;</p>
+<p>
+There are also dynamic linker/loader <code>ld-linux.so.2</code> and its
+older incarnation <code>ld.so</code> (the first handles ELF, the last handles
+outdated <samp>a.out</samp> files). <i>Both are not related to
+<samp>binutils</samp>!</i></p>
+<p>
+Note that <code>ld</code> is used during software build process only,
+while <code>ld-linux.so.2</code> is required each time when a program
+starts - the dynamic linker/loader finds and loads shared libraries required
+by the program. Of course it's not necessary if all required libs were
+<i>statically linked</i> during app build.</p>
+<p>
+The <b>binutils</b> package also includes:</p>
+
+<p class="fmtc"><code>addr2line</code></p>
+<p class="desc">converts addresses into filenames and line numbers;</p>
+
+<p class="fmtc"><code>ar</code></p>
+<p class="desc">creates, modifies, and extracts from archives;</p>
+
+<p class="fmtc"><code>c++filt</code></p>
+<p class="desc">filter to demangle encoded C++ symbols;</p>
+
+<p class="fmtc"><code>dlltool</code></p>
+<p class="desc">creates files for building and using DLLs (Windows
+dynamic-link libraries);</p>
+
+<p class="fmtc"><code>gold</code></p>
+<p class="desc">alternative linker (a new, faster, ELF only linker)
+(still beta?);</p>
+
+<p class="fmtc"><code>gprof</code></p>
+<p class="desc">profiler (displays profiling information);</p>
+
+<p class="fmtc"><code>nlmconv</code></p>
+<p class="desc">converts object code into an NLM (NetWare Loadable Module);
+I thought NetWare is long forgotten;</p>
+
+<p class="fmtc"><code>nm</code></p>
+<p class="desc">lists symbols from object files;</p>
+
+<p class="fmtc"><code>objcopy</code></p>
+<p class="desc">copies and translates object files;</p>
+
+<p class="fmtc"><code>objdump</code></p>
+<p class="desc">displays information from object files;</p>
+
+<p class="fmtc"><code>ranlib</code></p>
+<p class="desc">generates an index to the contents of an archive;</p>
+
+<p class="fmtc"><code>readelf</code></p>
+<p class="desc">displays information from the ELF-format object files;</p>
+
+<p class="fmtc"><code>size</code></p>
+<p class="desc">lists the section sizes of an object or archive file;</p>
+
+<p class="fmtc"><code>strings</code></p>
+<p class="desc">lists printable strings from files;</p>
+
+<p class="fmtc"><code>strip</code></p>
+<p class="desc">removes symbols from an object file;</p>
+
+<p class="fmtc"><code>windmc</code></p>
+<p class="desc">A Windows compatible message compiler (generates Windows
+message resources);</p>
+
+<p class="fmtc"><code>windres</code></p>
+<p class="desc">a compiler for Windows resource files;</p>
+
+
+<p class="opt"><i>Usage examples:</i></p>
+
+<p class="cmd">readelf -d /lib/x86_64-linux-gnu/libz.so.1</p>
+<p class="desc">display contents of the dynamic section of the specified
+file (<samp>libz.so.1</samp>);</p>
+
+<p class="cmd">readelf -l /lib/x86_64-linux-gnu/libz.so.1</p>
+<p class="desc">display segment's headers of the specified file;</p>
+
+<p class="cmd">size /usr/bin/mplayer</p>
+<p class="desc">print section sizes of the specified file;</p>
+
+<p class="cmd">strings --data /usr/bin/mplayer | more</p>
+<p class="desc">output the strings [of printable chars] from the initialized,
+loaded data sections in the specified file; by default only strings of 4+
+chars are selected;</p>
+
+</div>
+
+</body></html>

@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (sata, ssd, usb)</title>
+<meta name="description" content="linux quick reference, sata, ssd, usb, usb flash drive, live usb" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+<script>
+$(document).ready(function() {
+  $("#show_nas").click(function() {
+    $("#nas").slideToggle(100);
+  });
+});
+</script>
+</head><body>
+
+<div id="main">
+
+<h1 class="part">Storage</h1>
+
+<p class="menu">
+<a href="#san">SAN</a>&nbsp;//
+<a href="#sata">SATA</a>&nbsp;//
+<a href="#ssd">SSD</a>&nbsp;//
+<a href="#usb">USB</a>&nbsp;//
+<a href="#usb_flash">USB&nbsp;Flash</a>&nbsp;//
+<a href="lvm-raid.html">LVM&amp;RAID</a>
+</p>
+
+
+<h2 class="top">
+<a name="sata">SATA interface</a></h2>
+<p>
+SATA (Serial ATA) is an interface for connecting HDDs, SSDs, and optical drives
+to computers. SATA replaced the old parallel ATA interface (PATA, aka IDE). Max
+transfer speed of PATA was <span class="sserif">133 MB/s</span>. Some
+abbreviations:</p>
+<img class="float_right" src="images/sata_data_cable.jpg" />
+<ul>
+<li><b>HDD</b> - Hard Disk Drive,</li>
+<li><b>SSD</b> - Solid State Drive,</li>
+<li><b>IDE</b> - Integrated Drive Electronics,</li>
+<li><b>PATA</b> - Parallel Advanced Technology Attachment,</li>
+<li><b>SATA</b> - Serial Advanced Technology Attachment,</li>
+<li><b>SAS</b> - Serial Attached SCSI,</li>
+<li><b>SCSI</b> - Small Computer System Interface; it's older then PATA but
+still used by servers (as SAS),</li>
+<li><b>NVMe</b> - NVM Express, Non-Volatile Memory Host Controller Interface;</li>
+</ul>
+<img class="centered" src="images/sata_pinout_data_power.jpg" />
+<p>
+SATA cables can be as long as <span class="sserif">1m</span>
+(<span class="sserif">3.3ft</span>), each SATA drive requires a separate cable,
+because it's <b>one drive per channel</b> technology, and they are
+<b>hot-pluggable</b>.</p>
+
+<table class="grid" style="font-family:Droid-Sans">
+<tr>
+<th class="gridcen">Name</th>
+<th class="gridcen">Rev</th>
+<th class="gridcen">Speed</th>
+<th class="gridcen">Speed</th>
+<th class="gridcen">NCQ</th>
+<th class="gridcen">Notes</th></tr>
+<tr>
+<td class="grid_2_mid_cen">Serial&nbsp;ATA-150</td>
+<td class="grid_2_mid_cen">1.0</td>
+<td class="grid_2_mid_cen">1.5&nbsp;Gbit/s</td>
+<td class="grid_2_mid_cen">150 MB/s</td>
+<td class="grid_2_mid_cen">-</td>
+<td class="grid_2_mid_cen">2003</td></tr>
+<tr>
+<td class="grid_2_mid_cen">Serial&nbsp;ATA-300</td>
+<td class="grid_2_mid_cen">2.0</td>
+<td class="grid_2_mid_cen">3 Gbit/s</td>
+<td class="grid_2_mid_cen">300 MB/s</td>
+<td class="grid_2_mid_cen">+</td>
+<td class="grid_2_mid_cen">2004</td></tr>
+<tr>
+<td class="grid_2_mid_cen">Serial&nbsp;ATA-600</td>
+<td class="grid_2_mid_cen">3.0</td>
+<td class="grid_2_mid_cen">6 Gbit/s</td>
+<td class="grid_2_mid_cen">600 MB/s</td>
+<td class="grid_2_mid_cen">+</td>
+<td class="grid_2_mid_cen">2009</td></tr>
+<tr>
+<td class="grid_2_mid_cen">Serial&nbsp;ATA-600</td>
+<td class="grid_2_mid_cen">3.2</td>
+<td class="grid_2_mid_cen">16 Gbit/s</td>
+<td class="grid_2_mid_cen">1969&nbsp;MB/s</td>
+<td class="grid_2_mid_cen">+</td>
+<td class="grid_2_mid_cen">2013</td></tr>
+</table>
+<p>
+<b>NCQ</b> (Native Command Queuing) increases HDD performance by reordering
+the commands send by computer. Some SSDs also use NCQ, but in a different
+manner: SSD has no need to compensate latency caused by magnetic heads
+movement, so reordering has no sense, but queuing can be usefull.</p>
+<p>
+Currently, SATA has a number of misc connectors and form factors like
+<b>Micro SATA</b> (aka uSATA or &#956;SATA) for
+<span class="sserif">1.8</span>-inch drives, <b>eSATA</b> for external
+connectivity (it uses a more robust connector, shielded cables up to
+<span class="sserif">2m</span>, etc), <span class="sserif"><b>M.2</b></span>
+for computer expansion cards and associated connectors.</p>
+<p>
+<b>SAS</b> (Serial Attached SCSI) uses the same physical interconnects as
+SATA, and most SAS HBAs (Host Bus Adapter) also support
+<span class="sserif">3</span> and <span class="sserif">6 Gbit/s</span> SATA
+devices.</p>
+
+
+
+<h3>
+<a name="ssd">SSD (Solid State Drive)</a></h3>
+
+<h5>SSD form-factors</h5>
+<p>
+<span class="sserif"><b>SATA, M.2, PCI Express card</b></span></p>
+<p>
+Strictly speaking, SATA is an interface specification. But when SSDs became
+popular, SATA became a SSD's form-factor. So, now any SSD in
+<span class="sserif">2.5"</span> case with standard SATA connectors is a
+<b>SATA SSD</b>:</p>
+
+<img class="centered" src="images/ssd.jpg" />
+<p>
+Since SATA (as interface) has speed limits, the next logical step was to
+connect SSDs directly to the PCI bus. As a result we got NVMe, Non-Volatile
+Memory Express and two additional form factors: NVMe on a standard PCI
+Express card (like graphics card) and NVMe on a small card
+(<span class="sserif">22x100mm</span>, <span class="sserif">22x80mm</span>,
+<span class="sserif">22x60mm</span>, ...) inserted into a new
+<span class="sserif"><b>M.2</b></span> slot on computer's motherboard.</p>
+
+<img class="centered" src="images/ssd_sata_3_m2.jpg" />
+<p>
+It's obvious that SATA and PCIe form-factors are too big for SSD, and PCIe
+slots on the motherboard are "precious", especially for extreme gamers using
+two graphics cards. So, <span class="sserif"><b>NVMe M.2</b></span> is probably
+the winner in the near future.</p>
+<p>
+Note that <span class="sserif"><b>M.2</b></span> (in the past it was called
+<b>NGFF</b>, new generation form-factor) can support several interfaces,
+including SATA (same speed limit as for SATA SSD), PCIe (faster then SATA and
+does not occupy PCIe slot), NVMe (probably the best of all).</p>
+<p>
+The most popular SSDs in 2020 seems to be <span class="sserif"><b>NVMe SSD Type
+2280</b></span> (<span class="sserif">80mm</span>) cards connected to
+<span class="sserif"><b>M.2</b></span> socket on the motherboard. Of course,
+you can only use these SSDs if your motherboard has
+<span class="sserif"><b>M.2</b></span> socket. Otherwise you need SATA SSD.</p>
+
+
+<h5>SSD speeds</h5>
+<p>
+Non-Volatile Memory Express is an open standard developed to allow modern SSDs
+to operate at the read/write speeds their flash memory is capable of. So, let's
+compare.</p>
+<p>
+An average read/write speed of a typical <span class="sserif">7200rpm</span>
+SATA HDD is <span class="sserif"><b>~100 MB/s</b></span> (megabytes per sec).
+SATA SSDs provide <span class="sserif"><b>~530/500 MB/s</b></span>. Read is
+faster than write, and the difference can be essential. NVMe SSDs are absolute
+ champions with read/write speeds up to <span class="sserif"><b>3500/3200
+MB/s</b></span>. That is, roughly <span class="sserif"><b>6x</b></span> faster
+than SATA SSDs and <span class="sserif"><b>30x</b></span> faster than HDDs.</p>
+<p>
+Of course, the above numbers are just some average estimates. In fact, some
+users complain that they have not noticed big difference after replacing SATA
+SSD with NVMe. On the other hand, the difference between SSD and HDD is very
+noticeable.</p> 
+
+
+<h5>Ajusting your system to Solid State Drive</a></h5>
+<p>
+Typical SSD root filesystem in <samp>/etc/fstab</samp>:</p>
+
+<p class="fmt"><samp>UUID=f0a...5d  /  ext4 noatime,errors=remount-ro  0 1</samp></p>
+<p>
+However, this should not be used for <b>swap</b> and <b>efi</b> partitions,
+if they exist.</p>
+
+<p class="warn">Note!</p>
+<p class="indent">When I installed Ubuntu 18.04 on <span class="sserif">256
+Gb</span> SSD, the default installation procedure created
+<span class="sserif">512 Mb</span> <b>efi</b> partition and the rest went
+to <b>ext4</b> partition (root, home, and everything). And no swap partition
+- a swap file instead.</p>
+<p class="indent">When I installed Ubuntu 19.04 on <span class="sserif">128
+Gb</span> SSD, the default installation procedure created only one <b>ext4</b>,
+i.e., all-in-one, no efi, no swap, just <samp>/boot</samp> dir and
+<samp>/swapfile</samp> (<span class="sserif">~2GB</span>) .</p>
+
+
+<h5>About tmpfs</h5>
+<p>
+I prefer to use <samp>tmpfs</samp> (i.e., RAM) for temp files, logs and
+spools:</p>
+<div class="file">
+<pre>
+none   /tmp  tmpfs defaults,noatime,mode=1777,size=10%  0 0
+tmpfs  /var/spool  tmpfs defaults,noatime,mode=1777  0 0
+tmpfs  /var/log    tmpfs defaults,noatime,mode=1777  0 0</pre>
+</div>
+<p>
+Note that <samp>/var/tmp</samp> dir is used to keep some stuff
+between reboots, and it should not be configured as <samp>tmpfs</samp>!</p>
+
+
+<h5>Examples of /etc/fstab</h5>
+<p>
+In both cases root filesystem on SSD:</p>
+<ul>
+<li><samp><a href="files/etc_fstab.txt">/etc/fstab</a></samp> without
+<b>efi</b> and <b>swap</b> partitions, no separate <samp>home</samp> partition;</li>
+<li><samp><a href="files/etc_fstab_old.txt">/etc/fstab</a></samp>
+with <b>efi</b> and <b>swap</b> partitions, <samp>home</samp> filesystem is
+a separate partition on SSD;</li>
+</ul>
+
+
+<h5>Trimming</h5>
+<p>
+In Linux systems with <samp>systemd</samp>, scheduled tasks are usually
+executed by <a href="boot.html#timers">systemd timers</a>, and probably you
+don't need to bother about trimming. Just make sure that timer and service
+are O.K.:</p>
+
+<p class="cmd">systemctl status fstrim.timer</p>
+<p>
+Probably you should also check it the next day after scheduled execution because
+<i>systemd</i> logs are volatile (<samp>/run/log/journal/*</samp>) and disappear
+after reboot. Note that for <i>systemd</i><samp> weekly </samp>usually means
+"on Monday, early, like at <samp>00:00</samp> or within an hour after midnight".</p>
+<!--
+<div class="box1" style="padding-bottom:0.1em">
+<p>
+In some older systems you have to remove trimming from <samp>cron</samp>
+(check <samp>cron.weekly</samp>) and set trimming at system boot. Edit
+<samp>/etc/rc.local</samp> according to your partitioning schema:</p>
+<div class="file">
+<pre>
+fstrim -v /
+fstrim -v /home
+exit 0</pre>
+</div></div>
+-->
+
+
+<h5>Optimize swapping</h5>
+<p>
+Check <samp>/etc/sysctl.conf</samp>, there must be:</p>
+<div class="file">
+<pre>
+# Sharply reduce swap inclination
+vm.swappiness=1
+# Improve cache management
+vm.vfs_cache_pressure=50</pre>
+</div>
+
+
+<h5>Limit the write actions of Mozilla Firefox web-browser</h5>
+<p>
+Basically, there are two parameters you should take care of:</p>
+<ul>
+<li>Session store interval (don't save session info too often).</li>
+<li>Browser cache (how large and where to keep).</li>
+</ul>
+<p>
+Start manual config (type <samp>about:config</samp> in URL bar).</p>
+<p>
+Find <samp>browser.sessionstore.interval</samp>. By default it's usually
+<samp>15000</samp> (<samp>15</samp> sec). Change it to a larger value, e.g.,
+<samp>100,000,000</samp> (~<samp>28</samp> hours), or, at least,
+<samp>3,600,000</samp> (~<samp>1</samp> hour).</p>
+<div class="file">
+<pre>
+  browser.sessionstore.interval    100000000</pre>
+</div>
+<p>
+Find and set following parameters:</p>
+<div class="file">
+<pre>
+  browser.cache.disk.enable        false
+  ...
+  browser.cache.memory.enable      true
+  browser.cache.memory.capacity    204800
+</pre></div>
+<p>
+The last param is usually missing from the default browser config, because
+browser prefers to keep its cache on disk (HDD). If you found that key,
+just set the value, otherwise you have to create a new entry like this:</p>
+<ul>
+<li>Right-click somewhere in the blank area within the Firefox config window,
+and select: <b>New &gt; Integer</b>.</li>
+<li>
+Create a new key (preference name) <samp>browser.cache.memory.capacity</samp>
+(you will see the dialog "Enter the preference name").</li>
+<li>Now set the value (integer value in KB), something in the range
+<samp>51200..204800</samp> (i.e., from <span class="sserif">50Mb</span> to
+<span class="sserif">200Mb</span>) depending on your RAM size. Of course, you
+can make it smaller or larger, the values above are just a recommendation. But
+remember that <samp>0</samp> means "no cache", while <samp>-1</samp> means
+"unlimited cache" (probably not the best option).</li>
+<li>Restart Mozilla Firefox.</li>
+<li>Type in the URL bar <samp>about:cache</samp> to see if your changes were
+activated.</li>
+</ul>
+<p>
+Note! These are <b>user preferences</b>, i.e., they are not global throughout
+the system, but only effective for a particular user account.</p>
+
+
+<!--
+<p>
+You can disable anti-phishing features (system will be less secure).</p>
+<p>
+Either use
+<b>Edit</b> / <b>Preferences</b> / <b>Security</b>:</p>
+<ul>
+<li>Block reported attack sites</li>
+<li>Block reported web forgeries</li>
+</ul>
+<p>
+or use <samp>about:config</samp> page and set to <samp>false</samp>:</p>
+<ul>
+<li><samp>browser.safebrowsing.enabled</samp></li>
+<li><samp>browser.safebrowsing.malware.enabled</samp></li>
+</ul>
+<p>
+Now you must close Firefox and delete all files beginning with
+<samp>urlclassifier</samp> in your profile folder
+<samp>~/.mozilla/firefox/<kbd>xxxxxxxx</kbd>.default</samp>:</p>
+
+<p class="cmd">rm -i ~/.mozilla/firefox/*.default/urlclassifier*</p>
+<p>
+Some of those files will be recreated by FF, but they won't grow any
+larger than their initial size.</p>
+-->
+
+
+<h5>Limit the write actions of the Java plugin</h5>
+<p>
+If you have installed Oracle Java:</p>
+<ul>
+<li>Launch the Java Control Panel -&gt; Tab General:</li>
+<ul>
+<li>Temporary Internet Files -&gt; Settings...</li>
+<ul>
+<li>Remove the tick for: Keep temporary files on my computer.</li>
+</ul></ul></ul>
+
+
+
+<h2>
+<a name="usb">USB interface</a></h2>
+<p>
+<b>Universal Serial Bus</b> was designed to standardize, improve,
+simplify the interface between personal computers and peripherals like
+pointing devices, keyboards, digital cams, printers, portable disk drives,
+etc.</p>
+<p>
+Besides the data exchange, USB port also provides electric power to
+a connected device. USB 1.x &amp; 2.0 supplied <span class="sserif"><b>5V</b></span>
+only, USB 3.x can additionally supply <span class="sserif"><b>20V</b></span>.</p>
+
+<img class="centered" src="images/usb_pins1.png" />
+
+<table style="font-family:Droid-Sans;margin-left:auto;margin-right:auto">
+<tr>
+<td>Pin 1</td><td style="background:red;width:2em">&nbsp;</td><td>VBUS (+5 V)</td></tr>
+<td>Pin 2</td><td style="background:grey;width:2em">&nbsp;</td><td>Data−</td></tr>
+<td>Pin 3</td><td style="background:green;width:2em">&nbsp;</td><td>Data+</td></tr>
+<td>Pin 4</td><td style="background:black;width:2em">&nbsp;</td><td>Ground</td></tr>
+</table>
+<p>
+Keep in mind that:</p>
+<ul>
+<li>USB has a strict <b>tree topology</b> and <b>master-slave protocol</b>.
+It means that peripheral devices cannot interact one with another directly
+(only via the host), two hosts also cannot communicate directly over USB ports.</li>
+<li>USB <b>does not support broadcasting</b>, each peripheral device must be
+addressed individually.</li>
+<li>USB is <b>hot pluggable</b>, i.e., you can connect/disconnect a peripheral
+device whenever you need, and you don't have to power down (or restart)
+computer.</li>
+<li>USB interface is <b>self-configuring</b>, there is no need to adjust
+settings on the device and interface for speed, data format, interrupts, I/O
+addresses, DMA channels, etc.</li>
+<li>Cable length is limited (<span class="sserif">5m</span> for USB 2.0),
+shorter cables are usually better.</li>
+<li>Cables of the same type are not always identical, some "differences"
+in pins and wires are possible.</li>
+<li>Power supplied by a USB port can be not sufficient for a specific
+peripheral device (table below shows max values, not every USB port provides
+those numbers).</li>
+</ul>
+<img class="centered" src="images/usb_connectors.jpg" />
+<p>
+Note that <b>Type-C</b> has a symmetric shape and works either way up, i.e., you [normal people] cannot insert it incorrectly!</p>
+<p>
+There are three generations of USB spec:</p>
+<ul>
+<li><b>USB 1.x</b> (now totally outdated) was released in 1996 (USB 1.0), 1998 (USB 1.1),</li>
+<li><b>USB 2.0</b> was released in 2000/2001,</li>
+<li><b>USB 3.x</b> was released in 2008 (USB 3.1 in 2013, USB 3.2 in 2017)</li>
+</ul>
+
+<img class="centered" src="images/usb_standards.png" />
+
+<!--
+<table class="grid" style="font-family:Droid-Sans">
+<tr>
+<th class="gridcen">Version</th>
+<th class="gridcen">Max transfer speed</th>
+<th class="gridcen">Max power output</th>
+<th class="gridcen">Logo</th></tr>
+<tr>
+<td class="grid_2_mid_cen">USB 1.1</td>
+<td class="grid_2_mid_cen">12&nbsp;Mbit/s</td>
+<td class="grid_2_mid_cen">?</td>
+<td class="grid_2_mid_cen" style="width:20%">?</td></tr>
+<tr>
+<td class="grid_2_mid_cen">USB 2.0</td>
+<td class="grid_2_mid_cen">480&nbsp;Mbit/s</td>
+<td class="grid_2_mid_cen">2.5W</td>
+<td class="grid_2_mid_cen"><img class="cell" src="images/logo_usb_2.jpg" /></td></tr>
+<tr>
+<td class="grid_2_mid_cen">USB 3.0<br>(3.1&nbsp;Gen&nbsp;1)</td>
+<td class="grid_2_mid_cen">5&nbsp;Gbit/s</td>
+<td class="grid_2_mid_cen">4.5W</td>
+<td class="grid_2_mid_cen"><img class="cell" src="images/logo_usb_3.jpg" /></td></tr>
+<tr>
+<td class="grid_2_mid_cen">USB 3.1<br>
+(3.1&nbsp;Gen&nbsp;2)<br>
+(3.2&nbsp;Gen&nbsp;2x1)</td>
+<td class="grid_2_mid_cen">10&nbsp;Gbit/s</td>
+<td class="grid_2_mid_cen">100W</td>
+<td class="grid_2_mid_cen"><img class="cell" src="images/logo_usb_3_1.jpg" /></td></tr>
+<tr>
+<td class="grid_2_mid_cen">USB 3.2<br>
+(3.2&nbsp;Gen&nbsp;2x2)</td>
+<td class="grid_2_mid_cen">20&nbsp;Gbit/s</td>
+<td class="grid_2_mid_cen">100W</td>
+<td class="grid_2_mid_cen">?</td></tr>
+</table>
+-->
+
+<h5>USB power standards</h5>
+<p>
+In general USB supplies <span class="sserif"><b>5V &#177; 5%</b></span>.
+However, when it comes to power consumption, USB spec uses such term as a
+<b>unit load</b>:</p>
+<div class="term"><pre>
+1 unit load is 100 mA for USB 1.x &amp; 2.0
+1 unit load is 150 mA for USB 3.0 SuperSpeed dev
+1 unit load is 250 mA for USB 3.2 Gen x2 Multi-lane
+  SuperSpeed devices</pre></div>
+<p>
+The <b>low-power devices</b> are those with power consumption up to 1 unit
+load, i.e., below <span class="sserif">100 mA</span> (e.g., keyboard, mouse).</p>
+<p>
+The <b>high-power devices</b>  (e.g., external HDD) are those with power
+consumption between <span class="sserif">1 unit</span> load and
+<span class="sserif">5 unit</span> loads, i.e., up to <span class="sserif">500
+mA</span>. For USB 3.0 the upper limit is <span class="sserif">6 unit</span> loads
+(<span class="sserif">900 mA</span>). For USB 3.2 Gen x2 upper limit is
+<span class="sserif">6 unit</span> loads (<span class="sserif">1.5 A</span>).</p>
+<p>
+Higher currents (<span class="sserif">1.5..3 A</span>) and higher voltages
+(<span class="sserif">20V</span> at <span class="sserif">3..5 A</span>) are
+related to <b>Battery Charging</b> (BC) and <b>Power Delivery</b> (PD) specs. See
+<a href="https://manhattanproducts.eu/pages/usb-c-pd-charging-everything-you-need-to-know" target="_top">Power Delivery</a>
+or <a href="https://www.usb.org/usb-charger-pd" target="_top">USB Power Delivery</a>.</p>
+
+
+
+<h5>USB device class</h5>
+<p>
+The functionality of a USB device is defined by a class code sent by device
+to a USB host. This allows the host to load the appropriate software modules
+for this device.</p>
+
+<table class="grid">
+<caption>Some (not all) USB device classes</caption>
+<tr>
+<th class="gridcen">Class</th>
+<th class="gridcen">Type</th>
+<th class="gridcen">Device</th>
+<th class="gridcen">Examples</th></tr>
+<tr>
+<td class="grid_2_mid_cen"><samp>00h</samp></td>
+<td class="grid_2_mid_cen">Device</td>
+<td class="grid_2_mid_cen">Unspecified</td>
+<td class="grid_2_mid_cen">-</td></tr>
+<tr>
+<td class="grid_2_mid_cen"><samp>01h</samp></td>
+<td class="grid_2_mid_cen">Interface</td>
+<td class="grid_2_mid_cen">Audio</td>
+<td class="grid_2_mid_cen">sound card, microphone, speaker</td></tr>
+<tr>
+<td class="grid_2_mid_cen"><samp>02h</samp></td>
+<td class="grid_2_mid_cen">Device, Interface</td>
+<td class="grid_2_mid_cen">Communications and CDC Control</td>
+<td class="grid_2_mid_cen">Wi-Fi adapter, Ethernet adapter, RS-232 serial adapter</td></tr>
+<tr>
+<td class="grid_2_mid_cen"><samp>03h</samp></td>
+<td class="grid_2_mid_cen">Interface</td>
+<td class="grid_2_mid_cen">HID (human interface device)</td>
+<td class="grid_2_mid_cen">keyboard, mouse, joystick</td></tr>
+<tr>
+<td class="grid_2_mid_cen"><samp>05h</samp></td>
+<td class="grid_2_mid_cen">Interface</td>
+<td class="grid_2_mid_cen">PID (physical interface device)</td>
+<td class="grid_2_mid_cen">force feedback joystick</td></tr>
+<tr>
+<td class="grid_2_mid_cen"><samp>06h</samp></td>
+<td class="grid_2_mid_cen">Interface</td>
+<td class="grid_2_mid_cen">Image</td>
+<td class="grid_2_mid_cen">webcam, scanner</td></tr>
+<tr>
+<td class="grid_2_mid_cen"><samp>07h</samp></td>
+<td class="grid_2_mid_cen">Interface</td>
+<td class="grid_2_mid_cen">Printer</td>
+<td class="grid_2_mid_cen">laser/inkjet</td></tr>
+<tr>
+<td class="grid_2_mid_cen"><samp>08h</samp></td>
+<td class="grid_2_mid_cen">Interface</td>
+<td class="grid_2_mid_cen">Mass storage</td>
+<td class="grid_2_mid_cen">USB flash, external HDD</td></tr>
+<tr>
+<td class="grid_2_mid_cen"><samp>09h</samp></td>
+<td class="grid_2_mid_cen">Device</td>
+<td class="grid_2_mid_cen">USB hub</td>
+<td class="grid_2_mid_cen">Full bandwidth hub</td></tr>
+<tr>
+<td class="grid_2_mid_cen"><samp>0Eh</samp></td>
+<td class="grid_2_mid_cen">Interface</td>
+<td class="grid_2_mid_cen">Video</td>
+<td class="grid_2_mid_cen">webcam</td></tr>
+<tr>
+<td class="grid_2_mid_cen"><samp>E0h</samp></td>
+<td class="grid_2_mid_cen">Interface</td>
+<td class="grid_2_mid_cen">Wireless controller</td>
+<td class="grid_2_mid_cen">Bluetooth adapter</td></tr>
+</table>
+
+
+
+
+
+<h3>
+<a name="usb_flash">USB Flash Drive</a></h3>
+
+<table>
+<caption>Note!</caption>
+<tr>
+<td style="padding-left:1em">
+USB&nbsp;flash<br>
+USB&nbsp;flash&nbsp;drive<br>
+USB&nbsp;stick<br>
+USB&nbsp;thumb&nbsp;drive<br>
+USB&nbsp;pen&nbsp;drive<br>
+USB&nbsp;disk&nbsp;key<br>
+USB&nbsp;memory&nbsp;stick</td>
+<td style="vertical-align:middle;padding-left:2em">
+<i>are the same thing!
+And&nbsp;there&nbsp;is&nbsp;also&nbsp;<a href="live_usb.html">Live&nbsp;USB</a>!</i></td></tr></table>
+<p>
+As of 2018 the largest USB flash drives have a storage capacity
+<span class="sserif"><b>2TB</b></span>, the max write/erase cycles param is
+<span class="sserif"><b>100,000</b></span>. Most flash drives are preformatted
+with the <samp>FAT32</samp>, or <samp>exFAT</samp> file systems. However, to
+the system, a flash drive looks like a USB-connected hard drive, and it can be
+reformatted to any file system supported by the host OS.</p>
+
+<img class="centered" src="images/usb_flash_internals.jpg" />
+<ol>
+<li>USB connector (Type-A, male);</li>
+<li>USB mass storage controller (microcontroller with on-chip ROM and RAM);</li>
+<li>Test connector (for loading code into the microcontroller);</li>
+<li>Flash memory chip;</li>
+<li>Crystal oscillator (produces the clock signal and controls data output);</li>
+<li>LED (indicates active data transfer);</li>
+<li>Write-protect switch (optional);</li>
+<li>The place for the second memory chip;</li>
+</ol>
+
+
+<h5>Longevity</h5>
+<p>
+The majority of flash drives use a <i>multi-level cell</i> (MLC) based memory
+which is good for around <span class="sserif"><b>3,000-5,000</b></span>
+program-erase cycles, but some flash drives have <i>single-level cell</i> (SLC)
+based memory that is good for around <span class="sserif"><b>100,000</b></span>
+writes. And there is practically no limit to the number of reads from the flash
+memory. Remember, however, that a typical USB connector warrants only around
+<span class="sserif"><b>1,500</b></span> insert-removal cycles.</p>
+
+
+<h5>Speed</h5>
+<p>
+The data transfer speed is limited by the slowest of three factors:</p>
+<ul>
+<li>USB version used,</li>
+<li>the quality of the USB controller device that reads and writes data onto
+the flash memory,</li>
+<li>the speed of the hardware bus, especially in the case of add-on USB ports.</li>
+</ul>
+<p>
+The last param is the host param, USB flash drive has nothing to do with it.</p>
+<p>
+Many manufacturers avoid to declare the speeds of their USB flash drives
+because it's a complex parameter - not just a couple of values (read/write),
+but the large set of numbers depending on unknown (beforehand) conditions like
+port's USB version, the quality of host controller, the quality of software
+drivers, the mode of operation, the sizes of files, etc. So, if the speed is
+declared, it's usually some average number for some optimal/ideal conditions.
+The real speeds are slower. The only things you can trust (more or less):
+the reading is almost alway faster than writing; the large number of small
+files usually goes slower than the small number of big files; the more
+expensive flash drives are faster in general, but not always. Here you
+can see examples from some price list (speeds are in Megabytes/sec):</p>
+
+<table class="grid" style="font-family:DroidSansMono;font-size:87%">
+<tr>
+<th class="gridcen">Model</th>
+<th class="gridcen">USB&nbsp;ver</th>
+<th class="gridcen">Capacity</th>
+<th class="gridcen">Reading speed</th>
+<th class="gridcen">Writing speed</th></tr>
+<tr>
+<td class="grid_2_mid_cen">Transcend JetFlash 300<br>(TS16GJF300)</td>
+<td class="grid_2_mid_cen">USB 2.0</td>
+<td class="grid_2_mid_cen">16GB</td>
+<td class="grid_2_mid_cen">up to 15 MB/s</td>
+<td class="grid_2_mid_cen">up to 7 MB/s</td></tr>
+<tr>
+<td class="grid_2_mid_cen">Transcend JetFlash 530<br>(TS32GJF530)</td>
+<td class="grid_2_mid_cen">USB 2.0</td>
+<td class="grid_2_mid_cen">32GB</td>
+<td class="grid_2_mid_cen">up to 21 MB/s</td>
+<td class="grid_2_mid_cen">up to 10 MB/s</td></tr>
+<tr>
+<td class="grid_2_mid_cen">Transcend JetFlash 600<br>(TS32GJF600)</td>
+<td class="grid_2_mid_cen">USB 2.0</td>
+<td class="grid_2_mid_cen">32GB</td>
+<td class="grid_2_mid_cen">up to 150 MB/s</td>
+<td class="grid_2_mid_cen">up to 18 MB/s</td></tr>
+<tr>
+<td class="grid_2_mid_cen">Transcend JetFlash 780<br>(TS32GJF780)</td>
+<td class="grid_2_mid_cen">USB 3.1</td>
+<td class="grid_2_mid_cen">32GB</td>
+<td class="grid_2_mid_cen">up to 210 MB/s</td>
+<td class="grid_2_mid_cen">up to 75 MB/s</td></tr>
+<tr>
+<td class="grid_2_mid_cen">Transcend JetFlash 780<br>(TS64GJF780)</td>
+<td class="grid_2_mid_cen">USB 3.1</td>
+<td class="grid_2_mid_cen">64GB</td>
+<td class="grid_2_mid_cen">up to 210 MB/s</td>
+<td class="grid_2_mid_cen">up to 140 MB/s</td></tr>
+</table>
+
+
+<h5>
+<a name="usb_flash_fs">File system</a></h5>
+<p>
+The most popular file systems for USB flash drives are <b>FAT32</b> and
+<b>exFAT</b> (both are supported by the majority of operating systems). The
+exFAT (Extended File Allocation Table, was introduced by Microsoft in 2006) is
+optimized for flash memory such as USB flash drives and SD cards, and it can
+store really big files, up to <span class="sserif"><b>128 PB</b></span>
+(petabytes) - an essential advantage over FAT32 which does not accept files
+larger than <span class="sserif">4GB</span>.</p>
+<p>
+However, it looks like the majority of USB flash drives still (2019) arrive
+to users formatted with FAT32, and it's OK until you need to store files bigger
+than <span class="sserif"><b>4GB</b></span>. So, before you start using your
+new USB flash, think if, maybe, you should format it with exFAT.</p>
+<p>
+Note that Linux users and developers persistently designate FAT32
+as <samp>vfat</samp> though it's not quite correct. Be aware that
+<samp>vfat</samp> can be FAT32, but it can aslo be FAT16, or even FAT12
+(see <a href="cmds_m.html#mkfs">mkfs</a>).</p>
+<p>
+In Linux, to format USB flash drive with exFAT, first make sure the
+appropriate software is installed, not all Linux systems support exFAT out
+of the box. In case of Ubuntu:</p>
+
+<p class="cmd">sudo apt-get install exfat-utils exfat-fuse</p>
+<p>
+As usually, before formatting, <b>don't forget to save what you need to
+save!</b> When your USB flash drive is inserted and mounted, find its device
+name. There are many ways to do it, e.g.:</p>
+
+<p class="cmd">df</p>
+<p>
+Let's assume the name is <samp>/dev/sdf1</samp>. Now you can format this flash
+drive with the following cmd, but, again, before you start, <i>make sure (1)
+the device name is correct, and (2) all precious data from this drive was
+saved!</i>:</p>
+
+<p class="cmd">mkfs.exfat -n FLASH01 /dev/sdf1</p>
+
+
+<h5>Usage notes</h5>
+<p>
+Disconnecting USB flash without unmounting filesystem won't damage device
+itself (it's hot-pluggable), but it can damage the filesystem.</p>
+<p>
+Also, you should be cautious with static electricity, especially during cold
+winters when the humidity is low. The probability of damage is low, but, if
+you care, "discharge" yourself before touching/connecting anything.</p>
+<p>
+Dropping USB flash in the water is not lethal (in most cases) unless you
+insert it into a working USB port before the liquid evaporates from the
+internal parts.</p>
+
+
+
+<h4>
+<a name="usb_init">Reinitialization of the bootable USB flash drive</a></h4>
+<p>
+(assuming the device is <samp>/dev/sdf</samp>)</p>
+<p>
+If your "bootable" USB stick does not boot, you can try the following
+procedure (in general it is safe, but as with all such ops there is always
+a risk of data loss).</p>
+<p>
+Run <code>cfdisk</code> and find the partition ID. It must be
+<samp>LBA FAT32</samp> (<samp>0B</samp> or <samp>0C</samp>):</p>
+
+<p class="cmd">cfdisk /dev/sdf</p>
+<!--
+<p>
+Format the partition:</p>
+
+<p class="cmd">mkfs.vfat -F 32 -n SYSRESC /dev/sdf1</p>
+-->
+<p>
+Overwrite the first <samp>440</samp> bytes of the MBR. It's supposed to erase
+the prev boot instructions with the default ones to make the stick bootable.
+If you do everything right, the partition table is not changed (it starts at
+offset <samp>446</samp>):</p>
+
+<p class="cmd">dd if=/usr/share/syslinux/mbr.bin of=/dev/sdf</p>
+<p>
+A similar cmd in Ubuntu:</p>
+
+<p class="cmd">dd if=/usr/lib/syslinux/mbr.bin of=/dev/sdf</p>
+<p>
+The same cmd, but more safe:</p>
+
+<p class="cmd">dd bs=440 count=1 if=/usr/lib/syslinux/mbr.bin of=/dev/sdf</p>
+<p>
+Make sure that all changes have been flushed to the disk.</p>
+
+<p class="cmd">sync</p>
+
+
+
+<h4>
+<a name="reset_usb">Restoring USB flash drive to its original state</a></h4>
+<p>
+(original state: empty VFAT, non-bootable)<br>
+(assuming the device is <samp>/dev/sdf</samp>)</p>
+</p>
+<p>
+Let's suppose you created a bootable USB flash with a hybrid Ubuntu Linux
+image. Then later you decided to remove Linux image and use it as a regular
+USB flash. But when you try to delete files, system says "it's read only".
+And besides, it's bootable and probably has GPT. So, you must take care of
+all this stuff.</p>
+<ul>
+<li>Delete existing partitions (using
+<a href="cmds_f.html#fdisk"><code>fdisk</code></a> or
+<a href="cmds_g.html#gdisk"><code>gdisk</code></a> or other similar tools
+you rely on.</li>
+<li>If the above apps report the presence of GPT, remove it too. Probably
+you'll have to use <code>gdisk</code>'s advanced options, unless you have
+something more convenient.</li>
+<li>Create a new empty partition (probably using all available space).</li>
+<li>Create a filesystem (VFAT):</li>
+</ul>
+<p class="cmd">mkfs.vfat -F 32 -n VIDEO_01 /dev/sdf1</p>
+
+
+
+
+<h2 class="top">
+<a name="san">SAN (Storage Area Network)</a></h2>
+
+<p class="center" id="show_nas">
+<span class="ref">Do not confuse SAN with NAS!</span></p>
+
+<div class="box1" id="nas" style="display:none">
+<p>
+<b>NAS</b> (network-attached storage) is a simple and relatively unexpensive
+<b>file-server</b> that is mostly used as a home appliance to store all kinds
+of large files like movies, music, etc. Of course, there are corporate models
+like 2U rack-mounted devices. But typical NAS looks like a compact box with two
+or four SATA HDDs configured as <span class="sserif">RAID 1</span> or
+<span class="sserif">RAID 10</span> managed by simple software RAID (aka
+FakeRAID) controller, because hardware RAID controller would be too expensive
+for such system.</p>
+</div>
+<p>
+<b>Storage Area Network</b> is a special kind of network (network behind the
+servers) used by <i>storage devices</i> and <i>servers</i>. Note that servers
+(database servers, application servers, web servers, etc) are considered
+clients in this network.</p>
+<p>
+Unlike the traditional <i>shared network storage</i> technologies that work
+with files (NFS, file-servers), SAN operates with <i>data blocks</i> (aka
+<i>chunks</i>). In other words, to server's operating system SAN looks like
+a locally-attached RAID box.</p>
+<p>
+The most popular technologies used to build Storage Area Networks:</p>
+<ul class="tight">
+<li>Fibre (or Fiber) Channel (FC)</li>
+<li>Fibre Channel over Ethernet (FCoE)</li>
+<li>iSCSI</li>
+</ul>
+
+<table class="grid">
+<caption>Fibre Channel vs FCoE vs iSCSI</caption>
+<tr>
+<th class="grid">&nbsp;</th>
+<th class="grid">FC</th>
+<th class="grid">FCoE</th>
+<th class="grid">iSCSI</th></tr>
+<tr>
+<td class="grid_2">Can be used on existing network?</td>
+<td class="grid_2_cen">-</td>
+<td class="grid_2_cen">+/-<br>(needs special switches and adapters)</td>
+<td class="grid_2_cen">+</td></tr>
+<tr>
+<td class="grid_2">Block-level access</td>
+<td class="grid_2_cen">+</td>
+<td class="grid_2_cen">+</td>
+<td class="grid_2_cen">+</td></tr>
+<tr>
+<td class="grid_2">Strong data flow management (CRC check, avoids transmission retries)</td>
+<td class="grid_2_cen">+</td>
+<td class="grid_2_cen">+</td>
+<td class="grid_2_cen">-</td></tr>
+<tr>
+<td class="grid_2">Embedded service infrastructure</td>
+<td class="grid_2_cen">+</td>
+<td class="grid_2_cen">+</td>
+<td class="grid_2_cen">-</td></tr>
+<tr>
+<td class="grid_2">Network isolation by design</td>
+<td class="grid_2_cen">+</td>
+<td class="grid_2_cen">+</td>
+<td class="grid_2_cen">-</td></tr>
+<tr>
+<td class="grid_2">Requires special hardware (adapters, switches, etc.)</td>
+<td class="grid_2_cen">+</td>
+<td class="grid_2_cen">+</td>
+<td class="grid_2_cen">+/-<br>(for good performance you need special adapters)</td></tr>
+<tr>
+<td class="grid_2">Transfer speeds available, Gbit/s</td>
+<td class="grid_2_cen"><samp>2/4/8/16/32</samp><br>support for link aggregation</td>
+<td class="grid_2_cen"><samp>1/10/40/100</samp><br>support for link aggregation</td>
+<td class="grid_2_cen"><samp>1/10/40/100</samp><br>support for link aggregation</td></tr>
+</table>
+
+
+<h5>Fibre Channel</h5>
+<p>
+Fibre Channel is a high-speed data transfer network (usually running at
+<span class="sserif">2, 4, 8, 16, 32, 64, 128 gigabits per second</span>)
+providing in-order, lossless delivery of raw block data.</p>
+<p>
+Fibre Channel network is built up of Fibre Channel adapters and switches
+connected with fiber optic cables.</p>
+
+<img class="centered" src="images/qlogic_fc_adapter.jpg" />
+<p>
+<b>Fibre Channel Protocol</b> (FCP) is the SCSI interface protocol utilising an
+underlying Fibre Channel connection. FCP consists of the following layers:</p>
+<ul>
+<li><samp><b>FC-0</b></samp> provides the physical media interface;</li>
+<li><samp><b>FC-1</b></samp> performs data encoding/decoding and out-of-band
+physical link control info for transmission over the physical media;</li>
+<li><samp><b>FC-2</b></samp> transfers frames, sequences and exchanges
+comprising protocol info units;</li>
+<li><samp><b>FC-3</b></samp> provides common services required for advanced
+features such as striping, hunt group and multicast;</li>
+<li><samp><b>FC-4</b></samp> provides application interfaces that can execute
+over Fibre Channel, e.g. FCS (Fibre Channel Protocol for SCSI), FC-LE (Fibre
+Channel Link Encapsulation);</li>
+</ul>
+<img class="centered" src="images/fcp.jpg" />
+<p>
+Unlike TCP/IP which is supposed to handle unpredictable channel quality, data
+loss, intricate topology, etc, FCP is a relatively simple protocol optimized
+for fast and reliable data transfer in reliable networks with simple topology.
+Typical Fibre Channel speeds are <span class="sserif">8 Gbps</span>,
+<span class="sserif">16 Gbps</span>, and <span class="sserif">32 Gbps</span>.
+FC SAN is isolated from LAN, i.e., users and client devices are not directly
+connected to SAN.</p>
+
+
+<h5>iSCSI</h5>
+<p>
+was invented to send SCSI commands using TCP/IP and related equipment.</p>
+<p>
+You can organize iSCSI SAN within your LAN using standard Ethernet cards,
+cables, switches, but the throughput will be very far from FC SAN. Obviously,
+<span class="sserif">1 Gbit/s</span> Ethernet adapter on a desktop's
+motherboard is not that kind of device you can use to build something close
+to FC SAN.</p>
+<p>
+But you can build a dedicated <span class="sserif">10 Gbit/s</span>
+Ethernet-based network (either optical or copper) for servers and storage
+devices. Of course, in this case you must buy hardware-accelerated adapters,
+the appropriate network switches supporting large data frames, etc. It will be
+faster than SAN within LAN, but TCP/IP overhead still stays, and costs become
+comparable to FC. And configuration process won't be trivial. You must install
+and configure iSCSI Target/Initiator software onto your storage server and its
+clients, configure IP addresses of iSCSI storage and clients, optimize
+hardware/network settings like Flow Control,
+<a href="tcpip.html#jumbo_frame">Jumbo Frames</a>, Spanning Tree, Trunks,
+etc.</p>
+
+
+<h5>FCoE (Fibre Channel over Ethernet)</h5>
+<p>
+<b>Fibre Channel over Ethernet</b> is a computer network technology that
+encapsulates FC frames over Ethernet networks. This allows Fibre Channel to use
+<span class="sserif">10 Gigabit</span> (or higher) Ethernet networks while
+preserving the FCP (Fibre Channel Protocol).</p>
+<p>
+This technology combines benefits of both FC and Ethernet. With FCoE,
+FC becomes another network protocol running on Ethernet alongside traditional
+IP traffic (see <a href="tcpip.html#ethernet_frame">Ethernet Frame</a>). FCoE
+operates <i>directly above Ethernet</i> in the network protocol stack, in
+contrast to iSCSI which runs on top of TCP/IP. It also means that FCoE is not
+routable at the IP layer and will not work across the routed IP networks.</p>
+<p>
+The main benefit of FCoE is its ability to use <i>converged</i> infrastructure,
+which allows LAN and SAN traffic to pass through using the same hardware and
+links, while still maintaining isolation. The best examples are <i>Blade
+servers</i>. Using copper Ethernet lines and switches with the support of FCoE,
+it allows system administrators to change LAN/SAN distribution depending on
+the business needs.</p>
+<p>
+If you are already using high-performance networks
+(<span class="sserif">10 Gbit/s</span> or better) with FCoE-enabled switches
+and adapters, this technology is a good alternative to the classic Fibre
+Channel.</p>
+
+
+</div>
+
+</body></html>

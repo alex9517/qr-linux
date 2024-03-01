@@ -1,0 +1,1746 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (cat, chmod, chown, cksum, cp, crontab, curl)</title>
+<meta name="description" content="linux quick reference, cat, chattr, chgrp, chkconfig, chmod, chown, cksum, cmp, comm, cp, cpio, crontab, curl" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<div id="topmenu">
+<p class="menu">
+<a href="#cat">cat</a>&nbsp;|
+<a href="#cd">cd</a>&nbsp;|
+<a href="#chattr">chattr</a>&nbsp;|
+<a href="#chgrp">chgrp</a>&nbsp;|
+<a href="#chkconfig">chkconfig</a>&nbsp;|
+<a href="#chmod">chmod</a>&nbsp;|
+<a href="#chown">chown</a>&nbsp;|
+<a href="#cksum">cksum</a>&nbsp;|
+<a href="#cmp">cmp</a>&nbsp;|
+<a href="#comm">comm</a>&nbsp;|
+<a href="#cp">cp</a>&nbsp;|
+<a href="#cpio">cpio</a>&nbsp;|
+<a href="#crontab">crontab</a>&nbsp;|
+<a href="#curl">curl</a></p>
+</div>
+
+
+<p class="cmdname"><a name="cat">cat</a></p>
+<p>
+concatenates files and prints the result on the stdout.</p>
+
+<p class="fmt"><code>cat&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;file1 file2 ..</kbd></p>
+
+<p class="cmdc">cat -n app.cpp | more</p>
+<p class="desc">display <samp>app.cpp</samp> with line numbers;</p>
+
+<p class="cmdc">cat file02.txt &gt;&gt; my_file.txt</p>
+<p class="desc">add contents of <samp>file02.txt</samp> to <samp>my_file.txt</samp>;</p>
+
+<p class="cmdc">cat *txt &gt; all_info.txt</p>
+<p class="desc">copy contents of several files [in curr dir] into a single file;</p>
+
+<p class="cmdc">cat info04 1&gt; mydata 2&gt; myerr</p>
+<p class="desc">redirect stdout to <samp>mydata</samp>, redirect stderr to
+<samp>myerr</samp>; if <samp>info04</samp> exists, then <samp>mydata</samp>
+will be its exact copy;</p>
+
+<p class="cmdc">cat info05 1&gt; mydata 2&gt;&amp;1</p>
+<p class="desc">if <samp>info05</samp> does not exist, then error msg will
+be written to <samp>mydata</samp>, otherwise, contents of <samp>info05</samp>
+will be copied to <samp>mydata</samp>; in fact, this cmd concatenates stdout
+and stderr and writes their contents to <samp>mydata</samp> file;</p>
+
+<p class="cmdc">cat /etc/*-release</p>
+<p class="desc">Linux name and version numbers; you can also use:</p>
+
+<p class="cmd">lsb-release -a</p>
+
+
+<h5>Getting misc system info</h5>
+
+<p class="cmdc">cat /proc/cpuinfo</p>
+<p class="desc">show info about CPU installed in your computer;</p>
+
+<p class="cmdc">cat /proc/cpuinfo|grep processor|wc -l</p>
+<p class="desc">get the number of processors (cores, if CPU is multicore);</p>
+
+<p class="cmdc">cat /proc/cmdline</p>
+<p class="desc">show command line params received by kernel at the start;</p>
+
+<p class="cmdc">cat /proc/devices</p>
+<p class="desc">show currently configured block &amp; character devices;</p>
+
+<p class="cmdc">cat /proc/asound/cards</p>
+<p class="desc">show info about sound cards installed;</p>
+
+<p class="cmdc">cat /proc/filesystems</p>
+<p class="desc">show fs types supported by the running kernel;</p>
+
+<p class="cmdc">cat /proc/meminfo</p>
+<p class="desc">show RAM &amp; virtual memory info;</p>
+
+<p class="cmdc">cat /proc/mounts</p>
+<p class="desc">show mount points;</p>
+
+<p class="cmdc">cat /proc/partitions</p>
+<p class="desc">show info about disk partitions;</p>
+
+<p class="cmdc">cat /proc/swaps</p>
+<p class="desc">show info about swap partitions;</p>
+
+<p class="cmdc">cat /proc/version</p>
+<p class="desc">show kernel &amp; C-compiler versions;</p>
+
+<a name="ip_forward_status">
+<p class="cmdc">cat /proc/sys/net/ipv4/ip_forward</p></a>
+<p class="desc">check IP forwarding status (<samp>0</samp> means OFF,
+<samp>1</samp> means ON);</p>
+
+<p class="cmdc">cat /proc/net/if_inet6</p>
+<p class="desc">check if IPv6 is enabled (if disabled - file does not exist,
+if enabled, the output usually includes <samp>eth0</samp> and <samp>lo</samp>);
+see also <a href="cmds_s.html#sysctl"><code>sysctl</code></a>;</p>
+
+<p class="cmdc">cat /proc/sys/vm/swappiness</p>
+<p class="desc">show current swappiness param: default is usually
+<samp>60</samp>, but for SSD you should have <samp>1</samp> (set
+<samp>vm.swappiness=1</samp> in <samp>/etc/sysctl.conf</samp>);</p>
+
+<p class="cmdc">cat /sys/block/sda/queue/scheduler</p>
+<p class="desc">show current I/O scheduler; the best for SSD (and probably
+HDD too) is thought to be <samp>deadline</samp> (default in Ubuntu and
+Mint); the above cmd usually outputs "<samp>noop [deadline] cfq</samp>" which
+means <samp>deadline</samp> is active, but <samp>noop</samp> and
+<samp>cfq</samp> are also supported; to change default scheduler, you have to
+modify <samp>/etc/default/grub</samp>;</p>
+
+<p class="cmdc">cat /proc/sys/kernel/random/uuid | tr -d '-' |<br>base64 | cut -b 1-22</p>
+<p class="desc">generate 16-byte base64-encoded random UUID;</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-b</code></td>
+<td class="opt_desc">number non-blank output lines;</td></tr>
+<tr>
+<td class="opt_name"><code>-E</code></td>
+<td class="opt_desc">display $ at the end of each line;</td></tr>
+<tr>
+<td class="opt_name"><code>-n</code></td>
+<td class="opt_desc">number all output lines;</td></tr>
+<tr>
+<td class="opt_name"><code>-s</code></td>
+<td class="opt_desc">replace several blank lines with a single blank line;</td></tr>
+<tr>
+<td class="opt_name"><code>-T</code></td>
+<td class="opt_desc">show TABs;</td></tr>
+<tr>
+<td class="opt_name"><code>-v</code></td>
+<td class="opt_desc">show non-printing;</td></tr>
+</table>
+
+
+
+<p class="cmdname"><a name="cd">cd</a></p>
+<p>
+Change directory is a Shell built-in cmd, and its behavior varies slightly
+between shells since it uses shell environment variables. Remember that in many
+situation you can use the <span class="keys">Tab</span> key to <b>auto complete</b>
+the path.</p>
+
+<p class="fmt"><code>cd </code>[<kbd>options</kbd>] [<kbd>dir</kbd>]</p>
+<p>
+The <b>current working directory</b> is the dir your terminal window or command
+prompt is working in (use <code>pwd</code> or pay attention to the prompt). When
+you login, your working dir is usually the root of your home dir:</p>
+
+<p class="cmd">echo $HOME</p>
+<p>
+You can always return to the root of your home dir using one of the following
+cmds:</p>
+
+<p class="cmdc">cd</p>
+<p class="cmd">cd ~</p>
+<p>
+To return to the previous dir:</p>
+
+<p class="cmd">cd -</p>
+<p>
+The following cmds move you to the <i>parent dir</i> and to the <i>system's
+root</i> correspondingly:</p>
+
+<p class="cmdc">cd ..</p>
+<p class="cmd">cd /</p>
+<p>
+To move through the filesystem's dir tree, you can use relative or absolute dir
+specs:</p>
+
+<p class="cmdc">cd /usr/local/bin</p>
+<p class="cmd">cd ../tmp2</p>
+<p>
+If the path has spaces or some other "inconvenient" symbols, try to use quotes,
+double quotes, escapes (<samp>\</samp>), or just enter the beginning and press
+<span class="keys">Tab</span>:</p>
+
+<p class="cmdc">cd 'Some dir name with blank spaces'</p>
+<p class="cmd">cd Some\ dir\ name\ with\ blank\ spaces</p>
+
+
+<h5>Options</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-L</code></td>
+<td class="opt_desc">force following symbolic links (default);</td></tr>
+<tr>
+<td class="opt_name"><code>-P</code></td>
+<td class="opt_desc">do not follow symbolic links; this option resolves the
+symlink to determine the parent dir before moving to the user-requested dir;</td></tr>
+<tr>
+<td class="opt_name"><code>-e</code></td>
+<td class="opt_desc">exit with a non-zero status if using the <samp>-P</samp>
+option and the cmd cannot resolve the symlink;</td></tr>
+
+<tr>
+<td class="opt_name"><code>-@</code></td>
+<td class="opt_desc">present a file with extended attributes as a dir containing
+the file attributes;</td></tr>
+</table>
+
+
+
+
+<p class="cmdname"><a name="chattr">chattr</a></p>
+<p>
+sets/clears file attributes on an ext2/ext3/ext4 filesystems. Though
+<code>~</code> belongs to <samp>e2fsprogs</samp> pkg, it supports (at least
+partially) XFS, ReiserFS, JFS, OCFS2, BTRFS. Note that <i>only root</i> (or a
+process with <samp>CAP_LINUX_IMMUTABLE</samp> capability) can set/clear immutable
+attrib (<samp>i</samp>). Also, <i>only root</i> (or a process with
+<samp>CAP_SYS_RESOURCE</samp>) can set/clear journaling (<samp>j</samp>).</p>
+<p>
+Take into account that <samp>c</samp>, <samp>s</samp>, and <samp>u</samp>
+attribs may be not honored by ext2/ext3/ext4 filesystems (depends on kernel
+version).</p>
+
+<p class="cmdc">chattr =s mesg.txt</p>
+<p class="desc">set secure deletion attribute for <samp>mesg.txt</samp>
+(all prev attribs will be removed);</p>
+
+<p class="cmdc">chattr +i setmode.sh</p>
+<p class="desc">make this file (<samp>setmode.sh</samp>) immutable (nobody
+can change, delete, rename, etc);</p>
+
+<p class="cmdc">chattr -i setmode.sh</p>
+<p class="desc">remove immutable attrib of the specified file;</p>
+
+<p class="fmt"><code>chattr&nbsp;</code>[<kbd>options</kbd>] [<kbd>mode</kbd>]<kbd>&nbsp;files ...</kbd></p>
+
+
+<h5>Options</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-R</code></td>
+<td class="opt_desc">recursively change attribs of dirs and
+their contents; symlinks are ignored;</td></tr>
+<tr>
+<td class="opt_name"><code>-V</code></td>
+<td class="opt_desc">show program version and produce verbose output;</td></tr>
+<tr>
+<td class="opt_name"><code>-v</code> <kbd>n</kbd></td>
+<td class="opt_desc">set the file’s version/generation number;</td></tr>
+</table>
+<p>
+In mode specification <code>+</code> causes the selected attributes to be
+added to existing, <code>-</code> causes them to be removed, <code>=</code>
+means "remove all existing, add the specified".</p>
+
+
+<h5>Attributes</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>A</code></td>
+<td class="opt_desc">no <samp>atime</samp> updates (reduces disk I/O);</td></tr>
+<tr>
+<td class="opt_name"><code>a</code></td>
+<td class="opt_desc">file can only be open in append mode for writing;
+nobody except superuser or proc with <samp>CAP_LINUX_IMMUTABLE</samp>
+capability can set/clear this attribute;</td></tr>
+<tr>
+<td class="opt_name"><code>c</code></td>
+<td class="opt_desc">file with this attrib is auto compressed
+on the disk by the kernel; read/write ops with such file are transparent;</td></tr>
+<tr>
+<td class="opt_name"><code>D</code></td>
+<td class="opt_desc">synchronous directory updates; when dir with this
+attrib set is modified, changes are written to the disk synchronously;</td></tr>
+<tr>
+<td class="opt_name"><code>d</code></td>
+<td class="opt_desc">no dump (<code>dump</code> does not backup files
+with this attrib set);</td></tr>
+<tr>
+<td class="opt_name"><code>E</code></td>
+<td class="opt_desc">is used by the experimental compression patches to
+indicate that a compressed file has a compression error; it cannot be
+set or reset by <code>~</code>;</td></tr>
+<tr>
+<td class="opt_name"><code>e</code></td>
+<td class="opt_desc">indicates that the file is using extents for mapping
+the blocks on disk; <code>~</code> cannot remove this attrib;</td></tr>
+<tr>
+<td class="opt_name"><code>h</code></td>
+<td class="opt_desc">indicates that the file is storing its blocks in units
+of the filesystem blocksize instead of in units of sectors, and means that
+the file is (or once was) larger than <samp>2TB</samp>; <code>~</code> cannot
+set or reset this attrib;</td></tr>
+<tr>
+<td class="opt_name"><code>I</code></td>
+<td class="opt_desc">is used by the <code>htree</code> code to indicate that
+a directory is being indexed using hashed trees; it cannot be set or reset
+by <code>~</code>;</td></tr>
+<tr>
+<td class="opt_name"><code>i</code></td>
+<td class="opt_desc">immutable; file with this attrib cannot be modified,
+deleted, renamed, no link can be created; only superuser or process with
+<samp>CAP_LINUX_IMMUTABLE</samp> capability can set/clear this attrib;</td></tr>
+<tr>
+<td class="opt_name"><code>j</code></td>
+<td class="opt_desc">data journalling (only useful if fs mounted as ext3/ext4);
+all file data must be written to the ext3 journal before being written to the
+file itself; it is only effective when fs is mounted with
+<samp>data=ordered</samp> or <samp>data=writeback</samp> options; only
+superuser or process with <samp>CAP_SYS_RESOURCE</samp> capability can
+set/clear this attrib;</td></tr>
+<tr>
+<td class="opt_name"><code>S</code></td>
+<td class="opt_desc">synchronous updates; when a file with this attrib is
+modified, changes are written to the disk synchronously;</td></tr>
+<tr>
+<td class="opt_name"><code>s</code></td>
+<td class="opt_desc">secure deletion; when file with this attrib set is
+deleted, its blocks are zeroed and written back to the disk;</td></tr>
+<tr>
+<td class="opt_name"><code>T</code></td>
+<td class="opt_desc">top of the directory hierachy (dir will be deemed
+to be the top of the dir hierarchy);</td></tr>
+<tr>
+<td class="opt_name"><code>t</code></td>
+<td class="opt_desc">no tail-merging; file with this attrib will not have
+a partial block fragment at the end of file merged with other file
+(ext2/ext3 currently does not support tail-merging);</td></tr>
+<tr>
+<td class="opt_name"><code>u</code></td>
+<td class="opt_desc">undeletable; when file with this attrib is deleted,
+its contents are saved, and user can undelete such file;</td></tr>
+<tr>
+<td class="opt_name"><code>X</code></td>
+<td class="opt_desc">is used by the experimental compression patches to
+indicate that a raw contents of a compressed file can be accessed directly;
+<code>~</code> cannot set or reset this attrib;</td></tr>
+<tr>
+<td class="opt_name"><code>Z</code></td>
+<td class="opt_desc">is used by the experimental compression patches to
+indicate a compressed file is dirty; <code>~</code> cannot set or reset this
+attrib;</td></tr>
+</table>
+
+
+
+
+<p class="cmdname"><a name="chgrp">chgrp</a></p>
+<p>
+changes the group of each file to <kbd>grp</kbd>.</p>
+
+<p class="cmdc">chgrp dba control.dbf</p>
+<p class="desc">change the group of the specified file (<samp>control.dbf</samp>) to <samp>dba</samp>;</p>
+
+<p class="cmdc">chgrp -R root ./arc01</p>
+<p class="desc">change group of subdir <samp>arc01</samp> (including all its
+contents) in the current directory to <samp>root</samp>;</p>
+<p class="fmt"><code>chgrp&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;grp file</kbd></p>
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code> &nbsp;&nbsp;
+<code>--verbose</code> &nbsp;&nbsp; <code>-v</code></p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-c</code></td>
+<td class="opt_desc">like verbose, but report only when a change is made;</td></tr>
+</table>
+
+<p class="fmtc"><code>-f</code>, <code>--silent</code>, <code>--quiet</code></p>
+<p class="desc">suppress most error messages;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-H</code></td>
+<td class="opt_desc">(with <code>-R</code>) if a cmd line arg is
+a symlink to a dir, traverse it;</td></tr>
+</table>
+
+<p class="fmtc"><code>-h</code>, <code>--no-dereference</code></p>
+<p class="desc">affect symlinks instead of referenced files
+(useful only on systems that can change the ownership of a symlink);</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-L</code></td>
+<td class="opt_desc">(with <code>-R</code>) traverse every symlink to a dir;</td></tr>
+<tr><td class="opt_name"><code>-P</code></td>
+<td class="opt_desc">(with <code>-R</code>) do not traverse any symlinks (default);</td></tr>
+<tr><td class="opt_name"><code>-R</code></td>
+<td class="opt_desc">operate on files and dirs recursively;</td></tr>
+</table>
+
+<p class="cmdc">--dereference</p>
+<p class="desc">change files referenced by symlinks;</p>
+
+<p class="cmdc">--no-preserve-root</p>
+<p class="desc">do not treat root dir specially (default);</p>
+
+<p class="cmdc">--preserve-root</p>
+<p class="desc">fail to operate recursively on root dir;</p>
+
+<p class="cmdc">--reference=<span class="arg">file</span></p>
+<p class="desc">use <kbd>file</kbd>'s group rather than specifying <kbd>grp</kbd>;</p>
+
+
+
+
+<p class="cmdname"><a name="chkconfig">chkconfig</a></p>
+<p>
+(<b>outdated</b>, related to <a href="sysinit.html">system init</a> proc)
+updates and queries <a href="sysinit.html#runlevel">runlevel</a> info for
+system services, maintains links in <samp>/etc/rc.d</samp> dir hierarchy.</p>
+
+<p class="fmtc"><code>chkconfig --list&nbsp;</code>[<kbd>name</kbd>]</p>
+<p class="fmtc"><code>chkconfig --add </code><kbd>name</kbd></p>
+<p class="fmtc"><code>chkconfig --del </code><kbd>name</kbd></p>
+<p class="fmt"><code>chkconfig&nbsp;</code>[<code>--level</code> <kbd>n</kbd>]<kbd>&nbsp;name&nbsp;</kbd>[<code>on</code> | <code>off</code> | <code>reset</code>]</p>
+
+<p><kbd>name</kbd> is a service name (like <code>httpd</code>,
+<code>sshd</code>, <code>named</code>). <code>on</code> and <code>off</code>
+cause service to be started or stopped, <code>reset</code> resets the startup
+info for the service to whatever is specified in its init script. By default,
+<code>on</code> and <code>off</code> affect levels 2,3,4,5, while
+<code>reset</code> affects all levels.</p>
+
+<p class="cmdc">chkconfig cups</p>
+<p class="desc">check if cups is configured to be started at the current
+runlevel; this cmd outputs nothing, just sets the exit status;</p>
+
+<p class="cmdc">chkconfig --list</p>
+<p class="desc">show status of all services [known to <code>~</code>] at all runlevels;</p>
+
+<p class="cmdc">chkconfig --list anacron</p>
+<p class="desc">query a service managed by <samp>/etc/rc.d</samp>;</p>
+
+<p class="cmdc">chkconfig --level 2345 db_ora on</p>
+<p class="desc">turn on db_ora at runlevels 2, 3, 4, 5 (start Oracle database at normal system startup);</p>
+
+<p class="cmdc">chkconfig --level 06 db_ora off</p>
+<p class="desc">turn off db_ora in runlevels 0, 6 (shutdown Oracle database when system goes down or restarts);</p>
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-h</code> &nbsp;&nbsp; <code>--help</code> &nbsp;&nbsp;
+<code>--version</code></p>
+
+<p class="fmtc"><code>--add</code> <kbd>name</kbd></p>
+<p class="desc">add a new service for management by <code>~</code>;</p>
+
+<p class="fmtc"><code>--del</code> <kbd>name</kbd></p>
+<p class="desc">remove service from <code>~</code> management, and remove
+corresponding symlinks in <samp>/etc/rc.d</samp>;</p>
+
+<p class="fmtc"><code>--level</code> <kbd>n</kbd></p>
+<p class="desc">specify the runlevels to be affected;</p>
+
+<p class="fmtc"><code>--list</code> [<kbd>name</kbd>]</p>
+<p class="desc">show info about the status of the specified service at all
+runlevels;</p>
+<p>
+Ubuntu (since 10.xx ?) does not install <code>~</code> by default.
+But you can:</p>
+
+<p class="cmd">sudo apt-get install chkconfig</p>
+
+
+<h5>A note for init script writers</h5>
+<p>
+Each service to be managed by <code>~</code>, needs two or more
+lines added to its <samp>/etc/init.d</samp> script file:</p>
+<div class="file">
+<pre># chkconfig: 2345 80 20
+# description: Oracle Database</pre>
+</div>
+<p>
+The first line tells <code>~</code> in what runlevels (2345) the service
+should be started up by default, and its start/stop priority levels
+(80/20 - typical for non-privileged third party services). If the service
+should not be started by default in any runlevels, put '<samp>-</samp>'
+in place of the runlevels list. The 2nd line is a description for the
+service (add '<samp>\</samp>' at the EOL to make it multiline).</p>
+
+
+
+
+<p class="cmdname"><a name="chmod">chmod</a></p>
+<p>
+sets/changes the access permissions of the specified file/directory.</p>
+
+<p class="fmt"><code>chmod&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;mode
+file</kbd></p>
+<p>
+It never changes permissions of the <b>symbolic links</b> (in fact,
+symlink permissions are never used), instead it changes permissions of
+the pointed-to files. An <b>important</b> thing to remember: <code>chmod</code>
+ignores symbolic links encountered during recursive directory traversals!</p>
+<p>
+Linux uses <a href="#symbolic_notation">symbolic</a> and
+<a href="#numeric_notation">numeric</a> notations for permissions.
+See <a href="#notation_examples">Examples</a>.</p>
+<p>
+Thus, the<kbd> mode </kbd>arg is either <i>symbolic representation</i>
+of changes to be done, or an <i>octal number</i> representing the <i>bit
+pattern</i> for the new permissions. Note, that '<samp>+</samp>' at the end
+of the symbolic notation means that <samp>ACL</samp> is in effect for that
+file (see <code><a href="cmds_l.html#ls">ls</a></code> for details).</p>
+<p>
+The<kbd> file </kbd>arg can be <i>filename</i>, <i>dirname</i> or name
+<i>pattern</i> (e.g., <samp>*.html</samp>).</p>
+
+<p class="cmdc">chmod 644 index.html</p>
+<p class="desc">set <samp>-rw-r--r--</samp> permissions on
+<samp>index.html</samp> (everybody can read, owner can modify);</p>
+
+<p class="cmdc">chmod 644 V*</p>
+<p class="desc">set <samp>rw-r--r--</samp> perms on all files beginning with
+<samp>V</samp> (in the current dir) (everybody can read, owner can write,
+delete, etc);</p>
+
+<p class="cmdc">chmod 755 VS_VIDEO</p>
+<p class="desc">set <samp>rwxr-xr-x</samp> perms on dir <samp>VS_VIDEO</samp>;</p>
+
+<p class="cmdc">chmod 700 clean_arc.sh</p>
+<p class="desc">set <samp>rwx------</samp> perms on a bash script; it means
+only owner can run this script; other users cannot even look inside;</p>
+
+<p class="cmdc">chmod a+r readme.doc</p>
+<p class="desc">add (give) read perm on <samp>readme.doc</samp> to all users;</p>
+
+<p class="cmdc">chmod u+rwx rlist.pl</p>
+<p class="desc">give read/write/exec on <samp>rlist.pl</samp> to owner;</p>
+
+<p class="cmdc">chmod g-w infodata</p>
+<p class="desc">revoke write perm on <samp>infodata</samp> from group;</p>
+
+<p class="cmdc">chmod o-rwx rlist.pl</p>
+<p class="desc">revoke read/write/exec on <samp>rlist.pl</samp> from others;</p>
+
+<p class="cmdc">chmod u+s /usr/sbin/pppd</p>
+<p class="desc">set user ID on execution;</p>
+
+
+
+<h5>Symbolic mode args</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>ugoa</code></td>
+<td class="opt_desc">user, group, other, all;</td></tr>
+<tr>
+<td class="opt_name"><code>+ - =&nbsp;</code></td>
+<td class="opt_desc">(perm) add, remove, set as specified;</td></tr>
+<tr>
+<td class="opt_name"><code>rwxst&nbsp;</code></td>
+<td class="opt_desc">1) read, 2) write, 3) execute,
+4) set user or group ID on execution, 5) set sticky bit
+(restricted deletion);</td></tr>
+<tr>
+<td class="opt_name"><code>X</code></td>
+<td class="opt_desc">execute only if file is a directory or already has
+exec perm for some user;</td></tr>
+</table>
+
+
+
+<h5>
+<a name="symbolic_notation">Symbolic notation</a></h5>
+<p>
+The first char in <code>ls</code> output is the <b>file type</b>.
+Linux/POSIX file types:</p>
+
+<table class="exit" style="margin-top:0">
+<tr>
+<td class="exit_code">-</td>
+<td class="code_desc">regular file</td></tr>
+<tr>
+<td class="exit_code">d</td>
+<td class="code_desc">directory</td></tr>
+<tr>
+<td class="exit_code">l</td>
+<td class="code_desc">symbolic link (a reference to another file; symlink
+is a textual representation of the referenced file's path, which means the
+destination may be a relative path, or may not exist at all)</td></tr>
+<tr>
+<td class="exit_code">p</td>
+<td class="code_desc">named pipe (FIFO) (pipes connect the output of one
+process to the input of another)</td></tr>
+<tr>
+<td class="exit_code">b</td>
+<td class="code_desc">block device special file</td></tr>
+<tr>
+<td class="exit_code">c</td>
+<td class="code_desc">character device special file</td></tr>
+<tr>
+<td class="exit_code">s</td>
+<td class="code_desc">socket special file (socket special files are used
+for inter-process communication; unlike named pipes which are unidirectional,
+sockets provide full-duplex communication)</td></tr>
+</table>
+<p>
+Then go <b>three permission triads</b>
+(see <a href="#notation_examples">Examples</a>):</p>
+<ul>
+<li><i>first triad</i> - the rights of the <b>owner</b>;</li>
+<li><i>second triad</i> - the rights of the <b>group</b>;</li>
+<li><i>third triad</i> - the rights of all <b>other</b> users;</li>
+</ul>
+<p>
+Each char in each triad designates a specific permission:</p>
+<ul>
+<li><samp>-</samp> - (any position in triad) no permission;</li>
+<li><samp>r</samp> - (first position in triad) <b>read</b> (file is readable);</li>
+<li><samp>w</samp> - (second position in triad) <b>write</b> (file is writable);</li>
+<li><samp>x</samp> - (third position in triad) <b>execute</b> (file is executable);
+the third char can also be:
+<ul>
+<li><samp>s</samp> - file is executable with setuid/setgid
+(<samp>1</samp>st and <samp>2</samp>nd triads only);</li>
+<li><samp>S</samp> - file is NOT executable with setuid/setgid
+(<samp>1</samp>st and <samp>2</samp>nd triads);</li>
+<li><samp>t</samp> - file is executable with sticky bit
+(<samp>3</samp>rd triad only);</li>
+<li><samp>T</samp> - file is NOT executable with sticky bit
+(<samp>3</samp>rd triad only);</li>
+</ul>
+</li>
+</ul>
+<p>
+There is some <a href="#perm_meaning">difference in meaning</a> of
+read/write/execute permissions when they apply to files and when they apply
+to directories.</p>
+
+
+
+<h5>
+<a name="numeric_notation">Numeric notation</a></h5>
+<p>
+consists of <samp>4</samp> octal digits (<samp>0..7</samp>). If it's shorter,
+then  missing digits are assumed to be leading zeros. Each of these digits is
+the sum of its component bits in the <i>binary numeral system</i>.</p>
+<p>
+The <b>first digit</b> (leftmost) means:
+<table class="exit">
+<tr>
+<td class="exit_code">4</td>
+<td class="code_desc">set user ID (<samp>s</samp> or <samp>S</samp> in first triad);</td></tr>
+<tr>
+<td class="exit_code">2</td>
+<td class="code_desc">set group ID (<samp>s</samp> or <samp>S</samp> in second triad);</td></tr>
+<tr>
+<td class="exit_code">1</td>
+<td class="code_desc">set sticky bit (restricted deletion) on directory (<samp>t</samp> or <samp>T</samp> in third triad);</td></tr>
+</table>
+<p>
+The <b>second</b>, <b>third</b>, <b>fourth</b> digits set permissions on
+file/dir for owner, group, others (it looks like <i>others</i> does not mean
+<i>everybody</i>, i.e., file owner and group members are excluded from others).
+The meaning is like this:</p>
+
+<a name="perm_meaning"></a>
+<p>
+<b>For files:</b></p>
+<table class="exit">
+<tr>
+<td class="exit_code">4</td>
+<td class="code_desc">(<samp>r</samp>) the right to <b>read</b> this file;</td></tr>
+<tr>
+<td class="exit_code">2</td>
+<td class="code_desc">(<samp>w</samp>) the right to <b>write</b> to this file;</td></tr>
+<tr>
+<td class="exit_code">1</td>
+<td class="code_desc">(<samp>x</samp>) the right to <b>execute</b> this file;</td></tr>
+</table>
+
+<p>
+<b>For directories:</b></p>
+<table class="exit">
+<tr>
+<td class="exit_code">4</td>
+<td class="code_desc">(<samp>r</samp>) the right to <b>list</b> this dir (i.e., <b>read</b>
+dir contents);</td></tr>
+<tr>
+<td class="exit_code">2</td>
+<td class="code_desc">(<samp>w</samp>) the right to <b>create files</b> in this dir;</td></tr>
+<tr>
+<td class="exit_code">1</td>
+<td class="code_desc">(<samp>x</samp>) the right to <b>enter this dir</b> (i.e., change to this
+dir);</td></tr>
+</table>
+
+
+
+<h5>
+<a name="notation_examples">Examples of symbolic and numeric notation</a></h5>
+<table class="grid">
+<tr>
+<th class="grid_2_cen">Symbolic</th>
+<th class="grid_2_cen">Numeric</th>
+<th class="grid_2_cen">Description</th></tr>
+<tr>
+<td class="gridcen"><samp>-rw-r--r--</samp></td>
+<td class="gridcen"><samp>644</samp></td>
+<td class="grid">owner can read, write (edit), delete, others can only read;
+typical mode of a text file, HTML file, or even some data file of unperceivable
+binary struct;</td></tr>
+<tr>
+<td class="gridcen"><samp>-rwxr-xr-x</samp></td>
+<td class="gridcen"><samp>755</samp></td>
+<td class="grid">owner can read, write (edit, delete), execute; others can
+only read and execute; this is a typical mode of the majority of Linux programs
+(binary executables, shell scripts, python, PERL, etc);</td></tr>
+<tr>
+<td class="gridcen"><samp>drwxr-xr-x</samp></td>
+<td class="gridcen"><samp>755</samp></td>
+<td class="grid">this is a std set of permissions of a typical Linux
+directory (file type <samp>d</samp> means "directory"); owner can do whatever
+he/she wants; others can change to this dir, run <code>ls</code>, but cannot
+copy files to this dir, and cannot delete files from this dir; probably they
+can copy some file from this dir (it depends on file's perms);</td></tr>
+<tr>
+<td class="gridcen"><samp>----------</samp></td>
+<td class="gridcen"><samp>0000</samp></td>
+<td class="grid">no permissions;</td></tr>
+<tr>
+<td class="gridcen"><samp>-rwx------</samp></td>
+<td class="gridcen"><samp>0700</samp></td>
+<td class="grid">owner can read, write, execute; others cannot do anything
+with this file;</td></tr>
+<tr>
+<td class="gridcen"><samp>-rwxrwx---</samp></td>
+<td class="gridcen"><samp>0770</samp></td>
+<td class="grid">owner and members of his/her primary group can read, write,
+execute; other users cannot do anything with this file;</td></tr>
+<tr>
+<td class="gridcen"><samp>-rwxrwxrwx</samp></td>
+<td class="gridcen"><samp>0777</samp></td>
+<td class="grid">everybody can read, write, execute this program (they can
+also modify or delete this prog);</td></tr>
+<tr>
+<td class="gridcen"><samp>---x--x--x</samp></td>
+<td class="gridcen"><samp>0111</samp></td>
+<td class="grid">everybody can execute it, but nobody is allowed to look
+inside or modify; of course, owner can change access permissions and read,
+modify, delete this file;</td></tr>
+<tr>
+<td class="gridcen"><samp>--w--w--w-</samp></td>
+<td class="gridcen"><samp>0222</samp></td>
+<td class="grid">everybody can modify or delete this file; yet everybody,
+including owner, is denied the possibility to read its contents (unusual);
+though owner can change access mode;</td></tr>
+<tr>
+<td class="gridcen"><samp>--wx-wx-wx</samp></td>
+<td class="gridcen"><samp>0333</samp></td>
+<td class="grid">everybody can execute, delete, or modify this file,
+but cannot its contents;</td></tr>
+<tr>
+<td class="gridcen"><samp>-r--r--r--</samp></td>
+<td class="gridcen"><samp>0444</samp></td>
+<td class="grid">absolute read-only for everybody; of course,
+owner can change access permissions and delete this file;</td></tr>
+<tr>
+<td class="gridcen"><samp>-r-xr-xr-x</samp></td>
+<td class="gridcen"><samp>0555</samp></td>
+<td class="grid">everybody can read and execute, nobody can modify;</td></tr>
+<tr>
+<td class="gridcen"><samp>-rw-rw-rw-</samp></td>
+<td class="gridcen"><samp>0666</samp></td>
+<td class="grid">everybody can read and write</td></tr>
+<tr>
+<td class="gridcen"><samp>-rwxr-----</samp></td>
+<td class="gridcen"><samp>0740</samp></td>
+<td class="grid">owner can read, write, execute; group members can only
+read; others have no permissions;</td></tr>
+<tr>
+<td class="gridcen"><samp>-rwsr-xr-x</samp></td>
+<td class="gridcen"><samp>4755</samp></td>
+<td class="grid">set <a href="#setuid">user ID</a> on exec; owner can
+read, write, execute; group and others can only read and execute;</td></tr>
+<tr>
+<td class="gridcen"><samp>drwxrwxrwt</samp></td>
+<td class="gridcen"><samp>1777</samp></td>
+<td class="grid">set sticky bit on this dir, and give everybody
+all permissions applicable to a <a href="#sticky_bit">dir with sticky
+bit</a>;</td></tr>
+<tr>
+<td class="gridcen"><samp>-rwS------</samp></td>
+<td class="gridcen"><samp>4600</samp></td>
+<td class="grid">set <a href="#setuid">user ID</a>; owner can
+read and write, but not execute; others have no access;</td></tr>
+<tr>
+<td class="gridcen"><samp>----rwS---</samp></td>
+<td class="gridcen"><samp>2060</samp></td>
+<td class="grid">set <a href="#setgid">group ID</a>, enable mandatory
+locking (if it's enabled for this filesystem); group can read and write,
+others have no access;</td></tr>
+<tr>
+<td class="gridcen"><samp>----r-s---</samp></td>
+<td class="gridcen"><samp>2050</samp></td>
+<td class="grid">if the third digit is 7, 5, 3, 1, set group ID on exec;
+if the third digit is 6, 4, 2, 0, enable mandatory locking (<samp>l</samp>);
+in this case: setgid on exec without write perm, and no access for others;</td></tr>
+</table>
+
+
+
+<h5>
+<a name="setuid">Setuid, setgid on files</a></h5>
+<p>
+The <b>setuid</b> (set user ID) and <b>setgid</b> (set group ID),
+when it's set on <b>executable file</b>, allow users to run an executable
+with the permissions of the executable's owner (or group). Usually it means
+<samp>root</samp>.</p>
+<p>
+This feature is used to allow users to run programs with temporarily
+elevated privileges in order to perform specific potentially not safe
+tasks.</p>
+<p>
+For example, to change password, user must be able to modify
+<samp>/etc/shadow</samp> file. But ordinary users cannot even read this
+file (<samp>-rw-r-----</samp>). However, <samp>/usr/bin/passwd</samp> program
+has setuid bit (<samp>-rwsr-xr-x</samp>), i.e., user runs this prog as
+<samp>root</samp>, and <samp>root</samp> can modify <samp>/etc/shadow</samp>.</p>
+<p>
+This feature may not work with shell scripts, and even if it works, you
+should not set this permission on scripts, or your own binary executables,
+or any other binary executables unless you are <samp>100%</samp> sure the app
+is perfectly safe, unbreakable, etc. Shortly speaking, don't use it at all,
+leave it to OS maintainers.</p>
+<p>
+The setuid bit <samp>s</samp> is displayed at the same location as
+<samp>x</samp> permission for owner. It's assumed that <samp>x</samp>
+is also present, otherwise setuid bit is displayed as <samp>S</samp>.</p>
+
+
+
+<h5>Setuid, setgid on dirs</h5>
+<p>
+The <b>setuid</b> permission set on a directory is ignored on most systems.</p>
+<p>
+The <b>setgid</b> permission on a directory (like <code>chmod g+s</code>)
+causes new files and subdirs created within this dir to inherit group ID of
+this dir, rather than the primary group ID of the user who created the file.
+There are following subtle moments:</p>
+<ul>
+<li>the owner ID is never affected, only group ID;</li>
+<li>newly created subdirs inherit setgid (and behavior of the parent dir);</li>
+<li>the group ID of the files that were created elsewhere and moved to this
+dir is not afftected;</li>
+<li>setting this permission does not affect files and subdirs that existed
+in this dir before;</li>
+</ul>
+<p>
+The setgid bit <samp>s</samp> is displayed at the same location as
+<samp>x</samp> perm for group owner. It's assumed that <samp>x</samp>
+is also present, otherwise setgid bit is displayed as <samp>S</samp>.</p>
+
+
+
+<h5>
+<a name="sticky_bit">Sticky bit</a></h5>
+<p>
+The Linux kernel ignores the sticky bit on files.</p>
+<p>
+When the sticky bit is set on a directory, the system treats the files in
+this directory in a special way so that only file's owner, or directory's
+owner, or <samp>root</samp> can rename or delete those files. In other words,
+sticky bit prevents users from removing files that they do not own.</p>
+<p>
+The sticky bit <samp>t</samp> is displayed at the same location as the
+<samp>x</samp> (executable permission) for <samp>others</samp>. It's assumed
+that <samp>x</samp> is also set, otherwise the sticky bit is displayed as
+<samp>T</samp>.</p>
+<p>
+Typically sticky bit is set on <samp>/tmp</samp> and other world-writable
+dirs to prevent ordinary users from deleting files that belong to other users.</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code>
+&nbsp;&nbsp; <code>--verbose</code> &nbsp;&nbsp; <code>-v</code></p>
+
+<p class="fmtc"><code>-c</code>, <code>--change</code></p>
+<p class="desc">report only when a change is made;</p>
+
+<p class="fmtc"><code>-f</code>, <code>--silent</code>, <code>--quiet</code></p>
+<p class="desc">suppress most error messages;</p>
+
+<p class="fmtc"><code>-R</code>, <code>--recursive</code></p>
+<p class="desc">operate on files/dirs recursively;</p>
+
+<p class="fmtc"><code>--no-preserve-root</code></p>
+<p class="desc">do not treat root dir specially (default);</p>
+
+<p class="fmtc"><code>--preserve-root</code></p>
+<p class="desc">fail to operate recursively on root dir;</p>
+
+<p class="fmtc"><code>--reference=</code><kbd>file</kbd></p>
+<p class="desc">use <kbd>file</kbd>'s mode instead of <kbd>mode</kbd>;</p>
+
+
+
+<h5>About umask</h5>
+<p>
+Though <a href="bash_cmds.html#umask"><code>umask</code></a>
+(bash built-in cmd) is not directly related to <code>chmod</code>,
+it's related to permissions.</p>
+<p>
+When a new file (or dir) is created by some app, its permissons
+are defined by two params: default perms and umask. Default (aka <i>base</i>)
+perms are usually <samp>666</samp> for files and <samp>777</samp> for dirs;
+umask is usually <samp>022</samp> (unless changed by user/admin).
+In fact, if you run <code>umask</code> it outputs <samp>0022</samp>. However,
+the first digit is not essential, because sticky bit, setgid, setuid are never
+set during file/dir creation. Umask is what it sounds - a mask that turns off
+perm bits set by default (base) perms. The rough and convenient (though
+absolutely <i>incorrect</i>) method of calculating real perms is to subtract
+<samp>umask</samp> from default perms. With <samp>umask = 022</samp> new
+files will be created with perm <samp>644</samp>, new dirs will be created
+with perms <samp>755</samp>. Exec bit is never set for a newly created file,
+you must set it explicitly afterwards.</p>
+<p>
+There are some diffs between distros concerning umask. For example, Ubuntu
+Linux may have option</p>
+
+<div class="file">
+<pre>USERGROUPS_ENAB yes</pre>
+</div>
+<p>
+in <samp>/etc/login.defs</samp>. It means each user has his/her personal
+(private) group. In this case <samp>umask</samp> for non-root users is
+<samp>002</samp>, so files will be created with <samp>664</samp>, dirs with
+<samp>775</samp>. For details see manpage for <code>pam_umask</code> PAM
+module.</p>
+
+
+
+
+<p class="cmdname"><a name="chown">chown</a></p>
+<p>
+changes file's owner and group.</p>
+
+<p class="fmt"><code>chown&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;owner</kbd><code>:</code><kbd>group file</kbd></p>
+<p>
+Dot (<code>.</code>) can be used instead of column (<code>:</code>).</p>
+
+<p class="cmdc">chown pro08 install.doc</p>
+<p class="desc">make <samp>pro08</samp> the owner of <samp>install.doc</samp>;</p>
+
+<p class="cmdc">chown -R root:root /u02</p>
+<p class="desc">set owner/group = root/root for the whole dir tree <samp>/u02</samp>;</p>
+
+<p class="cmdc">chown -R root.root ./install</p>
+<p class="desc">set owner/group = root/root for the whole dir tree <samp>install</samp>;</p>
+
+<p class="cmdc">chown alex:users *.png</p>
+<p class="desc">set ownership of all PNG files in the current dir to user/group = alex/users;</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code> &nbsp;&nbsp;
+<code>--verbose</code> &nbsp;&nbsp; <code>-v</code></p>
+
+<p class="fmtc"><code>-c</code>, <code>--change</code></p>
+<p class="desc">report only when a change is made;</p>
+
+<p class="fmtc"><code>-f</code>, <code>--silent</code>, <code>--quiet</code></p>
+<p class="desc">suppress most error messages;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-H</code></td>
+<td class="opt_desc">(with <code>-R</code>) if a cmd line arg is a symlink
+to a dir, traverse it;</td></tr>
+</table>
+
+<p class="fmtc"><code>-h</code>, <code>--no-dereference</code></p>
+<p class="desc">affect symlinks, do not touch files referenced by them;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-L</code></td>
+<td class="opt_desc">(with <code>-R</code>) traverse every symlink to a dir;</td></tr>
+<tr>
+<td class="opt_name"><code>-P</code></td>
+<td class="opt_desc">(with <code>-R</code>) do not traverse symlinks (default);</td></tr>
+</table>
+
+<p class="fmtc"><code>-R</code>, <code>--recursive</code></p>
+<p class="desc">operate on files and dirs recursively;
+
+<p class="cmdc">--dereference</p>
+<p class="desc">change files referenced by symbolic links;</p>
+
+<p class="cmdc">--from=<span class="arg">curr_owner</span>:<span class="arg">curr_grp</span></p>
+<p class="desc">change the owner and/or group of each file only if its
+current owner/group match those specified here; either may be omitted,
+in which case a match is not required for the omitted attribute;</p>
+
+<p class="cmdc">--no-preserve-root</p>
+<p class="desc">do not treat root dir specially (default);</p>
+
+<p class="cmdc">--preserve-root</p>
+<p class="desc">fail to operate recursively on root dir;</p>
+
+<p class="cmdc">--reference=<span class="arg">file</span></p>
+<p class="desc">change owner/group of each file to that of <kbd>file</kbd>;</p>
+
+
+
+
+<p class="cmdname"><a name="cksum">cksum</a></p>
+<p>
+outputs CRC checksum and byte count of the specified file (multiple files
+can be selected using a space-separated list or wildcards).</p>
+
+<p class="cmdc">cksum my_notes.tar.gz</p>
+<p class="desc">count and display CRC checksum and size of the specified file;</p>
+
+<p class="cmdc">cksum notes201?.html</p>
+<p class="desc">count and display checksums and sizes of all files
+in the current dir matching the wildcard pattern;</p>
+
+<p class="cmdc">cksum rpt01.html rpt02.html</p>
+<p class="desc">count and display checksums and sizes of these two files;</p>
+
+<p class="cmdc">cksum *.gz</p>
+<p class="desc">count and display checksums and sizes of all gzip
+archives matching the specified wildcard pattern in the current dir;</p>
+<p>
+The only options are<code>&nbsp;--help&nbsp;</code>and<code>&nbsp;--version</code>.</p>
+
+
+
+
+<p class="cmdname"><a name="cmp">cmp</a></p>
+<p>
+compares two files of any type and writes the results to the stdout.
+If filename is <code>-</code>  or missing, reads stdin.</p>
+
+<p class="fmt"><code>cmp&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;file1&nbsp;</kbd>[<kbd>file2&nbsp;</kbd>[<kbd>skip1&nbsp;</kbd>[<kbd>skip2</kbd>]]]</p>
+<p>
+By default <code>~</code> prints nothing if files are the same, otherwise
+byte and line number at which the first difference occurred are shown.
+Bytes and lines numbering starts from 1. The optional args
+<kbd>skip1</kbd>, <kbd>skip2</kbd> are the byte offsets from the beginning
+of <kbd>file1</kbd> and <kbd>file2</kbd>, respectively, where the comparison
+starts. By default the offset is decimal, but can be hex/octal if prefixed
+with <code>0x</code> or <code>0</code> (zero). Multiplicative suffixes:
+<code>kB</code> (1000), <code>K</code> (1024), <code>MB</code> (1,000,000),
+<code>M</code> (1,048,576), etc.</p>
+
+<p class="cmdc">cmp rpt20090504 rpt20090507</p>
+<p class="desc">compare 2 files; silent termination means that files are
+identical, otherwise only the first difference is shown;</p>
+
+<p class="cmdc">cmp -s rpt20090504 rpt20090507</p>
+<p class="desc">compare 2 files silently: nothing is displayed,
+the only outcome is the exit status (<code>echo $?</code>);</p>
+
+<p class="cmdc">cmp -l --bytes=1024 users.dbf users2.dbf</p>
+<p class="desc">compare only first 1024 bytes of each file, show each
+differing byte within that range;</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code>
+&nbsp;&nbsp; <code>-v</code></p>
+
+<p class="fmtc"><code>-b</code>, <code>--print-bytes</code></p>
+<p class="desc">print differing bytes;</p>
+
+<p class="fmtc"><code>-i</code> <kbd>n</kbd>, <code>--ignore-initial=</code><kbd>n</kbd></p>
+<p class="desc">skip first <kbd>n</kbd> bytes of input;</p>
+
+<p class="fmtc"><code>-i</code> <kbd>n</kbd><code>:</code><kbd>m</kbd>,
+<code>--ignore-initial=</code><kbd>n</kbd><code>:</code><kbd>m</kbd></p>
+<p class="desc">skip first <kbd>n</kbd> bytes of <kbd>file1</kbd> and first
+<kbd>m</kbd> bytes of <kbd>file2</kbd>;</p>
+
+<p class="fmtc"><code>-l</code>, <code>--verbose</code></p>
+<p class="desc">output byte numbers (decimal) and values (octal) of all differing bytes;</p>
+
+<p class="fmtc"><code>-n</code> <kbd>m</kbd>, <code>--bytes=</code><kbd>m</kbd></p>
+<p class="desc">compare at most <kbd>m</kbd> bytes;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-s</code></td><td class="opt_desc">output nothing, return an exit status only;</td></tr>
+</table>
+
+<table class="exit">
+<caption>Exit codes</caption>
+<tr>
+<td class="exit_code">0</td><td class="code_desc">files are identical;</td></tr>
+<tr>
+<td class="exit_code">1</td><td class="code_desc">files are different;</td></tr>
+<tr>
+<td class="exit_code">&gt;1</td><td class="code_desc">error;</td></tr>
+</table>
+
+
+
+
+<p class="cmdname"><a name="comm">comm</a></p>
+<p>
+compares 2 sorted files line by line.</p>
+
+<p class="fmt"><code>comm&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;file1 file2</kbd></p>
+<p>
+Without options <code>~</code> outputs 3 columns: first contains lines unique
+to <samp>file1</samp>, second contains lines unique to <samp>file2</samp>,
+third contains lines common to both files.</p>
+
+<p class="cmdc">comm info01.txt info02.txt</p>
+<p class="desc">compare two text files;</p>
+
+<p class="cmdc">comm -1 -3 index1.html index2.html &gt; upd.html</p>
+<p class="desc">create file containing only those lines from the second file that are missing from the first file (last additions);</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-1</code></td>
+<td class="opt_desc">suppress lines unique to <kbd>file1</kbd>;</td></tr>
+<tr>
+<td class="opt_name"><code>-2</code></td>
+<td class="opt_desc">suppress lines unique to <kbd>file2</kbd>;</td></tr>
+<tr>
+<td class="opt_name"><code>-3</code></td>
+<td class="opt_desc">suppress lines that are common to both files;</td></tr>
+</table>
+
+
+
+
+<p class="cmdname"><a name="cp">cp</a></p>
+<p>
+copies files and directories.</p>
+
+<p class="fmt"><code>cp&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;src dst</kbd></p>
+<p>
+If <kbd>dst</kbd> is an existing dir, <code>~</code> copies each
+specified file into a file with the same name in that dir. It's an error
+if the last arg is not a dir  and more than two files are given. By default,
+<code>~</code> does not copy dirs. Default backup suffix is "<samp>~</samp>".</p>
+
+<p class="cmdc">cp index.html index2.html</p>
+<p class="desc">make a copy of an existing file (<samp>index.html</samp>);</p>
+
+<p class="cmdc">cp ./tmp4/news.html .</p>
+<p class="desc">copy <samp>news.html</samp> from the subdir
+<samp>tmp4</samp> to the current directory;</p>
+
+<p class="cmdc">cp -u ../alex/last_proj/*.cpp ./last_proj</p>
+<p class="desc">copy brand new files and overwrite (update) existing ones
+only if source file is newer then destination file;</p>
+
+<p class="cmdc">cp -i ../alex/last_proj/*.cpp ./last_proj</p>
+<p class="desc">copy files interactively, prompt before overwriting;</p>
+
+<p class="cmdc">cp -a ../alex/last_proj ./last_proj</p>
+<p class="desc">copy dir recursively, preserve attribs, don't dereference links;</p>
+
+<p class="cmdc">cp -R --preserve=all alex /mnt</p>
+<p class="desc">copy dir <samp>alex</samp> recursively to a disk partition
+mounted on <samp>/mnt</samp>, preserve all attribs, don't dereference links;</p>
+
+<p class="warn">Note!</p>
+<p class="indent">
+In some systems, when you invoke this cmd as <code>cp</code>,
+an alias <code>cp -i</code> is used instead, and you are always asked about
+overwriting an existing file; to eliminate this implicit <code>-i</code>,
+either remove the corresponding alias (usually it's in <samp>.bashrc</samp>)
+or use <code>/bin/cp</code>;</p>
+
+<p class="cmdc">/bin/cp --backup=none /opt/db/exp.tar.bz2 /var/ftp/pub/</p>
+<p class="desc">copy <samp>exp.tar.bz2</samp> to <samp>/var/fpt/pub</samp>
+dir, overwrite the existing file (if ...) without prompts and backup;</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code>
+&nbsp;&nbsp; <code>--verbose</code> &nbsp;&nbsp; <code>-v</code></p>
+
+<p class="fmtc"><code>-a</code>, <code>--archive</code></p>
+<p class="desc">same as <code>-cdpR</code>;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-b</code></td>
+<td class="opt_desc">make a backup of each existing dest file;</td></tr>
+<tr>
+<td class="opt_name"><code>-c</code></td>
+<td class="opt_desc">same as <code>--preserve=</code><kbd>context</kbd>;</td></tr>
+<tr>
+<td class="opt_name"><code>-d</code></td>
+<td class="opt_desc">same as <code>--no-dereference</code>,
+<code>--preserve=links</code>;</td></tr>
+</table>
+
+<p class="fmtc"><code>-f</code>, <code>--force</code></p>
+<p class="desc">if an existing dest file cannot be opened, remove it and try again;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-H</code></td>
+<td class="opt_desc">follow cmd line symlinks in <kbd>src</kbd>;</td></tr>
+</table>
+
+<p class="fmtc"><code>-i</code>, <code>--interactive</code></p>
+<p class="desc">prompt before overwrite;</p>
+
+<p class="fmtc"><code>-L</code>, <code>--dereference</code></p>
+<p class="desc">always follow symlinks;</p>
+
+<p class="fmtc"><code>-l</code>, <code>--link</code></p>
+<p class="desc">link files instead of copying;</p>
+
+<p class="fmtc"><code>-n</code>, <code>--no-clobber</code></p>
+<p class="desc">do not overwrite an existing file;</p>
+
+<p class="fmtc"><code>-P</code>, <code>--no-dereference</code></p>
+<p class="desc">never follow symlinks in <kbd>src</kbd>;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-p</code></td>
+<td class="opt_desc">as <code>--preserve=mode,ownership,timestamps</code>;</td></tr>
+</table>
+
+<p class="fmtc"><code>-R</code>, <code>-r</code>, <code>--recursive</code></p>
+<p class="desc">copy directories recursively;</p>
+
+<p class="fmtc"><code>-S</code> <kbd>suffix</kbd>,
+<code>--suffix=</code><kbd>suffix</kbd></p>
+<p class="desc">override default bkp suffix <samp>~</samp>;</p>
+
+<p class="fmtc"><code>-s</code>, <code>--symbolic-link</code></p>
+<p class="desc">make symlinks instead of copying;</p>
+
+<p class="fmtc"><code>-T</code>, <code>--no-target-directory</code></p>
+<p class="desc">treat <kbd>dst</kbd> as a normal file;</p>
+
+<p class="fmtc"><code>-t</code> <kbd>dir</kbd>, <code>--target-directory=</code><kbd>dir</kbd></p>
+<p class="desc">copy all <kbd>src</kbd> args into <kbd>dir</kbd>;</p>
+
+<p class="fmtc"><code>-u</code>, <code>--update</code></p>
+<p class="desc">copy only when the src file is newer
+than the dest or when the dest is missing;</p>
+
+<p class="fmtc"><code>-x</code>, <code>--one-file-system</code></p>
+<p class="desc">stay on this file system;</p>
+
+<p class="fmtc"><code>-Z</code> <kbd>ctx</kbd>, <code>--context=</code><kbd>ctx</kbd></p>
+<p class="desc">set security context of the copy to <kbd>ctx</kbd>;</p>
+
+<p class="fmtc"><code>--backup</code>[<code>=</code><kbd>ctrl</kbd>]</p>
+<p class="desc">make a backup of each existing dest file;
+version control (<kbd>ctrl</kbd>) can be:</p>
+
+<table class="opts" style="margin-left:8%;width:90%">
+<tr>
+<td class="opts">none, off</td><td class="opt_desc">never make backups;</td></tr>
+<td class="opts">numbered, t</td><td class="opt_desc">make numbered backups;</td></tr>
+<td class="opts">existing, nil</td><td class="opt_desc">numbered, if numbered backups exist, simple otherwise;</td></tr>
+<td class="opts">simple, never &nbsp;</td><td class="opt_desc">always make simple backups;</td></tr>
+</table>
+
+<p class="fmtc"><code>--copy-contents</code></p>
+<p class="desc">copy contents of special files when recursive;</p>
+
+<p class="fmtc"><code>--no-preserve=<kbd>attr</kbd></code></p>
+<p class="desc">don't preserve the specified attributes;</p>
+
+<p class="fmtc"><code>--parents</code></p>
+<p class="desc">use full src filename under dest directory;</p>
+
+<p class="fmtc"><code>--preserve</code>[<code>=</code><kbd>attr</kbd>]</p>
+<p class="desc">preserve the specified attributes (comma-separated list,
+by default <samp>mode,ownership,timestamps</samp>); other attribs:
+<samp>context</samp> (SELinux), <samp>links</samp> (preserve symlinks as
+they are in the src), <samp>xattr</samp> (extended attribs),
+<samp>all</samp> (all available attribs);</p>
+
+<p class="fmtc"><code>--remove-destination</code></p>
+<p class="desc">remove each existing dest file before attempting to open it;</p>
+
+<p class="fmtc"><code>--sparse=</code><kbd>when</kbd></p>
+<p class="desc">control creation of sparse files (<kbd>when</kbd> :
+<samp>auto</samp>, <samp>always</samp>, <samp>never</samp>);</p>
+
+<p class="fmtc"><code>--strip-trailing-slashes</code></p>
+<p class="desc">remove any trailing slashes from each src arg;</p>
+
+
+
+
+<p class="cmdname"><a name="cpio">cpio</a></p>
+<p>
+copies files to and from archives.
+In copy-out mode (<code>cpio -o</code>) reads a list of filenames
+(one per line) from stdin and writes archive to stdout. In copy-in mode
+(<code>cpio -i</code>) copies files from archive or lists archive contents,
+reading archive from stdin. In copy-pass mode (<code>cpio -p</code>) copies
+files from one directory tree to another without using an archive.</p>
+
+<p class="cmdc">cpio -iudv -I /dev/st0 -C 10240</p>
+<p class="desc">restore all files from a tape archive;</p>
+
+<p class="cmdc">cpio -iv -I /dev/rstp1 -C 10240 "bin/sort" "bin/xbackup"</p>
+<p class="desc">restore from a tape archive specified files only;</p>
+
+<p class="cmdc">cpio -itv -I /devrstp1 -C 10240</p>
+<p class="desc">check integrity of a tape archive;</p>
+
+<p class="cmdc">cpio -idmv &lt; ship.lnx32.cpio</p>
+<p class="desc">unpack cpio archive creating required directories and
+preserving file modification times;</p>
+
+<p class="cmdc">find . -depth -print -mount | cpio -ov -O /dev/st0 -C 10240</p>
+<p class="desc">archive to tape all files from the current dir (including subdirs);</p>
+
+<p class="cmdc">find /usr/local -depth -print | cpio -ov | gzip -c &gt; usr_loc.cpio.gz</p>
+<p class="desc">archive to a file everything in <samp>/usr/local</samp>;</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--usage</code>
+&nbsp;&nbsp; <code>--version</code> &nbsp;&nbsp; <code>--verbose</code>
+&nbsp;&nbsp; <code>-v</code></p>
+
+<p style="padding-left:3.6em">
+<b>in</b> : the option is valid for copy-in mode only;<br>
+<b>out</b> : the option is valid for copy-out mode only;<br>
+<b>pass</b> : the option is valid for copy-pass mode only;</p>
+
+<p class="fmtc"><code>-0</code>, <code>--null</code></p>
+<p class="desc">(out/pass) a list of filenames is terminated by a null
+char instead of a nl;</p>
+
+<p class="fmtc"><code>-a</code>, <code>--reset-access-time</code></p>
+<p class="desc">(out/pass) reset the access times of files after reading them;</p>
+
+<p class="fmtc"><code>-A</code>, <code>--append</code></p>
+<p class="desc">(out) append to an existing archive;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-B</code></td>
+<td class="opt_desc">set the I/O block size to 5120 bytes;</td></tr>
+</table>
+
+<p class="fmtc"><code>-b</code>, <code>--swap</code></p>
+<p class="desc">(in) swap both halfwords of words and bytes of halfwords
+in the data; equivalent to <code>-sS</code>;</p>
+
+<p class="fmtc"><code>-C</code> <kbd>n</kbd>,
+<code>--io-size=</code><kbd>n</kbd></p>
+<p class="desc">set I/O block size to <kbd>n</kbd> bytes, default is 512;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-c</code></td>
+<td class="opt_desc">use the old portable (ASCII) archive format;</td></tr>
+</table>
+
+<p class="fmtc"><code>-d</code>, <code>--make-directories</code></p>
+<p class="desc">(in/pass) create leading directories when needed;</p>
+
+<p class="fmtc"><code>-E</code> <kbd>file</kbd>,
+<code>--pattern-file=</code><kbd>file</kbd></p>
+<p class="desc">(in) read additional patterns specifying filenames
+to extract or list from file;</p>
+
+<p class="fmtc"><code>-F</code> [[<kbd>user</kbd><code>@</code>]<kbd>host</kbd><code>:</code>]<kbd>fname</kbd>,
+<code>--file=</code>[[<kbd>user</kbd><code>@</code>]<kbd>host</kbd><code>:</code>]<kbd>fname</kbd></p>
+<p class="desc">use the specified filename instead of stdin or stdout;
+optional <kbd>user</kbd> and <kbd>host</kbd> specify the user and host names
+in case of a remote archive;</p>
+
+<p class="fmtc"><code>-f</code>, <code>--nonmatching</code>
+<p class="desc">only copy files that do not match any of the given patterns;</p>
+
+<p class="fmtc"><code>-H</code> <kbd>format</kbd>,
+<code>--format=</code><kbd>format</kbd></p>
+<p class="desc">use specified archive format (copy-in autodetects,
+copy-out uses <samp>bin</samp> by default):</p>
+
+<table class="opts" style="margin-left:8%;width:90%">
+<tr>
+<td class="opts">bin</td><td class="opt_desc">obsolete binary;</td></tr>
+<tr>
+<td class="opts">odc</td><td class="opt_desc">old portable (POSIX.1);</td></tr>
+<tr>
+<td class="opts">newc</td><td class="opt_desc">new portable (SVR4);</td></tr>
+<tr>
+<td class="opts">crc</td><td class="opt_desc">new portable (SVR4) with checksum;</td></tr>
+<tr>
+<td class="opts">tar</td><td class="opt_desc">old tar;</td></tr>
+<tr>
+<td class="opts">ustar</td><td class="opt_desc">POSIX.1 tar;</td></tr>
+<tr>
+<td class="opts">hpbin</td><td class="opt_desc">obsolete bin used by HPUX;</td></tr>
+<tr>
+<td class="opts">hpodc</td><td class="opt_desc">portable format used by HPUX;</td></tr>
+</table>
+
+<p class="fmtc"><code>-I</code> [[<kbd>user</kbd><code>@</code>]<kbd>host</kbd><code>:</code>]<kbd>fname</kbd></p>
+<p class="desc">(out/pass) set archive filename to use instead of stdin;
+optional <kbd>user</kbd> and <kbd>host</kbd> specify the user and host names
+in case of a remote archive;</p>
+
+<p class="fmtc"><code>-i</code>, <code>--extract</code></p>
+<p class="desc">(in) extract files from an archive;</p>
+
+<p class="fmtc"><code>-L</code>, <code>--dereference</code></p>
+<p class="desc">(out/pass) dereference symlinks;</p>
+
+<p class="fmtc"><code>-l</code>, <code>--link</code></p>
+<p class="desc">(pass) link files instead of copying when possible;</p>
+
+<p class="fmtc"><code>-M</code> <kbd>str</kbd>,
+<code>--message=</code><kbd>str</kbd></p>
+<p class="desc">output <kbd>str</kbd> when the end of a volume
+of the backup media is reached;</p>
+
+<p class="fmtc"><code>-m</code>, <code>--preserve-modification-time</code></p>
+<p class="desc">(in/pass) retain prev file modification times when
+creating files;</p>
+
+<p class="fmtc"><code>-n</code>, <code>--numeric-uid-gid</code></p>
+<p class="desc">in the verbose table of contents listing, show numeric UID
+and GID;</p>
+
+<p class="fmtc"><code>-O</code>
+[[<kbd>user</kbd><code>@</code>]<kbd>host</kbd><code>:</code>]<kbd>fname</kbd></p>
+<p class="desc">(out) set archive filename to use instead of stdout;
+optional <kbd>user</kbd> and <kbd>host</kbd> specify the user and host
+names in case of a remote archive;</p>
+
+<p class="fmtc"><code>-o</code>, <code>--create</code></p>
+<p class="desc">create archive (run in copy-out mode);</p>
+
+<p class="fmtc"><code>-p</code>, <code>--pass-through</code></p>
+<p class="desc">run in copy-pass mode;</p>
+
+<p class="fmtc"><code>-R</code>
+[<kbd>user</kbd>][<code>:.</code>][<kbd>group</kbd>],
+<code>--owner=</code>[<kbd>user</kbd>][<code>:.</code>][<kbd>group</kbd>]</p>
+<p class="desc">(out/pass) set the ownership of all created files to the
+specified user/group;</p>
+
+<p class="fmtc"><code>-r</code>, <code>--rename</code></p>
+<p class="desc">(in) interactively rename files;</p>
+
+<p class="fmtc"><code>-s</code>, <code>--swap-bytes</code></p>
+<p class="desc">(in) swap bytes of each halfword in files;</p>
+
+<p class="fmtc"><code>-S</code>, <code>--swap-halfwords</code></p>
+<p class="desc">(in) swap halfwords of each word (4 bytes) in files;</p>
+
+<p class="fmtc"><code>-t</code>, <code>--list</code></p>
+<p class="desc">print a table of contents of the input;</p>
+
+<p class="fmtc"><code>-u</code>, <code>--unconditional</code></p>
+<p class="desc">(in/pass) replace all files unconditionally;</p>
+
+<p class="fmtc"><code>-V</code>, <code>--dot</code></p>
+<p class="desc">print a "<samp>.</samp>" for each file processed;</p>
+
+<p class="fmtc"><code>--absolute-filenames</code></p>
+<p class="desc">(in) do not strip leading filename components that
+contain "<samp>..</samp>" and slashes;</p>
+
+<p class="fmtc"><code>--block-size=</code><kbd>n</kbd></p>
+<p class="desc">set I/O block size to <kbd>n</kbd> * 512 bytes;</p>
+
+<p class="fmtc"><code>--force-local</code></p>
+<p class="desc">archive file is local, even if its name contains colons;</p>
+
+<p class="fmtc"><code>--no-absolute-filenames</code></p>
+<p class="desc">(in) create all files relative to the current dir;</p>
+
+<p class="fmtc"><code>--no-preserve-owner</code></p>
+<p class="desc">(in/pass) do not change the ownership of the files;</p>
+
+<p class="fmtc"><code>--only-verify-crc</code></p>
+<p class="desc">(in) only verify the CRC's of each file in the archive;</p>
+
+<p class="fmtc"><code>--quiet</code></p>
+<p class="desc">do not show the number of blocks copied;</p>
+
+<p class="fmtc"><code>--rsh-command=</code><kbd>cmd</kbd></code></p>
+<p class="desc">use remote <kbd>cmd</kbd> instead of <code>rsh</code>;</p>
+
+<p class="fmtc"><code>--sparse</code></p>
+<p class="desc">(out/pass) write files with large blocks of zeros as sparse
+files;</p>
+
+<p class="fmtc"><code>--to-stdout</code></p>
+<p class="desc">(in) extract files to standard output;</p>
+
+
+
+
+<p class="cmdname"><a name="crontab">crontab</a></p>
+<p class="center">
+<i>Probably it will be deprecated in future versions, and maybe you should
+start learning <a href="boot.html#timers">systemd timers</a> already!</i></p>
+<p>
+The <code>cron</code> daemon runs in the background and continuoulsy
+checks <samp>/etc/crontab</samp>, <samp>/etc/cron.*/</samp> dirs,
+<samp>/var/spool/cron/</samp> dir, and executes scheduled cmds.
+<code>crontab</code> installs, deinstalls, lists the tables used
+to drive the <code>cron</code> daemon.</p>
+
+<p class="fmtc"><code>crontab&nbsp;</code>[<code>-u</code> <kbd>user</kbd>]
+{ <code>-l</code> | <code>-r</code> | <code>-e</code> }</p>
+<p class="fmt"><code>crontab&nbsp;</code>[<code>-u</code>
+<kbd>user</kbd>]<kbd>&nbsp;file</kbd></p>
+<p>
+The last form is used to set crontab from an existing file
+or stdin. In last case use <code>-</code> instead of filename.</p>
+<table class="options">
+<tr>
+<td class="opt_name"><code>crontab -l&nbsp;</code></td>
+<td class="opt_desc">display crontab file of the current user;</td></tr>
+<td class="opt_name"><code>crontab -e&nbsp;</code></td>
+<td class="opt_desc">edit/create crontab of the current user;</td></tr>
+</table>
+<p>
+Each user can have his/her own crontab (see in <samp>/var/spool/cron/...</samp>).
+If <samp>/etc/cron.allow</samp> exists, you must be listed therein to use
+<code>~</code>. Otherwise, if <samp>/etc/cron.deny</samp> exists you must
+not be listed in it. If both are missing, then only root can use
+<code>~</code> (in some systems - all).</p>
+
+<table class="grid">
+<caption>crontab entry format:</caption>
+<tr>
+<th>Field</td><th>Value</td></tr>
+<tr>
+<td class="grid_2">minute</td><td class="grid_2"><samp>0..59</samp></td></tr>
+<tr>
+<td class="grid_2">hour</td><td class="grid_2"><samp>0..23</samp></td></tr>
+<tr>
+<td class="grid_2">day of month</td><td class="grid_2"><samp>1..31</samp></td></tr>
+<tr>
+<td class="grid_2">month</td><td class="grid_2"><samp>1..12</samp> or
+<samp>Jan</samp>, <samp>Feb</samp>, <samp>Mar</samp>, <samp>Apr</samp>,
+<samp>May</samp>, <samp>Jun</samp>, <samp>Jul</samp>, <samp>Aug</samp>,
+<samp>Sep</samp>, <samp>Oct</samp>, <samp>Nov</samp>, <samp>Dec</samp></td></tr>
+<tr>
+<td class="grid_2">day of week</td><td class="grid_2"><samp>0..7</samp> or
+<samp>Sun</samp> (can be <samp>0</samp> or <samp>7</samp>),
+<samp>Mon</samp>, <samp>Tue</samp>, <samp>Wed</samp>, <samp>Thu</samp>,
+<samp>Fri</samp>, <samp>Sat</samp></td></tr>
+<tr>
+<td class="grid_2">command</td><td class="grid_2">command to be run</td></tr>
+</table>
+<p>
+You can also use the following special strings:</p>
+
+<table class="grid">
+<tr>
+<td class="grid_2"><samp>@reboot</samp></td>
+<td class="grid_2">Run once, at startup</td></tr>
+<tr>
+<td class="grid_2"><samp>@yearly</samp></td>
+<td class="grid_2">Run once a year, "<samp>0 0 1 1 *</samp>"</td></tr>
+<tr>
+<td class="grid_2"><samp>@annually</samp></td>
+<td class="grid_2">(same as <samp>@yearly</samp>)</td></tr>
+<tr>
+<td class="grid_2"><samp>@monthly</samp></td>
+<td class="grid_2">Run once a month, "<samp>0 0 1 * *</samp>"</td></tr>
+<tr>
+<td class="grid_2"><samp>@weekly</samp></td>
+<td class="grid_2">Run once a week, "<samp>0 0 * * 0</samp>"</td></tr>
+<tr>
+<td class="grid_2"><samp>@daily</samp></td>
+<td class="grid_2">Run once a day, "<samp>0 0 * * *</samp>"</td></tr>
+<tr>
+<td class="grid_2"><samp>@midnight</samp></td>
+<td class="grid_2">(same as <samp>@daily</samp>)</td></tr>
+<tr>
+<td class="grid_2"><samp>@hourly</samp></td>
+<td class="grid_2">Run once an hour, "<samp>0 * * * *</samp>"</td></tr>
+</table>
+
+
+
+<h5>Examples of crontab entries</h5>
+
+<p class="fmtc"><samp>45 22 * * fri /usr/local/bin/arc00.sh</samp></p>
+<p class="desc">run <samp>arc00.sh</samp> every friday at 22:45;</p>
+
+<p class="fmtc"><samp>05 18 * * mon-fri /usr/local/bin/rpt2.pl</samp></p>
+<p class="desc">run <samp>rpt2.pl</samp> every day (except Sat and Sun) at 18:05;</p>
+
+<p class="fmtc"><samp>1 * * * * /root/bin/save_cnt.sh 1&gt; /dev/null 2&gt; /dev/null</samp></p>
+<p class="desc">run <samp>save_cnt.sh</samp> at 1 min after each hour;
+discard msgs;</p>
+
+<p class="fmtc"><samp>0,15,30,45 8-18 * * * /usr/local/bin/chk &gt;/dev/null 2&gt;&amp;1</samp></p>
+<p class="desc">run <samp>chk</samp> every 15 min, every day from 8:00
+to 18:00, discard msgs;</p>
+
+<p class="fmtc"><samp>@hourly /usr/sbin/ntpdate ru.pool.ntp.org &gt;/dev/null 2&gt;&amp;1</samp></p>
+<p class="desc">sync system time once per hour, discard msgs;</p>
+<p>
+Names are first three letters of a particular day or month,
+case doesn't matter. Ranges or lists of names are not allowed, but ranges
+(1-5) and lists (2,5,7) of nums are supported. Asterisk <samp>*</samp>
+describes the whole range of values. Ranges can be combined with steps
+(8-20/2 means 8,10,12,14,..). The part of the cmd line up to a newline or
+<samp>%</samp> sign will be executed by <code>/bin/sh</code> or by the shell
+specifed in the <samp>SHELL</samp> var in the crontab file. The <samp>%</samp>
+sign (unless escaped by '<samp>\</samp>') means nl, all data after the first
+<samp>%</samp> will be sent to the cmd as std input. By default the cmd output
+is mailed to the crontab owner. You can redirect it using
+<samp>MAILTO=<span class="arg">userid</span></samp> in crontab file.
+<code>cron</code> examines crontab entries once a minute.</p>
+
+
+
+<h5>Options</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-e</code></td>
+<td class="opt_desc">edit current crontab using editor specified by
+<samp>EDITOR</samp> or <samp>VISUAL</samp> env var; though crontab is a text
+file, you should not edit it directly; <code>crontab -e&nbsp;</code>immediately
+activates changes, which doesn’t happen in case of direct editing;</td></tr>
+<tr>
+<td class="opt_name"><code>-i</code></td>
+<td class="opt_desc">prompt before deleting user's crontab;</td></tr>
+<tr>
+<td class="opt_name"><code>-l</code></td>
+<td class="opt_desc">list current crontab;</td></tr>
+<tr>
+<td class="opt_name"><code>-r</code></td>
+<td class="opt_desc">remove current crontab;</td></tr>
+</table>
+
+<p class="fmtc"><code>-u</code> <kbd>user</kbd></p>
+<p class="desc">specifies the user whose crontab is to be tweaked;
+by default this is the user running this cmd; always use this option
+inside of <a href="cmds_s.html#su"><code>su</code></a>;</p>
+
+
+
+
+<p class="cmdname"><a name="curl">curl</a></p>
+<p>
+can be used to transfer resources specified as URLs from/to a server using
+internet protocols like <samp>HTTP</samp>, <samp>HTTPS</samp>,
+<samp>FTP</samp>, <samp>FTPS</samp>, <samp>LDAP</samp>, <samp>SMB</samp>,
+<samp>SMTP</samp>, and many other. It also provides proxy support, user
+authentication, FTP upload, HTTP post, SSL connections, cookies, etc.
+<b>Note!</b> Use<code> -k </code>to connect a server with a self-signed
+certificate!</p>
+
+<p class="cmdc">curl http://localhost</p>
+<p class="desc">retrieves a default (index) HTML page of a web-server
+running on localhost (if there is one, of course) and displays it in the
+terminal (stdout);</p>
+
+<p class="cmdc">curl -v http://localhost</p>
+<p class="desc">like previous, but outputs more information - mostly
+HTML header details;</p>
+
+<p class="cmdc">curl http://localhost -v</p>
+<p class="desc">like prev; you can put options before or after; you can also
+use <code>--verbose</code> instead of <code>-v</code>;</p>
+
+<p class="cmdc">curl file://localhost/home/alex/public_html/dict/phrasal_verbs.html</p>
+<p class="desc">outputs contents of a local HMTL file;</p>
+
+<p class="cmdc">curl file:///home/alex/public_html/dict/phrasal_verbs.html</p>
+<p class="desc">like prev; note the triple slash! double slash is only OK
+with <samp>localhost</samp> or <samp>127.0.0.1</samp> or blank (which turns it
+into a triple slash);</p>
+
+<p class="cmdc">curl http://www.example.com</p>
+<p class="desc">retrieves a default (home, index) HTML page of the specified
+web-server and displays it in the terminal;</p>
+
+<p class="cmdc">curl http://www.example.com -i</p>
+<p class="desc">retrieves a web page and displays its header;</p>
+
+<p class="cmdc">curl http://www.example.com -o page1.html</p>
+<p class="desc">retrieves a web page and saves it to a file;</p>
+
+<p class="cmdc">curl -x proxy.mydomain.com:3128 http://www.example.org/unix/</p>
+<p class="desc">downloads via a proxy server;</p>
+
+<p class="cmdc">curl -F password=@/etc/passwd www.mypasswords.com</p>
+<p class="desc">sends your password file to the server; 'password' is the name
+of the form-field to which <samp>/etc/passwd</samp> will be the input;</p>
+
+<p class="cmdc">curl -k -v -d "user=user1&amp;pass=cadabra44" -X POST https://ws2:8443/auth</p>
+<p class="desc">sends a POST (<code>-X POST</code>) request with data
+(<code>-d</code>);</p>
+
+
+</div>
+
+</body></html>

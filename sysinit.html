@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (upstart, sysvinit, init, initctl, runlevel)</title>
+<meta name="description" content="linux quick reference, boot process, upstart, sysvinit, init, initctl, runlevel" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<h1>
+<a name="boot_old_stuff">System Initialization (old stuff)</a></h1>
+
+<div id="contents" style="margin-top:0px">
+<table class="menu">
+<tr>
+<td class="menu1"><a href="#sysv">System V</a></td>
+<td class="menu2" style="text-align:center"><a href="#upstart">Upstart</a></td>
+<td class="menu2"><a href="#runlevel">Runlevel</a></td></tr>
+</table>
+</div>
+
+<h4 class="part3">
+<a name="sysv">System V init (sysvinit)</a></h4>
+<p>
+is based on a <a href="#runlevel">runlevel</a> concept. The SysV
+<code>init</code> examines <samp>/etc/inittab</samp> for
+a line that sets a default <samp>runlevel</samp>:</p>
+
+<div class="file">
+<pre>id:3:initdefault:</pre>
+</div>
+<p>
+If there is no such line, user is prompted to enter runlevel
+value manually. The initialization process is synchronous,
+i.e., the next task wouldn't start until the current one is finished.
+The <code>init</code> daemon runs scripts in <samp>/etc/init.d</samp> dir.
+The order of execution is defined by the symlinks in <samp>/etc/rc.d</samp>
+dir. The names of these symlinks are interpreted as follows: first letter
+<samp>S</samp> means that the script must be invoked during startup, first
+letter <samp>K</samp> - during shutdown, digits set the order of invocation.
+By modern standards <b>sysvinit</b> is slow and resource-consuming.
+It is also inconvenient for the desktop systems, that require fast and
+reliable interaction with USB devices, removable storage, etc.</p>
+
+
+
+<h4 class="part3">
+<a name="upstart">Upstart</a></h4>
+<p>
+is an <a href="init_defs.html">event-based</a> system, that starts and
+stops <a href="init_defs.html">services</a> and
+<a href="init_defs.html">tasks</a> asynchronously, and supervises them
+while OS is running. The time and the order [of the specific service start]
+depend on a set of conditions (like the presence of processes that a service
+depends upon).
+The main <b>Upstart</b> programs are the <code>init</code> (daemon)
+and the <code><a href="cmds_i.html#initctl">initctl</a></code> (it starts
+and stops init <a href="init_defs.html">jobs</a>, sends signals, and queries
+the status of jobs. The <b>Upstart</b> <code>init</code> daemon tries to
+perform tasks in parallel to finish the boot procedure as fast as possible.
+<b>Upstart</b> service config files (equivalent of <b>Sys&nbsp;V</b> init
+scripts) are in <samp>/etc/init</samp> dir. Here is an example of a simple
+service config file for a permanently running daemon (server application
+listening on some tcp port); this config file provides start/stop and auto
+restart in case of an abnormal exit:</p>
+<div class="file">
+<pre>
+# htpasd - this server app provides ... ...;
+
+description "third-party daemon"
+
+start on (net-device-up and local-filesystems)
+stop on runlevel [!2345]
+
+expect fork
+respawn
+
+exec htpasd</pre>
+</div>
+<p>
+You can find details using <code>&nbsp;man 5 init&nbsp;</code> and multiple
+examples in <samp>/etc/init</samp> (if your system is <b>Upstart</b>-based,
+of course).</p>
+<p>
+Classical <samp>/etc/inittab</samp> is not neccessary any more, though
+it can be present. To set the default runlevel, edit</p>
+
+<p class="fmt"><samp>/etc/init/rc-sysinit.conf</samp></p>
+<p>
+<b>Upstart</b> consists of 5 packages:</p>
+
+<p class="fmtc"><samp>upstart</samp></p>
+<p class="desc"><code>init</code> daemon, <code>initctl</code>;</p>
+
+<p class="fmtc"><samp>upstart-logd</samp></p>
+<p class="desc"><code>logd</code> daemon and job definition file for
+<code>logd</code>;</p>
+
+<p class="fmtc"><samp>upstart-compat-sysv</samp></p>
+<p class="desc">SysV job definition files and utilities: <code>reboot</code>,
+<code>runlevel</code>, <code>shutdown</code>, <code>telinit</code>;</p>
+
+<p class="fmtc"><samp>startup-tasks</samp></p>
+<p class="desc">job definition files for system startup tasks;</p>
+
+<p class="fmtc"><samp>system-services</samp></p>
+<p class="desc">job definition files for tty services;</p>
+<p>
+See usage examples in
+<code><a href="cmds_i.html#initctl">initctl</a></code>.</p>
+<p>
+Though <b>Upstart</b> is backward-compatible with <b>sysvinit</b> and runs
+the old-style scripts unmodified, you should not rely on the old tools like
+<code><a href="cmds_c.html#chkconfig">chkconfig</a></code>,
+<code>rc-sysv-conf</code>, <code>ntsysv</code> - they control old-style
+services only. The new-style services are being started and
+stopped if/when the pre-defined conditions are met. To prevent the start
+of a new-style service during system start, change the extension of the
+corresponding config file, e.g.:</p>
+
+<p class="cmd">cd /etc/init</p>
+<p class="cmd">mv dovecot.conf dovecot.disabled</p>
+<p class="cmd">stop dovecot</p>
+<p>
+You also have such options as moving the service <samp>.conf</samp> file
+to some dir, or totally deleting it (unwise), or removing the
+appropriate software pkg from the system (should be carefully considered).
+The last cmd (<code>stop</code>) is required if the service is currently
+running.</p>
+
+
+
+<h4 class="part3">
+<a name="runlevel">Runlevel</a></h4>
+<p>
+defines the certain system's state, characterized by the set of the running
+services (daemons). It is a System V paradigm. The last Ubuntu releases
+emulate runlevels for backward compatibility with the old-style scripts
+and for compatibility with the third-party applications intended for other
+distributions.</p>
+<p>
+There could be up to 8 runlevels, but only 3 are <b>mandatory</b>:</p>
+
+<table class="grid">
+<tr>
+<th class="grid">RL</th>
+<th class="grid">Name</th>
+<th class="grid">Description</th></tr>
+<tr>
+<td class="gridcen"><samp>0</samp></td>
+<td class="grid">Halt</td>
+<td class="grid">Modern x86 computers usually power off when run level
+<samp>0</samp> is reached; older x86, and some different architectures
+display a message and stay on;</td></tr>
+<tr>
+<td class="gridcen"><samp>1</samp></td>
+<td class="grid">Single user mode</td>
+<td class="grid">In run level <samp>1</samp>
+no daemons (services) are started;
+<a href="boot.html#single_user">GRUB / Recovery mode (single user mode)</a>
+explains how to boot into a single user mode;</td></tr>
+<tr>
+<td class="gridcen"><samp>6</samp></td>
+<td class="grid">Reboot</td>
+<td class="grid">This is like runlevel <samp>0</samp> except a reboot is
+issued at the end of the sequence instead of a power off;</td></tr>
+</table>
+<p>
+The other runlevels are treated differently by different systems.
+It's supposed, that for each supported runlevel, <samp>/etc/inittab</samp>
+has a description of what should be done when the system switches from one
+runlevel to another.</p>
+
+<table class="grid">
+<tr>
+<th class="grid">RL</th>
+<th class="grid">Description</th></tr>
+<tr>
+<td class="gridcen"><samp>2</samp></td>
+<td class="grid">Full scale multi-user mode without GUI; default
+runlevel for Red Hat/Fedora server, Ubuntu, Debian (see note below);</td></tr>
+<tr>
+<td class="gridcen"><samp>3</samp></td>
+<td class="grid">Same as previous plus NFS (?);
+default runlevel for Arch Linux, Gentoo, Slackware;</td></tr>
+<tr>
+<td class="gridcen"><samp>4</samp></td>
+<td class="grid">Usually undefined;</td></tr>
+<tr>
+<td class="gridcen"><samp>5</samp></td>
+<td class="grid">Full scale multi-user mode with GUI,
+i.e., the most appropriate mode for the desktop systems;
+default runlevel for Mandriva Linux, SUSE Linux, Red Hat/Fedora desktop;</td></tr>
+</table>
+
+<p>
+In Ubuntu/Debian runlevels <samp>2</samp>, <samp>3</samp>,
+<samp>5</samp> are all the same (multi-user, GUI). To check the current
+runlevel:</p>
+
+<p class="cmd">runlevel</p>
+<p class="desc">or</p>
+<p class="cmd">who -r</p>
+
+</div>
+
+</body></html>

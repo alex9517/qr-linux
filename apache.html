@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference / Apache web-server</title>
+<meta name="description" content="linux quick reference, apache web-server, apache2" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<h1 class="part">Apache (web-server)</h1>
+<p>
+See also <a href="tomcat.html">Apache Tomcat</a>.</p>
+
+
+<h5>Maybe it's already installed. How to find?</h5>
+<p>
+The following cmds explain the situation with Apache. To be sure,
+prepend them with <code>sudo</code>, though in many systems <i>status</i>
+does not require <samp>root</samp> priv.</p>
+
+<p class="cmd">systemctl status apache2</p>
+<p>
+In older systems without <samp>systemd</samp></p>
+
+<p class="cmdc">service apache2 status</p>
+<p class="or">or</p>
+<p class="cmd">/etc/init.d/apache2 status</p>
+<p>
+If the output includes<samp> ... no such service</samp>, then Apache is not
+installed.</p>
+<p>
+When Apache is running,</p>
+
+<p class="cmd">ps ax | grep apache</p>
+<p>
+displays a number of lines like</p>
+<div class="term">
+<pre>
+  ... /usr/sbin/apache2 -k start
+  ... /usr/sbin/apache2 -k start
+  ... ... ...</pre></div>
+<p>
+Also, when Apache is running, it usually responds to the browser's request</p>
+
+<p class="cmd">http://localhost</p>
+<p>
+and displays its welcoming page, or some other page, if config was changed
+after installation.</p>
+<p>
+You can find detailed info about Apache with:</p>
+
+<p class="cmdc">man apache2</p>
+<p class="cmdc">man apache2ctl</p>
+<p class="cmdc">man a2enmod</p>
+<p class="cmd">man a2ensite</p>
+<p>
+In most cases, no <i>manual</i> means no <i>program</i>.</p>
+
+
+<h5>Before installation</h5>
+<p>
+It would be good for your web-server to have a real FQDN (fully qualified
+domain name). To see your current situation, try:</p>
+
+<p class="cmd">hostname --fqdn</p>
+<p>
+Even if this is going to be an internal server, you should probably use
+some name resolution technology, like, e.g., <a href="net.html#mdns">mDNS</a>.
+Using pure IPs within URLs will cause problems sooner or later.</p>
+<p>
+Also, check/change date/time and TZ (must correspond to the server's
+location). To change time zone data in Ubuntu:</p>
+
+<p class="cmd">dpkg-reconfigure tzdata</p>
+<p>
+It's especially important for a server accessible from the Internet.</p>
+
+
+<h5>
+<a name="apache_install">Installation</a></h5>
+<p>
+As usually,</p>
+
+<p class="cmd">sudo apt update</p>
+<p>
+then install the package:</p>
+
+<p class="cmd">sudo apt install apache2</p>
+<p>
+In the past it was <code>httpd</code> (HTTP daemon), but now they call it
+<code>apache2</code>.</p>
+<p>
+Note that by default Apache web-server accepts connection requests
+on <samp>80/tcp</samp>, and your <b>firewall must be configured</b>
+appropriately.</p>
+
+
+<h5>Startup/shutdown</h5>
+<p>
+In Ubuntu, it's usually configured to start auto after installation.
+And there are, of course, well-known standard commands (most of them must be
+prepended with <code>sudo</code>):</p>
+
+<p class="cmdc">systemctl start apache2</p>
+<p class="cmdc">systemctl stop apache2</p>
+<p class="cmdc">systemctl restart apache2</p>
+<p class="cmdc">systemctl reload apache2</p>
+<p class="cmdc">systemctl status apache2</p>
+<p class="cmdc">systemctl disable apache2</p>
+<p class="cmd">systemctl enable apache2</p>
+<p>
+The last two cmds are used to control Apache service start at system boot.</p>
+<p>
+If your Linux does not use <samp>systemd</samp>, you can try</p>
+
+<p class="cmdc">service apache2 start</p>
+<p class="cmdc">service apache2 stop</p>
+<p class="cmdc">service apache2 restart</p>
+<p class="cmd">service apache2 status</p>
+<p>
+or, you can manage your web-server using its init script:</p>
+
+<p class="cmdc">/etc/init.d/apache2 start</p>
+<p class="cmdc">/etc/init.d/apache2 stop</p>
+<p class="cmdc">/etc/init.d/apache2 restart</p>
+<p class="cmdc">/etc/init.d/apache2 reload</p>
+<p class="cmdc">/etc/init.d/apache2 force-reload</p>
+<p class="cmd">/etc/init.d/apache2 status</p>
+<p>
+And, there is also <code>apache2ctl</code>, a shell script
+(<samp>/usr/sbin/apache2ctl</samp>), aka Apache web-server's
+<i>front-end</i>:</p>
+
+<p class="cmdc">apache2ctl start</p>
+<p class="cmdc">apache2ctl stop</p>
+<p class="cmdc">apache2ctl status</p>
+<p class="cmd">...</p>
+<p>
+The main binary file is <samp>/usr/bin/apache2</samp>, but you shouldn't
+start it directly.
+
+
+
+
+<h4>Configuration</h4>
+
+
+<h5>Basic stuff</h5>
+<p>
+The main config file is <samp>/etc/apache2/apache2.conf</samp>, but it's
+just the core; the whole config is the assembly of multiple files stored in
+<samp>/etc/apache2</samp> and subdirs. For example, <samp>ports.conf</samp>
+allows to change the listening port for connection requests
+(<samp>80/tcp</samp> by default), <samp>envvars</samp> defines env variables,
+etc.</p>
+<p>
+Many config tasks can be done (and should be done) by "helpers":</p>
+
+<p class="cmdc">a2enmod</p>
+<p class="cmdc">a2dismod</p>
+<p class="cmdc">a2ensite</p>
+<p class="cmdc">a2dissite</p>
+<p class="cmdc">a2enconf</p>
+<p class="cmd">a2disconf</p>
+<p>
+These are PERL scripts in <samp>/usr/sbin/</samp>. They manipulate symlinks
+allowing to include/exclude misc config parts. For example, to allow access to
+<samp>public_html</samp> in user's home dir(s), you do</p>
+
+<p class="cmd">sudo a2enmod userdir</p>
+<p>
+and that script correctly modifes all necessary symlinks, so that
+you (and any other regular user of your system) can have a web-site
+in <samp>public_html</samp> dir within the home dir tree (i.e., in
+<samp>~/public_html</samp>). Note that the <b>name</b>
+(<samp>public_html</samp>) and the <b>location</b> (at the root of your
+home dir) are <b>important!</b> And you must restart Apache after config
+changes:</p>
+
+<p class="cmd">sudo systemctl restart apache2</p>
+<p>
+To allow execution of web-applications/scripts in <samp>cgi-bin</samp>
+(or <samp>/usr/lib/cgi-bin</samp>):</p>
+
+<p class="cmd">sudo a2enmod cgi</p>
+<p>
+The default document root is <samp>/var/www/html</samp>. By default,
+web-browsers are not allowed to access files outside the document root,
+<samp>~/public_html</samp> and <samp>/usr/share</samp> (web-apps only).</p>
+
+
+<h5>Log files, user/group, etc</h5>
+<p>
+By default (see <samp>/etc/apache2/envvars</samp> for details), Apache process
+belongs to user <samp>www-data</samp>, group <samp>www-data</samp>. Log files
+reside in</p>
+
+<p class="fmt"><samp>/var/log/apache2/</samp></p>
+
+<p class="warn">Note!</p>
+<p class="indent">If your <samp>/var/log/</samp> is <b>tmpfs</b> (which is
+typical when OS resides on SSD), then you will have problems with the default
+Apache config. It looks like <samp>/var/log/apache2/</samp> is created by
+installation procedure and disappears during reboot. Apache daemon does not
+try to re-create that dir, it just complains about missing log dir and rejects
+to start.</p>
+<p>
+There are at least two simple solutions: you can manually create
+<samp>/var/log/apache2/</samp> (ownership: <samp>root.root</samp>) each
+time after reboot, and then manually start Apache; or, you can modify
+<samp>/etc/apache2/apache2.conf</samp> and move log files to some non-volatile
+locaction, e.g., <samp>/var/local/apache2/</samp>.</p>
+
+
+<h5>Virtual hosting</h5>
+<p>
+feature provides hosting for multiple domains (multiple web-sites) deployed
+on a single server. To set a virtual domain you need, of course, a registered
+domain name (it's a separate story). The following example uses
+<samp>mydomain.com</samp> which is obviously just for demo!</p>
+<p>
+First of all, you create a directory named similarly to your domain name,
+then you create <samp>html</samp> subdir within this dir. There are many ways
+to perform this task, for example:</p>
+
+<p class="cmd">sudo mkdir -p /var/www/mydomain.com/html</p>
+<p>
+The <code>-p</code> options is used to create both dirs in one step
+(see <code><a href="cmds_m.html#mkdir">mkdir</a></code> for details).</p>
+<p>
+The next step is to set correct ownership and permissions:</p>
+
+<p class="cmd">sudo chown -R <span class="arg">username</span>:<span class="arg">groupname</span> /var/www/mydomain.com</p>
+<p>
+Permissions [for dirs] must be <samp>755</samp>. If not, use
+<code><a href="cmds_c.html#chmod">chmod</a></code>:</p>
+
+<p class="cmd">sudo chmod -R 755 /var/www/mydomain.com</p>
+<p>
+Now, you can already move all prepared content into
+<samp>/var/www/mydomain.com/html</samp>, or, at least, put there some
+<samp>index.html</samp> file appropriate for testing.</p>
+<p>
+After that, comes the most tricky part: you have to create a config file
+in <samp>/etc/apache2/sites-available</samp> dir; the name of the file should
+correspond to the virtual domain name, i.e., <samp>mydomain.com.conf</samp>.
+Probably, it's not a strict requirement (?) but a reasonable recommendation.
+Carefully check each line before testing.</p>
+<div class="file">
+<pre>
+&lt;VirtualHost *:80&gt;
+    ServerAdmin admin@mydomain.com
+    ServerName mydomain.com
+    ServerAlias www.mydomain.com
+    DocumentRoot /var/www/mydomain.com/html
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+&lt;/VirtualHost&gt;
+</pre></div>
+<p>
+Note that the <samp>ServerName</samp> in the file above has nothing to do
+with the name of the real server storing all this stuff.</p>
+<p>
+To activate (enable) this new site:</p>
+
+<p class="cmd">sudo a2ensite mydomain.com.conf</p>
+<p>
+Also, you should disable the default virtual site (which is a useful template
+for virtual host config files with explanations of misc options):</p>
+
+<p class="cmd">sudo a2dissite 000-default.conf</p>
+<p>
+And the last two steps (assuming there is no erros in config):</p>
+
+<p class="cmd">sudo apache2ctl configtest</p>
+<p class="cmd">sudo systemctl restart apache2</p>
+
+
+<h5>SSL with self-signed certificate</h5>
+<p>
+I skip the details of certificate creation ...
+see <a href="cmds_o.html#openssl">openssl</a>. Here is a command:</p>
+
+<p class="cmd">sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout
+/etc/ssl/private/apache.key -out /etc/ssl/certs/apache.crt</p>
+<p>
+It creates a new private RSA key,</p>
+
+<p class="fmt"><samp>/etc/ssl/private/apache.key</samp></p>
+<p>
+which is used to sign the certificate:</p>
+
+<p class="fmt"><samp>/etc/ssl/certs/apache.crt</samp></p>
+<p>
+Now create <samp>/etc/apache2/conf-available/ssl-params.conf</samp> file with
+the following content:</p>
+<div class="file"><pre>
+SSLCipherSuite EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH
+SSLProtocol All -SSLv2 -SSLv3 -TLSv1 -TLSv1.1
+SSLHonorCipherOrder On
+Header always set X-Frame-Options DENY
+Header always set X-Content-Type-Options nosniff
+SSLCompression off
+SSLUseStapling on
+SSLStaplingCache "shmcb:logs/stapling-cache(150000)"
+SSLSessionTickets Off
+</pre></div>
+<p>
+Open <samp>/etc/apache2/sites-available/default-ssl.conf</samp> (the default
+SSL Virtual Host file) and make sure the following lines point to your certificate
+and key:</p>
+<div class="file"><pre>
+SSLCertificateFile /etc/ssl/certs/apache.crt
+SSLCertificateKeyFile /etc/ssl/private/apache.key
+</pre></div>
+<p>
+Check <samp>ServerName</samp>, <samp>ServerAdmin</samp>, and
+<samp>DocumentRoot</samp>. They must be the same as in
+<samp>000-default.conf</samp> (assuming it was working good before).</p>
+<p>
+To redirect HTTP traffic to HTTPS, add the following lines to
+<samp>/etc/apache2/apache2.conf</samp> file:</p>
+<div class="file"><pre>
+RewriteEngine On 
+RewriteCond %{SERVER_PORT} 80 
+RewriteRule ^(.*)$ https://www.yourdomain.com/$1 [R,L]
+</pre></div>
+<p>
+Note that if your system uses a firewal, it must accept requests on
+<samp>tcp/443</samp>.</p>
+<p>
+To activate the new config, restart service:</p>
+
+<p class="cmd">sudo systemctl restart apache2</p>
+<p>
+If it fails, and in <samp>/var/syslog</samp> you see an error like</p>
+<div class="term"><pre>
+Invalid command 'RewriteEngine', perhaps misspelled or
+  defined by a module not included ...
+</pre></div>
+<p>
+most likely it means you need to enable the <i>Rewrite</i> module:</p>
+
+<p class="cmd">sudo a2enmod rewrite</p>
+<p>
+If Apache starts good, it still does not mean everything is OK. Use</p>
+
+<p class="cmd">ss -nlt</p>
+<p>
+to be sure that web-server listens on <samp>tcp/443</samp>. If not, the problem
+is usually related to modules. First, you need to enable the SSL module:</p>
+
+<p class="cmd">sudo a2enmod ssl</p>
+<p>
+Then you need to enable the site:</p>
+
+<p class="cmd">sudo a2ensite default-ssl.conf</p>
+<p>
+After that restart the service again.</p>
+<p>
+Do not forget that your web-server has a <b>self-signed certificate</b>.
+It means that when you try to connect, your <b>browser will throw some disturbing
+warning</b>, and you must accept the risk. It may look bad, but technically you
+just acknowledge the validity of your own certificate which cannot be acknowledged
+by a real trustworthy CA (Certification Authority).</p>
+
+
+<!--
+<p>
+First of all, we need a certficate for Apache (mail service requires
+passwords, password over HTTP requires SSL, and SSL requires certificates).
+Self-signed certificate is bad for a big, serious, crictical, financial, etc.
+system, but this is (what can I say?) very popular choice for simple, local,
+internal, experimental, ... system. So be it, let's create this trivial,
+self-made, <b>self-signed certificate</b> (which, besides all, should not
+request a password when Apache starts):</p>
+
+<p class="cmd">openssl req -new > new.cert.csr</p>
+<p>
+At this point we'll be prompted to enter some info about organization,
+PEM pass phrase (prepare beforehand), etc:</p>
+
+<p class="fmt">...</p>
+<p>
+If this stage is O.K., let's do the rest:</p>
+
+<p class="cmd">openssl rsa -in privkey.pem -out new.cert.key</p>
+<p class="cmd">openssl x509 -in new.cert.csr -out new.cert.cert -req -signkey new.cert.key -days 1825</p>
+<p>
+If there is no <samp>ssl</samp> dir in <samp>/etc/apache2</samp>,
+create it (or, if you prefer <samp>/etc/ssl</samp>, modify config):</p>
+
+<p class="cmd">cp new.cert.cert /etc/apache2/ssl/server.crt</p>
+<p class="cmd">cp new.cert.key /etc/apache2/ssl/server.key</p>
+<p>
+Now we must configure DNS for a first domain to be able to address the
+server. Use <code>a2enmod</code> apache2 module config script:</p>
+
+<p class="cmd">a2enmod rewrite</p>
+<p class="cmd">a2enmod ssl</p>
+<p>
+All unnecessary files from <samp>/var/www/</samp> (most likely
+<samp>index.html</samp>) should be deleted or moved to some arc location
+(postpone this step to be able to test the web server access),
+and some new dirs (for future use) should be created:</p>
+
+<p class="cmd">mkdir /var/www/webmail</p>
+<p class="cmd">mkdir /var/www/mysql</p>
+<p>
+Ubuntu 11.10 installation usually includes two templates:</p>
+
+<p class="fmtc"><samp>/etc/apache2/sites-available/default</samp></p>
+<p class="fmt"><samp>/etc/apache2/sites-available/default-ssl</samp></p>
+<p>
+Edit one of them (<samp>default-ssl</samp> is more appropriate in our case),
+or create totally new, but remember, web server will only read files
+referenced by symlinks in <samp>/etc/apache2/sites-enabled/</samp> dir,
+be sure the symlink points to the right file. Actually, there are
+scripts <code>a2ensite</code> and <code>a2dissite</code> to handle this
+situation.</p>
+<p>
+There are many ways to set options in this file, see, for example,
+<a href="file_default.html"><samp>/etc/apache2/sites-available/default</samp></a>
+(if you take it, replace names of files, certificates, etc). This config
+allows access through the standard tcp/80 port and tcp/443 port (SSL).</p>
+<p>
+Also, we have to set some basic rules in<br>
+<samp>/etc/apache2/conf.d/security</samp>:</p>
+
+<div class="file">
+<pre>&lt;Directory&gt;
+  AllowOverride None
+  Order Deny,Allow
+  Deny from all
+&lt;/Directory&gt;
+
+ServerTokens Prod
+
+ServerSignature Off</pre>
+</div>
+<p>
+Restart Apache and test web server access from the net:</p>
+
+<p class="cmd">/etc/init.d/apache2 restart</p>
+<p>
+Check/change PHP config <samp>/etc/php5/apache2/php.ini</samp>, pay
+attention to the following params:</p>
+<div class="file">
+<pre>display_errors = off
+upload_max_filesize = 20M
+date.timezone = Europe/Rome</pre>
+</div>
+<p>
+Enable default site (<code>a2ensite</code> creates symlinks, but it would
+make no harm if all those symlinks were created manually):</p>
+
+<p class="cmd">a2ensite default</p>
+<p>
+Once again restart Apache.</p>
+-->
+
+</div>
+
+</body></html>

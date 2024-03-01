@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (netcat, netstat, nice, nmap, nproc, ntpd)</title>
+<meta name="description" content="linux quick reference, netcat, netstat, nice, nmap, nproc, ntpd, ntsysv" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<div id="topmenu">
+<p class="menu">
+<a href="#netcat">netcat</a>&nbsp;|
+<a href="#netstat">netstat</a>&nbsp;|
+<a href="#nice">nice</a>&nbsp;|
+<a href="#nmap">nmap</a>&nbsp;|
+<a href="#nmcli">nmcli</a>&nbsp;|
+<a href="#nproc">nproc</a>&nbsp;|
+<a href="#ntpd">ntpd</a>&nbsp;|
+<a href="#ntsysv">ntsysv</a></p>
+</div>
+
+<p class="cmdname"><a name="netcat">netcat</a></p>
+<p>
+The <code>nc</code> (or <code>netcat</code>) utility (supports IPv4 and
+IPv6) can be used for about anything involving TCP, UDP, or UNIX-domain
+sockets. It can open TCP connections, send UDP pkts, listen on arbitrary
+TCP/UDP ports, do port scanning, etc.</p>
+<p>
+Typical usage:</p>
+<ul>
+<li>simple TCP proxies;</li>
+<li>shell-script based HTTP clients/servers;</li>
+<li>network daemon testing;</li>
+<li>a SOCKS or HTTP ProxyCommand for <code>ssh</code>;</li>
+</ul>
+<p>
+For example, start <code>nc</code> as a server listening on
+<samp>tcp/2020</samp>:</p>
+
+<p class="cmd">nc -l 2020</p>
+<p>
+Then, on a second terminal (console, terminal window, another computer, etc)
+connect to that server like this:</p>
+
+<p class="cmd">nc 127.0.0.1 2020</p>
+<p>
+Now, anything typed at the second console will be concatenated to the first,
+and vice-versa. After the connection was established, <code>nc</code> does not
+care which side is "server". To terminate connection use
+<span class="keys">CTRL+D</span> (EOF).</p>
+<p>
+Some other examples:</p>
+
+<p class="cmdc">nc -p 32337 -w 5 host2.home.net 42</p>
+<p class="desc">open a TCP connection to port <samp>42</samp> of the
+specified host using port <samp>32337</samp> as the source port, set timeout
+to <samp>5</samp> sec;</p>
+
+<p class="cmdc">nc -zv host2.home.net 20-25 80</p>
+<p class="desc">scan the specified host for the open ports in the range
+<samp>20..30</samp> and also try port <samp>80</samp>;</p>
+
+
+
+<h5>Options</h5>
+<table class="options">
+<tr>
+<td class="opt_name"><code>-4</code></td>
+<td class="opt_desc">use IPv4 addresses only;</td></tr>
+<tr>
+<td class="opt_name"><code>-6</code></td>
+<td class="opt_desc">use IPv6 addresses only;</td></tr>
+<tr>
+<td class="opt_name"><code>-b</code></td>
+<td class="opt_desc">allow broadcast;</td></tr>
+<tr>
+<td class="opt_name"><code>-C</code></td>
+<td class="opt_desc">send <samp>CR/LF</samp> as line-ending;</td></tr>
+<tr>
+<td class="opt_name"><code>-D</code></td>
+<td class="opt_desc">enable the debug socket option;</td></tr>
+<tr>
+<td class="opt_name"><code>-d</code></td>
+<td class="opt_desc">detach from <samp>stdin</samp>;</td></tr>
+<tr>
+<td class="opt_name"><code>-F</code></td>
+<td class="opt_desc">pass the first connected socket using <samp>sendmsg</samp>
+(2) to <samp>stdout</samp> and exit; cannot be used with <samp>-U</samp>;</td></tr>
+<tr>
+<td class="opt_name"><code>-h</code></td>
+<td class="opt_desc">help;</td></tr>
+<tr>
+<td class="opt_name"><code>-I </code><kbd>n</kbd></td>
+<td class="opt_desc">the size of the TCP receive buffer;</td></tr>
+<tr>
+<td class="opt_name"><code>-i </code><kbd>t</kbd></td>
+<td class="opt_desc">sleep interval (sec) between lines of text sent and
+received, or between connections to multiple ports;</td></tr>
+<tr>
+<td class="opt_name"><code>-k</code></td>
+<td class="opt_desc">keep inbound sockets open for multiple connects;</td></tr>
+<tr>
+<td class="opt_name"><code>-l</code></td>
+<td class="opt_desc">listen for incoming connection requests; this cannot be
+used together with <samp>-x</samp> or <samp>-z</samp>;</td></tr>
+</table>
+
+<p class="fmtc"><code>-M </code><kbd>ttl</kbd></p>
+<p class="desc">set the TTL/hop limit of outgoing pkts;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-m <span class="arg">m</span></code></td>
+<td class="opt_desc">ask kernel to drop incoming pkts whose TTL/hop limit is
+less than <kbd>m</kbd>;</td></tr>
+<tr>
+<td class="opt_name"><code>-N</code></td>
+<td class="opt_desc"><samp>shutdown</samp> (2) the network socket after EOF
+on <samp>stdin</samp> (some servers require this);</td></tr>
+<tr>
+<td class="opt_name"><code>-n</code></td>
+<td class="opt_desc">no DNS or service lookups, do not try to resolve
+addresses, hostnames or ports;</td></tr>
+<tr>
+<td class="opt_name"><code>-O </code><kbd>n</kbd></td>
+<td class="opt_desc">the size of the TCP send buffer;</td></tr>
+</table>
+
+<p class="fmtc"><code>-P </code><kbd>user</kbd></p>
+<p class="desc">use this username for proxy authentication;</p>
+
+<p class="fmtc"><code>-p </code><kbd>src_port</kbd></p>
+<p class="desc">use this source port, subject to privilege restrictions and
+availability;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-q </code><kbd>t</kbd></td>
+<td class="opt_desc">quit after EOF on <samp>stdin</samp> and delay of
+<kbd>t</kbd> sec;</td></tr>
+<tr>
+<td class="opt_name"><code>-r</code></td>
+<td class="opt_desc">choose source and/or destination ports randomly;</td></tr>
+<tr>
+<td class="opt_name"><code>-S</code></td>
+<td class="opt_desc">enable the TCP MD5 signature option;</td></tr>
+</table>
+
+<p class="fmtc"><code>-s </code><kbd>source</kbd></p>
+<p class="desc">send pkts from the interface with the <kbd>source</kbd>
+IP address;</p>
+
+<p class="fmtc"><code>-T </code><kbd>keyword</kbd></p>
+<p class="desc">change the IPv4 TOS/IPv6 traffic class value; options:
+<samp>critical</samp>, <samp>inetcontrol</samp>, <samp>lowcost</samp>,
+<samp>lowdelay</samp>, <samp>netcontrol</samp>, <samp>throughput</samp>,
+<samp>reliability</samp>, ... or a hex/decimal number;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-t</code></td>
+<td class="opt_desc">answer TELNET negotiation;</td></tr>
+<tr>
+<td class="opt_name"><code>-U</code></td>
+<td class="opt_desc">use UNIX domain socket;</td></tr>
+<tr>
+<td class="opt_name"><code>-u</code></td>
+<td class="opt_desc">use UDP instead of TCP;</td></tr>
+</table>
+
+<p class="fmtc"><code>-V </code> <kbd>rtable</kbd></p>
+<p class="desc">set the routing table to be used;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-v</code></td>
+<td class="opt_desc">verbose;</td></tr>
+<tr>
+<td class="opt_name"><code>-W </code><kbd>n</kbd></td>
+<td class="opt_desc">terminate after receiving <kbd>n</kbd> packets from
+the network;</td></tr>
+<tr>
+<td class="opt_name"><code>-w </code><kbd>t</kbd></td>
+<td class="opt_desc">timeout connections which cannot be established or are
+idle after <kbd>t</kbd> sec; it does not apply to the listening mode
+(<samp>-l</samp>); the default is no timeout;</td></tr>
+</table>
+
+<p class="fmtc"><code>-X </code> <kbd>proxy_proto</kbd></p>
+<p class="desc">use this proxy protocol when talking to a proxy server;
+supported protocols: <samp>4</samp> (SOCKS v.4), <samp>5</samp> (SOCKS v.5)
+and <samp>connect</samp> (HTTPS proxy); default is SOCKS version 5;</p>
+
+<p class="cmdc">-x <span class="arg">addr</span>[:<span class="arg">port</span>]</p>
+<p class="desc">connect to dest using a proxy at <kbd>addr</kbd> and
+<kbd>port</kbd>; if port is not specified, the well-known port for the proxy
+protocol is used (<samp>1080</samp> for SOCKS, <samp>3128</samp> for HTTPS);
+an IPv6 address can be specified unambiguously by enclosing <kbd>addr</kbd>
+in square brackets; a proxy cannot be used with any of the options
+<samp>-lsuU</samp>;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-Z</code></td>
+<td class="opt_desc">DCCP mode (Datagram Congestion Control Protocol);</td></tr>
+<tr>
+<td class="opt_name"><code>-z</code></td>
+<td class="opt_desc">only scan for listening daemons, do not send any data;</td></tr>
+</table>
+
+
+
+
+
+<p class="cmdname_dep"><a name="netstat">netstat</a></p>
+<p class="dep">Deprecated</p>
+<p>
+shows network connections, routing tables, interface statistics, masqueraded connections, multicast membership. Note that <b>info
+won't be full unless</b> you prepend it with <code>sudo</code>. Since it's deprecated, you should probably use <code>ss</code>!</p>
+
+<p class="cmdc">netstat -A inet -l -n -p | more</p>
+<p class="desc">show listening sockets for <samp>inet</samp> address family,
+do not resolve names, show related programs;</p>
+
+<p class="cmdc">netstat -tulpn | more</p>
+<p class="desc">show listening sockets for <samp>tcp</samp> and
+<samp>udp</samp> protocols, do not resolve names, show related programs;</p>
+
+<p class="cmdc">watch netstat -tulpn</p>
+<p class="desc">like prev but in real time (exit - <span class="keys">CTRL+C</span>);</p>
+
+<p class="cmdc">netstat -nlpA inet,inet6 | more</p>
+<p class="desc">show listening sockets for <samp>inet</samp> and
+<samp>inet6</samp> addr families, do not resolve names, show related programs;</p>
+
+<p class="cmdc">netstat</p>
+<p class="desc">show active sockets of all configured addr families;</p>
+
+<p class="cmdc">netstat -r</p>
+<p class="desc">display the kernel’s routing tables;</p>
+
+<p class="cmdc">netstat -r -n</p>
+<p class="desc">the same as previous, but do not resolve names;</p>
+
+<p class="cmdc">netstat -i</p>
+<p class="desc">display a table of all network interfaces;</p>
+
+<p class="cmdc">netstat --interfaces=eth0</p>
+<p class="desc">show info on the first ethernet card only;</p>
+
+<p class="cmdc">netstat -M</p>
+<p class="desc">display a list of masqueraded connecions;</p>
+
+<p class="cmdc">netstat -s</p>
+<p class="desc">display summary statistics for each protocol;</p>
+<p>
+The type of info displayed is controlled by the first arg
+(by default a list of open sockets):</p>
+
+<p class="fmtc"><code>-g --groups</code></p>
+<p class="desc">show multicast group membership;</p>
+
+<p class="fmtc"><code>-i --interfaces</code></p>
+<p class="desc">show a table of all network interface;</p>
+
+<p class="fmtc"><code>-M --masquerade</code></p>
+<p class="desc">show a list of masqueraded connections;</p>
+
+<p class="fmtc"><code>-r --route</code></p>
+<p class="desc">show kernel's routing tables;</p>
+
+<p class="fmtc"><code>-s --statistics</code></p>
+<p class="desc">show summary stats for each protocol;</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-h</code> &nbsp;&nbsp; <code>--help</code>
+&nbsp;&nbsp; <code>-V</code> &nbsp;&nbsp; <code>--version</code>
+&nbsp;&nbsp; <code>-v</code> &nbsp;&nbsp; <code>--verbose</code></p>
+
+<p class="fmtc"><code>-A <span class="arg">family</span>
+--protocol=<span class="arg">family</span></code></p>
+<p class="desc">the address families (low level protocols)
+for which connections are to be shown; <kbd>family</kbd> is a comma
+separated list of keywords: <samp>inet</samp> and <samp>inet6</samp>
+(includes <samp>raw</samp>, <samp>udp</samp>, <samp>tcp</samp> protocol
+sockets), <samp>unix</samp>, <samp>ipx</samp>, <samp>ax25</samp>,
+<samp>netrom</samp>, <samp>ddp</samp>;</p>
+
+<p class="fmtc"><code>-a --all</code></p>
+<p class="desc">show both listening and non-listening sockets;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-C</code></td>
+<td class="opt_desc">show routing info from the routing cache;</td></tr>
+</table>
+
+<p class="fmtc"><code>-c --continuous</code></p>
+<p class="desc">show the selected info continuously;</p>
+
+<p class="fmtc"><code>-e --extend</code></p>
+<p class="desc">show additional info (<code>-ee</code> - max details);</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-F</code></td>
+<td class="opt_desc">show routing info from the FIB (default);</td></tr>
+</table>
+
+<p class="fmtc"><code>-l --listening</code></p>
+<p class="desc">show only listening sockets;</p>
+
+<p class="fmtc"><code>-n --numeric</code></p>
+<p class="desc">show numerical addresses, do not try to determine
+symbolic host, port or user names;</p>
+
+<p class="fmtc"><code>--numeric-hosts</code></p>
+<p class="desc">shows numerical host addresses (it does not affect the
+resolution of port or user names);</p>
+
+<p class="fmtc"><code>--numeric-ports</code></p>
+<p class="desc">show numerical port numbers (it does not affect
+the resolution of host or user names);</p>
+
+<p class="fmtc"><code>--numeric-users</code></p>
+<p class="desc">shows numerical user IDs (it does not affect
+the resolution of host or port names);</p>
+
+<p class="fmtc"><code>-o --timers</code></p>
+<p class="desc">include info related to networking timers;</p>
+
+<p class="fmtc"><code>-p --program</code></p>
+<p class="desc">show the PID and the name of the program to which
+each socket belongs</p>
+
+<p class="fmtc"><code>-W --wide</code></p>
+<p class="desc">do not truncate IP addresses;</p>
+
+
+
+<h5>Output (inet connections)</h5>
+
+<p class="fmtc"><samp>Proto</samp></p>
+<p class="desc">the protocol used by the socket;</p>
+
+<p class="fmtc"><samp>Recv-Q</samp></p>
+<p class="desc">the count of bytes not copied by the user prog
+connected to this socket;</p>
+
+<p class="fmtc"><samp>Send-Q</samp></p>
+<p class="desc">the count of bytes not acknowledged by the remote host;</p>
+
+<p class="fmtc"><samp>Local Address</samp></p>
+<p class="desc">addr/port of the local end of the socket;</p>
+
+<p class="fmtc"><samp>Foreign Address</samp></p>
+<p class="desc">addr/port of the remote end of the socket;</p>
+
+<p class="fmtc"><samp>State</samp></p>
+<p class="desc">state of socket (usually blank for <samp>raw</samp>,
+<samp>udp</samp>):</p>
+
+<table class="opts" style="margin-left:4.8rem">
+<tr><td class="opt_name" style="width:6rem"><samp>ESTABLISHED</samp></td><td class="opt_desc">socket has an established connection;</td></tr>
+<tr><td class="opt_name"><samp>SYN_SENT</samp></td><td class="opt_desc">socket is trying to establish connection;</td></tr>
+<tr><td class="opt_name"><samp>SYN_RECV</samp></td><td class="opt_desc">conn request has been received from net;</td></tr>
+<tr><td class="opt_name"><samp>FIN_WAIT1</samp></td><td class="opt_desc">socket is closed and conn is shutting down;</td></tr>
+<tr><td class="opt_name"><samp>FIN_WAIT2</samp></td><td class="opt_desc">connection is closed and socket is waiting for a shutdow from the remote end;</td></tr>
+<tr><td class="opt_name"><samp>TIME_WAIT</samp></td><td class="opt_desc">socket is waiting after close to handle packets still in the network;</td></tr>
+<tr><td class="opt_name"><samp>CLOSED</samp></td><td class="opt_desc">socket is not used;</td></tr>
+<tr><td class="opt_name"><samp>CLOSE_WAIT</samp></td><td class="opt_desc">remote end has shutdown, waiting for socket to close;</td></tr>
+<tr><td class="opt_name"><samp>LAST_ACK</samp></td><td class="opt_desc">remote end has shutdown and socket is closed; waiting for acknowledgement;</td></tr>
+<tr><td class="opt_name"><samp>LISTEN</samp></td><td class="opt_desc">socket is listening for incoming conns;</td></tr>
+<tr><td class="opt_name"><samp>CLOSING</samp></td><td class="opt_desc">both sockets are shutting down, but not all data sent;</td></tr>
+<tr><td class="opt_name"><samp>UNKNOWN</samp></td><td class="opt_desc">the state of socket is unknown;</td></tr>
+</table>
+
+<p class="fmtc"><samp>User</samp></p>
+<p class="desc">username or UID of the socket owner;</p>
+
+<p class="fmtc"><samp>PID/Program name</samp></p>
+<p class="desc">PID and the process name of the process that owns the socket;</p>
+
+
+
+
+
+<p class="cmdname"><a name="nice">nice</a></p>
+<p>
+modifies (adjusts) scheduling priority of a program.</p>
+
+<p class="cmdc">nice -n 19 dd if=/dev/hda of=fc6.iso</p>
+<p class="desc">run <code>dd ...</code> with lowered priority;</p>
+
+<p class="fmt"><code>nice&nbsp;</code>[<kbd>options</kbd>] [<kbd>cmd&nbsp;</kbd>[<kbd>arg</kbd>]<kbd>&nbsp;...</kbd>]</p>
+<p>
+If command is not specified, <code>~</code> shows the current scheduling
+priority. The larger number means lower priority.</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>-n </code><kbd>adjust</kbd>, <code>--adjustment=</code><kbd>adjust</kbd></p>
+<p class="desc">increment priority by <kbd>adjust</kbd> (which is 10 by
+default); the range is from <samp>-20</samp> (highest priority) to
+<samp>19</samp> (lowest priority);</p>
+
+
+
+
+
+<p class="cmdname"><a name="nmap">nmap</a></p>
+<p>
+is a network security scanner. It detects which hosts are up, which TCP/UDP
+ports are open, what services are available, etc. Note, that <code>~</code>
+functionality is limited, unless user is <samp>root</samp>.</p>
+
+
+
+<h5>Short intro</h5>
+<p>
+There is a recommended scanning methodology:</p>
+<ol>
+<li>Check for live systems.</li>
+
+<li>Check for open ports. Once you know which IPs are active, find what ports
+they're listening on.</li>
+
+<li>Scan beyond IDS (Intrusion Detection System). Sometimes your scanning efforts
+need to be altered to avoid IDS.</li>
+
+<li>Perform banner grabbing. Banner grabbing and OS fingerprinting will tell
+you what operating systems are on those machines and which services they are
+running.</li>
+
+<li>Scan for vulnerabilities. Perform a more focused look at the vulnerabilities
+these machines haven't been patched for yet.</li>
+
+<li>Draw network diagrams. A good network diagram will display all the logical
+and physical pathways to targets you might like.</li>
+
+<li>Prepare proxies. This obscures your efforts to keep you hidden.</li>
+
+<li></li>
+</ol>
+<p>
+Ping the whole network to find live nodes:</p>
+
+<p class="cmd">nmap -sP 192.168.0.0/24</p>
+<p>
+TCP Connect scan:
+
+<p class="cmd">sudo nmap -sT -p 80,443 192.168.0.0/24</p>
+<p>
+It performs 3-way handshake:</p>
+<div class="file"><pre>
+SYN -&gt;
+&lt;- SYN ACK
+ACK -&gt;</pre></div>
+<p>
+Stealth scan:</p>
+
+<p class="cmd">sudo nmap -sS -p 80,443 192.168.0.0/24</p>
+<p>
+It only sends SYN, gets SYN ACK and ignores the rest:</p>
+<div class="file"><pre>
+SYN -&gt;
+&lt;- SYN ACK
+ignore</pre></div>
+<p>
+Scan a specific host, check TCP ports 1..1000
+(it's default when <samp>-p</samp> is missing):
+
+<p class="cmd">sudo nmap -sT 192.168.0.10</p>
+<p>
+Detecting OS:</p>
+
+<p class="cmd">sudo nmap -O 192.168.0.10</p>
+<p>
+Combo scan (OS detection, version detection, script scanning, traceroute):</p>
+
+<p class="cmd">sudo nmap -A 192.168.0.10</p>
+<p>
+Decoy (<samp>192.168.0.21</samp> is a decoy, while <samp>192.168.0.10</samp>
+is a target):</p>
+
+<p class="cmd">sudo nmap -sS -D 192.168.0.21 192.168.0.10</p>
+<p>
+Nmap scripting engine:</p>
+
+<p class="cmd">sudo nmap --script vuln</p>
+
+<table class="grid_2" style="margin-left:0;margin-right:auto">
+<caption>Some of the most often used switches</caption>
+<tr>
+<th class="grid_2">Option</th>
+<th class="grid_2">Description</th></tr>
+<tr>
+<td class="grid_2"><code>-sA</code></td>
+<td class="grid_2">ACK scan</td></tr>
+<tr>
+<td class="grid_2"><code>-sF</code></td>
+<td class="grid_2">FIN scan</td></tr>
+
+<tr>
+<td class="grid_2"><code>-sI</code></td>
+<td class="grid_2">IDLE scan</td></tr>
+<tr>
+<td class="grid_2"><code>-sL</code></td>
+<td class="grid_2">DNS scan (aka list scan)</td></tr>
+<tr>
+<td class="grid_2"><code>-sN</code></td>
+<td class="grid_2">NULL scan</td></tr>
+<tr>
+<td class="grid_2"><code>-sO</code></td>
+<td class="grid_2">Protocol scan</td></tr>
+<tr>
+<td class="grid_2"><code>-sP</code></td>
+<td class="grid_2">Ping scan</td></tr>
+<tr>
+<td class="grid_2"><code>-sR</code></td>
+<td class="grid_2">RPC scan</td></tr>
+<tr>
+<td class="grid_2"><code>-sS</code></td>
+<td class="grid_2">SYN scan (aka stealth scan)</td></tr>
+<tr>
+<td class="grid_2"><code>-sT</code></td>
+<td class="grid_2">TCP connect scan</td></tr>
+<tr>
+<td class="grid_2"><code>-sW</code></td>
+<td class="grid_2">Window scan</td></tr>
+<tr>
+<td class="grid_2"><code>-sX</code></td>
+<td class="grid_2">XMAS scan</td></tr>
+<tr>
+<td class="grid_2"><code>-PI</code></td>
+<td class="grid_2">ICMP ping</td></tr>
+<tr>
+<td class="grid_2"><code>-Po</code></td>
+<td class="grid_2">No ping</td></tr>
+<tr>
+<td class="grid_2"><code>-PS</code></td>
+<td class="grid_2">SYN ping</td></tr>
+<tr>
+<td class="grid_2"><code>-PT</code></td>
+<td class="grid_2">TCP ping</td></tr>
+<tr>
+<td class="grid_2"><code>-oN</code></td>
+<td class="grid_2">Normal output</td></tr>
+<tr>
+<td class="grid_2"><code>-oX</code></td>
+<td class="grid_2">XML output</td></tr>
+<tr>
+<td class="grid_2"><code>-T0</code></td>
+<td class="grid_2">Serial slowest scan</td></tr>
+<tr>
+<td class="grid_2"><code>-T1</code></td>
+<td class="grid_2">Serial slow scan</td></tr>
+<tr>
+<td class="grid_2"><code>-T2</code></td>
+<td class="grid_2">Serial normal speed scan</td></tr>
+<tr>
+<td class="grid_2"><code>-T3</code></td>
+<td class="grid_2">Parallel normal speed scan (default)</td></tr>
+<tr>
+<td class="grid_2"><code>-T4</code></td>
+<td class="grid_2">Parallel fast scan</td></tr>
+</table>
+
+
+
+<h5>Misc examples</h5>
+
+<p class="cmdc">nmap -sU -p 1-1024 srv2</p>
+<p class="desc">launch UDP scan of port range <samp>1..1024</samp> against
+<samp>srv2</samp>;</p>
+
+<p class="cmdc">nmap -p 25 mail.acme.com</p>
+<p class="desc">check if <samp>mail.acme.com</samp> accepts SMTP connections
+(<samp>tcp/25</samp>); use the default scan type (stealth TCP SYN);</p>
+
+<p class="cmdc">nmap -PN -p 22 192.168.2.14</p>
+<p class="desc">check if host <samp>192.168.2.14</samp> accepts SSH connections
+(<samp>tcp/22</samp>); skip host discovery, treat host as online (<code>-PN</code>);</p>
+
+<p class="cmdc">nmap -p '1-1024,1521' db.acme.net</p>
+<p class="desc">scan first <samp>1024</samp> TCP ports on
+<samp>db.acme.net</samp>, and check if Oracle database is available
+(<i>Oracle Net</i> usually listens on <samp>tcp/1521</samp>);</p>
+
+<p class="cmdc">nmap -v 192.168.0.4</p>
+<p class="desc">scan all reserved TCP ports on the specified host, and
+give verbose output;</p>
+
+<p class="cmdc">nmap -sF -p 1-445 192.168.0.5</p>
+<p class="desc">launch a stealth TCP FIN scan against a host
+<samp>192.168.0.5</samp>; limit scan to the port range <samp>1..445</samp>;</p>
+
+<p class="cmdc">nmap -sP 192.168.0.0/24 -oN scan.log</p>
+<p class="desc">find available hosts (up and running) in the net
+<samp>192.168.0.0</samp> (netmask is <samp>24</samp> bits), save scan
+results to a file named <samp>scan.log</samp> using simple text format;</p>
+
+<p class="cmdc">nmap -sS -O ws54</p>
+<p class="desc">try to find what OS is installed on <samp>ws54</samp>;</p>
+
+<p class="cmdc">nmap -sX -p 22,53,110,143,4564 195.110.2.7-64</p>
+<p class="desc">launch an Xmas tree scan (specified ports only) against
+a range of hosts (<samp>195.110.2.7..195.110.2.64</samp>); may be useless
+if the target system is Microsoft, Cisco, HP/UX;</p>
+
+<p class="fmt"><code>nmap&nbsp;</code>[<kbd>scan_type</kbd>] [<kbd>options</kbd>]<kbd>&nbsp;host</kbd> | <kbd>network</kbd></p>
+
+
+
+<h5>Scan types</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-sS</code></td>
+<td class="opt_desc"><b>stealth TCP SYN scan</b> (default for
+<samp>root</samp>); we send a SYN pkt and wait for response; if we
+receive RST, it means this port is not listening; a SYN,ACK indicates that
+port is listening and we immediately send RST to break connection; the
+target host usually does not log this activity, but some firewalls do,
+if properly set;</td></tr>
+<tr>
+<td class="opt_name"><code>-sT</code></td>
+<td class="opt_desc"><b>TCP connect scan</b> (default for non-priv
+users); we try to connect to each interesting port; this activity can be
+easily detected and logged by the target host;</td></tr>
+</table>
+
+<p class="fmtc"><code>-sF</code>, <code>-sX</code>, <code>-sN</code></p>
+<p class="desc"><b>stealth FIN</b>, <b>Xmas Tree</b>, <b>Null scan</b> modes;
+these are better hidden, than SYN scan; the basic idea is that closed ports
+must reply to probe pkts with an RST, while open ports ignore the pkts in
+question (RFC 793); FIN scan uses a bare FIN pkt as probe, Xmas tree turn on
+FIN,URG,PUSH, Null scan turns off all flags; some systems of Microsoft, Cisco,
+HP/UX, MVS, BSDI, IRIX do not obey RFC 793, and these types of scan detect no
+open ports, while SYN shows different;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-sP</code></td>
+<td class="opt_desc"><b>ping scan</b>; does not really scan - just finds if
+the specified hosts are up; by default, if user is <samp>root</samp>,
+<code>~</code> sends in parallel ICMP echo request and TCP ACK to some port
+(80, by default); TCP SYN also can be used; non-privileged users send TCP
+connect instead of ACK or SYN; in fact ping is always performed when range
+of hosts is specified (no matter what type of scan is chosen), it allows
+to exclude inactive hosts;</td></tr>
+<tr>
+<td class="opt_name"><code>-sV</code></td>
+<td class="opt_desc"><b>version detection</b>; after tcp/udp ports are
+discovered by other scan methods, version detection communicates with those
+ports to find what OS is actually running there;</td></tr>
+<tr>
+<td class="opt_name"><code>-sU</code></td>
+<td class="opt_desc"><b>UDP scan</b>; we send 0 byte udp pkts to each
+port on the target; if we receive "ICMP port unreachable", then port is
+closed, otherwise we assume it is open; firewalls often block "port
+unreachable" msgs, causing the port to appear open; also, some hosts
+limit ICMP error msg rate, which makes udp scan slow; in general, it
+is not always easy to find what udp ports are really open;</td></tr>
+<tr>
+<td class="opt_name"><code>-sO</code></td>
+<td class="opt_desc"><b>IP protocol scan</b> (is used to find what IP
+protocols are supported on the target); we send raw IP pkts to each specified
+prot on a target host; if response is "ICMP protocol unreachable" msg, then
+prot is unavailable, otherwise we assume it is open; all problems related
+to ICMP (see above) can take place with this type of scan as well;</td></tr>
+</table>
+
+<p class="fmtc"><code>-sI</code> &lt;<kbd>zombie_host</kbd>[<code>:</code><kbd>probe_port</kbd>]&gt;</p>
+<p class="desc"><b>Idle scan</b>, advanced scan method alowing to send
+packets on behalf of another host;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-sA</code></td>
+<td class="opt_desc"><b>ACK scan</b>; an advanced method, which is usually
+used to map out firewall rulesets; we send ACK pkt with random looking
+acknowledgement / sequence numbers; if RST comes back, port is classified
+as "unfiltered"; if nothing or "ICMP unreachable" is returned, port is
+classified as "filtered";</td></tr>
+<tr>
+<td class="opt_name"><code>-sW</code></td>
+<td class="opt_desc"><b>window scan</b>; an advanced method, similar to
+previous (ACK scan), except that it can sometimes detect open ports as well
+as filtered / unfiltered;</td></tr>
+<tr>
+<td class="opt_name"><code>-sR</code></td>
+<td class="opt_desc"><b>RPC scan</b>, works in combination with other port
+scan methods; it takes all tcp/udp ports found open and floods them with
+SunRPC program NULL cmds in an attempt to determine whether they are RPC
+ports;</td></tr>
+<tr>
+<td class="opt_name"><code>-sL</code></td>
+<td class="opt_desc"><b>list scan</b>, generates and prints a list of IP
+addresses or hostnames without actually pinging or scanning them;</td></tr>
+</table>
+
+<p class="fmtc"><code>-b</code> &lt;<kbd>ftp_relay_host</kbd>&gt;</p>
+<p class="desc">FTP bounce attack;</p>
+
+
+
+<h5>Some options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-v</code></td>
+<td class="opt_desc">verbose;</td></tr>
+<tr>
+<td class="opt_name"><code>-6</code></td>
+<td class="opt_desc">scan via IPv6 rather than IPv4;</td></tr>
+</table>
+
+<p class="fmtc"><code>-D</code><kbd>decoy1</kbd><code>,</code><kbd>decoy2</kbd><code>,</code><kbd>...</kbd></p>
+<p class="desc">use decoys; it may be effective for hiding your IP among
+many decoys;</p>
+
+<p class="fmtc"><code>-e</code> <kbd>iface</kbd></p>
+<p class="desc">use network interface <kbd>iface</kbd>;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-F</code></td>
+<td class="opt_desc">fast scan mode; it means you want to scan only those
+ports listed in <samp>nmap-services</samp> file (distributed with
+<code>~</code>);</td></tr>
+<tr>
+<td class="opt_name"><code>-g</code> <kbd>n</kbd></td>
+<td class="opt_desc">set source port number to be used in scans;</td></tr>
+</table>
+
+<p class="fmtc"><code>-iL</code> <kbd>file</kbd></p>
+<p class="desc">get targets from <kbd>file</kbd> ('<code>-</code>' for stdin);</p>
+
+<p class="fmtc"><code>-n</code> / <code>-R</code></p>
+<p class="desc">never / always do reverse DNS resolution
+(default is "sometimes resolve");</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-0</code></td>
+<td class="opt_desc">use TCP/IP fingerprinting to guess remote OS;</td></tr>
+</table>
+
+<p class="fmtc"><code>-oN</code> <kbd>logfile</kbd></p>
+<p class="desc">save scan output in normal format to <samp>logfile</samp>;
+there are also: XML (<code>-oX</code>) and <code>grep</code>able
+(<code>-oG</code>) formats;</p>
+
+<p class="fmtc"><code>-p</code> <kbd>range</kbd></p>
+<p class="desc">ports to scan, for example: '1-1024,7779,8080';</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-P0</code></td>
+<td class="opt_desc">do not try to ping hosts before scaning them;</td></tr>
+<tr>
+<td class="opt_name"><code>-r</code></td>
+<td class="opt_desc">randomize order in which ports are scanned;</td></tr>
+</table>
+
+<p class="fmtc"><code>-S</code> <kbd>ip_addr</kbd></p>
+<p class="desc">use source address <kbd>ip_addr</kbd>;</p>
+
+<p class="fmtc"><code>-T</code> <kbd>policy</kbd></p>
+<p class="desc">general timing policy; <kbd>policy</kbd>
+is one of (numbers <samp>0..5</samp> are also allowed):</p>
+
+<table class="opts" style="margin-left:3.6em;width:84%">
+<tr>
+<td class="opts">Paranoid</td>
+<td class="opt_desc">very slow, to avoid detection;</td></tr>
+<tr>
+<td class="opts">Sneaky</td>
+<td class="opt_desc">slow, 15s between packets;</td></tr>
+<tr>
+<td class="opts">Polite</td>
+<td class="opt_desc">serialize probes and wait at least 0.4s
+between them to reduce chances of crashing target;</td></tr>
+<tr>
+<td class="opts">Normal</td>
+<td class="opt_desc">as quickly as possible without overloading network
+or missing hosts/ports (default);</td></tr>
+<tr>
+<td class="opts">Aggressive</td>
+<td class="opt_desc">accelerates SYN scan against heavily filtered hosts;
+fast connection is required;</td></tr>
+<tr>
+<td class="opts">Insane</td>
+<td class="opt_desc">for very fast networks, some scan info may be lost
+because individual probes are not waited more than 0.3s;</td></tr>
+</table>
+
+
+
+
+
+<p class="cmdname"><a name="nmcli">nmcli</a></p>
+<p>
+is a cmdline tool for controlling <i>NetworkManager</i> daemon and reporting
+network status. It can be used to create, display, edit, delete, activate,
+and deactivate network connections, and to control and display network device
+status.</p>
+<p>
+There are two main concepts used by <i>NetworkManager</i>: <b>device</b> and
+<b>connection</b>. To see devices detected by <i>NetworkManager</i>,</p>
+
+<p class="cmd">nmcli device</p>
+<p>
+You can use some shortcuts, e.g. next cmds work exactly like prev:
+
+<p class="cmdc">nmcli dev</p>
+<p class="cmd">nmcli d</p>
+<div class="term"><pre>
+DEVICE  TYPE      STATE      CONNECTION
+enp7s0  ethernet  connected  Wired connection 1
+lo      loopback  unmanaged  --</pre></div>
+<p>
+If you want to exclude some device from <i>NetworkManager</i> control,</p>
+
+<p class="cmd">nmcli device set enp3s0 managed no</p>
+<p>
+This is not persistent, and will be canceled after reboot. Or, you can return
+it back yourself:</p>
+
+<p class="cmd">nmcli device set enp3s0 managed yes</p>
+<p>
+To see the IP config for each device, use:</p>
+
+<p class="cmd">nmcli</p>
+<p>
+To get detailed info about the specified device:</p>
+
+<p class="cmdc">nmcli device show enp7s0</p>
+<p class="or">or</p>
+<p class="cmd">nmcli d show enp7s0</p>
+<p>
+To get status of all devices:</p>
+
+<p class="cmd">nmcli device status</p>
+<p>
+To list the available connections,</p>
+
+<p class="cmdc">nmcli connection</p>
+<p class="or">or</p>
+<p class="cmd">nmcli c</p>
+<div class="term"><pre>
+NAME                UUID               TYPE      DEVICE
+Wired connection 1  c883bc75-ca24 ...  ethernet  enp7s0</pre></div>
+<p>
+To list all currently active connections:</p>
+
+<p class="cmd">nmcli connection show --active</p>
+<p>
+You can deactivate and activate connections with the following cmds:</p>
+
+<p class="cmdc">nmcli connection down 'Wired connection 1'</p>
+<p class="cmd">nmcli connection up 'Wired connection 1'</p>
+<p>
+To see the details of a connection (very long list, press<span class="keys">
+Space </span>to move on, or<span class="keys"> q <span>to quit),</p>
+
+<p class="cmd">nmcli connection show 'Wired connection 1'</p>
+
+
+
+<h5>Wireless connections</h5>
+<p>
+You can find if Wi-Fi is enabled in your system with this cmd:</p>
+
+<p class="cmd">nmcli radio wifi</p>
+<p>
+But (!)<samp> enabled </samp>does not mean present.
+My desktop without Wi-Fi shows <i>enabled</i>, but does not show any Wi-Fi
+devices. As it was demonstrated before, you can check the presence of any
+network devices in your system with one of the following cmds:</p>
+
+<p class="cmdc">nmcli</p>
+<p class="cmdc">nmcli d</p>
+<p class="cmd">nmcli dev status</p>
+<p>
+So, if your system has a Wi-Fi device, you can switch Wi-Fi support on/off
+(enable/disable):</p>
+
+<p class="cmdc">nmcli radio wifi on</p>
+<p class="cmd">nmcli radio wifi off</p>
+<p>
+<i>NetworkManager</i> scans Wi-Fi networks periodically. To list the SSIDs
+of Wi-Fi Access Points currently visible to your Linux system,</p>
+
+<p class="cmd">nmcli dev wifi list</p>
+<p>
+If you see some SSIDs but don't see the desired one, try to rescan using</p>
+
+<p class="cmd">nmcli dev wifi rescan</p>
+<p>
+If it does not help, then may be you are too far from AP, or its antennas are
+directed wrong, ...</p>
+<p>
+In general, the following cmd must show the available wireless networks SSID,
+mode, channel, transfer rate, signal strength, bars and security info:</p>
+
+<p class="cmd">nmcli dev wifi</p>
+<p>
+If it does not work, try</p>
+
+<p class="cmd">sudo nmcli dev wifi</p>
+<p>
+To get some extra info about the scanned WiFi networks, including the SSID-HEX,
+BSSID, frequency, and more, use</p>
+
+<p class="cmd">nmcli -f ALL dev wifi</p>
+<p>
+If you know SSID and password, you can connect to Wi-Fi network using:</p>
+
+<p class="cmdc">sudo nmcli dev wifi connect 'Cool Hotspot' password 'abracadabra'</p>
+<p class="or">or, without exposing pass on the cmdline,</p>
+<p class="cmd">nmcli --ask dev wifi con "Cool Hotspot"</p>
+<p>
+Technically, the above cmds <i>create connection</i>.
+Now, to bring it down (disconnect) and up (connect again), you can do:</p>
+
+<p class="cmdc">nmcli con down <span class="arg">SSID</span></p>
+<p class="cmd">nmcli con up <span class="arg">SSID</span></p>
+<p>
+Instead SSID you can use connection's UUID (very long and very inconvenient
+unless you copy/paste). The connection info is displayed (it was demonstrated
+before) using</p>
+
+<p class="cmd">nmcli con sh</p>
+<p>
+To delete an existing Wi-Fi connection you need either its name or UUID:</p>
+
+<p class="cmd">sudo nmcli con del 'Cool Hotspot'</p>
+
+
+
+<h5>
+<a name="net_connectivity">Network connectivity</a></h5>
+<p>
+The<samp> connectivity </samp>argument shows the network connectivity state:</p>
+
+<p class="cmd">nmcli networking connectivity</p>
+<p>
+Technically, this cmd displays the most recent known connectivity state, but
+you can initiate rechecking with the following cmd:</p>
+
+<p class="cmd">nmcli networking connectivity check</p>
+<p>
+Possible states:</p>
+<table class="grid">
+<tr>
+<td class="grid_2"><samp>none</samp></td>
+<td class="grid_2">The host is not connected to any network</td></tr>
+<tr>
+<td class="grid_2"><samp>portal</samp></td>
+<td class="grid_2">The host is behind a captive portal and cannot reach
+the full Internet</td></tr>
+<tr>
+<td class="grid_2"><samp>limited</samp></td>
+<td class="grid_2">The host is connected to a network, but it has no access
+to the Internet</td></tr>
+<tr>
+<td class="grid_2"><samp>full</samp></td>
+<td class="grid_2">The host is connected to a network and has full access
+to the Internet</td></tr>
+<tr>
+<td class="grid_2"><samp>unknown</samp></td>
+<td class="grid_2">The connectivity status cannot be determined</td></tr>
+</table>
+
+
+
+<h5>Service management</h5>
+<p>
+This simple cmd outputs one word (<samp>enabled</samp> or
+<samp>disabled</samp> indicating the current state of networking:</p>
+
+<p class="cmdc">nmcli networking</p>
+<p>
+You can stop/start/restart <i>NetworkManager</i> with the following cmds.
+Note that it requires superuser privilege:</p>
+
+<p class="cmdc">sudo nmcli networking off</p>
+<p class="cmd">sudo nmcli networking on</p>
+<p>
+Of course, you can control <i>NetworkManager</i>
+with<code><a href="net.html#net_restart"> systemctl </a></code>like other
+system services.</p>
+<p>
+The following cmd tells you whether NetworkManager is running or not:</p>
+
+<p class="cmd">nmcli -t -f RUNNING general</p>
+<p>
+And this cmd shows the overall status of NetworkManager:</p>
+
+<p class="cmd">nmcli -t -f STATE general</p>
+<p>
+But next cmd gives you more info:</p>
+
+<p class="cmd">nmcli general status</p>
+<p>
+Some operations are available to a superuser only. To see what is allowed
+to you, as you are now (and you should be a regular user most of the time):</p>
+
+<p class="cmd">nmcli general permissions</p>
+<p>
+Let's see current <i>NetworkManager</i> logging level:</p>
+
+<p class="cmd">nmcli general logging</p>
+<p>
+Available logging levels are:</p>
+<table class="grid">
+<tr>
+<td class="grid_2"><samp>ERR</samp></td>
+<td class="grid_2">Logs only critical errors</td></tr>
+<tr>
+<td class="grid_2"><samp>WARN</samp></td>
+<td class="grid_2">Logs warnings that might reflect operation</td></tr>
+<tr>
+<td class="grid_2"><samp>INFO</samp></td>
+<td class="grid_2">Logs various informational messages that are useful for
+tracking state and operations</td></tr>
+<tr>
+<td class="grid_2"><samp>DEBUG</samp></td>
+<td class="grid_2">Enables verbose logging for debugging purposes</td></tr>
+</table>
+<p>
+To set a new logging level for a specific domain or for all domains:</p>
+
+<p class="cmdc">nmcli general logging level DEBUG domains IP4</p>
+<p class="cmd">nmcli general logging level INFO domains ALL</p>
+
+
+
+
+
+<p class="cmdname"><a name="nproc">nproc</a></p>
+<p>
+displays the number of processing units (CPUs/Cores) available to the
+current process, which may be less than the number of online processors.</p>
+
+<p class="cmdc">nproc</p>
+<p class="desc">show the number of processors (cores) available to this
+process;</p>
+
+<p class="cmdc">nproc --all</p>
+<p class="desc">show the total number of installed processors (cores);</p>
+
+<p class="cmdc">nproc --ignore=2</p>
+<p class="desc">if possible exclude 2 CPUs;</p>
+<p>
+Other options are <code>--help</code> and <code>--version</code>.</p>
+<div class="box1">
+<p>
+<b>Note!</b> It reports <samp>12</samp> processors/cores on a desktop with
+a single CPU <span style="font-family:Droid-Sans"><b>AMD Ryzen 5 3600</b></span>
+which is officially <b>6 Core, 12 Thread</b>.</p>
+</div>
+
+
+
+
+
+<p class="cmdname"><a name="ntpd">ntpd, ntpdate, ntpq</a></p>
+<p>
+<code>ntpd</code> is an OS daemon which sets and maintains the system time
+in synchronism with Internet standard time servers. By default it runs in
+continuous mode polling time servers at intervals determined by means of
+a non-trivial algorithm using measurements of the incidental roundtrip
+delay jitter, oscilator frequency deviation, etc.
+<code>ntpdate</code> (deprecated, but still widely used) sets the local
+date and time by polling the specified NTP server.</p>
+
+<p class="cmdc">ntpd -q</p>
+<p class="desc">sync system time (NTP servers must be set in
+<samp>/etc/ntp.conf</samp>); in this case <code>ntpd</code> exits after
+synchronizing (<code>-q</code>) or silently fails, if another instance of
+<code>ntpd</code> is already running as a daemon;</p>
+
+<p class="cmdc">ntpd -q -g</p>
+<p class="desc">similar to prev (one time sync), but <code>ntpd</code> is
+forced to ignore offset limits; it is used when the time difference is really
+big;</p>
+
+<p class="cmdc">ntpd -q -x</p>
+<p class="desc">sync system time with NTP server, adjust system clock
+smoothly; offset must be within 60s, otherwise it'll be long;</p>
+
+<p class="cmdc">ntpdate ru.pool.ntp.org</p>
+<p class="desc">sync system time with the specified NTP server;
+it fails if <code>ntpd</code> is running;</p>
+<p>
+<code>ntpq&nbsp;</code>is used to monitor NTP daemon (<code>ntpd</code>)
+operations and determine performance. It may be used as a cmd line or
+interactive tool.</p>
+
+<p class="cmdc">ntpq -p</p>
+<p class="desc">get a list of known peers and a summary of their states
+(can be slow because of the name resolution);</p>
+<p class="cmdc">ntpq -pn</p>
+<p class="desc">like prev, but faster, because IPs are used instead of names;</p>
+
+
+
+<h5>Some <code>ntpd</code> options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-a</code></td>
+<td class="opt_desc">enable authentication mode (default);</td></tr>
+<tr>
+<td class="opt_name"><code>-A</code></td>
+<td class="opt_desc">disable authentication mode;</td></tr>
+<tr>
+<td class="opt_name"><code>-b</code></td>
+<td class="opt_desc">synchronize using NTP broadcast messages;</td></tr>
+<tr>
+<td class="opt_name"><code>-g</code></td>
+<td class="opt_desc">normally <code>ntpd</code> exits if offset exceeds
+the sanity limit (<samp>1000</samp> seconds); <code>-g</code> overrides this
+limit and forces <code>ntpd</code> to set the time ignoring precautions, but
+only once; the necessity to repeat this procedure usually means the hardware
+problem;</td></tr>
+<tr>
+<td class="opt_name"><code>-L</code></td>
+<td class="opt_desc">listen to virtual IPs;</td></tr>
+<tr>
+<td class="opt_name"><code>-n</code></td>
+<td class="opt_desc">do not fork;</td></tr>
+</table>
+
+<p class="fmtc"><code>-p</code> <kbd>file</kbd></p>
+<p class="desc">the name of the pid file
+(usually <samp>/var/run/ntpd.pid</samp>);</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-q</code></td>
+<td class="opt_desc">exit after the first time the clock is set
+(<code>ntpdate</code> behaviour); <code>-g</code> and <code>-x</code>
+are often used with this option;</td></tr>
+</table>
+
+<p class="fmtc"><code>-u </code><kbd>uid</kbd><code>:</code><kbd>gid</kbd></p>
+<p class="desc">drop root privileges and change user/group IDs of the
+<code>ntpd</code> process to the specified <kbd>uid</kbd>:<kbd>gid</kbd>;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-x</code></td>
+<td class="opt_desc">normally the time is <i>slewed</i> if the offset
+is below the <i>step threshold</i> (<samp>128</samp> ms by default), and
+<i>stepped</i> otherwise; <code>-x</code> forces the time to be slewed in
+all cases; however, as the slew rate is limited to <samp>0.5</samp> ms/s,
+the adjustment process may take essential time (<samp>2000</samp> sec for
+each second);</td></tr>
+</table>
+
+
+
+
+
+<p class="cmdname"><a name="ntsysv">ntsysv</a></p>
+<p>
+(<b>outdated</b>) (<samp>ncurses</samp>-based app)
+can be used to configure runlevel services (also, see
+<a href="cmds_c.html#chkconfig"><code>chkconfig</code></a>).
+By default <code>~</code> configures current runlevel.</p>
+
+<p class="cmdc">ntsysv</p>
+<p class="desc">start configuration of the current runlevel;</p>
+
+<p class="cmdc">ntsysv --level 5</p>
+<p class="desc">configure runlevel 5;</p>
+
+<p class="cmdc">ntsysv --level 016</p>
+<p class="desc">configure runlevels 0, 1, 6;</p>
+
+<p class="cmdc">ntsysv --back --level 3</p>
+<p class="desc">configure runlevel 3, show '<samp>Back</samp>' button
+instead of '<samp>Cancel</samp>';</p>
+
+</div>
+
+</body></html>

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (od, openssl)</title>
+<meta name="description" content="linux quick reference, od, openssl" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<div id="topmenu">
+<p class="menu">
+<a href="#od">od</a>&nbsp;|
+<a href="#openssl">openssl</a></p>
+</div>
+
+<p class="cmdname"><a name="od">od</a></p>
+<p>
+(octal debugger) dumps files in octal and other formats.</p>
+
+<p class="fmt"><code>od&nbsp;</code>[<kbd>options</kbd>] [<kbd>file</kbd>]<kbd>&nbsp;...</kbd></p>
+<p>
+If the <kbd>file</kbd> arg is '<code>-</code>', or missing, <code>od</code>
+reads <samp>stdin</samp>.</p>
+
+<p class="cmdc">od -A d -N 512 -h logo.gif</p>
+<p class="desc">output the first <samp>512</samp> bytes of
+<samp>logo.gif</samp> file in hexadecimal format using decimal offset;</p>
+
+<p class="cmdc">od -A d -N 512 --width=1 -h logo.gif</p>
+<p class="desc">like previous, but output one byte per line;</p>
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>-A</code> <kbd>r</kbd>,
+<code>--address-radix=</code><kbd>r</kbd></p>
+<p class="desc">specify how the file offsets are printed; <kbd>r</kbd>
+can be <code>d</code> (decimal), <code>o</code> (octal), <code>x</code>
+(hexadecimal), <code>n</code> (none);</p>
+
+<p class="fmtc"><code>-j</code> <kbd>n</kbd>,
+<code>--skip-bytes=</code><kbd>n</kbd></p>
+<p class="desc">skip <kbd>n</kbd> input bytes;</p>
+
+<p class="fmtc"><code>-N</code> <kbd>n</kbd>,
+<code>--read-bytes=</code><kbd>n</kbd></p>
+<p class="desc">limit dump to <kbd>n</kbd> input bytes;</p>
+
+<p class="fmtc"><code>-s</code> <kbd>n</kbd>,
+<code>--strings=</code><kbd>n</kbd></p>
+<p class="desc">output strings of at least <kbd>n</kbd>
+graphic chars (default is 3);</p>
+
+<p class="fmtc"><code>-v</code>,
+<code>--output-duplicates</code></p>
+<p class="desc">do not use <samp>*</samp> to mark line suppression;</p>
+
+<p class="fmtc"><code>-w</code> <kbd>n</kbd>,
+<code>--width=</code><kbd>n</kbd></p>
+<p class="desc">output <kbd>n</kbd> bytes per line (default is 32);</p>
+
+
+<h5>Format options</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-a</code></td>
+<td class="opt_desc">named characters (<code>-t a</code>);</td></tr>
+<tr>
+<td class="opt_name"><code>-b</code></td>
+<td class="opt_desc">octal bytes (<code>-t oC</code>);</td></tr>
+<tr>
+<td class="opt_name"><code>-c</code></td>
+<td class="opt_desc">ASCII chars or backslash escapes (<code>-t c</code>);</td></tr>
+<tr>
+<td class="opt_name"><code>-d</code></td>
+<td class="opt_desc">unsigned decimal shorts (<code>-t u2</code>);</td></tr>
+<tr>
+<td class="opt_name"><code>-f</code></td>
+<td class="opt_desc">floats (<code>-t fF</code>);</td></tr>
+<tr>
+<td class="opt_name"><code>-h</code></td>
+<td class="opt_desc">hexadecimal shorts (<code>-t x2</code>);</td></tr>
+<tr>
+<td class="opt_name"><code>-i</code></td>
+<td class="opt_desc">decimal shorts (<code>-t d2</code>);</td></tr>
+<tr>
+<td class="opt_name"><code>-l</code></td>
+<td class="opt_desc">decimal longs (<code>-t d4</code>);</td></tr>
+<tr>
+<td class="opt_name"><code>-o</code></td>
+<td class="opt_desc">octal shorts (<code>-t o2</code>);</td></tr>
+<tr>
+<td class="opt_name"><code>-x</code></td>
+<td class="opt_desc">hexadecimal shorts (<code>-t x2</code>);</td></tr>
+</table>
+
+
+
+<p class="cmdname"><a name="openssl">openssl</a></p>
+<p>
+Some relevant abbreviations:</p>
+<ul>
+<li><b>SSL</b> - Secure Socket Layer,<lir>
+<li><b>TLS</b> - Transport Layer Security,</li>
+<li><b>CSR</b> - Certificate Signing Request,</li>
+<li><b>CRL</b> - Certificate Revocation List,</li>
+<li><b>MIME</b> - Multipurpose Internet Mail Extensions.</li>
+</ul>
+<p>
+<b>OpenSSL</b> is a cryptography toolkit implementing SSL v2/v3 and TLS v1
+net protocols and related cryptography standards.</p>
+<p>
+The <code>openssl</code> (cmdline app) provides various cryptography
+functions of OpenSSL's crypto library:</p>
+<ul>
+<li>Creation and management of private keys, public keys and parameters</li>
+<li>Public key cryptographic operations</li>
+<li>Creation of X.509 certificates, CSRs and CRLs</li>
+<li>Calculation of Message Digests</li>
+<li>Encryption and Decryption with Ciphers</li>
+<li>SSL/TLS Client and Server Tests</li>
+<li>Handling of S/MIME signed or encrypted mail</li>
+<li>Time Stamp requests, generation and verification</li>
+</ul>
+
+
+<h5>Some certificate-related file formats and standards</h5>
+<p>
+<b>PKCS</b> (Public-Key Cryptography Standards) are a group of public-key
+cryptography standards devised and published by RSA Security Inc, starting in
+the early 1990s.</p>
+<p>
+<b>PEM</b> (Privacy Enhanced Mail Base64 encoded DER certificate) is the most
+common format used for certificates. File extensions used for PEM certificates
+are <samp>.cer</samp>, <samp>.crt</samp>, <samp>.pem</samp>. Technically they
+are <i>Base64 encoded ASCII files</i>.</p>
+<p>
+<b>DER</b> (Distinguished Encoding Rules) is the binary form of the
+certificate. DER formatted certificates do not contain the "BEGIN
+CERTIFICATE/END CERTIFICATE" stmts. DER formatted certificates usually
+have <samp>.der</samp> ext.</p>
+<p>
+<b>PKCS#7</b> or <b>P7B</b> is used by Cryptographic Message Syntax Standard
+(CMS) - a standard for cryptographically protected messages. It can be used to
+digitally sign, digest, authenticate or encrypt any form of digital data.
+File extensions are <samp>.p7b</samp> or <samp>.p7c</samp>.</p>
+<p>
+<b>PKCS#8</b> (Private-Key Information Syntax Standard) is used to carry
+private certificate keypairs (encrypted or unencrypted).</p>
+<p>
+<b>PKCS#12</b> (successor to Microsoft's <b>PFX</b>) defines an archive
+file format for storing many cryptography objects as a single file. It's
+commonly used to bundle a private key with its X.509 certificate or to bundle
+all the members of a chain of trust. File extensions are <samp>.pfx</samp> or
+<samp>.p12</samp>. A PKCS#12 file may be encrypted and signed.</p>
+<p>
+<b>CRL</b> (Certificate Revocation List) is a list of digital certificates that have
+been revoked by the issuing certificate authority (CA) before their scheduled
+expiration date and should no longer be trusted.</p>
+
+
+
+<h5>Creating RSA keys</h5>
+<p>
+To create an RSA <b>private key</b> use the following cmd:</p>
+
+<p class="cmd">openssl genrsa -out private-key.pem 3072</p>
+<p>
+Note that a key length is set to 3072 bits. The minimum key length is 2048, but
+experts recommend 3072 (May, 2021).</p>
+<p>
+To generate a related public key:</p>
+
+<p class="cmd">openssl rsa -in private-key.pem -pubout -out public-key.pem</p>
+<p>
+Remember that <b>priviate key is your secret</b>, keep and protect it carefully.
+The <b>public key</b> is really public, you can give it to anybody who wants to
+communicate with you, or, e.g., to validate your digital signature.</p>
+
+
+
+<h5>Symmetric encryption</h5>
+<p>
+The symmetric encryption is a classic approach when the same key (or password)
+is used to encrypt and decrypt data. There are two types of symmetric encryption:
+<i>stream ciphers</i> and <i>block ciphers</i>. The following description is about
+<b>block ciphers</b>. Note that <i>encryption algorithm</i> and <i>cipher</i> are
+often synonymous in this context.</p>
+<p>
+In general, it's not recommended to use<code> openssl </code>for symmetric
+encryption. First, it's just inconvenient, second, you must understand all those
+subtle things about randomness, IV (initialization vector), etc. So, just stick
+to <a href="cmds_g.html#gpg">GnuPG</a> which is more user-oriented, while<code>
+openssl </code>is more like admin/developer/library tool.</p>
+<p>
+Here are some commands you can use with AES (Advanced Encryption Standard).</p>
+<p>
+For symmetric encryption/decryption you need a <b>key</b> and an
+<b>initialization vector</b>. Let's generate a key:</p>
+
+<p class="cmd">openssl rand -out my_key.bin 32</p>
+<p>
+The number specifies the key length in bytes, so this is supposed to be a
+256-bit key.</p>
+<p>
+Here is the tricky part. The above cmd uses CPU to generate entropy to produce
+the random numbers that are used as the key. In other words, in this case OpenSSL
+is using a pseudorandom number generator (PRNG), i.e., just an algorithm that is
+technically not random. Well, so far experts consider it cryptograpically secure.
+Of course it would be better to use a True Random Number Generator (TRNG) which
+is a piece of hardware specifically designed to produce true randomness.</p>
+<p>
+We also need a random IV (Initialization Vector). It hides patterns in the
+encrypted data and introduces more randomness (if you really use new IV each
+time):</p>
+
+<p class="cmd">openssl rand -hex 16</p>
+<p>
+The output will be a 16 byte string. Note that you need this key and this IV for
+decrypting too. Another important thing: each time use unique random IV.</p>
+<p>
+The <b>encryption</b> cmd looks like this:</p>
+
+<p class="cmd">openssl enc -aes-256-cfb8 -in <span class="arg">filename</span>
+-k file:my_key.bin -out <span class="arg">encrypted_file</span> -pbkdf2 -iv
+035efcc5418ab26ea4057d60998ed137</p>
+<p>
+The<samp> enc </samp>specifies the encryption algorithm which in this case is<samp>
+-aes-256-cfb8</samp>, i.e., AES, 256-bit key, CFB (Cipher FeedBack) mode. The<samp>
+-pbkdf2 </samp> applies a pseudorandom function along with a salt value and repeats
+the process many times to produce a derived key to be used in the operation. It's
+used to complicate the brute force attacks.</p>
+<p>
+Here is a simplified version of the above cmd using password instead of key.
+In fact, it prompts you for password and generates key in the process:</p>
+
+<p class="cmd">openssl enc -aes-256-cfb8 -in <span class="arg">filename</span>
+-out <span class="arg">encrypted_file</span> -pbkdf2 -iv
+035efcc5418ab26ea4057d60998ed137</p>
+<p>
+Now, <b>decryption</b>:</p>
+
+<p class="cmd">openssl enc -d -aes-256-cfb8
+-in <span class="arg">encrypted_file</span> -k file:my_key.bin
+-out <span class="arg">filename</span> -pbkdf2 -iv
+035efcc5418ab26ea4057d60998ed137</p>
+<p>
+The simplified version with password:</p>
+
+<p class="cmd">openssl enc -d -aes-256-cfb8
+-in <span class="arg">encrypted_file</span>
+-out <span class="arg">filename</span> -pbkdf2 -iv
+035efcc5418ab26ea4057d60998ed137</p>
+<p>
+Once again, key (or password) and IV must be the same for both encryption and
+decryption.</p>
+
+
+
+<h5>Convertions</h5>
+<p>
+X509 to PEM:</p>
+<p class="cmd">openssl x509 -in <span class="arg">certname</span>.cer
+-outform PEM -out <span class="arg">certname</span>.pem</p>
+<p>
+PEM to DER:</p>
+<p class="cmd">openssl x509 -outform der
+-in <span class="arg">certname</span>.pem
+-out <span class="arg">certname</span>.der</p>
+<p>
+DER to PEM:</p>
+<p class="cmd">openssl x509 -inform der
+-in <span class="arg">certname</span>.der
+-out <span class="arg">certname</span>.pem</p>
+<p>
+PEM to P7B:</p>
+<p class="cmd">openssl crl2pkcs7 -nocrl
+-certfile <span class="arg">certname</span>.pem
+-out <span class="arg">certname</span>.p7b -certfile CACert.cer</p>
+<p>
+PKCS#7 to PEM:</p>
+<p class="cmd">openssl pkcs7 -print_certs
+-in <span class="arg">certname</span>.p7b
+-out <span class="arg">certname</span>.pem</p>
+<p>
+PFX to PEM:</p>
+<p class="cmd">openssl pkcs12 -in <span class="arg">filename</span>.pfx
+-out <span class="arg">certname</span>.pem</p>
+<p>
+PKCS#12 to PEM.<br>
+(similar to prev; note that if your PKCS#12 file contains several items,
+like cert and key, the PEM file will contain those items too):</p>
+<p class="cmd">openssl pkcs12 -in <span class="arg">filename</span>.p12
+-nodes -out <span class="arg">certname</span>.pem</p>
+<p>
+PKCS#12 to PEM.<br>
+(the following two cmds extract cert and private key and put them into
+separate files):</p>
+<p class="cmd">openssl pkcs12 -in <span class="arg">filename</span>.p12
+-out cert.pem -clcerts -nokeys</p>
+<p class="cmd">openssl pkcs12 -in <span class="arg">filename</span>.p12
+-out key.pem -nocerts -nodes</p>
+<p>
+PFX to PKCS#8.<br>
+(first, convert PFX to PEM, then convert PEM to PKCS#8):</p>
+<p class="cmd">openssl pkcs12 -in <span class="arg">certname</span>.pfx
+-nocerts -nodes -out <span class="arg">certname</span>.pem</p>
+<p class="cmd">openSSL pkcs8 -in <span class="arg">certname</span>.pem -topk8
+-nocrypt -out <span class="arg">certname</span>.pk8</p>
+<p>
+P7B to PFX.<br>
+(first, convert P7B to CER, then convert CER and Private Key to PFX):</p>
+<p class="cmd">openssl pkcs7 -print_certs
+-in <span class="arg">certname</span>.p7b
+-out <span class="arg">certname</span>.cer</p>
+<p class="cmd">openssl pkcs12 -export
+-in <span class="arg">certname</span>.cer
+-inkey <span class="arg">privateKey</span>.key
+-out <span class="arg">certname</span>.pfx -certfile  cacert.cer</p>
+
+
+
+<h5>Checking certificates</h5>
+
+<p class="cmdc">openssl s_client -connect google.com:443 | openssl x509 -text</p>
+<p class="desc">requests info about <samp>google.com</samp> certificate; port
+<samp>443</samp> is default for HTTPS; cmd sends the output of
+<samp>openssl s_client</samp> to <samp>openssl x509</samp>, which formats cert
+info according to the X.509 standard;</p>
+
+<p class="cmdc">openssl s_client -connect wikipedia.org:443 | openssl x509 -noout -subject -issuer</p>
+<p class="desc">requests Wikipedia's server certificate info; in particular,
+cmd asks for the subject, which contains the server name info, and the issuer,
+which identifies the CA;</p>
+
+
+
+<h5>Creating a self-signed certificate</h5>
+<p>
+(Simple case, no CA)</p>
+<p>
+Before you start, define CN (Common Name) for your future cert. The CN is the
+fully qualified name of the system that's going to use the certificate. In case
+of Dynamic DNS, your CN should have a wild-card, e.g. <samp>*.api.com</samp>.
+You can also use the hostname (even <samp>localhost</samp>, but it's not good)
+or IP address.</p>
+<p>
+Besides that, prepare a password for the keystore (optional) and answers for
+the standard CSR (certificate signing request) question, because whenever you
+try to generate a CSR, you will face a dialog like this:</p>
+<div class="term">
+<pre>
+Country Name (2 letter code) []:
+State or Province Name (full name) []:
+Locality Name (e.g. city) []:
+Organization Name (e.g. company) []:
+Organizational Unit Name (e.g. section) []:
+Common Name (e.g. server FQDN or YOUR name) []:
+Email Address []:</pre>
+</div>
+<p>
+You can bypass those questions by adding <samp>-subj</samp> option to the
+certificate generation cmd, but you still have to provide some info. If you
+don't want to protect your private key with a passphrase, add
+<samp>-nodes</samp> option. The simple cert/key generation cmd can be
+like this:</p>
+
+<p class="cmd">openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out cert.pem</p>
+<p>
+More complicated cmd (some names are not real and should not be used):</p>
+
+<p class="cmd">openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509
+-days 365 -out cert.pem
+-subj "/C=US/ST=California/L=LA/O=Acme Company/CN=example.com"</p>
+<p>
+To review the created certificate:</p>
+
+<p class="cmd">openssl x509 -text -noout -in cert.pem</p>
+<p>
+Put your key and cert into a PKCS#12 bundle:</p>
+
+<p class="cmd">openssl pkcs12 -inkey key.pem -in cert.pem -export -out cert.p12</p>
+<p>
+Validate PKCS#12 file:</p>
+
+<p class="cmd">openssl pkcs12 -in cert.p12 -noout -info</p>
+
+</div>
+
+</body></html>

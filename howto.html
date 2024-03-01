@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (howto..)</title>
+<meta name="description" content="linux quick reference, howto" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+<script>
+$(document).ready(function() {
+  $("#show_mmu").click(function() {
+    $("#mmu").slideToggle(100);
+  });
+});
+</script>
+</head><body>
+
+<div id="main">
+
+<h1 class="part">Howto..? What is ..?</h1>
+
+<p class="submenu">
+
+<a href="#hw_mon"><b>CPU temperature</b>, <b>fan speed</b>, ...</a><br>
+<a href="#env_vars"><b>Environment variables</b></a><br>
+<a href="#fd_num"><b>File descriptors</b> used by this process</a><br>
+<a href="#find_fs_type"><b>Filesystem's type</b></a><br>
+<a href="#mount_opts"><b>Filesystem's mount options</b></a><br>
+<a href="#kernel_version"><b>Kernel version</b></a><br>
+<a href="#lib_dep"><b>Libraries</b> used by this binary executable</a><br>
+<a href="#proc_info">Linux <b>process</b>, misc info</a><br>
+<a href="#libc"><b>Libc (glibc) version</b></a><br>
+<a href="#release"><b>Linux version</b> (release)</a><br>
+<a href="#mem_page"><b>Memory page size</b></a><br>
+<a href="#mem_mmu"><b>MMU</b> (Memory Management Unit)</a><br>
+<a href="#nvidia"><b>nVidia  &amp; Nouveau</a></b><br>
+<a href="cmds_s.html#rc.local"><b>rc.local</b></a><br>
+<a href="#service"><b>Service</b>, <b>daemon</b></a><br>
+<a href="#squashfs"><b>squashfs</b> (filesystem type)</a><br>
+<a href="net.html#static_ip"><b>Static IP</b></a><br>
+<a href="#ubu-deb"><b>Ubuntu -- Debian</b> version's names and numbers.</a><br>
+<a href="#x86-64">What is <b>x86-64</b>?</a><br>
+<a href="#yaml"><b>YAML</b> (.yml)</a><br>
+<a href="#zero-copy"><b>Zero-copy</b></a>
+</p>
+
+
+
+<h5>How to get miscellaneous system info?</h5>
+<p>
+<a name="release"></a>
+Which <b>Linux version</b> do I have?</p>
+
+<p class="cmd">lsb_release -a</p>
+<p>
+(see below how to find <a href="#kernel_version">kernel version</a>)</p>
+<p>
+<a name="mem_page"></a>
+How large is the <a href="memory.html">memory</a> <b>page size</b> (bytes)
+in my Linux system?</p>
+
+<p class="cmd">getconf PAGESIZE</p>
+<p>
+<a name="env_vars"></a>
+What <b>environment variables</b> are currently set (and their values)?</p>
+
+<p class="cmd">set | less</p>
+<p>
+To find the current value of some specific env variable:</p>
+
+<p class="cmdc">echo $HOME</p>
+<p class="cmd">echo $PATH</p>
+<p>
+<a name="fd_num"></a>
+The <b>number of file descriptors</b> used by the process with PID number
+<kbd>pid</kbd>:</p>
+
+<p class="cmdc">ls -l /proc/<span class="arg">pid</span>/fd</p>
+<p class="cmd">ls -l /proc/<span class="arg">pid</span>/fd | wc -l</p>
+<p>
+<a name="proc_info"></a>
+Miscellaneous process info (some of this cmds require <b>superuser</b> priv
+if the current user is not the owner of the process):</p>
+
+<p class="cmdc">cat /proc/2208/cmdline</p>
+<p class="desc">command line args of the process with <samp>PID = 2208</samp>
+(random PID, just for demo);</p>
+
+<p class="cmdc">ls -l /proc/2208/cwd</p>
+<p class="desc">current working dir of the process with <samp>PID = 2208</samp>;</p>
+
+<p class="cmdc">ls -l /proc/2208/exe</p>
+<p class="desc">executable file (full path to the binary executable of the process);</p>
+
+<p class="cmdc">cat /proc/2208/environ</p>
+<p class="desc">environment variables used by the process;</p>
+
+<p class="cmdc">ls -l /proc/2208/root</p>
+<p class="desc">the root path as seen by the process;</p>
+
+<p class="cmdc">cat /proc/2208/status</p>
+<p class="desc">status info (run state, memory usage, etc);</p>
+
+<p class="cmdc">sudo pmap 4237</p>
+<p class="desc">detailed info about memory used by the process
+(<samp>pid = 4237</samp>);</p>
+
+<p class="cmdc">sudo pmap 4237 | grep total</p>
+<p class="desc">total size of memory used by the process;</p>
+<p>
+System-wide <b>maximum number of file handles</b>:</p>
+
+<p class="cmdc">cat /proc/sys/fs/file-max</p>
+<p class="or">or</p>
+<p class="cmd">sysctl fs.file-max</p>
+<p>
+File descriptors in kernel memory (format: num of allocated file handles,
+num of unused-but-allocated file handles, system-wide max num of file
+handles):</p>
+
+<p class="cmdc">cat /proc/sys/fs/file-nr</p>
+<p class="or">or</p>
+<p class="cmd">sysctl fs.file-nr</p>
+<p>
+See also <code><a href="cmds_c.html#cat">cat</a></code> usage examples.</p>
+
+
+
+<h5>
+<a name="libc"></a>How to find Libc (Glibc) version?</h5>
+<p>
+The simplest way is probably</p>
+
+<p class="cmd">ldd --version</p>
+<p>
+Or, you can just look at that file in that dir with your own eyes:</p>
+
+<p class="cmdc">ls -al /lib/x86_64-linux-gnu/libc-*</p>
+<p class="cmd">ls -al /lib/x86_64-linux-gnu/libc.*</p>
+
+
+
+<h5>
+<a name="lib_dep"></a>What libraries are used by this binary executable?</h5>
+<p>
+There are many ways. For example:</p>
+
+<p class="cmdc">ldd ~/bin/digger</p>
+<p class="or">or</p>
+<p class="cmdc">objdump -p ~/bin/digger</p>
+<p class="or">or</p>
+<p class="cmd">lsof -P -T -p objdump -p <span class="arg">pid</span></p>
+<p>
+Note that the third cmd is only applicable to the running processes, while
+the first two cmds query the executable file and work even when the program
+cannot be started because of the unsatisfied dependencies.</p>
+<p>
+If <code>ldd</code> outputs "not a dynamic executable", it usually means that the executable is a static one, or it was built
+for a different architecture, or some loader files are missing, or kernel version is too old, or library configurations are
+incorrect. For example, it often happens with Go apps because they are usually statically linked.</p>
+
+
+
+<h5>
+<a name="kernel_version">Kernel version..</a></h5>
+<p>
+To find the current version of your <a href="kernel.html">Linux kernel</a>,
+use the following cmds:</p>
+
+<p class="cmdc">cat /proc/version</p>
+<p class="or">or</p>
+<p class="cmd">uname -r</p>
+<p>
+The last cmd only shows kernel release numbers, and usually it's enough.
+But this cmd with a different option can give you even more info:</p>
+
+<p class="cmd">uname -a</p>
+<p>
+displays</p>
+<ul>
+<li>Kernel name which is <samp>Linux</samp> for Linux, but can be different
+on BSD or macOS.</li>
+<li>Hostname (whatever you set).</li>
+<li>Kernel release numbers. It's complicated and was changing over time.
+Ubuntu kernel numbers are not exactly the same as the mainline Linux kernel
+numbers, and, probably, you should only pay attention to the first three:
+<ul class="tight">
+<li>Kernel version</li>
+<li>Major revision</li>
+<li>Minor revision</li>
+<li>Patch (bug fix) number</li>
+<li>Some distribution specific word/string, aka <i>flavour</i>.
+Some popular Ubuntu flavours are:
+<ul class="tight">
+<li><samp>generic</samp> - default kernel optimized for desktops;</li>
+<li><samp>server</samp> - kernel optimized for servers;</li>
+<li><samp>virtual</samp> - kernel optimized for for KVM, XEN, and EC2;</li>
+</ul></li></ul></li>
+<li>Kernel name, time of built, etc (smth like
+<samp>#148~14.04.1-Ubuntu SMP Thu May 3 07:26:53 UTC 2018</samp></li>
+<li>Machine architecture.</li>
+<li>Processor architecture.</li>
+<li>Operating system architecture (technically, you can run 32-bit
+<samp>x86</samp> OS on a 64-bit <samp>x86_64</samp> CPU).</li>
+<li>Operating system, which is usually <samp>GNU/Linux</samp> for Linux,
+whatever distribution.</li>
+</ul>
+On my system <i>machine architecture</i>, <i>processor architecture</i>,
+<i>OS architecture</i> are all the same, <samp>x86_64</samp>, and I guess
+it's the most popular case.</p>
+
+
+
+<h5>
+<a name="find_fs_type">Filesystem type..</a></h5>
+<p>
+There are many ways to find the filesystem type. For example:</p>
+
+<p class="cmd">df -Th</p>
+<p>
+It's good, except that it displays USB flash drive as <samp>fuseblk</samp>
+instead of <samp>exfat</samp>.</p>
+
+<p class="cmd">lsblk -f</p>
+<p>
+displays everything right but requires <samp>root</samp> priv (i.e., you
+have to <code>sudo ...</code>).</p>
+
+<p class="cmd">mount | grep "^/dev"</p>
+<p>
+also requires <samp>root</samp> priv and displays <samp>fuseblk</samp> instead
+of <samp>exfat</samp>. The following is better (assuming your USB flash drive
+is mounted on <samp>/dev/sdf1</samp>):</p>
+
+<p class="cmd">blkid /dev/sdf1</p>
+<p>
+However, without <code>sudo</code> it shows nothing, and this could be
+misleading. You can also use</p>
+
+<p class="cmd">cat /etc/mtab</p>
+<p>
+but, once again, it displays USB flash drive fs as <samp>fuseblk</samp>
+instead of <samp>exfat</samp>. And notice that all these cmds display FAT32
+as <samp>vfat</samp> which is right. But, technically, it could be FAT16, and
+besides, <samp>vfat</samp> is not actually a filesystem type, it's an
+extension, kind of addition to FAT providing support for long file names.</p>
+<p>
+There is also <code>findmnt</code>:</p>
+
+<p class="cmd">findmnt /dev/sda3</p>
+
+
+
+<h5>
+<a name="mount_opts">Filesystem's mount options</a></h5>
+<p>
+Assuming it's already mounted, and you want to know what are actual mount
+options .. where to look?</p>
+<p>
+You can look in <samp>/etc/fstab</samp>, or you can examine <samp>/etc/mtab</samp>,
+or you can try <samp>/proc/mounts</samp>. I prefer the last two because the
+<samp>/etc/fstab</samp> is not the best source of information: you can edit it
+(having <i>root</i> priv), make some minor mistakes, and something won't be
+mounted as supposed.</p>
+<p>
+All the above files usually include too many lines. So, it would be good to
+know beforehand what do you want (e.g. device name would be helpful):</p>
+
+<p class="cmdc">cat /etc/mtab | grep sda</p>
+<p class="cmdc">cat /etc/mtab | grep /dev/sdb1</p>
+<p class="cmd">cat /proc/mounts | grep nvme</p>
+
+
+
+<h5>
+<a name="hw_mon">CPU temperature, fan speed, HDD temperature, ...</a></h5>
+<p>
+Make sure your system has<code> sensors </code>and<code> hddtemp</code>.
+If not, see <a href="sw_inst.html#sensors">Hardware Monitoring / Sensors</a>.
+To see the current HW parameters (or, to be exact, sensors' data),</p>
+
+<p class="cmd">sensors</p>
+<p>
+This is a console app, the output is not exactly user friendly, but all
+important info is present: temperatures, fan speeds, voltages, etc.</p>
+<p>
+<i><b>Note # 1</b>: It does not display fans connected directly to Power Supply
+Unit! You can only see fans connected to motherboard!</i></p>
+<p>
+<i><b>Note # 2</b>: Your system may not support some sensor chips, and in this
+case you won't be able to see all info supplied by sensors. You can try to run
+<code>sensors-detect</code>, but it's not safe (see<code> man
+sensors-detect</code>).</i></p> 
+<p>
+To find the temperatures of HDDs and SSDs,
+use<code><a href="cmds_h.html#hddtemp"> hddtemp</a></code>:</p>
+
+<p class="cmdc">sudo hddtemp /dev/sda</p>
+<p class="cmd">sudo hddtemp /dev/sdb</p>
+<p>
+You can get even more info about storage devices with
+<code><a href="cmds_s.html#smartctl">smartctl</a></code>.</p>
+
+
+
+<h5>
+<a name="mem_mmu">Memory Management Unit</a></h5>
+<p>
+See also <a href="memory.html">Memory</a>.</p>
+<p>
+MMU, sometimes called PMMU (paged memory management unit), is a computer
+<b>hardware unit</b> having all memory references passed through itself,
+primarily performing the translation of virtual memory addresses to physical
+addresses.</p>
+<p>
+MMU performs virtual memory management, handling at the same time memory
+protection, cache control, bus arbitration and, in simpler computer
+architectures (e.g. 8-bit systems), bank switching.</p>
+<p>
+Typical MMU divides the virtual address space (the range of addresses used by
+the processor) into <b>pages</b>, each having a size which is a power of
+<samp>2</samp>, usually a few kilobytes or larger. The bottom bits of the
+address (the offset within a page) are left unchanged. The upper address bits
+are the virtual page numbers.</p>
+
+<p id="show_mmu"><span class="ref">PTE, TLB, paging, segmentation fault...</span></p>
+
+<div class="box1" id="mmu" style="display:none">
+<p>
+Most MMUs use an in-memory table of items called a <b>page table</b>, containing
+one <i>page table entry</i> (PTE) per page, to map virtual page numbers to physical
+page numbers in main memory. An associative cache of PTEs is called a <i>translation
+lookaside buffer</i> (TLB) and is used to avoid the necessity of accessing the main
+memory every time a virtual address is mapped. Other MMUs may have a private array
+of memory or registers that hold a set of page table entries. The physical page
+number is combined with the page offset to give the complete physical address.</p>
+<p>
+A PTE may also include info about whether the page has been written to (the
+<i>dirty bit</i>), when it was last used (the <i>accessed bit</i>, for a least
+recently used (LRU) page replacement algorithm), what kind of processes (<i>user
+mode</i> or <i>supervisor</i> mode) may read and write it, and whether it should
+be cached.</p>
+<p>
+Sometimes, a PTE prohibits access to a virtual page, perhaps because no physical
+random access memory has been allocated to that virtual page. In this case, the MMU
+signals a <b>page fault</b> to the CPU. The OS then handles the situation, perhaps
+by trying to find a spare frame of RAM and set up a new PTE to map it to the requested
+virtual address. If no RAM is free, it may be necessary to choose an existing page,
+using some replacement algorithm, and save it to disk (a process called <b>paging</b>).
+With some MMUs, there can also be a shortage of PTEs, in which case the OS will have
+to free one for the new mapping.</p>
+<p>
+The MMU may also generate illegal access error conditions or <b>invalid page faults</b>
+upon illegal or non-existing memory accesses, respectively, leading to <b>segmentation
+fault</b> or <b>bus error</b> conditions when handled by OS.</p>
+</div>
+
+
+
+<h5>
+<a name="service">Service vs daemon</a></h5>
+<p>
+The border line between <i>daemons</i> and <i>services</i> in Linux is fuzzy.</p>
+<p>
+The majority of experts would probably agree that<samp> systemd</samp>,<samp>
+networkd</samp>,<samp> sshd </samp>are <i>daemons</i>. Not because their names
+end with 'd' (this is rather a tradition), but because they are specifically
+created to run at the background. Unix/Linux <i>daemons</i> (the name speaks
+for itself) are invisible programs (maybe for user, but not for<code> ps
+</code>or<code> top</code>) working somewhere inside a computer system and
+magically performing important job.</p>
+<p>
+In fact, <b>daemon</b> is just a computer program that at some moment (usually
+soon after start) disconnects itself from display and keyboard, writes some
+(mostly diagnostic) messages into a log file, and you can only control it with
+the help of another program, like<code> systemctl </code>or<code> kill
+</code>(this name is awkward and misleading).</p>
+<p>
+The term <b>service</b> (in the sense <i>application</i>, <i>program</i>) came
+in the Linux world relatively late, probably when a universal abstract idea of
+<i>service</i> started to gain popularity due to the appearance of concrete
+implementations like web-services (first SOAP, then REST).</p>
+<p>
+In general, Linux <b>service</b> is supposed to be something bigger, more
+complicated, or, at least, more user-oriented than a <i>daemon</i>. Take, for
+example, <i>Oracle database server</i>: Oracle instance runs simultaneously
+more than ten processes handling shared memory segments, database files, redo
+log (transaction journals), user's connections, etc. So, we would rather call
+it a <i>service</i> than a daemon.</p>
+<p>
+Some experts, however, prefer to draw the line in accordance with the target
+area: <i>daemons</i> serve the internal system needs, <i>services</i> work for
+users.</p>
+<p>
+Technically, many Linux <i>services</i> are implemented as <i>daemons</i>.
+But it can also be a <i>web-service</i> or a <i>web-application</i> packed into
+a single big JAR that starts as a console app.</p>
+<p>
+However,</p>
+<p class="center">
+<i>For <b>systemd</b>, everything (i.e. any executable specified in a<samp>
+*.service </samp>file) is <b>service</b>! It's just a terminology, and the above
+discussion has nothing to do with it.</i></p>
+
+
+
+<h5>
+<a name="squashfs">Squashfs (filesystem type)</a></h5>
+<p>
+<b>Squashfs</b> is a compressed read-only file system for Linux. It compresses
+files, inodes and directories, and supports block sizes from <samp>4</samp>
+KiB up to <samp>1</samp> MiB (for better compression). Several compression
+algorithms are supported. Squashfs is intended for general read-only
+filesystem use and in constrained block-device memory systems (e.g. embedded
+systems) where low overhead is needed.</p>
+<p>
+Since Linux kernel 4.14 <i>squashfs</i> supports <samp>GZIP</samp>,
+<samp>LZMA</samp>, <samp>LZO</samp>, <samp>LZMA2</samp>, <samp>LZ4</samp>,
+and <samp>Zstd</samp> compression.</p>
+<p>
+Many Live CDs use <i>squashfs</i>, e.g. Arch Linux, Debian, Fedora, Gentoo
+Linux, Linux Mint, Ubuntu and other.</p>
+
+
+
+<h5>
+<a name="ubu-deb">Ubuntu -- Debian (version names &amp; numbers)</a></h5>
+
+<table class="grid_2">
+<tr>
+<th class="grid" style="width:12em">Ubuntu</th>
+<th class="grid" style="width:14em">Debian</th></tr>
+<tr>
+<td class="grid"><samp>22.04 jammy</samp></td><td class="grid"><samp>bookworm / sid - 12</td></tr>
+<tr>
+<td class="grid"><samp>20.04 focal</samp></td><td class="grid"><samp>bullseye / sid - 11</td></tr>
+<tr>
+<td class="grid"><samp>19.10 eoan</samp></td><td class="grid"><samp>buster / sid - 10</td></tr>
+<tr>
+<td class="grid"><samp>19.04 disco</samp></td><td class="grid"><samp>buster / sid - 10</td></tr>
+<tr>
+<td class="grid"><samp>18.10 cosmic</samp></td><td class="grid"><samp>buster / sid - 10</td></tr>
+<tr>
+<td class="grid"><samp>18.04 bionic</samp></td><td class="grid"><samp>buster / sid - 10</td></tr>
+<tr>
+<td class="grid"><samp>17.10 artful</samp></td><td class="grid"><samp>stretch / sid - 9</td></tr>
+<tr>
+<td class="grid"><samp>17.04 zesty</samp></td><td class="grid"><samp>stretch / sid - 9</td></tr>
+<tr>
+<td class="grid"><samp>16.10 yakkety</samp></td><td class="grid"><samp>stretch / sid - 9</td></tr>
+<tr>
+<td class="grid"><samp>16.04 xenial</samp></td><td class="grid"><samp>stretch / sid - 9</td></tr>
+<tr>
+<td class="grid"><samp>15.10 wily</samp></td><td class="grid"><samp>jessie / sid - 8</td></tr>
+<tr>
+<td class="grid"><samp>15.04 vivid</samp></td><td class="grid"><samp>jessie / sid - 8</td></tr>
+<tr>
+<td class="grid"><samp>14.10 utopic</samp></td><td class="grid"><samp>jessie / sid - 8</td></tr>
+<tr>
+<td class="grid"><samp>14.04 trusty</samp></td><td class="grid"><samp>jessie / sid - 8</td></tr>
+</table>
+
+<div class="file" style="font-size:84%"><pre>
+                                    Release        End of supp  End of life
+----------------------------------------------------------------------------
+Ubuntu 22.04.3 LTS Jammy Jellyfish  Aug 10, 2023     Jun 2027     Apr 2032
+Ubuntu 22.04.2 LTS Jammy Jellyfish  Feb 23, 2023     Jun 2027     Apr 2032
+Ubuntu 22.04.1 LTS Jammy Jellyfish  Aug 11, 2022     Jun 2027     Apr 2032
+Ubuntu 22.04 LTS   Jammy Jellyfish  Apr 21, 2022     Jun 2027     Apr 2032
+Ubuntu 20.04.6 LTS Focal Fossa      Mar 23, 2023     Apr 2025     Apr 2030
+Ubuntu 20.04.5 LTS Focal Fossa      Sep 1, 2022      Apr 2025     Apr 2030
+Ubuntu 20.04.4 LTS Focal Fossa      Feb 24, 2022     Apr 2025     Apr 2030
+Ubuntu 20.04.3 LTS Focal Fossa      Aug 26, 2021     Apr 2025     Apr 2030
+Ubuntu 20.04.2 LTS Focal Fossa      Feb 4, 2021      Apr 2025     Apr 2030
+Ubuntu 20.04.1 LTS Focal Fossa      Aug 6, 2020      Apr 2025     Apr 2030
+Ubuntu 20.04 LTS   Focal Fossa      Apr 23, 2020     Apr 2025     Apr 2030
+</pre></div>
+
+
+
+<h5>
+<a name="x86-64">x86-64</a></h5>
+<p>
+(based on Wikipedia article
+<a href="https://en.wikipedia.org/wiki/X86-64" target="_top">x86-64</a>)</p>
+<p>
+<b>64-bit</b> architecture usually means <b>x86-64</b> when we talk
+about personal computers and servers with Intel or AMD processors.</p>
+
+<img class="float_right" src="images/AMD_Opteron_2005.jpg" />
+<p>
+The original x86-64 specification was released by AMD in 2000. It was later
+implemented by Intel and VIA, but AMD K8 processor was the first CPU with
+this architecture.</p>
+<p>
+<b>x86-64</b> (aka x64, x86_64, AMD64 and Intel 64) is the 64-bit version
+of the x86 instruction set. It supports vastly larger amounts of virtual
+and physical <a href="memory.html">memory</a> than 32-bit systems. It also
+provides 64-bit general-purpose registers and numerous other enhancements.
+x86-64 processors can boot in a fully backward compatible <b>legacy mode</b>,
+without 64-bit support, for 16-bit and 32-bit x86 software that requires real
+mode, or in a <b>compatibility mode</b> that allows 64-bit apps to coexist
+with 16- and 32-bit protected mode software if the 64-bit system software
+supports them. Since x86 16-bit &amp; 32-bit instruction sets remain
+implemented in hardware without any intervening emulation, these older
+executables can run with little or no performance penalty, while newer or
+recoded apps can take advantage of new features.</p>
+<p>
+Intel's implementation of x86-64, known as <b>Intel 64</b>, has some minor
+differences from AMD spec. This may be important for low-level system
+programming, but regular app developers should not bother about it.</p>
+
+
+
+<h5>
+<a name="yaml">YAML</a></h5>
+<p>
+YAML is a <b>human-readable data-serialization language</b>. It is commonly
+used for configuration files and in apps where data is being stored or
+transmitted. YAML was supposed to replace XML (Extensible Markup Language) in
+config files, like those config files used in Java EE, Spring Framework, etc.
+YAML does not use XML/HTML <i>tags</i>, its syntax is shorter and simpler
+than XML's. The acronym itself means "YAML Ain't Markup Language". Recursive,
+in traditions of Open Soft.</p>
+<p>
+YAML uses Python-style indentation to indicate nesting, and a more compact
+format with<samp> [] </samp>for lists and<samp> {} </samp>for maps making
+YAML 1.2 a superset of JSON.</p>
+
+
+
+<h5>
+<a name="zero-copy">Zero-copy</a></h5>
+<p>
+describes computer operations in which the CPU does not perform the task
+of copying data from one memory area to another.</p>
+<p>
+Zero-copy device drivers, file systems, and network protocol stacks greatly
+increase performance of certain application programs and improve utilization
+of the system resources. Performance is enhanced by allowing the CPU to move
+on to other tasks while data copying proceeds in parallel. Also, zero-copy
+operations reduce the number of mode switches between <i>user space</i> and
+<i>kernel space</i>. System resources are utilized more efficiently because
+the CPU does not have to waste time performing simple copy operations if
+other system components can do this.</p>
+<p>
+Zero-copy protocols are especially important for high-speed networks in which
+the capacity of a network link approaches or exceeds the CPU's processing
+capacity. In this case CPU spends nearly all its time copying transferred data
+and thus becomes a bottleneck limiting communication rate.</p>
+<p>
+Of course, zero-copy must be supported on the hardware level by technologies
+like DMA (direct memory access), MMU (memory management unit), HSA
+(Heterogeneous System Architecture, see x86-64 implementation on the picture
+below).</p>
+
+<img class="centered" src="images/hsa.png" />
+
+
+
+<h4>
+<a name="nvidia">nVidia &amp; Nouveau</a></h4>
+<p>
+<i>The following is only applicable to systems with nVidia card!</i></p>
+<p>
+Usually Linux (e.g. Ubuntu) comes with open-source <b>Nouveau</b> drivers for
+Nvidia GPUs. But Nouveau is not good. <b>Nvidia proprietary drivers</b> are much
+better. Nouveau is used by default unless you install proprietary driver, and
+sometimes it's used even after you've installed proprietary driver. My system in
+this case has screen size smaller than actual display size though resolution is
+the same. And "Settings" shows "Graphics" like "llvmpipe .." instead of "NVIDIA ..".
+</p>
+
+
+<h5>How to solve this problem (super short description)</h5>
+<p>
+Remove all nvidia drivers (Nouveau will stay, and GUI is not going to stop
+working .. in most cases):</p>
+
+<p class="cmd">sudo apt remove --purge '^nvidia-.*'</p>
+<p>
+Now, open "Software and Updates" from the App Menu, click the "Additional Drivers"
+tab. Or, you can start "Additional Drivers" app if you have it (I have it on
+Ubuntu 20.04).</p>
+<p>
+Wait for the app to download a list of additional drivers available for your
+GPU. The driver installed on your machine is selected by default. It is usually
+an open-source Nouveau display driver.</p>
+<p>
+From the list, select the latest Nvidia driver labeled <b>proprietary,
+tested</b>.</p>
+<p>
+Click "Apply Changes", and wait for the installation to finish.</p>
+<p>
+Restart your system for the changes to take effect.</p>
+
+
+<h5>More details</h5>
+<p>
+A [NVIDIA] meta-package is a type of package that contains info about other
+packages to be installed. For that reason, installing the meta-package will
+result in installing the packages it defines. The Nvidia meta-package not only
+contains the driver but also the helper tools such as nvidia-smi (<b>System
+Management Interface</b>). You can use it to find driver version and other
+info:</p>
+
+<p class="cmd">nvidia-smi</p>
+<p>
+There are other ways to get driver info.</p>
+
+<p class="cmdc">grep "X Driver" /var/log/Xorg.0.log</p>
+<p class="or">or</p>
+<p class="cmd">cat /proc/driver/nvidia/version</p>
+
+Also, you can use the <code>lspci</code> utility to retrieve module name:</p>
+
+<p class="cmd">lspci -k | grep -A 2 -i "VGA"</p>
+<p>
+And you can display the specs of the video card like this:</p>
+
+<p class="cmd">lshw -c video</p>
+<p>
+To list installed nvidia drivers:</p>
+
+<p class="cmd">dpkg -l | grep -i nvidia</p>
+<p>
+To find all the available drivers for Nvidia [in repo]:</p>
+
+<p class="cmd">apt search nvidia-*</p>
+<p>
+To remove all nvidia drivers from your system:
+
+<p class="cmd">sudo apt remove --purge '^nvidia-.*'</p>
+<p>
+The <code>glxinfo</code> displays info about the <b>mesa driver</b>, which
+is an open-source implementation of the <b>OpenGL</b> specification. It contains
+info about graphics API specifications and also about the graphics card in use.</p>
+<p>
+The <code>glxinfo</code> is a helper utility, it does not come with the mesa
+driver, but you can get it by installing the <samp>mesa-utils</samp> pkg from
+the official repo:</p>
+
+<p class="cmd">sudo apt install mesa-utils</p>
+<p>
+By default, <i>glxinfo</i> outputs much and you should probably use it with
+<i>grep</i>:</p>
+<p class="cmd">glxinfo | grep -iE 'vendor:|device:|version:'</p>
+<div class="term"><pre>
+Vendor: AMD Radeon Software
+Device: Mesa DRI Radeon RX 570 (0x166)
+Version: 21.1.5</pre></div>
+
+
+<h5>About Intel drivers</h5>
+<p>
+The drivers for Intel on Linux are a bit confusing due to the conflict between
+<b>Wayland</b> (new) and <b>X.Org</b> - old, traditional window system for Linux
+(since 1984); Wayland is the intended security-focused replacement for X.Org and
+does not support the drivers developed for X.Org.</p>
+<p>So, there are different packages for Intel drivers that run under X.Org
+(Xorg VESA, XF86-Video-Intel, Xorg Intel, etc). Most of these pkgs are ancient
+and are not recommended for Intel GPUs anymore.</p>
+<p>
+To overcome the issues with those drivers, Tungsten Graphics introduced Mesa -
+an open-source implementation of OpenGL, Vulkan, and other Graphics API specs.
+Mesa works well with both Wayland and X.Org and is actively maintained.</p>
+
+
+</div>
+
+</body></html>

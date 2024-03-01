@@ -1,0 +1,46 @@
+<VirtualHost *:80>
+    ServerAdmin info@example.com
+    DocumentRoot /var/www/webmail/
+    ErrorLog /var/log/apache2/mail.example.com-error.log
+    CustomLog /var/log/apache2/mail.example.com-access.log combined
+    RewriteEngine On
+    RewriteCond %{HTTPS} off
+    RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
+</VirtualHost>
+
+<IfModule mod_ssl.c>
+<VirtualHost *:443>
+    DocumentRoot /var/www/webmail/
+    Alias /mysql /var/www/mysql/
+    <Directory />
+       Options FollowSymLinks
+       AllowOverride None
+    </Directory>
+    <Directory /var/www/>
+       Options FollowSymLinks MultiViews
+       AllowOverride All
+       Order allow,deny
+       allow from all
+    </Directory>
+
+    ErrorLog /var/log/apache2/mail.example.com-error.log
+    CustomLog /var/log/apache2/mail.example.com-access.log combined
+
+    SSLEngine on
+
+    SSLCertificateFile       /etc/apache2/ssl/example-startssl/ssl.pem
+    SSLCertificateKeyFile    /etc/apache2/ssl/example-startssl/ssl.key
+    SSLCertificateChainFile  /etc/apache2/ssl/startssl/sub.class1.server.ca.crt
+    SSLCACertificateFile     /etc/apache2/ssl/startssl/ca.crt
+    <FilesMatch "\.(cgi|shtml|phtml|php)$">
+       SSLOptions +StdEnvVars
+    </FilesMatch>
+    <Directory /usr/lib/cgi-bin>
+       SSLOptions +StdEnvVars
+    </Directory>
+
+    BrowserMatch ".*MSIE.*" \
+                nokeepalive ssl-unclean-shutdown \
+                downgrade-1.0 force-response-1.0
+</VirtualHost>
+</IfModule>

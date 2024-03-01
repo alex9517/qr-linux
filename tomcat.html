@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (Apache Tomcat)</title>
+<meta name="description" content="Linux quick reference, apache tomcat" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<h1 class="part">Apache Tomcat</h1>
+
+<div id="contents" style="margin-top:0px">
+<table class="menu">
+<tr>
+<td class="menu1"><a href="#tomcat7">Tomcat 7</a></td>
+<td class="menu2"><a href="#tomcat8">Tomcat 8</a></td></tr>
+</table>
+</div>
+
+<p>
+Apache Tomcat™ is an open source software implementation of the Java Servlet,
+JSP, Java EL and Java WebSocket technologies. It means that Tomcat is (1) a web
+server and (2) servlet container.</p>
+
+
+<h4>
+<a name="tomcat7">Tomcat 7 / Ubuntu 14.04</a></h4>
+<p>
+To install Tomcat 7 in a usual Ubuntu manner:</p>
+
+<p class="cmdc">sudo apt-get update</p>
+<p class="cmd">sudo apt-get install tomcat7</p>
+<p>
+If you want doc, examples, web management iface you should install
+additional pkgs:</p>
+
+<p class="cmd">sudo apt-get install tomcat7-docs tomcat7-admin tomcat7-examples</p>
+<p>
+To access using browser:</p>
+
+<p class="cmd">http://<span class="arg">srv_ip_addr</span>:8080</p>
+<p>
+(you must see a splash page "It works!"...)</p>
+
+
+<h5>Install JDK and tools</h5>
+<p>
+It's for developers only. To install openjdk-7-jdk:</p>
+
+<p class="cmd">sudo apt-get install default-jdk</p>
+<p>
+You may also need Apache Ant (which is used to build Java apps)
+and a src ctrl system, such as git:</p>
+
+<p class="cmd">sudo apt-get install ant git</p>
+
+
+
+<h5>Tomcat Web Management</h5>
+<p>
+To add a login, edit <samp>/etc/tomcat7/tomcat-users.xml</samp>.
+This file is filled with comments which describe how to ...
+You can delete all comments between the following two lines,
+or you may leave them if you want to reference the examples:</p>
+
+<div class="file">
+<pre>&lt;tomcat-users&gt;
+...
+&lt;/tomcat-users&gt;</pre>
+</div>
+<p>
+Let's add a user who can access the manager-gui and admin-gui
+(set real name and passwd):</p>
+<div class="file">
+<pre>&lt;tomcat-users&gt;
+  &lt;user username="admin" password="password"
+    roles="manager-gui,admin-gui" /&gt;
+&lt;/tomcat-users&gt;</pre>
+</div>
+<p>
+To activate changes:</p>
+
+<p class="cmd">sudo service tomcat7 restart</p>
+<p>
+To access Web Application Manager:</p>
+
+<p class="cmd">http://<span class="arg">ip_addr</span>:8080/manager/html</p>
+<p>
+To access Virtual Host Manager:</p>
+
+<p class="cmd">http://<span class="arg">ip_addr</span>:8080/host-manager/html/</p>
+
+
+
+<h4>
+<a name="tomcat8">Tomcat 8 / Ubuntu 14.04</a></h4>
+<p>
+(manual procedure, assuming JDK 7/8 is installed)</p>
+<p>
+To run Tomcat as an unprivileged user (security reasons) create a new user
+account and group (<samp>tomcat/tomcat</samp>):</p>
+
+<p class="cmdc">sudo groupadd tomcat</p>
+<p class="cmd">sudo useradd -s /bin/false -g tomcat -d /opt/tomcat tomcat</p>
+<p>
+Option<samp> -s /bin/false </samp>is used to prevent logins, home dir can be
+different, but it looks like <samp>/opt/tomcat</samp> is most popular.</p>
+<p>
+Download binary distro (<samp>?.tar.gz</samp>, Core part) from
+<a href="https://tomcat.apache.org/download-80.cgi">tomcat.apache.org/download-80.cgi</a>,
+unpack to <samp>/opt/tomcat</samp> (or whatever you chose as Tomcat home
+dir), set right permissions:</p>
+
+<p class="cmdc">cd /opt/tomcat</p>
+<p class="cmdc">sudo chgrp -R tomcat conf</p>
+<p class="cmdc">sudo chmod g+rwx conf</p>
+<p class="cmd">sudo chmod g+r conf/*</p>
+<p>
+and also make <samp>tomcat</samp> the owner of <samp>work</samp>,
+<samp>temp</samp>, and <samp>logs</samp> dirs:</p>
+
+<p class="cmd">sudo chown -R tomcat work/ temp/ logs/</p>
+<p>
+Also, as we assume Ubuntu 14.04, you have to create an appropriate Upstart
+script which must be <samp>/etc/init/tomcat.conf</samp>:</p>
+<div class="file">
+<pre>
+description "Tomcat Server"
+
+  start on runlevel [2345]
+  stop on runlevel [!2345]
+  respawn
+  respawn limit 10 5
+
+  setuid tomcat
+  setgid tomcat
+
+  # env JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64/jre
+  env JAVA_HOME=/usr/lib/jvm/java-8-oracle
+  env CATALINA_HOME=/opt/tomcat
+
+  # Modify these options as needed;
+  env JAVA_OPTS="-Djava.awt.headless=true
+    -Djava.security.egd=file:/dev/./urandom"
+  env CATALINA_OPTS="-Xms512M -Xmx1024M
+    -server -XX:+UseParallelGC"
+
+  exec $CATALINA_HOME/bin/catalina.sh run
+
+  # cleanup temp directory after stop;
+  post-stop script
+    rm -rf $CATALINA_HOME/temp/*
+  end script</pre>
+</div>
+<p>
+Reload Upstart config to activate this new script:</p>
+
+<p class="cmd">sudo initctl reload-configuration</p>
+<p>
+Now Tomcat can be started by:</p>
+
+<p class="cmd">sudo initctl start tomcat</p>
+<p>
+To be sure it's working, try to access its splash page using
+<samp>http://<span class="arg">ip_addr</span>:8080</samp>
+(maybe <samp>http://localhost:8080</samp>).</p>
+<p>
+Configuring web interface is similar to Tomcat 7, except the file is
+<samp>/opt/tomcat/conf/tomcat-users.xml</samp>.</p>
+
+</div>
+
+</body></html>

@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference / video</title>
+<meta name="description" content="Linux quick reference, video, ffmpeg, mplayer, mp4, mpeg, avi, webm, growisofs, mkisofs" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<h1 class="part">
+<a name="video">Video</a></h1>
+
+<p class="menu">
+<a href="#ffmpeg">FFmpeg</a>&nbsp;//
+<a href="#mplayer">Mplayer</a>&nbsp;//
+<a href="#video_dvd">Video DVD creation</a>
+</p>
+
+
+<h3 class="part">
+<a name="ffmpeg">FFmpeg</a></h3>
+<p>
+<b>FFmpeg</b> software project includes programs and libraries for audio/video
+processing, and for handling multimedia files and streams. The core program
+<code>ffmpeg</code> is a command-line tool for audio/video format convertions,
+basic editing (trimming, concatenation), video scaling, video post-production
+effects, etc. It can also capture and encode in real-time from various hardware
+and software sources such as TV capture cards.</p>
+<p>
+Among other things, <i>FFmpeg</i> includes <samp>libavcodec</samp> - an
+audio/video codec library used by many commercial and free software products.</p>
+<div class="box1">
+<p>
+Developer's site is
+<a href="https://www.ffmpeg.org" target="_top">www.ffmpeg.org</a>.
+<i>Static builds</i> for Linux can be downloaded from
+<a href="https://johnvansickle.com/ffmpeg" target="_top">this site</a>.
+There is also <samp>avconv</samp> - a video and audio converter, the part
+of <samp>Libav</samp> project which is the fork (2011) of <samp>FFmpeg</samp>
+project. Ubuntu/Debian supported <samp>avconv/Libav</samp> since 2011, but in
+2015 switched back to <samp>FFmpeg</samp>.</p>
+</div>
+
+<p class="menu" style="font-size:120%">
+<a href="#one_pass">One-pass enc</a>&nbsp;//
+<a href="#two_pass">Two-pass enc</a>&nbsp;//
+<a href="#opts">Some&nbsp;options</a>&nbsp;//
+<a href="#mp4towebm">MP4&nbsp;to&nbsp;WEBM</a>&nbsp;//
+<a href="#resize">Resize/Rotate</a>&nbsp;//
+<a href="#cutting">Cut&nbsp;fragment</a>&nbsp;//
+<a href="#merge">Merge&nbsp;files</a>&nbsp;//
+<a href="#fade">Fade-in/Fade-out</a>&nbsp;//
+<a href="#audio">Audio</a>&nbsp;//
+<a href="#poster">Poster&nbsp;for&nbsp;video</a>&nbsp;//
+<a href="#anim">Animated&nbsp;GIF</a>
+</p>
+<p>
+You can get some info using following cmds:</p>
+
+<p class="cmdc">ffmpeg -formats</p>
+<p class="cmdc">ffmpeg -codecs</p>
+<p class="cmdc">ffmpeg -filters</p>
+<p class="cmdc">ffmpeg -preset help</p>
+<p class="cmdc">ffmpeg -y -i clip01.avi -c:v libx264 -preset -tune -f mp4 /dev/null</p>
+<p class="cmdc">ffmpeg -i clip002.vob</p>
+<p class="cmd">ffmpeg -i clip003.mp4</p>
+
+
+
+<h4 class="part3">
+<a name="one_pass">One-pass encoding / Constant Rate Factor (CRF)</a></h4>
+<p>
+This method provides a certain output quality
+for the whole file. Each frame gets the bitrate it needs to keep the
+requested quality level. The downside is that you cannot specify the
+output file size. The following example is supposed to provide
+very good quality, though the process of encoding may be slow:</p>
+
+<p class="cmd">ffmpeg -i clip01.vob -c:v&nbsp;libx264 -preset&nbsp;veryslow -crf&nbsp;20 -c:a&nbsp;copy clip01.mp4</p>
+<p>
+Note that the audio stream is just copied to the output "as is".
+Container format (MP4) is auto detected from the output file extenstion.</p>
+
+<p class="cmd">ffmpeg -i movie02.vob -c:a&nbsp;libmp3lame -ab&nbsp;160k
+-map&nbsp;0.0 -map&nbsp;0.1 -map&nbsp;0.3 -c:v&nbsp;libx264 -preset&nbsp;slow -crf 22 -threads 0 movie02.mp4</p>
+<p>
+In this case audio is converted to MP3, audio bitrate is set to 160 Kbit/s.</p>
+<p>
+Note that by default only <b>map 0.0</b> (video stream) and <b>map 0.1</b>
+(audio track #1) are included in the output. To transfer several audio
+tracks, you should specify them explicitly with<code> -map</code>.</p>
+<p>
+In general, one-pass enc is better than two-pass, because it's faster (~ 40%)
+and provides better visual quality when comparing the total file sizes.</p>
+<p>
+<b>For better results choose the slowest preset you can tolerate</b>.</p>
+
+
+
+<h4 class="part3">
+<a name="two_pass">Two-pass encoding</a></h4>
+<p>
+is used if you want a specific output file size while output quality from
+frame to frame is of less importance.
+
+<p class="cmdc">ffmpeg -y -i clip05.vob -c:v libx264 -preset medium -b:v 800k -pass 1 -an -f mp4 /dev/null &amp;&amp; \</p>
+<p class="cmd">ffmpeg -i clip05.vob -c:v libx264 -preset medium -b:v 800k -pass 2 -c:a libfdk_aac -b:a 128k clip05.mp4</p>
+<p>
+(Windows users use<samp> NUL </samp>instead of<samp> /dev/null</samp>)</p>
+<p>
+As before, choose the slowest preset you can tolerate.</p>
+<p>
+A two-pass encoding ensures, that the stream has a fixed bitrate, but without
+the artifacts and drawbacks known from CBR (Constant Bitrate). Fixed bitrate
+is important when video is supposed to be used on a <i>real</i> stream server,
+since it simplifies load balancing. For a regular web-server one-pass
+encoding is O.K.</p>
+<!--
+<p class="cmd">ffmpeg -i video04.vob -an -vcodec libx264 -pass 1
+-preset veryslow -threads 0 -b 3000k -x264opts frameref=15:fast_pskip=0
+-f rawvideo -y /dev/null</p>
+
+<p class="cmd">ffmpeg -i video04.vob -acodec libvo-aacenc -ab 256k -ar 96000
+-vcodec libx264 -pass 2 -preset veryslow -threads 0 -b 3000k -x264opts
+frameref=15:fast_pskip=0 video04.mp4</p>
+-->
+
+
+<h4 class="part3">
+<a name="opts">Options and settings</a></h4>
+<p>
+Most used only.</p>
+
+<p class="fmt"><code>-an</code> &nbsp;&nbsp;
+disable audio processing; usually it is used during the first pass of
+the two-pass encoding, because only video stats is recorded anyway;</p>
+
+<p class="fmtc"><code>-aq </code><kbd>n</kbd></p>
+<p class="desc">use a variable bitrate for audio;<kbd> n </kbd>can be
+<samp>0-255</samp>, where <samp>0</samp> gives the best quality, and
+<samp>100</samp> is a reasonable choice;</p>
+
+<p class="fmtc"><code>-b:a </code><kbd>n</kbd></p>
+<p class="desc">set audio bitrate in bits/s;</p>
+
+<p class="fmtc"><code>-b:v </code><kbd>n</kbd></p>
+<p class="desc">set video bitrate in bits/s;</p>
+
+<p class="fmtc"><code>-c:a </code><kbd>str</kbd> (<code>-acodec </code><kbd>str</kbd>)</p>
+<p class="desc">encode audio stream using specified lib; currently
+<code>ffmpeg</code> supports several <b>AAC</b> (Advanced Audio Coding)
+standards: 4 AAC-LC encoders (<samp>aac</samp>, <samp>libfaac</samp>,
+<samp>libfdk_aac</samp>, <samp>libvo_aacenc</samp>) and 2 AAC-HE
+(<samp>libaacplus</samp> and <samp>libfdk_aac</samp>), however,
+<samp>libaacplus</samp>, <samp>libfaac</samp>, <samp>libfdk_aac</samp> are
+<b>not compatible with GPL</b>! You can also use<samp> libmp3lame </samp>to
+convert audio to MP3, and<samp> libvorbis </samp> to convert to OGG Vorbis;</p>
+
+<p class="fmtc"><code>-c:v </code><kbd>str</kbd> (<code>-vcodec </code><kbd>str</kbd>)</p>
+<p class="desc">encode video using specified library; the library in most cases
+is<samp> libx264 </samp>and the video compression format is H.264/MPEG-4&nbsp;AVC;</p>
+
+<p class="fmtc"><code>-i</code> <kbd>file</kbd></p>
+<p class="desc">the name of the input file (source file);</p>
+
+<p class="fmtc"><code>-preset </code><kbd>str</kbd></p>
+<p class="desc">preset is a set of options that provide a certain
+speed/compression ratio; a slower preset provides better compression
+(smaller files, better quality at the same bitrate); use the slowest preset
+you have patience for; there are: <samp>ultrafast</samp>,
+<samp>superfast</samp>, <samp>veryfast</samp>, <samp>faster</samp>,
+<samp>fast</samp>, <samp>medium</samp> (default), <samp>slow</samp>,
+<samp>slower</samp>, <samp>veryslow</samp>, <samp>placebo</samp> (?);</p>
+
+<p class="fmtc"><code>-profile:v </code><kbd>str </kbd> (<code>-vprofile </code><kbd>str</str>)</p>
+<p class="desc">optional setting which limits the output to a specific H.264
+profile (see
+<a href="https://en.wikipedia.org/wiki/H.264/MPEG-4_AVC" target="_top">H.264/MPEG-4&nbsp;AVC in Wikipedia</a>);
+this can be used if target device only supports a certain profile; currently
+there are: <samp>baseline</samp>, <samp> main</samp>, <samp>high</samp>,
+<samp>high10</samp>, <samp>high422</samp>, <samp>high444</samp>; if you want
+your videos to have the best compatibility with target devices (e.g., older
+iOS and Android versions), use<samp> baseline&nbsp;-level&nbsp;3.0</samp>;
+Note! this is incompatible with lossless encoding;</p>
+
+<p class="fmtc"><code>-threads </code><kbd>n</kbd></p>
+<p class="desc">(with <samp>libx264</samp>) the number of threads to be used
+during encoding; usually<kbd> n </kbd>=<samp> 0 </samp> which means: choose the
+optimal number of threads (i.e., use all available processor cores); you can
+also limit resources avaliable to <code>ffmpeg</code> by specifying an explicit
+[small] number of cores to be used;</p>
+
+<p class="fmtc"><code>-tune </code><kbd>str</kbd></p>
+<p class="desc">allows to adapt settings to the specifics of your input;
+currently available: <samp>film</samp>, <samp>animation</samp>,
+<samp>grain</samp>, <samp>stillimage</samp>, <samp>psnr</samp>,
+<samp>ssim</samp>, <samp>fastdecode</samp>, <samp>zerolatency</samp>; if you
+are not sure what is best for your kind of video, just omit this option;</p>
+
+<p class="fmtc"><code>-vf fade=in:</code><kbd>m</kbd><code>:</code><kbd>n</kbd><code>,fade=out:</code><kbd>p</kbd><code>:</code><kbd>q</kbd></p>
+<p class="desc">apply video fade (in/out) filter; you can specify any one of
+them or both; all params are frames: <kbd>m</kbd> - frame number to start
+fade-in, <kbd>n</kbd> - fade-in duration (num of frames),
+<kbd>p</kbd> - frame num to start fade-out, <kbd>q</kbd> - fade-out duration;
+see <a href="#fade">example</a>.</p>
+
+<p class="fmtc"><code>-vf scale=</code><kbd>m</kbd><code>:</code><kbd>n</kbd></p>
+<p class="desc">apply scale filter to resize video to the desired resolution;
+scale is specified like<samp> 720:480 </samp>or<samp> -1:480 </samp>, where
+<samp>-1</samp> requires to preserve the initial aspect ratio;</p>
+
+
+<h5>Choosing CRF</h5>
+<p>
+The range is from <samp>0</samp> (lossles; the best quality) to
+<samp>51</samp> (bad). The default is <samp> 23</samp>, the reasonable range
+is <samp>18-28</samp>, since <samp>18</samp> looks nearly lossless.
+The range is exponential, so changing CRF by -6 roughly doubles the bitrate.</p>
+
+<p class="warn">Note:</p>
+<p class="indent">
+The CRF quantizer scale discussed here only applies to 8-bit x264 (more common
+among distributors). There is also 10-bit x264 quantizer scale with the range
+<samp>0-63</samp>.</p>
+
+
+
+<h5>ABR (Average Bit Rate)</h5>
+<p>
+This cmd tries to provide some average bitrate:</p>
+
+<p class="cmd">ffmpeg -i clip04.vob -c:v libx264 -b:v 1000k clip04.mp4</p>
+<p>
+If it gets a lot of black frames (which cost very little), it encodes
+them with less than requested bitrate, but then the following [non-black]
+frames are encodes at very high quality to bring the average back in line.
+This works better with 2-pass encoding (see below).</p>
+
+
+<h5>CBR (Constant Bit Rate)</h5>
+<p>
+is not supported, but you can simulate it like this:</p>
+
+<p class="cmd">ffmpeg -i clip04.vob -c:v libx264 -b:v 4000k -minrate 4000k -maxrate 4000k -bufsize 1835k clip4.m2v</p>
+<p>
+In this cmd<code> -bufsize </code>is the "rate control buffer", it will
+enforce the requested average (4000 kbit/s) across each 1835k worth of video.
+It is assumed that the player will buffer that much data so it's ok
+to fluctuate within.</p>
+
+
+<h5>Limiting bit rate</h5>
+<p>
+You can limit bit rate by specifying <code>crf</code> and <code>maxrate</code>.</p>
+
+<p class="cmd">ffmpeg -i clip03.avi -c:v libx264 -crf 20 -maxrate 800k -bufsize 1835k clip03.mp4</p>
+<p>
+This cmd tries to provide crf 20, but if the output exceeds 800 kbit/s, it
+will degrade to lower quality.</p>
+
+
+
+<h4 class="part3">
+<a name="mp4towebm">Converting MP4 to WEBM</a></h4>
+<p>
+With the<samp> libvpx </samp>used for WebM, quality depends
+on quantization levels<code> -qmin </code>and<code> -qmax </code>
+ranging from <samp>0</samp> to <samp>51</samp>. Setting<code> qmin </code>may
+have no difference. Setting<code> qmax </code>effectively controls the
+max compression that will be applied to each frame, i.e.,
+a higher<code> qmax </code>means lower quality with higher compr (smaller
+file size). Try to start with <samp>25</samp>.
+Setting bitrate (<code>-ab </code>for audio,<code> -b </code>for video)
+makes little or no difference.</p>
+
+<p class="cmd">ffmpeg -i clip04.mp4 -acodec libvorbis -aq 5 -ac 2 -qmax 20 -threads 2 clip04.webm</p>
+<p>
+Audio codec for WebM is Ogg Vorbis (<code>-acodec libvorbis</code>,
+default in late versions). The quality can be adjusted with
+<code>-aq</code> [<samp>1-10</samp>], higher means better,
+<samp>4</samp> or <samp>5</samp> is good in most cases. To be exact:</p>
+
+<table class="options" style="margin-bottom:1%">
+<tr>
+<td class="opt_name"><code>-aq 4</code></td>
+<td class="opt_desc">= 128 kb/s</td></tr>
+<tr>
+<td class="opt_name"><code>-aq 5</code></td>
+<td class="opt_desc">= 160 kb/s</td></tr>
+<tr>
+<td class="opt_name"><code>-aq 6</code></td>
+<td class="opt_desc">= 192 kb/s</td></tr>
+<tr>
+<td class="opt_name"><code>-aq 7</code></td>
+<td class="opt_desc">= 224 kb/s</td></tr>
+<tr>
+<td class="opt_name"><code>-aq 8</code></td>
+<td class="opt_desc">= 256 kb/s</td></tr>
+</table>
+<p>
+You can also ajust audio volume:</p>
+
+<table class="options" style="margin-bottom:1%">
+<tr>
+<td class="opt_name"><code>-vol 256</code></td>
+<td class="opt_desc">= 100%</td></tr>
+<tr>
+<td class="opt_name"><code>-vol 512</code></td>
+<td class="opt_desc">= 200%</td></tr>
+<tr>
+<td class="opt_name"><code>-vol 768</code></td>
+<td class="opt_desc">= 300%</td></tr>
+<tr>
+<td class="opt_name"><code>-vol 1024</code></td>
+<td class="opt_desc">= 400%</td></tr>
+<tr>
+<td class="opt_name"><code>-vol 2048</code></td>
+<td class="opt_desc">= 800%</td></tr>
+</table>
+<p>
+Intermediate values can be used as well.</p>
+<p>
+Use<code> -ac </code>to set the number of channels: <samp>1</samp> (mono),
+<samp>2</samp> (stereo).</p>
+<p>
+Transcoding flags:<code> -threads </code>sets the num of CPU threads to be
+used when transcoding,<code> -pass </code>provides 2-pass encoding.</p>
+
+
+
+<h4 class="part3">
+<a name="resize">Resize / Rotate</a></h4>
+
+<h5>Resizing video</h5>
+<p>
+The original file is <samp>640x480</samp>, we're going to resize it to
+<samp>320x240</samp> (remember about aspect ratio):</p>
+
+<p class="cmdc">ffmpeg -i clip01.mp4 -s&nbsp;320x240 -c:v&nbsp;libx264 -c:a&nbsp;copy clip01sm.mp4</p>
+<p class="or">or</p>
+<p class="cmd">ffmpeg -i clip01.mp4 -vf&nbsp;scale=320:240 -c:v&nbsp;libx264 -c:a&nbsp;copy clip01sm.mp4</p>
+
+<!--
+<p class="cmd" style="margin-bottom:1%">
+avconv -i clip01.vob -c:v libx264 clip01.mp4</p>
+<p class="cmd">
+avconv -i file02.avi -filter:v fade=in:0:50,fade=out:1704:50 -c:v libx264 file02.mp4</p>
+<p>
+The second cmd applies fade-in/fade-out. With the frame rate 25 frames/s,
+<samp>fade=in:0:25</samp> means that picture
+appears from black within 1s, while <samp>fade=out:1704:50</samp>
+fades it to black within 2s. You must know the total number of frames
+to set fade-out.</p>
+-->
+
+<h5>Rotating video</h5>
+<p>
+To rotate video you can use following options:</p>
+<table class="options">
+<tr>
+<td class="opt_name">
+<code>-vf transpose=1 &nbsp;</code></td><td class="opt_desc"><samp>90&#176;</samp> clockwise rotation;</td></tr>
+<tr>
+<td class="opt_name">
+<code>-vf transpose=2 </code></td><td class="opt_desc"><samp>90&#176;</samp> counterclockwise rotation;</td></tr>
+<tr>
+<td class="opt_name">
+<code>-vf transpose=3 </code></td><td class="opt_desc"><samp>90&#176;</samp> clockwise rotation + vertical flip;</td></tr>
+<tr>
+<td class="opt_name">
+<code>-vf transpose=0 </code></td><td class="opt_desc"><samp>90&#176;</samp> counterclockwise rotation + vertical flip;</td></tr>
+</table>
+<p>
+The following example rotates video <samp>90&#176;</samp> clockwise, copies
+audio as is, and saves it all to a new file:</p>
+
+<p class="cmd">ffmpeg -i clip01.mp4 -vf transpose=1 -c:a copy clip02.mp4</p>
+
+
+
+<h4 class="part3">
+<a name="cutting">Cuttung a fragment</a></h4>
+<p>
+The following cmd cuts a fragment from <samp>Movie.vob</samp> starting at
+1 hour 1 min 30 sec from the beginning (<code>-ss</code>), the length of the
+fragment is 122 sec (<code>-t</code>). It's also important to notice that
+streams to be copied are explicitly specified: video stream
+(<code>-map 0.0</code>) and audio track # 2 (129) (<code>-map 0.2</code>):</p>
+
+<p class="cmd">ffmpeg -ss 01:01:30 -t 00:02:02 -i Movie.vob -vcodec copy -acodec copy TinManSong.vob -map 0.0 -map 0.2</p>
+<p>
+Note that <code>-ss</code> and <code>-t</code> must precede input file,
+otherwise the result could be strange. Anyway, the starting point and
+the ending point of the clip may not be exactly what you want, because
+the clip can only start at the base frame. Since VOB files have more base
+frames then AVI or MP4 or FLV, they are the most suitable for cutting.</p>
+<p>
+The following sequence of cmds cuts a fragment from MP4 (60s), reduces
+frame rate from 30 to 25, converts and resizes to FLV:</p>
+
+<p class="cmdc">ffmpeg -ss 00:00:06 -t 00:01:00 -i clip20.mp4 -c:v copy -c:a copy clip21.mp4</p>
+<p class="cmdc">ffmpeg -i clip21.mp4 -r 25 -c:v libx264 -c:a copy clip22.mp4</p>
+<p class="cmd">ffmpeg -i clip22.mp4 -s 320x240 -c:v libx264 -c:a copy -q:v 5 clip22.flv</p>
+<p>
+Cutting fragments from the MP3 audio files is even simpler. The following cmd
+cuts first 9 sec from the specified input file:</p>
+
+<p class="cmd">ffmpeg -i file22.mp3 -t 9 -c copy file22short.mp3</p>
+<p>
+The next cmd cuts an 11 sec fragment starting at the 5th sec of the input file:</p>
+
+<p class="cmd">ffmpeg -ss 00:00:05 -i file33.mp3 -t 11 -c copy file33short.mp3</p>
+
+
+
+
+<h4 class="part3">
+<a name="merge">Merging two (or more) video files</a></h4>
+<p>
+Create a simple text file (e.g. <samp>files.txt</samp>) containing the names
+of all video files you want to concatenate:</p>
+
+<div class="file">
+<pre># This is a comment;
+file 'clip01.mp4'
+file 'clip02.mp4'
+file 'clip03.mp4'</pre>
+</div>
+File's paths can be absolute or relative. Now join these files with:</p>
+
+<p class="cmd">ffmpeg -f concat -i files.txt -c copy clip04.mp4</p>
+
+
+
+<h4 class="part3">
+<a name="fade">Applying fade-in/out filters</a></h4>
+<p>
+The following cmd applies simultaneously audio/video fade-in and fade-out:</p>
+
+<p class="cmd">ffmpeg -i clip01.mp4 -vf&nbsp;fade=in:0:90,fade=out:3541:90 -af afade=t=in:ss=0:d=3,afade=t=out:st=118:d=3 clip02.mp4</p>
+<p>
+You may need some info before you start (frame rate, total number of frames,
+etc). In this example frame rate = <samp>30 fr/s</samp>, total number of
+frames = <samp>3630</samp>, total length in seconds = <samp>121s</samp>.
+Video fade (<code>fade</code>) is specified in frames, audio fade
+(<code>afade</code>) - in seconds. Usually fade-in is simple if you start
+exactly at the beginning: <code>fade=in:0:90</code> means "start at frame
+<samp>0</samp> and reach max at frame <samp>90</samp>" (~<samp>3s</samp> from
+dark to full picture). Fade-out, however, requires some calculations. For
+example: total length is <samp>3630</samp> frames, we want to fade out in
+<samp>3s</samp>, which is <samp>90</samp> frames. So, since count starts at
+<samp>0</samp> and last frame is <samp>3631</samp>, fade-out must start at
+frame <samp>3541</samp>.</p>
+
+
+
+<h4 class="part3">
+<a name="audio">Audio</a></h4>
+
+<h5>Changing audio volume</h5>
+<p>
+Reducing audio to 25% of the original value:</p>
+
+<p class="cmd">ffmpeg -i CAM00015.mp4 -vcodec copy -ab 96k -vol 64 mov0015.mp4</p>
+<p>
+Note that 256 = 100%, so<code> -vol 64 </code>means 25% of the initial level,
+while<code> -vol 512 </code>means 200% of the initial level.</p>
+
+
+<h5>Extracting audio</h5>
+<p>
+To extract the first (<samp>-map 0:1</samp>) AC-3 encoded audio stream exactly
+as it was multiplexed (<code>-vn </code>disables video stream processing):</p>
+
+<p class="cmd">ffmpeg -i video01.vob -map 0:1 -c:a copy -vn video01.ac3</p>
+<p>
+To convert the third (<samp>-map 0:3</samp>) DTS audio stream to an AAC file
+with a bitrate of 192 kbit/s and a sampling rate of 96000 Hz:</p>
+
+<p class="cmd">ffmpeg -i video02.vob -map 0:3 -c:a libvo-aacenc -ab 192k -ar 96000 -vn video02.aac</p>
+
+
+<h5>Converting from ... to ...</h5>
+
+<p>
+M4A to MP3, CBR (constant bit rate):</p>
+
+<p class="cmd">ffmpeg -i file01.m4a -c:a libmp3lame -b:a 192k file01.mp3</p>
+<p>
+M4A to MP3, VBR (variable bit rate):</p>
+
+<p class="cmd">ffmpeg -i file01.m4awav -c:a libmp3lame -q:a 8 file01.mp3</p>
+<p>
+WAV to MP3 (MPEG-1 layer 3), CBR:</p>
+
+<p class="cmd">ffmpeg -i file01.wav -c:a libmp3lame -ab 192k file01.mp3</p>
+<p>
+WAV to MP3, VBR:</p>
+
+<p class="cmd">ffmpeg -i file02.wav -c:a libmp3lame -aq 100 file02.mp3</p>
+<p>
+WAV to AAC, CBR:</p>
+
+<p class="cmd">ffmpeg -i file03.wav -f adts -c:a libfaac -ab 192k file03.aac</p>
+<p>
+WAV to AAC, VBR:</p>
+
+<p class="cmd">ffmpeg -i file04.wav -f adts -c:a libfaac -aq 90 file04.aac</p>
+<p>
+WAV to OGG Vorbis, CBR:</p>
+
+<p class="cmd">ffmpeg -i file05.wav -f ogg -c:a libvorbis -ab 192k file05.ogg</p>
+<p>
+WAV to OGG Vorbis, VBR:</p>
+
+<p class="cmd">ffmpeg -i file06.wav -f ogg -c:a libvorbis -aq 105 file06.ogg</p>
+<p>
+WAV to FLAC:</p>
+
+<p class="cmd">ffmpeg -i file07.wav -c:a flac file07.flac</p>
+<p>
+WAV to WMA (Windows Audio Media v2):</p>
+
+<p class="cmd">ffmpeg -i file08.wav -c:a wmav2 -ab 256k file08.wma</p>
+
+
+
+<h4 class="part3">
+<a name="poster">Creating a poster for video</a></h4>
+<p>
+HTML5 video players have a <samp>poster</samp> property that requires
+a picture of the appropriate size. The following cmds give you the simplest
+way to create such pictures. Convert PNG to JPG to decrease size.</p>
+<p>
+The following cmd takes a single (first) frame from a video file and converts
+it to a PNG image file.</p>
+
+<p class="cmd">ffmpeg -i file01.mp4 -vcodec png -vframes 1 file01.png</p>
+<p>
+You can also get at once the series of PNG images based on the sequential
+frames from video file (20 pictures in this case):</p>
+
+<p class="cmd">ffmpeg -i file01.mp4 -vcodec png -vframes 20 file01-%03d.png</p>
+<p>
+The same trick, but skip the first 9 seconds of video, and only than create
+20 PNG files:</p>
+
+<p class="cmd">ffmpeg -i file01.mp4 -vcodec png -vframes 20 -ss 10 file01-%03d.png</p>
+
+
+<h4 class="part3">
+<a name="anim">Creating animated GIF from video</a></h4>
+<p>
+First, we need an appropriate video file, i.e., MP4, AVI, quite small
+(like 160x120), with low framerate (~15 frames/s), 30..100 sec length.
+Otherwise the resulting GIF can be very large.</p>
+
+<p class="cmdc">ffmpeg -i file1.mp4 file1.gif</p>
+
+<p class="or">or (if the above does not work)</p>
+
+<p class="cmd">ffmpeg -i file1.mp4 -pix_fmt rgb24 file1.gif</p>
+<p>
+Now we can use <b>ImageMagick</b>'s <code>convert</code> utility to reduce
+the file size:</p>
+
+<p class="cmd">convert -layers Optimize file1.gif file2.gif</p>
+<p>
+Let's make this GIF playing in an infinite loop:</p>
+
+<p class="cmd">convert -loop 0 -layers Optimize file2.gif file3.gif</p>
+<p>
+Sometimes it plays too fast or too slow. You can ajust the animation speed
+with the following utilities (ImageMagick). First, let's see what is the
+current delay param:</p>
+
+<p class="cmd">identify -verbose file3.gif | grep Delay</p>
+<p>
+It shows delay for each frame, i.e., the output can be 1000 lines and more
+(<span class="keys">CTRL+C</span> stops the process). If delay is
+<samp>4x100</samp>, then <samp>2x100</samp> would make animation faster,
+while <samp>10x100</samp> would make it essentially slower:</p>
+
+<p class="cmdc">convert -delay 10x100 file3.gif file3slow.gif</p>
+<p class="or">or</p>
+<p class="cmd">convert -delay 10 file3.gif file3slow.gif</p>
+
+
+
+<h3 class="part">
+<a name="mplayer">Mplayer</a></h3>
+<p>
+(playing, ripping, encoding video)</p>
+<p>
+There are 2 related apps: <code>mplayer</code> and
+<code>mencoder</code> (video encoding). Both are cmdline apps with
+intimidating number of options. You can get src, codecs, skins, etc.
+from <a href="https://www.mplayerhq.hu" target="_top">www.mplayerhq.hu</a>.
+
+<div class="box1">
+<p>
+There are several GUI front-ends for <samp>Mplayer</samp>, for example,
+<samp>SMPlayer</samp> (config file: <samp>~/.config/smplayer/*</samp>).</p>
+</div>
+<p>
+Following keys can be used to control <code>mplayer</code>
+(cmd line and GUI):</p>
+
+<table class="options" style="margin-bottom:2%">
+<tr><td class="opt_name"><span class="keys">f</span></td><td class="opt_desc">fullscreen mode toggle;</td></tr>
+<tr><td class="opt_name"><span class="keys">m</span></td><td class="opt_desc">mute sound;</td></tr>
+<tr><td class="opt_name"><span class="keys">p</span></td><td class="opt_desc">pause;</td></tr>
+<tr><td class="opt_name"><span class="keys">q</span></td><td class="opt_desc">quit;</td></tr>
+<tr><td class="opt_name"><span class="keys">/</span> | <span class="keys">*</span></td><td class="opt_desc">-/+ audio volume (Num Key Pad);</td></tr>
+<tr><td class="opt_name"><span class="keys">&#8592;</span> | <span class="keys">&#8594;</span></td><td class="opt_desc">10s back/forward;</td></tr>
+<tr><td class="opt_name"><span class="keys">&#8595;</span> | <span class="keys">&#8593;</span></td><td class="opt_desc">60s back/forward;</td></tr>
+<tr><td class="opt_name"><span class="keys">Page Up</span></td><td class="opt_desc">10 min forward;</td></tr>
+<tr><td class="opt_name"><span class="keys">Page Down</span></td><td class="opt_desc">10 min backward;</td></tr>
+</table>
+
+<p>
+Playing and ripping from DVD:</p>
+
+<p class="cmdc">mplayer dvd://1</p>
+<p class="desc">play title 1 (all chapters) from the default DVD device;</p>
+
+<p class="cmdc">mplayer dvd://1 -chapter 2-2</p>
+<p class="desc">play title 1, chapter 2 from the default DVD device;</p>
+
+<p class="cmdc">mplayer dvd://6 -aid 129 -dvd-device /dev/hda</p>
+<p class="desc">play title 6 from non-default device using audio track 129;</p>
+
+<p class="cmdc">mplayer dvd://2 -chapter 4-9 -aid 138 -dvd-device /opt/movies/TheCore</p>
+<p class="desc">play title 2, chapters 4..9, use audio track 138 (the movie was copied from DVD to HDD);</p>
+
+<p class="cmdc">mplayer dvd://4 -aid 128 -dumpstream</p>
+<p class="desc">save title 4, audio track 128 from DVD to a file (by default <code>stream.dump</code> in the current dir);</p>
+
+<p class="cmdc">mplayer dvd://24 -dumpstream -dumpfile clip024.vob</p>
+<p class="desc">save title 24 from a DVD to the file <code>clip024.vob</code>;</p>
+
+<p class="cmdc">mplayer dvd://1 -aid 130 -vf cropdetect -dvd-device /dev/sr0</p>
+<p class="desc">find actual picture size to be used by mencoder;</p>
+
+<p class="cmdc">mplayer -ss 00:01:48 -endpos 10 mov005.mp4</p>
+<p class="desc">skip the first 1 min 48 sec of<samp> mov005.mp4 </samp>and
+play the following 10s;</p>
+<p>
+The next example is DVD to AVI two-pass encoding: audio track 138 is copied
+as is, video is encoded using <samp>xvid</samp> codec, bitrate is auto
+adjusted to produce ~1.4 Gb output file <samp>faculty.avi</samp>,
+codec options (<samp>vhq</samp>, <samp>bvhq</samp>, etc) are set for
+"good" video quality, picture size is left unchanged, black areas around
+the picture are removed (<samp>crop</samp> option):</p>
+
+<p class="cmd">mencoder -oac copy -ovc xvid
+-xvidencopts pass=1:vhq=2:
+bvhq=1:chroma_opt:quant_type=mpeg
+-vf crop=704:544:4:16 -o /dev/null
+dvd://1 -aid 138 -dvd-device /dev/hda</p>
+<p class="cmd" style="margin-top:2px">mencoder -oac copy -ovc xvid
+-xvidencopts pass=2:bitrate=-1400000:
+vhq=2:bvhq=1:chroma_opt:quant_type=mpeg
+-vf crop=704:544:4:16 -o faculty.avi
+dvd://1 -aid 138 -dvd-device /dev/hda</p>
+
+
+
+<h3 class="part">
+<a name="video_dvd">Video DVD creation</a></h3>
+<p>
+It's assumed that files were ripped from the original DVD to some dir
+on HDD (dir <samp>matrix</samp>, in the following example). For reference:
+it should contain <samp>AUDIO_TS</samp> (optional) and <samp>VIDEO_TS</samp>.
+Many movie DVDs can be just copied file by file. Damaged files can be copied
+with <a href="cmds_d.html#ddrescue"><code>ddrescue</code></a> utility (not
+always, of course).</p>
+<p>
+One-step procedure:</p>
+
+<p class="cmd">growisofs -dvd-video -Z /dev/hda -V Matrix.1 ./matrix</p>
+<p>
+Option <samp>-dvd-video</samp> specifies the creation of UDF filesystem,
+and this is important for video DVD.</p>
+<p>
+Two-step procedure (requires additional space for an image file):</p>
+
+<p class="cmd">mkisofs -o matrix1.iso -dvd-video -V Matrix.1 ./matrix</p>
+<p>
+Second step, burning DVD (+/-R, +/-RW):</p>
+
+<p class="cmd">growisofs -dvd-compat -Z /dev/hda=matrix1.iso</p>
+
+</div>
+
+</body></html>

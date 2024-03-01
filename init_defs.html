@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (init, runlevel, System V)</title>
+<meta name="description" content="linux quick reference, init, runlevel, event, job, task, service" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<h1>
+<a name="init_defs">System init definitions (old)<a></h1>
+
+<p>
+The System V <code>init</code> daemon starts and stops processes when
+the runlevel is being changed.</p>
+<p>
+The Upstart <code>init</code> daemon is a state machine. It keeps track
+of the state of jobs and, as events are triggered, tracks jobs as they
+change states. When <code>init</code> tracks a job from one state to
+another, it may execute the job's cmds or terminate the job.</p>
+<p>
+An <a name="event"><strong>event</strong></a> is a change in state that
+<code>init</code> can be informed of. Almost any change in state
+(either internal or external to the system) can trigger an event.
+For example, the boot loader triggers the <samp>startup event</samp>,
+the system entering runlevel 2 triggers the <samp>runlevel 2 event</samp>,
+and a filesystem being mounted triggers the <samp>path-mounted event</samp>.
+You can also trigger an event manually by using the <code>initctl emit</code>
+cmd.</p>
+<p>
+A <a name="job"><strong>job</strong></a> is a series of instructions that
+<code>init</code> reads. The instructions typically include a program
+(binary file or shell script) and the name of an event. The Upstart
+<code>init</code> daemon runs the program when the event is triggered.
+A job can be started and stopped manually using <code>initctl</code>.
+Jobs are divided into <samp>tasks</samp> and <samp>services</samp>.</p>
+<p>
+The <samp>/etc/event.d</samp> dir holds job definition files (files defining
+the jobs that the Upstart <code>init</code> daemon runs). Initially this dir
+is populated by Upstart software packages. With new Ubuntu releases, files
+in this dir will replace the files in <samp>/etc/rc?.d</samp> and
+<samp>/etc/init.d</samp> dir.</p>
+<p>
+A <a name="task"><strong>task</strong></a> is a job that performs its work
+and returns to a waiting state when it is done.</p>
+<p>
+A <a name="service"><strong>service</strong></a> is a job that does not
+normally terminate by itself. For example, the <code>logd</code> daemon
+and the <code>getty</code>s are implemented as services.
+The <code>init</code> daemon monitors each service, restarting the
+service if it fails and killing the service when it is stopped manually or
+by an event.</p>
+
+</div>
+
+</body></html>

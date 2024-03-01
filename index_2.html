@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference / Two-column PC version</title>
+<meta name="description" content="Linux quick reference for administrators and users comfortable with command line, two-column PC version" />
+<meta name="keywords" content="linux, os, operating system, command line, ubuntu, unix" />
+<meta name="charset" content="UTF-8" />
+<meta name="author" content="A. S. Tarasenkov" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+</head><body>
+
+<script>
+
+const keyStyle = 'qr_lin_style';
+const keyPage = 'qr_lin_page';
+const refStyle = 'two';
+
+let leftFrameWid = 480;
+
+localStorage.setItem(keyStyle, refStyle);
+// Cookies.set(keyStyle, refStyle, { path: '' });
+
+let currPage = window.location.href;
+let currPath = currPage.substring(0, currPage.lastIndexOf("/") + 1);
+let tocPage = currPath + 'toc.html';
+let refStyleStored = localStorage.getItem(keyStyle);
+
+if (refStyle !== refStyleStored) {
+  console.log('Setting ' + keyStyle + ' as ' + refStyle);
+  console.log('Getting ' + keyStyle + ' as ' + refStyleStored);
+  alert('Cannot get correct refStyle from local storage!');
+  history.back();
+}
+
+var w = $('body').width();
+
+if (window !== top) {
+  console.log('The script is executed in frame!');
+  top.location = window.location + '';
+}
+
+if (w < 1000) {
+  leftFrameWid = Math.floor(w/2);
+} else {
+  leftFrameWid = Math.floor(w * 0.4);
+
+  if (leftFrameWid < 500) {
+    leftFrameWid = 500;
+  }
+}
+
+let rightFrameWid = w - leftFrameWid;
+let firstPage = currPath + 'keys.html';
+let page = localStorage.getItem(keyPage);
+
+console.log('Body width = ' + w);
+console.log('Left frame width = ' + leftFrameWid);
+console.log('Right frame width = ' + rightFrameWid);
+console.log('keyPage = ' + page);
+console.log('tocPage = ' + tocPage);
+
+//$('.left').css('width', frameWid);
+//$('.right').css('left', frameWid);
+//$('.right').css('width', rightFrameWid);
+
+if (!page) {
+  page = firstPage;
+  localStorage.setItem(keyPage, page);
+}
+document.write("<iframe class=\"left\" id=\"frame1\" name=\"frame1\" ")
+document.write("src=\"" + tocPage + "\" style=\"width:" + leftFrameWid + "px\"></iframe>")
+document.write("<iframe class=\"right\" id=\"frame2\" name=\"frame2\" ")
+// document.write("src=\"" + page + "\"></iframe>")
+document.write("src=\"" + page + "\" style=\"left:" + leftFrameWid + "px;width:" + rightFrameWid + "px\"></iframe>")
+
+// window.location.replace(tocPage);
+
+window.addEventListener("message", function(event) {
+  if (event.data == "reload") {
+    location.reload();
+  }
+});
+
+</script>
+
+<noscript>
+<p class="center">
+This cannot work if JavaScript is disabled in your browser!</p>
+</noscript>
+
+</body></html>

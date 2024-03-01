@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference / Util-Linux</title>
+<meta name="description" content="linux quick reference, addpart, agetty, blkdiscard, blkid, cfdisk, chcpu, column, dmesg, findmnt" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<h1 class="part">Util-linux</h1>
+<p>
+<samp>Util-linux</samp> package is a standard part of any Linux distro.
+It includes the following utilities:</p>
+
+<p class="fmtc"><code>addpart</code></p>
+<p class="desc">informs the Linux kernel of new [disk] partition
+(but it does not manipilate partitions);</p>
+
+<p class="fmtc"><code>agetty</code></p>
+<p class="desc">alternative <code>getty</code>, opens a tty port, prompts
+for a login name and invokes the <code>/bin/login</code> cmd; it's normally
+invoked by <a href="cmds_i.html#init"><code>init</code></a>(8);</p>
+
+<p class="fmtc"><code>blkdiscard</code></p>
+<p class="desc">discards device sectors; it can be useful for SSDs
+(solid-state drives) and thinly-provisioned storage;</p>
+
+<p class="fmtc"><code>blkid</code></p>
+<p class="desc">is cmdline interface to <samp>libblkid</samp> (3);
+it can determine the type of content (e.g. filesystem, swap) that block
+device holds; it can also find block device attributes;</p>
+
+<p class="fmtc"><code>blockdev</code></p>
+<p class="desc">calls block device <samp>ioctls</samp> from the cmdline;</p>
+
+<p class="fmtc"><code>cal</code></p>
+<p class="desc">displays a simple calendar in traditional format;</p>
+
+<p class="fmtc"><code>cfdisk</code></p>
+<p class="desc">displays or manipulates partition tables;
+it's a curses/slang based program for disk drive partitioning;</p>
+
+<p class="fmtc"><code>chcpu</code></p>
+<p class="desc">enables or disables CPUs, scans for new CPUs, changes
+the CPU dispatching mode of the underlying hypervisor, etc;</p>
+
+<p class="fmtc"><code>chfn</code></p>
+<p class="desc">changes user fullname, office room number, office phone
+number, home phone number for a user's account;</p>
+
+<p class="fmtc"><code>chrt</code></p>
+<p class="desc">manipulates the real-time attributes of a process;</p>
+
+<p class="fmtc"><code>chsh</code></p>
+<p class="desc">changes the user's login shell;</p>
+
+<p class="fmtc"><code>col</code></p>
+<p class="desc">(legacy) filters out reverse (and half reverse) line feeds
+so that the output is in the correct order with only forward and half forward
+line feeds, and replaces white-space chars with tabs where possible;</p>
+
+<p class="fmtc"><code>colcrt</code></p>
+<p class="desc">provides virtual half-line and reverse line feed sequences for
+terminals without such capability, and on which overstriking is destructive;</p>
+
+<p class="fmtc"><code>colrm</code></p>
+<p class="desc">removes selected columns from the lines of a file;</p>
+
+<p class="fmtc"><code>column</code></p>
+<p class="desc">formats its input into multiple columns; rows are filled
+before columns; input is taken from file operands, or, by default, from stdin;</p>
+
+<p class="fmtc"><code>ctrlaltdel</code></p>
+<p class="desc">sets the function of the
+<span class="keys">Ctrl+Alt+Del</span> combination;</p>
+
+<p class="fmtc"><code>delpart</code></p>
+<p class="desc">simple wrapper around the "del partition" <code>ioctl</code>;
+it's program that asks the Linux kernel to remove a partition, but it doesn't
+manipulate partitions on hard drive;</p>
+
+<p class="fmtc"><code>dmesg</code></p>
+<p class="desc">is used to examine or control the kernel ring buffer;
+the default action is to read all messages from kernel ring buffer;</p>
+
+<p class="fmtc"><code>eject</code></p>
+<p class="desc">allows removable media (CD-ROM, floppy disk, tape, etc) to be
+ejected under software control;</p>
+
+<p class="fmtc"><code>fallocate</code></p>
+<p class="desc">is used to preallocate blocks to a file; if filesystem
+supports the <code>fallocate</code> system call, this is done quickly by
+allocating blocks and marking them as uninitialized, requiring no IO to the
+data blocks; this is much faster than creating a file by filling it with
+zeros; the <code>fallocate</code> system call is supported by
+<samp>btrfs</samp>, <samp>ext4</samp>, <samp>ocfs2</samp>, and
+<samp>xfs</samp> filesystems;</p>
+
+<p class="fmtc"><code>fdformat</code></p>
+<p class="desc">does a low-level format on a floppy disk;</p>
+
+<p class="fmtc"><code><a href="cmds_f.html#fdisk">fdisk</a></code></p>
+<p class="desc">manipulates disk partition tables; NOTE! that it does not
+understand GUID partition tables (GPTs) and is not designed for large
+partitions;</p>
+
+<p class="fmtc"><code>findfs</code></p>
+<p class="desc">searches the disks in the system looking for a filesystem
+which has a label matching <kbd>label</kbd> or a UUID equal to <kbd>uuid</kbd>;
+if the filesystem is found, the device name for the filesystem will be printed
+on stdout;</p>
+
+<p class="fmtc"><code>findmnt</code></p>
+<p class="desc">lists all mounted filesytems or searches for a filesystem in
+<samp>/etc/fstab</samp>, <samp>/etc/fstab.d</samp>, <samp>/etc/mtab</samp>
+or <samp>/proc/self/mountinfo</samp>;</p>
+
+<p class="fmtc"><code>flock</code></p>
+<p class="desc">
+manages  <samp>flock(2)</samp> [<samp>int flock(int fd, int operation)</samp>]
+locks from within shell scripts or cmd line;</p>
+
+<p class="fmtc"><code><a href="cmds_f.html#fsck">fsck</a></code></p>
+<p class="desc">check and repair a Linux filesystem;</p>
+
+<p class="fmtc"><code>fsck.cramfs</code></p>
+<p class="fmtc"><code>fsck.minix</code></p>
+<p class="desc"></p>
+
+<p class="fmtc"><code>fsfreeze</code></p>
+<p class="desc">suspends and resumes access to a filesystem;</p>
+
+<p class="fmtc"><code>fstab</code></p>
+<p class="desc"><samp>/etc/fstab</samp> contains descriptive info about
+the various filesystems;</p>
+
+<p class="fmtc"><code>fstrim</code></p>
+<p class="desc">is used on a mounted filesystem to discard ("trim") blocks
+which are not in use by the filesystem; this is useful for solid-state drives
+and thinly-provisioned storage;</p>
+
+<p class="fmtc"><code>getopt</code></p>
+<p class="desc">is used to break up (parse) options in cmd lines for easy
+parsing by shell procedures, and to check for legal options;</p>
+
+<p class="fmtc"><code><a href="cmds_h.html#hexdump">hexdump</a></code></p>
+<p class="desc">is a filter which displays the specified files, or stdin,
+if no files are specified, in a user specified format;</p>
+
+<p class="fmtc"><code><a href="cmds_h.html#hwclock">hwclock</a></code></p>
+<p class="desc">query and set the hardware clock (RTC);</p>
+
+<p class="fmtc"><code>ionice</code></p>
+<p class="desc">sets/gets the I/O scheduling class and priority for a program;
+if no arg or <code>-p</code> is given, it  will query the current I/O
+scheduling class and priority for that process;</p>
+
+<p class="fmtc"><code>ipcmk</code></p>
+<p class="desc">allows to create shared memory segments, message queues or
+semaphore arrays;</p>
+
+<p class="fmtc"><code>ipcrm</code></p>
+<p class="desc">removes System V interprocess communication (IPC) objects and
+associated data structures from the system;</p>
+
+<p class="fmtc"><code><a href="cmds_i.html#ipcs">ipcs</a></code></p>
+<p class="desc">provides info on the IPC facilities for which the calling
+process has read access;</p>
+
+
+<p class="fmtc"><code>isosize</code></p>
+<p class="desc">outputs the length of an iso9660 file system that is contained
+in the specified file, which can be a regulra file or a block device (e.g.
+<samp>/dev/sr0</samp>); in the absence of any switches (and errors) it outputs
+the size of the iso9660 filesystem in bytes;</p>
+
+<p class="fmtc"><code><a href="cmds_k.html#kill">kill</a></code></p>
+<p class="desc">send a signal to a process;</p>
+
+<p class="fmtc"><code>last</code></p>
+<p class="desc">searches back through <samp>/var/log/wtmp</samp> (or the file
+specified with <code>-f</code>) and shows the list of all users logged in (and
+out) since that file was created;</p>
+
+<p class="fmtc"><code>ldattach</code></p>
+<p class="desc">this <i>daemon</i> is used to attach a line discipline
+to a serial line;</p>
+
+<p class="fmtc"><code>line</code></p>
+<p class="desc">(legacy) copies one line (up to a <i>newline</i>) from
+stdin to stdout; it always prints at least a <i>newline</i> and returns an
+exit status of <samp>1</samp> on <samp>EOF</samp> or read error;</p>
+</p>
+
+<p class="fmtc"><code>logger</code></p>
+<p class="desc">provides a shell command interface to the <samp>syslog</samp>
+system log module;</p>
+
+<p class="fmtc"><code>login</code></p>
+<p class="desc">is used to establish a new session with the system; it's
+usually invoked automatically in respondse to the <i>login</i> prompt on
+the user's terminal;</p>
+
+<p class="fmtc"><code>look</code></p>
+<p class="desc">displays any lines in the specified <i>file</i> which
+contain the specified <i>string</i> as a prefix; if file is not specified,
+then <samp>/usr/share/dict/words</samp> is used; only alphanumeric chars are
+compared, and the case of alphabetic chars is ignored;</p>
+
+<p class="fmtc"><code>losetup</code></p>
+<p class="desc">is used to associate loop devices with regular files or block
+devices, to detach loop devices and to query the status of a loop device; if
+only the <i>loopdev</i> arg is given, the status of the specified loop device
+is shown;</p>
+
+<p class="fmtc"><code>lsblk</code></p>
+<p class="desc">lists info about all or the specified block devices,
+the <samp>sysfs</samp> filesystem is used to gather info;</p>
+
+<p class="fmtc"><code>lscpu</code></p>
+<p class="desc">gathers and displays CPU architecture info: number of CPUs,
+family, model, cores, sockets, caches, etc;</p>
+
+<p class="fmtc"><code>lslocks</code></p>
+<p class="desc">shows info about all the currently held file locks in a Linux
+system;</p>
+
+<p class="fmtc"><code>lslogins</code></p>
+<p class="desc">shows info about known users in the system;</p>
+
+<p class="fmtc"><code>mcookie</code></p>
+<p class="desc">generates a <samp>128</samp>-bit random hexadecimal number
+for use with the X authority system;</p>
+
+<p class="fmtc"><code>mesg</code></p>
+<p class="desc">controls the access to your terminal by others; usually
+it's used to allow/disallow other users to write to your terminal using
+<code>write</code>;</p>
+
+<p class="fmtc"><code><a href="cmds_m.html#mkfs">mkfs</a></code></p>
+<p class="desc">(legacy) is used to build a Linux filesystem on a device,
+usually a hard disk partition; techincally, it's a front-end for the various
+filesystem builders available under Linux;</p>
+
+<p class="fmtc"><code>mkfs.bfs</code></p>
+<p class="desc">creates an SCO <samp>bfs</samp> filesystem on a block device,
+usually a disk partition or a file accessed via the loop device;</p>
+
+<p class="fmtc"><code>mkfs.cramfs</code></p>
+<p class="desc">creates a compressed ROM file system; files on cramfs are
+zlib-compressed one page at a time to allow random read access; the metadata
+is not compressed, but is expressed in a terse representation that is more
+space-efficient than conventional file systems; the filesystem is read-only;</p>
+
+<p class="fmtc"><code>mkfs.minix</code></p>
+<p class="desc">creates a Linux MINIX filesystem on a device (usually a disk
+partition);</p>
+
+<p class="fmtc"><code><a href="cmds_m.html#mkswap">mkswap</a></code></p>
+<p class="desc">sets up a Linux swap area on a device or in a file;</p>
+
+<p class="fmtc"><code>more</code></p>
+<p class="desc">is a filter for paging through text one screenful at a time;
+it's quite old and trivial, probably you should use
+<code><a href="cmds_l.html#less">less</a></code> instead;</p>
+
+<p class="fmtc"><code><a href="cmds_m.html#mount">mount</a></code></p>
+<p class="desc">mounts filesystems;</p>
+
+<p class="fmtc"><code>mountpoint</code></p>
+<p class="desc">checks if the specified directory is a mountpoint;</p>
+
+<p class="fmtc"><code>namei</code></p>
+<p class="desc">uses its args as pathnames to any type of Unix/Linux files
+(symlinks, files, dirs, etc); <code>~</code> follows each pathname until an
+endpoint is found (a file, a directory, a device node, etc); if it finds a
+symbolic link, it shows the link, and starts following it, indenting the
+output to show the context;</p>
+
+<p class="fmtc"><code>newgrp</code></p>
+<p class="desc">is used to change the current group ID during a login session;
+if an optional <code>-</code> flag is given, the user's environment will be
+reinitialized as though the user had logged in, otherwise the current env,
+including current working dir, remains unchanged;</p>
+
+<p class="fmtc"><code>nologin</code></p>
+<p class="desc">displays a message that an account is not available and exits
+non-zero; it's intended as a replacement shell field for accounts that have
+been disabled;</p>
+
+<p class="fmtc"><code>nsenter</code></p>
+<p class="desc">enters the namespaces of one or more other processes
+and executes the specified program; enterable namespaces are: <i>mount
+namespace</i>, <i>network namespace</i>, <i>IPC namespace</i>, etc;</p>
+
+<p class="fmtc"><code>partx</code></p>
+<p class="desc">tells the Linux kernel about the presence and numbering of
+on-disk partitions; <code>~</code> tries to parse the partition table of the
+specified disk or disk-image and to list its contents; it can also add or
+remove partitions, but this only affects kernel's list, the actual disk
+partitions are not affected;</p>
+
+<p class="fmtc"><code>pg</code></p>
+<p class="desc">(outdated?) displays a text file on a CRT one screenful
+at once;</p>
+
+<p class="fmtc"><code>pivot_root</code></p>
+<p class="desc">moves the root file system of the calling process to the
+specified directory ... ... ...; probably it's only required during system
+startup, when the system mounts a temporary root filesystem (like
+<samp>initrd</samp>), then mounts the real root filesystem, and eventually
+turns the latter into the current root of all relevant processes or threads;</p>
+
+<p class="fmtc"><code>prlimit</code></p>
+<p class="desc">(?) outputs miscell system resource limits?</p>
+
+<p class="center">To be continued...</p>
+<!--
+raw
+readprofile
+rename
+renice
+reset (legacy)[5]
+resizepart
+rev
+RTC Alarm
+runuser
+script
+scriptreplay
+setarch (including architecture symlinks such as i386, linux32, linux64, x86_64, etc.)
+setpriv
+setsid
+setterm
+sfdisk
+su
+sulogin
+swaplabel
+swapoff
+swapon
+switch_root
+tailf (legacy)[5]
+taskset
+tunelp (deprecated)[8]
+ul
+umount
+unshare
+utmpdump
+uuidd
+uuidgen
+vipw (including symlink to vigr)
+wall
+wdctl
+whereis
+wipefs
+write
+zramctl
+
+
+Th following utilities were removed from the package in 2015:
+
+    arch[9]
+    chkdupexe[10]
+    clock[11]
+    cytune[12]
+    ddate (removed from default build[13] before being removed[14] altogether)
+    elvtune[15]
+    fastboot[16]
+    fasthalt[16]
+    halt[16]
+    initctl[16]
+    ramsize (formerly a symlink to rdev)[17]
+    rdev[17]
+    reboot[16]
+    rootflags (formerly a symlink to rdev)[17]
+    shutdown[16]
+    simpleinit[16]
+    vidmode (formerly a symlink to rdev)[17]
+-->
+
+
+</div>
+
+</body></html>

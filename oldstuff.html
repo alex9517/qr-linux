@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (miscell old stuff)</title>
+<meta name="description" content="linux quick reference, mkisofs, wodim, cdrecord, growisofs, cdrwtool, mkudffs, pktsetup, dump, fdformat, mformat, sendmail, uuencode, uudecode" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<h1 class="part">Miscellaneous old stuff</h1>
+
+<div id="contents" style="margin-top:0px">
+<table class="menu">
+<tr>
+<td class="menu1"><a href="#data_cd">Data CD creation</a></td>
+<td class="menu2"><a href="#data_dvd">Data DVD creation</a></td></tr>
+<tr>
+<td class="menu1"><a href="#blank_dvdrw">Blanking DVD+RW</a></td>
+<td class="menu2"><a href="#packet_write">CD-RW pkt writing</a></td></tr>
+<tr>
+<td class="menu1"><a href="#dump">DUMP&nbsp;archives</a></td>
+<td class="menu2"><a href="#format_floppy">Format&nbsp;floppy</a></td></tr>
+<tr>
+<td class="menu1"><a href="#sendmail">Sendmail</a></td>
+<td class="menu2"><a href="#uuencode">Uuencode</a></td></tr>
+<tr>
+<td class="menu1" style="text-align:center" colspan="2">
+<a href="postfix-dovecot.html">Mail: Postfix + Dovecot</a></td></tr>
+</table>
+</div>
+
+
+
+<h4>
+<a name="data_cd">Data CD creation</a></h4>
+<p>
+Many Linux GUI applications for CD/DVD creation are just front-ends for
+cmdline programs. Due to license problems Debian, Ubuntu, Fedora and some
+others not long ago replaced <samp>cdrtools</samp> package with
+<samp>cdrkit</samp>. So, now we have <code>genisoimage</code> instead of
+<code>mkisofs</code>, and <code>wodim</code> (write optical disk media)
+instead of <code>cdrecord</code>. Options are still the same.</p>
+<p>
+Since ISO images nowdays are often loaded from the Internet, you usually
+don't have to use <code>genisoimage</code> (or <code>mkisofs</code>).
+However, if you want to put on CD some set of files of your own choice,
+you have to create an ISO image first (this stage is usually omitted,
+if you're burning a DVD):</p>
+
+<p class="cmdc">genisoimage -o cdimage.iso -R -J -V MUSIC.001
+/<span class="arg">path</span>/<span class="arg">to</span>/<span class="arg">folder_to_record</span></p>
+
+<p class="or">or</p>
+
+<p class="cmd">mkisofs -o cdimage.iso -R -J -V MUSIC.001
+/<span class="arg">path</span>/<span class="arg">to</span>/<span class="arg">folder_to_record</span></p>
+<p>
+To get an image of CD (DVD), use the following cmd:</p>
+
+<p class="cmd">dd if=/dev/hda of=cdimage.iso</p>
+<p>
+It works good in most cases, but may fail if disk is copy-protected.</p>
+<p>
+When ISO image is ready, you can burn CD-R or CD-RW. If CD-RW is not fresh
+new, use option <code>blank=fast</code> or <code>blank=all</code>
+(slower). To find the device names, use options
+<code>--scanbus</code> or <code>--devices</code> (or look in
+<samp>/dev</samp>):</p>
+
+<p class="cmdc">wodim --devices</p>
+<p class="cmdc">wodim dev=OLDATAPI --scanbus</p>
+<p class="cmd">cdrecord dev=ATAPI -scanbus</p>
+<p>
+To burn a CD-R:</p>
+
+<p class="cmdc">wodim -v -eject dev=/dev/scd0 cdimage.iso</p>
+<p class="cmd">wodim -v dev=/dev/sr0 cdimage.iso</p>
+<p>
+To burn a used CD-RW (slowly, reliably):</p>
+
+<p class="cmd">wodim -v blank=fast speed=4 dev=/dev/scd0 cdimage.iso</p>
+
+Other similar commands:</p>
+
+<p class="cmdc">cdrecord -v dev=ATAPI:0,0,0 cdimage.iso</p>
+<p class="cmdc">cdrecord -v speed=16 dev=ATAPI:0,0,0 cdimage.iso</p>
+<p class="cmd">cdrecord -v blank=fast speed=4 dev=ATAPI:1,0,0 cdimage.iso</p>
+<p>
+Some popular options with <code>genisoimage</code>, <code>mkisofs</code>,
+<code>growisofs</code>:</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-f</code></td>
+<td class="opt_desc">follow symlinks in the source dir;</td></tr>
+<tr>
+<td class="opt_name"><code>-J</code></td>
+<td class="opt_desc">generate Joliet dir records in addition to regular
+ISO9660 filenames; this is primarily useful when the discs are to be used
+on Windows systems; Joliet filenames are specified in Unicode and each path
+component can be up to 64 Unicode chars long; note that Joliet is not
+a standard, only Windows and Linux can read Joliet extensions; for better
+portability use both Joliet and Rock Ridge extensions;</td></tr>
+<tr>
+<td class="opt_name"><code>-R</code></td>
+<td class="opt_desc">generate ISO9660 filesystem with Rock Ridge extensions;</td></tr>
+</table>
+<p class="fmt"><code>-V</code> <kbd>str</kbd> &nbsp;
+set disk label to <kbd>str</kbd>;</p>
+
+
+
+<h4>
+<a name="data_dvd">Data DVD creation</a></h4>
+<p>
+Copy all necessary files (dirs) to a single dir (<samp>linux_soft</samp>,
+in this example). It will be the root dir of the new DVD.</p>
+<p>
+One-step procedure:</p>
+
+<p class="cmd">growisofs -dvd-compat -Z /dev/hda<br> -J -R -V SOFTWARE.001 ./linux_soft</p>
+<p>
+Two-step procedure requires more space.
+The first step is an image file creation:</p>
+
+<p class="cmd">mkisofs -o sw001.iso -R -J -V SOFTWARE.001 ./linux_soft</p>
+<p>
+The second step is burning DVD (+/-R, +/-RW):</p>
+
+<p class="cmd">growisofs -dvd-compat -Z /dev/hda=sw001.iso</p>
+
+
+
+<h4>
+<a name="blank_dvdrw">Blanking DVD+RW disks</a></h4>
+<p>
+To perform this tasks you need DVD+RW-Tools package. Quick format/erase is
+sufficient in most cases:</p>
+
+<p class="cmd">dvd+rw-format -blank /dev/dvd</p>
+<p>
+To erase the entire disk (it takes time):</p>
+
+<p class="cmd">dvd+rw-format -blank=full /dev/dvd</p>
+
+
+
+<h4>
+<a name="packet_write">CD-RW (DVD+/-RW) packet writing</a></h4>
+
+<p class="warn">Warning!</p>
+<p class="indent">It is totally outdated by USB flash.</p>
+<p>
+Linux kernel must be 2.6.17 or newer. You may also need <samp>udftools</samp>.</p>
+<p>
+To format CD-RW and create UDF filesystem:</p>
+
+<p class="cmd">cdrwtool –d /dev/hdc -q</p>
+<p>
+This utility does not support DVD, so there is another one that can be used
+to format CD-RW and DVD+/-RW. It usually auto defines media type and the only
+required parameter is the device spec; UDF revision by default is
+<samp>--udfrev=0x0201</samp> (others: <samp>0x0200</samp>,
+<samp>0x0150</samp>, <samp>0x0102</samp>), <code>--vid</code> can be used to
+set volume label:</p>
+
+<p class="cmdc">mkudffs /dev/hdc</p>
+<p class="cmdc">mkudffs –-media-type=dvd –-vid=TEMP /dev/hdc</p>
+<p class="cmd">mkudffs –-media-type=cdrw –-vid=TEMP /dev/hdc</p>
+<p>
+To write files to CD/DVD/RW in packet mode, create mount point
+(something like <samp>/media/cdrw</samp>). Create packet writing device
+(each time after system restart), unless it's created automatically:</p>
+
+<p class="cmd">pktsetup pktcdvd0 /dev/hdc</p>
+<p>
+Device name may be different, for example, <samp>/dev/hda</samp>.</p>
+<p>
+Insert disk, and if it automounts,</p>
+
+<p class="cmd">umount /dev/hdc</p>
+<p>
+and mount as shown below:</p>
+
+<p class="cmd">mount –t udf /dev/pktcdvd0 /media/cdrw</p>
+<p>
+Copy files to CD-RW (or delete from ~), then</p>
+
+<p class="cmd">umount /dev/pktcdvd0</p>
+<p>
+and eject disk. Optionally, you can remove packet device:</p>
+
+<p class="cmd">pktsetup –d pktcdvd0</p>
+<p>
+Note, that CD/DVD RW have a limited number of overwrites (~ 1000).</p>
+
+
+
+<h4>
+<a name="dump">Working with DUMP archives</a></h4>
+<p>
+<code>dump</code> was a popular backup utility in the past, partially due
+to its ability to archive special (device) files in <samp>/dev</samp> dir.
+However, as <samp>udev</samp> now creates device files during system
+startup, there is no sense to backup <samp>/dev</samp> dir. Besides,
+<code>dump</code> has compatibility problems with <samp>ext4</samp>
+filesystems. One of possible replacements is
+<a href="cmds_t.html#tar"><code>tar</code></a>.</p>
+
+<p class="cmdc">dump -0u -f /u02/fs_boot /boot</p>
+<p class="desc">make a full backup of <samp>/boot</samp> fs to the file
+<samp>fs_boot</samp>;</p>
+
+<p class="cmdc">dump -0u -z9 -f /u02/fs_home /home</p>
+<p class="desc">make a full backup of <samp>/home</samp> filesystem to
+the file <samp>fs_home</samp> using max compression;</p>
+
+<p class="cmdc">dump -0u -e 557099,4718593 -f /u02/fs_u01 /u01</p>
+<p class="desc">make a full backup of <samp>/u01</samp> fs to the file
+<samp>fs_u01</samp>  excluding files (dirs) with the specified inodes
+(<samp>557099</samp> and <samp>4718593</samp>);
+use <a href="cmds_s.html#stat"><code>stat <span class="arg">fname</span></code></a>
+to find inode;</p>
+
+<p class="cmdc">dump -0u -M -B256000 -z9 -f /u02/fs_root /</p>
+<p class="desc">make a full backup of the root fs to file
+<samp>fs_root</samp> using max compression and cutting output into
+pieces of <samp>256 MB</samp>;</p>
+
+<p class="cmdc">dump -0u -f /dev/st0 /var</p>
+<p class="desc">make a full backup of <samp>/var</samp> filesystem to tape;</p>
+<p>
+<code>restore</code> restores filesystems from backups made with
+<code>dump</code> utility.</p>
+
+<p class="fmt"><code>restore&nbsp;</code>[<kbd>options</kbd>]<code>&nbsp;-f&nbsp;</code><kbd>src</kbd></p>
+<p>
+<kbd>src</kbd> is a disk file or a device. Full backup of a file system may
+be restored and subsequent incremental backups layered on top of it. Single
+files and directory subtrees may be restored from full or partial backups.</p>
+
+<p class="fmt"><code>restore -i</code> &nbsp; start interactive restore session;</p>
+
+<h5>File system restoration example:</h5>
+
+<p class="warn">Note!</p>
+<p class="indent">The first two cmds are performed in case you restore
+the filesystem from archives stored on HDD.</p>
+
+<p>
+Start Linux using some appropriate LiveCD or USB flash.</p>
+
+<p class="cmdc">mkdir bkp</p>
+<p class="desc">create a mount point (<samp>bkp</samp>) for the backup disk
+(it's assumed to be <samp>/dev/sdb3</samp> in this case); it’s a good idea
+to have a separate HDD for <code>dump</code> archives of your filesystems);</p>
+
+<p class="fmt"><code>mount /dev/sdb3 /bkp</code> &nbsp; mount the backup disk;</p>
+
+<p class="cmdc">mke2fs -c -j -T news -L / /dev/sda2</p>
+<p class="desc">(it’s assumed that a new system disk is properly installed,
+configured and partitioned) create a new <samp>ext3</samp> filesystem with
+label <samp>/</samp>  (keep in mind that labels of the filesystems to be
+restored must be copasetic with the original <samp>/etc/fstab</samp>);</p>
+
+<p class="fmt"><code>mount /dev/sda2 /mnt</code> &nbsp;
+mount an empty fs on <samp>/mnt</samp>;</p>
+
+<p class="cmdc">cd /mnt</p>
+<p class="desc">change dir to <samp>/mnt</samp> (This is important!
+We must start the restore procedure in the root of an empty filesystem);</p>
+
+<p class="cmdc">restore -r -f /bkp/arc/fs_root</p>
+<p class="desc">restore filesystem using backup file <samp>fs_root</samp>;</p>
+
+<p class="or">or, if a backup tape is available (omit first 2 steps,
+i.e., <code>mkdir bkp</code> and <code>mount /dev/...</code>, insert the
+tape cartridge with archive instead):</p>
+
+<p class="cmdc">restore rf /dev/st0</p>
+<p class="desc">restore filesystem from tape (<samp>/dev/st0</samp>);</p>
+
+
+
+<h4>
+<a name="format_floppy">Format floppy, create filesystem</a></h4>
+<p>
+This is a two-stage procedure: 1) low-level format, 1) fs creation:</p>
+
+<p class="cmdc">fdformat /dev/fd0H1440</p>
+<p class="cmd">mkfs -t ext2 /dev/fd0 1440</p>
+<p>
+To format floppy for DOS / Windows FAT:</p>
+
+<p class="cmdc">fdformat /dev/fd0</p>
+<p class="cmd">mformat a:/</p>
+<p>
+Writing disk image file to a diskette (Windows):</p>
+
+<p class="cmd">rawrite2 -f diskimage.bin -d A:</p>
+<p>
+Writing disk image file to a diskette (Linux);</p>
+
+<p class="cmd">dd if=diskimage.bin of=/dev/fd0 bs=18k</p>
+
+
+
+<h4>
+<a name="sendmail">Sendmail</a></h4>
+
+<p class="cmdc">sendmail -bd -q1h</p>
+<p class="desc">start <code>sendmail</code> as daemon, process mail queue each hour;</p>
+
+<p class="cmdc">sendmail –bi</p>
+<p class="desc">re-create <samp>aliases.db</samp> (also <code>newaliases</code>);</p>
+
+<p class="cmdc">sendmail –bp</p>
+<p class="desc">print message queue (also <code>mailq</code>);</p>
+
+<p class="cmdc">sendmail –bs</p>
+<p class="desc">use SMTP protocol on std input/output;</p>
+
+<h5>Sendmail directories and files:</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><samp>/etc/aliases</samp></td>
+<td class="opt_desc"><samp>/etc/aliases.db</samp></td></tr>
+<tr>
+<td class="opt_name"><samp>/etc/sendmail.cf</samp></td>
+<td class="opt_desc"><samp>/etc/sendmail.hf</samp></td></tr>
+<tr>
+<td class="opt_name"><samp>/var/spool/mail</samp></td>
+<td class="opt_desc"><samp>/var/spool/mqueue</samp></td></tr>
+<tr>
+<td class="opt_name"><samp>/var/run/sendmail.pid</samp></td>
+<td class="opt_desc"></td></tr>
+</table>
+
+<h5>Sendmail queue prefixes:</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><samp>qf</samp></td>
+<td class="opt_desc">message header and control file;</td></tr>
+<tr>
+<td class="opt_name"><samp>df</samp></td>
+<td class="opt_desc">message body;</td></tr>
+<tr>
+<td class="opt_name"><samp>lf</samp></td>
+<td class="opt_desc">lock file (old);</td></tr>
+<tr>
+<td class="opt_name"><samp>tf</samp></td>
+<td class="opt_desc">temporary version of <samp>qf</samp>;</td></tr>
+<tr>
+<td class="opt_name"><samp>xf</samp></td>
+<td class="opt_desc">temporary file of mailer errors;</td></tr>
+</table>
+
+
+
+<h4>
+<a name="uuencode">UUENCODE, UUDECODE</a></h4>
+
+<p class="fmtc"><code>uuencode <span class="arg">src dst</span> &gt; <span class="arg">datafile</span></code></p>
+<p class="desc">conv binary file (<kbd>src</kbd>) to ASCII (<kbd>dst</kbd>)
+and write it to <kbd>datafile</kbd>;</p>
+
+<p class="fmtc"><code>mail <span class="arg">address</span> &lt; <span class="arg">datafile</span></code></p>
+<p class="desc">send <kbd>datafile</kbd> by e-mail;</p>
+
+<p class="fmtc"><code>&amp; s <span class="arg">msg_no datafile</span></code></p>
+<p class="desc">(mail at the reception side) save received msg to a <kbd>datafile</kbd>;</p>
+
+<p class="fmtc"><code>uudecode <span class="arg">datafile</span></code></p>
+<p class="desc">decode <kbd>datafile</kbd>;</p>
+
+<h5>Sending binary files from Windows to Linux:</h5>
+
+<p class="cmdc">uuew a /s tns.arj</p>
+<p class="desc">at the Windows side: convert <samp>tns.arj</samp> to
+<samp>tns.uue</samp>; start mail, copy / paste <samp>tns.uue</samp> and
+send it;</p>
+
+<p class="fmt"><code>mail</code> &nbsp; at the Linux side: start mail,
+write the received message to a file
+(<code><span class="prom">&amp;</span> w tns</code>), quit mail;</p>
+
+<p class="fmt"><code>uudecode tns</code> &nbsp; decode file <samp>tns</samp>;</p>
+
+<p class="fmt"><code>unarj e tns.arj</code> &nbsp; unpack archive <samp>tns.arj</samp>;</p>
+
+
+
+<h4>
+<a name="jdk">Oracle JDK 8 (Ubuntu 14.xx..16.xx)</a></h4>
+<p>
+Add the PPA:</p>
+
+<p class="cmd">sudo add-apt-repository ppa:webupd8team/java</p>
+<p>
+Update and install the installer script:</p>
+
+<p class="cmd">sudo apt update; sudo apt install oracle-java8-installer</p>
+<p>
+(you have to accept Java license to continue downloading and installing
+Java binaries)</p>
+<p>
+Set Java env variables (pay attention, it can be already installed):</p>
+
+<p class="cmd">sudo apt install oracle-java8-set-default</p>
+<p>
+Set <samp>JAVA_HOME</samp>, if third party tools, like <b>maven</b>,
+need it (<samp>javac</samp> runs without it).</p>
+<p>
+There can be multiple Java installations on one computer. You can
+configure which version is default by using <samp>update-alternatives</samp>
+(it manages symbolic links):</p>
+
+<p class="cmd">sudo update-alternatives --config java</p>
+
+</div>
+
+</body></html>

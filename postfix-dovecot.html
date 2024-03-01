@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (postfix, dovecot)</title>
+<meta name="description" content="linux quick reference, mail, postfix, postconf, postmap, dovecot, doveconf, roundcube" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<h1 class="part">
+<a name="postfix-dovecot">Mail service<br>
+<span style="font-size:84%">Postfix/Dovecot (v2) on Ubuntu 11.xx</span></a></h1>
+
+<p class="warn">Warning!</p>
+<p class="indent">This is quite old!</p>
+
+<div id="contents" style="margin-top:0px">
+<table class="menu">
+<tr>
+<td class="menu1"><a href="#intro">Introduction</a></td>
+<td class="menu2"><a href="#software">Software install</a></td></tr>
+<tr>
+<td class="menu1"><a href="#apache">Apache config</a></td>
+<td class="menu2"><a href="#mysql">MySQL objects</a></td></tr>
+<tr>
+<td class="menu1"><a href="#postfix">Postfix config</a></td>
+<td class="menu2"><a href="#dovecot">Dovecot config</a></td></tr>
+<tr>
+<td class="menu1"><a href="#tests1">Testing SMTP</a></td>
+<td class="menu2"><a href="#tests2">Testing POP3/IMAP</a></td></tr>
+<tr>
+<td class="menu1"><a href="#webmail">Web mail</a></td>
+<td class="menu2"><a href="#final_notes">Final notes</a></td></tr>
+</table>
+</div>
+<p>
+<a name="intro">The following description</a> is related to the situation
+when mail clients are <b>virtual users</b>, i.e., they have no system accounts
+(no records in <samp>/etc/passwd</samp>), all info about users (including
+passwords) is stored in a database (MySQL), and mail server handles e-mail
+for virtual domain(s). <b>Virtual domain</b> is any legal Internet domain
+which is external for a mail server (i.e., the mail server is not a part of
+such domain). <b>Canonical domain</b> is the mail server's own domain.</p>
+<p>
+Another important note: in this example SMTP client authentication
+is based on Dovecot SASL, not Cyrus SASL!</p>
+
+
+
+<h4>First of all,</h4>
+<p>
+be sure your server has a real FQDN
+(see <a href="cmds_h.html#hostname"><code>hostname</code></a>):</p>
+
+<p class="cmd">hostname --fqdn</p>
+<p>
+Check/change date/time and TZ (must correspond to the server's
+location). To change time zone data in Ubuntu:</p>
+
+<p class="cmd">dpkg-reconfigure tzdata</p>
+
+
+
+<h4>
+<a name="software">Software installation</a></h4>
+<p>
+(some packages may be already installed)</p>
+
+<p class="cmd">apt-get update</p>
+<p>
+While installing Postfix, choose "Internet Site" in config dialog:</p>
+
+<p class="cmd">apt-get install postfix postfix-mysql</p>
+<p>
+MySQL is going to be a backend database:</p>
+
+<p class="cmd">apt-get install mysql-server</p>
+<p>
+Installing pop3/imap server (Dovecot version 2.* is assumed):</p>
+
+<p class="cmd">apt-get install dovecot-pop3d dovecot-imapd dovecot-mysql dovecot-sieve</p>
+<p>
+(the Dovecot Sieve plugin provides mail filtering facilities at the stage
+of the final msg delivery; using Sieve language /RFC 5228/ you can write
+delivery customization scripts).</p>
+<p>
+The web-server (for administration, webmail, and stats gathering):</p>
+
+<p class="cmd">apt-get install apache2</p>
+<p>
+PHP modules, libs, apps, etc.:</p>
+
+<p class="cmd">apt-get install php5 php5-mysql php5-mcrypt php5-intl phpmyadmin</p>
+<p>
+Miscellaneous utilities, that can be useful for mail server:</p>
+
+<p class="cmd">apt-get install wget tcpflow dnsutils nmap unzip whois</p>
+<p>
+The Bayes and spf antispam filters:</p>
+
+<p class="cmdc">apt-get install spamassassin pyzor razor</p>
+<p class="cmd">apt-get install tumgreyspf</p>
+<p>
+Note! Antispam config is not considered here!</p>
+
+
+
+<h4>
+<a name="apache">Installing Apache</a></h4>
+<p>
+Actually, mail service does not require Apache or any other web server,
+but there are many reasons (like web mail, misc web/php admin tools) to
+have it.</p>
+<p>
+First of all, we need a certficate for Apache (mail service requires
+passwords, password over HTTP requires SSL, and SSL requires certificates).
+Self-signed certificate is bad for a big, serious, crictical, financial, etc.
+system, but this is (what can I say?) very popular choice for simple, local,
+internal, experimental, ... system. So be it, let's create this trivial,
+self-made, <b>self-signed certificate</b> (which, besides all, should not
+request a password when Apache starts):</p>
+
+<p class="cmd">openssl req -new > new.cert.csr</p>
+<p>
+At this point we'll be prompted to enter some info about organization,
+PEM pass phrase (prepare beforehand), etc:</p>
+
+<p class="fmt">...</p>
+<p>
+If this stage is O.K., let's do the rest:</p>
+
+<p class="cmdc">openssl rsa -in privkey.pem -out new.cert.key</p>
+<p class="cmd">openssl x509 -in new.cert.csr -out new.cert.cert -req -signkey new.cert.key -days 1825</p>
+<p>
+If there is no <samp>ssl</samp> dir in <samp>/etc/apache2</samp>,
+create it (or, if you prefer <samp>/etc/ssl</samp>, modify config):</p>
+
+<p class="cmdc">cp new.cert.cert /etc/apache2/ssl/server.crt</p>
+<p class="cmd">cp new.cert.key /etc/apache2/ssl/server.key</p>
+<p>
+Now we must configure DNS for a first domain to be able to address the
+server. Use <code>a2enmod</code> apache2 module config script:</p>
+
+<p class="cmdc">a2enmod rewrite</p>
+<p class="cmd">a2enmod ssl</p>
+<p>
+All unnecessary files from <samp>/var/www/</samp> (most likely
+<samp>index.html</samp>) should be deleted or moved to some arc location
+(postpone this step to be able to test the web server access),
+and some new dirs (for future use) should be created:</p>
+
+<p class="cmdc">mkdir /var/www/webmail</p>
+<p class="cmd">mkdir /var/www/mysql</p>
+<p>
+Ubuntu 11.10 installation usually includes two templates:</p>
+
+<p class="fmtc"><samp>/etc/apache2/sites-available/default</samp></p>
+<p class="fmt"><samp>/etc/apache2/sites-available/default-ssl</samp></p>
+<p>
+Edit one of them (<samp>default-ssl</samp> is more appropriate in our case),
+or create totally new, but remember, web server will only read files
+referenced by symlinks in <samp>/etc/apache2/sites-enabled/</samp> dir,
+be sure the symlink points to the right file. Actually, there are
+scripts <code>a2ensite</code> and <code>a2dissite</code> to handle this
+situation.</p>
+<p>
+There are many ways to set options in this file, see, for example,
+<a href="file_default.html"><samp>/etc/apache2/sites-available/default</samp></a>
+(if you take it, replace names of files, certificates, etc). This config
+allows access through the standard tcp/80 port and tcp/443 port (SSL).</p>
+<p>
+Also, we have to set some basic rules in<br>
+<samp>/etc/apache2/conf.d/security</samp>:</p>
+
+<div class="file">
+<pre>&lt;Directory&gt;
+  AllowOverride None
+  Order Deny,Allow
+  Deny from all
+&lt;/Directory&gt;
+
+ServerTokens Prod
+
+ServerSignature Off</pre>
+</div>
+<p>
+Restart Apache and test web server access from the net:</p>
+
+<p class="cmd">/etc/init.d/apache2 restart</p>
+<p>
+Check/change PHP config <samp>/etc/php5/apache2/php.ini</samp>, pay
+attention to the following params:</p>
+<div class="file">
+<pre>display_errors = off
+upload_max_filesize = 20M
+date.timezone = Europe/Rome</pre>
+</div>
+<p>
+Enable default site (<code>a2ensite</code> creates symlinks, but it would
+make no harm if all those symlinks were created manually):</p>
+
+<p class="cmd">a2ensite default</p>
+<p>
+Once again restart Apache.</p>
+
+
+
+<h4>
+<a name="mysql">MySQL database</a></h4>
+<p>
+It looks like nowdays everybody wants to use Postfix with a database
+(usually MySQL). It really provides some useful features.</p>
+<p>
+The name of the database and the name of the mail administrator in
+the database are quite random, let it be <samp>mailserver</samp> and
+<samp>postman</samp>. Use a reasonably long password (8+).</p>
+<p>
+The following description assumes the use of MySQL
+client<code>&nbsp;mysql</code>
+(see <a href="mysql.html">MySQL usage notes</a>):</p>
+
+<p class="cmd">mysql -u root -p</p>
+<p>
+If root login is disabled (e.g., due to empty root password, like in Ubuntu),
+and you cannot connect to MySQL server, see
+<a href="mysql.html#ubuntu_pass">Setting MySQL root password in Ubuntu</a>.
+When you're normally connected:</p>
+
+<p class="cmdc"><span class="prom">mysql&gt;</span>
+CREATE DATABASE mailserver;</p>
+
+<p class="cmdc"><span class="prom">mysql&gt;</span>
+USE mailserver;</p>
+
+<p class="cmdc"><span class="prom">mysql&gt;</span>
+GRANT ALL ON mailserver.* TO 'postman'@'localhost' IDENTIFIED BY 'gdp501wste';</p>
+<p class="cmd"><span class="prom">mysql&gt;</span> exit</p>
+<p>
+Now it's time to create database objects. Let's make it conveniently,
+using a carefully prepared <a href="file_mail_sql.html">SQL script</a>
+executed by <code>mysql</code>. Move this script to an appropriate dir
+and run:</p>
+
+<p class="cmd">mysql mailserver -u postman -p &lt; mailserver.sql</p>
+
+
+
+<h4>
+<a name="postfix">Configuring Postfix</a></h4>
+<p>
+There are some files to be created to provide interaction between Postfix
+and the database. They look alike, except SQL query string. Be sure it is
+consistent with your database struct (table/column names, etc).</p>
+<p>
+Virtual domain config file:</p>
+<p class="zero_pad">
+<samp>/etc/postfix/mysql-virtual-domains.cf</samp></p>
+<div class="file">
+<pre>user = postman
+password = gdp501wste
+hosts = 127.0.0.1
+dbname = mailserver
+query = SELECT id FROM virtual_domains WHERE name='%s'</pre>
+</div>
+<p>
+Virtual forwarding config file:</p>
+<p class="zero_pad">
+<samp>/etc/postfix/mysql-virtual-alias-maps.cf</samp></p>
+<div class="file">
+<pre>user = postman
+password = gdp501wste
+hosts = 127.0.0.1
+dbname = mailserver
+query = SELECT destination FROM virtual_aliases WHERE source='%s'</pre>
+</div>
+<p>
+Virtual mailbox config file:</p>
+<p class="zero_pad">
+<samp>/etc/postfix/mysql-virtual-mailbox-maps.cf</samp></p>
+<div class="file">
+<pre>user = postman
+password = gdp501wste
+hosts = 127.0.0.1
+dbname = mailserver
+query = SELECT email FROM users1 WHERE email='%s'</pre>
+</div>
+<p>
+Virtual e-mail mapping file:</p>
+<p class="zero_pad">
+<samp>/etc/postfix/mysql-virtual-email2email.cf</samp></p>
+<div class="file">
+<pre>user = postman
+password = gdp501wste
+hosts = 127.0.0.1
+dbname = mailserver
+query = SELECT email FROM users1 WHERE email='%s'</pre>
+</div>
+<p>
+Make sure that all these config files have group <samp>postfix</samp>
+and access mode <samp>640</samp> (it's important, because those files
+contain plaintext pass).</p>
+<p>
+Also, a special OS user is required to handle our mail (<samp>postman</samp>
+is a database user, not related to OS). On a system that auto creates a unique
+group for each new user (Fedora, Ubuntu):</p>
+
+<p class="cmdc">useradd -m vmail</p>
+
+<p class="or">or, if keeping mail in <samp>/home</samp> is not desired,</p>
+
+<p class="cmd">useradd -m -d /var/vmail vmail</p>
+<p>
+Find UID and GID in <samp>/etc/passwd</samp>. Alternative approach
+(with total control of names and numbers):</p>
+
+<p class="cmdc">groupadd -g 5000 vmail</p>
+<p class="cmd">useradd vmail -u 5000 -g vmail -m -d /home/vmail</p>
+<p>
+The following cmds are required to complete the Postfix config:</p>
+
+<p class="cmdc">postconf -e virtual_mailbox_domains=mysql:/etc/postfix/mysql-virtual-domains.cf</p>
+<p class="cmdc">postconf -e virtual_mailbox_maps=mysql:/etc/postfix/mysql-virtual-mailbox-maps.cf</p>
+<p class="cmdc">postconf -e virtual_alias_maps=mysql:/etc/postfix/mysql-virtual-alias-maps.cf,
+mysql:/etc/postfix/mysql-virtual-email2email.cf</p>
+<p class="cmdc">postconf -e 'virtual_uid_maps = static:5000'</p>
+<p class="cmd">postconf -e 'virtual_gid_maps = static:5000'</p>
+<p>
+The following example shows how to insert a new domain into the database
+(NOTE! <samp>example.com</samp> is used for demonstration, in fact, this
+table must keep valid domain names only):</p>
+
+<p class="cmdc">mysql mailserver -u postman -p</p>
+<p class="cmd">...</p>
+<p class="cmd"><span class="prom">mysql&gt;</span> INSERT INTO virtual_domains VALUES (1, 'example.com');</p>
+<p>
+Let's check that Postfix can execute the query (if everything is O.K., the
+following cmd must output <samp>1</samp>):</p>
+
+<p class="cmd">postmap -q example.com mysql:/etc/postfix/mysql-virtual-domains.cf</p>
+<p>
+Now you can create new mail users in following manner:</p>
+
+<p class="cmd"><span class="prom">mysql&gt;</span> INSERT INTO virtual_users
+(domain_id, user, password) VALUES (1, 'pro07', MD5('stp4e39mix'));</p>
+<p>
+Here's a database cmd to add a forwarding record:</p>
+
+<p class="cmd"><span class="prom">mysql&gt;</span> INSERT INTO virtual_aliases
+(domain_id, source, destination) VALUES (1, 'postmaster', 'alex@example.com');</p>
+<p>
+Testing cmds:</p>
+
+<p class="cmdc">postmap -q postmaster@example.com mysql:/etc/postfix/mysql-virtual-alias-maps.cf</p>
+<p class="cmd">postmap -q info@example.com mysql:/etc/postfix/mysql-email2email.cf</p>
+<p>
+Each of the above cmds should return the queried mail address if it exists
+in the database, otherwise an empty string is returned.</p>
+<p>
+See also the final version of <a href="file_main_cf.html">main.cf</a> as it
+looks after <code>dovecot</code> config is done.</p>
+
+
+
+<h4>
+<a name="dovecot">Configuring Dovecot</a></h4>
+<p>
+Dovecot provides POP3 and IMAP services. To establish relation between
+Postfix and Dovecot, we must add the following line to</p>
+<p class="zero_pad">
+<samp>/etc/postfix/master.cf</samp></p>
+
+<div class="file">
+<pre>dovecot  unix  -   n    n   -   -   pipe   flags=DRhu user=vmail:vmail argv=/usr/lib/dovecot/dovecot-lda -f ${sender} -d ${recipient}</pre>
+</div>
+<p>
+(all that stuff is a single line!)</p>
+<p>
+Next step is to modify Postfix config:</p>
+
+<p class="cmdc">postconf -e virtual_transport=dovecot</p>
+<p class="cmd">postconf -e dovecot_destination_recipient_limit=1</p>
+<p>
+To activate changes, Postfix must be restarted:</p>
+
+<p class="cmd">postfix reload</p>
+<p class="warn">Warning!</p>
+<p class="indent">
+There are some differences between Dovecot 1.* and Dovecot 2.*
+config. The following description assumes Dovecot 2.*.</p>
+<p>
+The default Dovecot config file</p>
+
+<p class="fmt"><samp>/etc/dovecot/dovecot.conf</samp></p>
+<p>
+is the assembly of the multiple include files, and you have to choose:
+to edit all those files or to create a single clean config file with all
+settings in one place. Here's an example of a single config file
+<a href="file_dovecot.html">dovecot.conf</a>.</p>
+<p>
+There is also <samp>dovecot-sql.conf</samp> for database connectivity:</p>
+
+<div class="file">
+<pre>driver = mysql
+connect = host=127.0.0.1 dbname=mailserver user=postman password=gdp501wste
+default_pass_scheme = PLAIN-MD5
+password_query = SELECT user, domain, password FROM users2 WHERE user='%n' AND domain='%d';
+user_query = SELECT user, password, 1001 AS uid, 1001 AS gid, '/var/vmail/%d/%n' AS home, 'maildir:/var/vmail/%d/%n' AS mail FROM users2 WHERE user='%n' AND domain='%d';</pre>
+</div>
+<p>
+Note that substitution params mean:</p>
+
+<p class="fmt"><samp>'%u' - </samp> entire userid (like <kbd>user</kbd><samp>@</samp><kbd>domain</kbd>);</p>
+<p class="fmt"><samp>'%n' - </samp> user part of <kbd>user</kbd><samp>@</samp><kbd>domain</kbd>;</p>
+<p class="fmt"><samp>'%d' - </samp> domain part of <kbd>user</kbd><samp>@</samp><kbd>domain</kbd>;</p>
+<p>
+To see actual Dovecot config:</p>
+
+<p class="cmd">doveconf -a | more</p>
+<p>
+Or you can select non-default settings only:</p>
+
+<p class="cmd">doveconf -n | more</p>
+<p>
+Starting/stopping Dovecot (Ubuntu Linux 10.*/11.*):</p>
+
+<p class="cmdc">sudo start dovecot</p>
+<p class="cmd">...</p>
+<p class="cmd">sudo stop dovecot</p>
+<p>
+The Dovecot log is (according to the above
+<a href="file_dovecot.html">dovecot.conf</a>):</p>
+
+<p class="fmt"><samp>/var/vmail/dovecot-deliver.log</samp></p>
+<p>
+Both Postfix and Dovecot use certificates to restrict access and reject
+bad clients (those without mail certificates). In our case these certificates
+are not the same that are used by Apache web-server. In fact, certificates
+can be inherited from an old mail server, if you're upgrading mail system;
+or created as described above. Anyway, it requires some config lines in
+Postfix <samp>main.cf</samp> and <samp>dovecot.conf</samp>, and these lines
+are usually added/modified in the end of the installation process when mail
+service is already functional, i.e., can send and receive mail.</p>
+
+<p class="cmdc">postconf -e smtpd_sasl_type=dovecot</p>
+<p class="cmdc">postconf -e smtpd_sasl_path=private/auth</p>
+<p class="cmd">postconf -e smtpd_sasl_auth_enable=yes</p>
+
+<p class="cmdc">postconf -e smtpd_tls_cert_file=/etc/ssl/certs/servcert.pem</p>
+<p class="cmdc">postconf -e smtpd_tls_key_file=/etc/ssl/private/servkey.pem</p>
+<p class="cmdc">postconf -e smtpd_use_tls=yes</p>
+<p class="cmd">postconf -e smtpd_tls_auth_only=no</p>
+
+
+
+<h4>
+<a name="tests1">Testing SMTP</a></h4>
+
+<p style="padding-top:8px">
+<b>TEST # 1</b> (connecting SMTP locally)</p>
+<p>
+At the server:</p>
+
+<p class="cmd">telnet localhost 25</p>
+<p>
+It should respond with:</p>
+
+<p class="fmtc"><samp>Trying 127.0.0.1...</samp></p>
+<p class="fmtc"><samp>Connected to localhost.</samp></p>
+<p class="fmtc"><samp>Escape character is '^]'.</samp></p>
+<p class="fmt"><samp>220 mx1.example.com ESMTP Postfix (Ubuntu)</samp></p>
+<p>
+At this point enter:</p>
+<p class="cmd">ehlo localhost</p>
+<p>
+It should output something like this:</p>
+
+<p class="fmtc"><samp>250-mx1.example.com</samp></p>
+<p class="fmtc"><samp>250-PIPELINING</samp></p>
+<p class="fmtc"><samp>250-SIZE 10240000</samp></p>
+<p class="fmtc"><samp>250-VRFY</samp></p>
+<p class="fmtc"><samp>250-ETRN</samp></p>
+<p class="fmtc"><samp>250-STARTTLS</samp></p>
+<p class="fmtc"><samp>250-AUTH PLAIN LOGIN</samp></p>
+<p class="fmtc"><samp>250-ENHANCEDSTATUSCODES</samp></p>
+<p class="fmtc"><samp>250-8BITMIME</samp></p>
+<p class="fmt"><samp>250 DSN</samp></p>
+<p>
+Now you can send a test message:</p>
+
+<p class="cmdc">mail from:&lt;pro@example.com&gt;</p>
+
+<p class="fmtc"><samp>250 2.1.0 Ok</samp></p>
+
+<p class="cmdc">rcpt to:&lt;postmaster@example.com&gt;</p>
+
+<p class="fmtc"><samp>250 2.1.5 Ok</samp></p>
+
+<p class="cmdc">data</p>
+
+<p class="fmtc"><samp>354 End data with &lt;CR&gt;&lt;LF&gt;.&lt;CR&gt;&lt;LF&gt;</samp></p>
+
+<p class="cmdc">Test 1</p>
+<p class="cmd">.</p>
+
+<p class="fmt"><samp>250 2.0.0 Ok: queued as E2604200068</samp></p>
+<p>
+That's enough for a simple test:</p>
+
+<p class="cmdc">quit</p>
+<p class="fmtc"><samp>221 2.0.0 Bye</samp></p>
+<p class="fmt"><samp>Connection closed by foreign host.</samp></p>
+
+
+<p style="padding-top:8px">
+<b>TEST # 2</b> (connecting SMTP from a LAN host)</p>
+<p>
+If this test fails, first try
+<a href="cmds_p.html#ping"><code>ping</code></a>
+(to be sure that SMTP server is accessible) and
+<a href="cmds_n.html#nmap"><code>nmap</code></a>
+(to be sure that firewall is set right).</p>
+<p>
+At the client computer/workstation:</p>
+
+<p class="cmd">telnet 192.168.0.2 25</p>
+<p>
+It should respond with:</p>
+
+<p class="fmtc"><samp>Trying 192.168.0.2...</samp></p>
+<p class="fmtc"><samp>Connected to 192.168.0.2.</samp></p>
+<p class="fmtc"><samp>Escape character is '^]'.</samp></p>
+<p class="fmt"><samp>220 mx1.example.com ESMTP Postfix (Ubuntu)</samp></p>
+<p>
+You should enter the following cmd with your host's IP (or name):</p>
+
+<p class="cmd">ehlo 192.168.0.25</p>
+<p>
+The rest is like in the previous example.</p>
+
+
+<p style="padding-top:8px">
+<b>TEST # 3</b> (connecting SMTP from a LAN host using TLS)</p>
+<p>
+At the client computer/workstation:</p>
+
+<p class="cmd">openssl s_client -connect 192.168.0.2:25<br> -starttls smtp</p>
+<p>
+In case of success server returns a big block of misc info that ends with:</p>
+
+<p class="fmtc"><samp> &nbsp; ...</samp></p>
+<p class="fmtc"><samp> &nbsp; Compression: 1 (zlib compression)</samp></p>
+<p class="fmtc"><samp> &nbsp; Start Time: 1331709237</samp></p>
+<p class="fmtc"><samp> &nbsp; Timeout   : 300 (sec)</samp></p>
+<p class="fmtc"><samp> &nbsp; Verify return code: 18 (self signed certificate)</samp></p>
+<p class="fmtc"><samp>---</samp></p>
+<p class="fmtc"><samp>250 DSN</samp></p>
+<p>
+At this point you can send:</p>
+
+<p class="cmd">ehlo 201.37.89.208</p>
+<p>
+and the rest goes like in the previous examples.</p>
+
+<p style="padding-top:8px">
+<b>TEST # 4</b></p>
+<p>
+If previous tests are successful, try to send a real mail message to
+a real external mail address (e.g., your own <samp>gmail.com</samp> acount).</p>
+<p>
+Remember that a real mail server must have an appropriate <samp>PTR</samp>
+record. If you do not belong to a big company with PI (provider independent)
+address space, than only your ISP can do this for you.</p>
+
+
+
+<h4>
+<a name="tests2">Testing POP3/IMAP</a></h4>
+
+<p style="padding-top:8px">
+<b>TEST # 5</b> (testing Dovecot/pop3 from a workstation)</p>
+
+<p class="cmd">telnet 192.168.0.2 pop3</p>
+<p>
+Server should respond with:</p>
+
+<p class="fmtc"><samp>Trying 192.168.0.2...</samp></p>
+<p class="fmtc"><samp>Connected to 192.168.0.2.</samp></p>
+<p class="fmtc"><samp>Escape character is '^]'.</samp></p>
+<p class="fmt"><samp>+OK Dovecot Ready.</samp></p>
+<p>
+Send your name:</p>
+
+<p class="cmdc">user pro7</p>
+<p class="fmt"><samp>+OK</samp></p>
+<p>
+Send your password:</p>
+
+<p class="cmdc">pass stp4e39mix</p>
+<p class="fmt"><samp>+OK Logged in.</samp></p>
+<p>
+Try some commands:</p>
+
+<p class="cmdc">list</p>
+<p class="fmtc"><samp>+OK 0 messages:</samp></p>
+<p class="fmtc"><samp>.</samp></p>
+<p class="cmdc">quit</p>
+<p class="fmtc"><samp>+OK Logging out.</samp></p>
+<p class="fmtc"><samp>Connection closed by foreign host.</samp></p>
+
+
+<p style="padding-top:8px">
+<b>TEST # 6</b> (testing Dovecot/imap from a workstation)</p>
+
+<p class="cmd">telnet 192.168.0.2 imap2</p>
+<p>
+Server should respond with:</p>
+
+<p class="fmtc"><samp>Trying 192.168.0.2...</samp></p>
+<p class="fmtc"><samp>Connected to 192.168.0.2.</samp></p>
+<p class="fmtc"><samp>Escape character is '^]'.</samp></p>
+<p class="fmt"><samp>* OK [CAPABILITY IMAP4rev1 LITERAL+ SASL-IR
+LOGIN-REFERRALS ID ENABLE IDLE STARTTLS AUTH=PLAIN AUTH=LOGIN]
+Dovecot ready.</samp></p>
+<p>
+Send your name and password:</p>
+
+<p class="cmdc">1 login pro07 stp4e39mix</p>
+
+<p class="fmt"><samp>1 OK [CAPABILITY IMAP4rev1 LITERAL+ SASL-IR
+LOGIN-REFERRALS ID ENABLE IDLE SORT SORT=DISPLAY THREAD=REFERENCES
+THREAD=REFS MULTIAPPEND UNSELECT CHILDREN NAMESPACE UIDPLUS LIST-EXTENDED
+I18NLEVEL=1 CONDSTORE QRESYNC ESEARCH ESORT SEARCHRES WITHIN CONTEXT=SEARCH
+LIST-STATUS] Logged in</samp></p>
+<p>
+Try some commands:</p>
+
+<p class="cmdc">2 list "" "*"</p>
+<p class="fmtc"><samp>* LIST (\HasChildren) "." "INBOX"</samp></p>
+<p class="fmtc"><samp>2 OK List completed.</samp></p>
+<p class="cmdc">3 select "INBOX"</p>
+<p class="fmtc"><samp>* FLAGS (\Answered \Flagged \Deleted \Seen \Draft)</samp></p>
+<p class="fmtc"><samp>* OK [PERMANENTFLAGS (\Answered \Flagged \Deleted \Seen \Draft \*)] Flags permitted.</samp></p>
+<p class="fmtc"><samp>* 0 EXISTS</samp></p>
+<p class="fmtc"><samp>* 0 RECENT</samp></p>
+<p class="fmtc"><samp>* OK [UIDVALIDITY 1332158528] UIDs valid</samp></p>
+<p class="fmtc"><samp>* OK [UIDNEXT 1] Predicted next UID</samp></p>
+<p class="fmtc"><samp>* OK [HIGHESTMODSEQ 1] Highest</samp></p>
+<p class="fmtc"><samp>3 OK [READ-WRITE] Select completed.</samp></p>
+<p class="cmdc">6 logout</p>
+<p class="fmtc"><samp>* BYE Logging out</samp></p>
+<p class="fmtc"><samp>6 OK Logout completed.</samp></p>
+<p class="fmtc"><samp>Connection closed by foreign host.</samp></p>
+<p>
+Now you can try to access mail boxes using a mail client program.</p>
+
+
+
+<h4>
+<a name="webmail">Web mail (roundcube)</a></h4>
+<p>
+Assuming that Apache is configured according to ...
+(see <a href="#apache">Apache config</a>),
+download the <b>Roundcube</b> archive, unpack, copy to
+<samp>/var/www/webmail</samp>, read INSTALL.</p>
+<p>
+Create a database named <samp>roundcubemail</samp>, grant privileges to
+<samp>rouncube@localhost</samp> (Note! The password below is just for example,
+you should provide your own):</p>
+
+<p class="cmdc"><span class="prom">mysql&gt;</span>
+CREATE DATABASE roundcubemail;</p>
+<p class="cmdc"><span class="prom">mysql&gt;</span>
+GRANT ALL PRIVILEGES ON rouncubemail.* TO 'roundcube'@'localhost' IDENTIFIED BY 'wsr8nvji32';</p>
+<p class="cmd"><span class="prom">mysql&gt;</span> exit</p>
+<p>
+From dir <samp>/var/www/webmail</samp> exec
+following cmd to create the database objects (tables):</p>
+
+<p class="cmd">mysql roundcubemail -u roundcube -p<br>
+&lt; SQL/mysql.initial.sql</p>
+<p>
+On success, open in browser
+<samp>http://<span class="arg">srvname</span>/installer</samp>
+and follow instructions. When finished, you can edit new config files
+manually (in my case the database password was not written to a config
+file, so I had to edit <samp>db.inc.php</samp>).</p>
+<p>
+Also, check <samp>/var/www/webmail/.htaccess</samp>, there is at least
+one line that you may want to change:</p>
+
+<p class="fmt"><samp>php_value &nbsp; &nbsp; upload_max_filesize &nbsp; 5M</samp></p>
+
+
+
+<h4>
+<a name="final_notes">Final notes</a></h4>
+<p>
+While setting Dovecot, put in <samp>dovecot.conf</samp>:</p>
+
+<p class="fmtc"><samp>mail_debug = yes</samp></p>
+<p class="fmt"><samp>auth_debug = yes</samp></p>
+<p>
+With these options you can see in <samp>/var/vmail/dovecot-deliver.log</samp>
+what is wrong, and how all those database queries look like at runtime.
+I had to change <samp>password_query</samp> and <samp>user_query</samp>
+in <samp>/etc/dovecot/dovecot-sql.conf</samp> many times before it started
+to work right.</p>
+
+<p class="fmt"><samp>mail_location = maildir:/var/vmail/%d/%n</samp></p>
+<p>
+does not work in my case (domain part of the path mystically disappears),
+but everything is O.K. if <samp>user_query</samp> returns the same maildir.
+Also, it's useful to keep in mind the difference between <b>home dir</b>
+and <b>maildir</b> (virtual users have no <b>home dir</b> in classical
+Unix/Linux sense).</p>
+
+</div>
+
+</body></html>

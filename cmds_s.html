@@ -1,0 +1,3009 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (sed, sfdisk, shutdown, sleep, smartctl, sort, split, ssh, stat, sudo)</title>
+<meta name="description" content="linux quick reference, sed, sfdisk, showmount, shutdown, sleep, slocate, sort, split, ss, ssh, stat, strace, su, sudo, swapon, swapoff, sysctl, systemctl" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<div id="topmenu">
+<p class="menu">
+<a href="#sed">sed</a>&nbsp;|
+<a href="#sfdisk">sfdisk</a>&nbsp;|
+<a href="#showmount">showmount</a>&nbsp;|
+<a href="#shutdown">shutdown</a>&nbsp;|
+<a href="#sleep">sleep</a>&nbsp;|
+<a href="#slocate">slocate</a>&nbsp;|
+<a href="#smartctl">smartctl</a>&nbsp;|
+<a href="#sort">sort</a>&nbsp;|
+<a href="#split">split</a>&nbsp;|
+<a href="#ss">ss</a>&nbsp;|
+<a href="#ssh">ssh</a>&nbsp;|
+<a href="#stat">stat</a>&nbsp;|
+<a href="#strace">strace</a>&nbsp;|
+<a href="#su">su</a>&nbsp;|
+<a href="#sudo">sudo</a>&nbsp;|
+<a href="#swapon">swapon</a>&nbsp;|
+<a href="#sysctl">sysctl</a>&nbsp;|
+<a href="#systemctl">systemctl</a></p>
+</div>
+
+
+
+<p class="cmdname"><a name="sed">sed</a></p>
+<p>
+is a stream editor used to perform basic text transformations on an input
+stream (file or pipe). <code>sed</code> reads one line at a time, chops off
+the terminating newline, puts what is left into the pattern space (buffer)
+where <code>~</code> script can process it. Then, if there is anything
+to print, it appends a newline and prints out the result (usually to stdout).</p>
+
+<p class="fmt"><code>sed </code>[<kbd><a href="#sed_options">options</a></kbd>]<code> '</code><kbd>editing_cmds</kbd><code>' </code>[<kbd>file_list</kbd>]</p>
+<p>
+For backward compatibility with old scripts <code>sed</code> uses BRE
+by default. If you want ERE, specify <code>-r</code> option. See
+<a href="regexp.html">regex</a> (regular expressions).</p>
+<p>
+If no <code>-e</code>, <code>--expression</code>, <code>-f</code>,
+<code>--file</code> options are given, then the first non-option arg is
+taken as <code>~</code> script to interpret. All remaining args are the names
+of the input files. If no input files are specified, stdin is read.</p>
+
+<p class="cmdc">sed -n '/^[^#]/p' squid.conf &gt; squid2.conf</p>
+<p class="desc"><b>remove</b> comments from <samp>squid.conf</samp> (i.e. all lines
+beginning with <samp>#</samp>), and create a compact version
+(<samp>squid2.conf</samp>) of this config file (the original file is not changed);
+<code>-n</code> means "quiet", suppress auto printing, flag <code>p</code> requires
+to print unmatched lines (i.e. non-comments);</p>
+
+<p class="cmdc">sed 's/&lt;prog&gt;/&lt;code&gt;/g' man01.html &gt; man02.html</p>
+<p class="desc"><b>replace</b> all <samp>&lt;prog&gt;</samp> tags with
+<samp>&lt;code&gt;</samp> tags in <samp>man01.html</samp>, save modified
+version to <samp>man02.html</samp> (the initial file is not changed); cmd
+<code>s</code> means "substitute"; also notice flag <code>g</code> (global) after
+the last slash: without it only first match in each line is processed;</p>
+
+<p class="cmdc">sed 's/&lt;\/prog&gt;/&lt;\/code&gt;/g' man02.html &gt; man03.html</p>
+<p class="desc"><b>replace</b> all <samp>&lt;/prog&gt;</samp> tags with
+<samp>&lt;/code&gt;</samp> tags in <samp>man02.html</samp>, save modified
+version to <samp>man03.html</samp> (the initial file is not changed);</p>
+<p>
+The following big example converts a file of strings
+(<samp>summary.txt</samp>) that look like (each line is exactly 15 fields
+separated with TABs)</p>
+<div class="file" style="font-size:80%"><pre>
+a322   1   A   163.840   1983.140   18080.360   2135.080   15.840   0.000   0.000   0.000   0.000   3174.630   60014.230   685.040
+
+a327   3   N   0.000   0.000   0.000   0.000   0.000   0.000   0.000   0.000   0.000   0.000   0.000   0.000
+
+a518   5   A   NULL   NULL   NULL   NULL   NULL   NULL   NULL   NULL   147100.730   144224.250   134254.820   9785.050
+</pre></div>
+<p>
+into an SQL script (<samp>summ_ins.sql</samp>) containing a sequence of SQL stmts:</p>
+<div class="file">
+<pre>INSERT INTO summary VALUES (
+ 'a518',5,'A',NULL,NULL,NULL,NULL,NULL,
+  NULL,NULL,NULL,147100.730,144224.250,
+  134254.820,9785.050);
+  ...</pre>
+</div>
+<p>
+One simple way to perform this conversion may look like this:</p>
+
+<p class="cmdc">sed "s/^[a-z]*[0-9]*/'&amp;'/g" summary.txt &gt; summ2.txt</p>
+<p class="desc">put the first field in quotes (it starts with one or more
+letters followed by one or more digits);</p>
+
+<p class="cmdc">sed "s/[A-Z]/'&amp;'/" summ2.txt &gt; summ3.txt</p>
+<p class="desc">put the third field in quotes (it can only have a single
+letter); note that due to missing <code>g</code>, processing stops after the
+first match, and any possible <samp>NULL</samp> words are not touched;</p>
+
+<p class="cmdc">sed 's/\t/,/g' summ3.txt &gt; summ4.txt</p>
+<p class="desc"><b>replace</b> TABs with commas;</p>
+
+<p class="cmdc">sed 's/.*/INSERT INTO summary VALUES (&amp;);/' summ4.txt &gt; summ_ins.sql</p>
+<p class="desc"><b>add</b> all required SQL words and make it a valid SQL script;
+note that<samp> &amp; </samp> in this and in the following example specifies
+where to put the whole content of the source line;</p>
+
+<p>
+Other examples:</p>
+
+<p class="cmdc">sed 's/.*&lt;td&gt;.*$/&@home.net&lt;\/td&gt;&lt;\/tr&gt;/' file1.html &gt; file2.html</p>
+<p class="desc"><b>add</b> text<samp> @home.net&lt;/td&gt;&lt;/tr&gt; </samp>to the
+end of each line containing HTML tag<samp> &lt;td&gt;</samp>; save modified
+file as<samp> file2.html</samp>;</p>
+
+<p class="cmdc">sed '2 d' manual.txt</p>
+<p class="desc"><b>delete</b> the 2nd line from <samp>manual.txt</samp> and send
+a modified version of this file to stdout (the initial file is not changed,
+all modifications are applied to the output stream only);</p>
+
+<p class="cmdc">sed '3 s/any/some' manual.txt</p>
+<p class="desc"><b>replace</b> <samp>any</samp> with <samp>some</samp> in the 3rd
+line of <samp>manual.txt</samp> and send a modified version of this file to
+stdout;</p>
+
+<p class="cmdc">sed -e '1,10d' test.sh</p>
+<p class="desc"><b>delete</b> the first 10 lines of <samp>test.sh</samp>
+and send the rest to stdout;</p>
+
+<p class="cmdc">sed -e '11,$d' test.sh</p>
+<p class="desc">print the first 10 lines of <samp>test.sh</samp>,
+delete the rest;</p>
+
+<p class="cmdc">sed -n -e '1,7p' messages.txt</p>
+<p class="desc"><b>print</b> the first 7 lines of <samp>messages.txt</samp>;</p>
+
+<p class="cmdc">sed -e '7q'</p>
+<p class="desc"><b>print</b> the first 7 lines of <samp>messages.txt</samp>;</p>
+
+<p class="cmdc">sed -e '1,4d' -e '22,36' history.txt</p>
+<p class="desc"><b>delete</b> lines 1-4 and 22-36 from <samp>history.txt</samp>
+and send the modified version to stdout;</p>
+
+<p class="cmdc">sed -e '/debug/d' &lt; log.txt</p>
+<p class="desc"><b>delete</b> all lines containing word <samp>debug</samp>
+from the file <samp>log.txt</samp> and send the modified vesion to stdout;</p>
+
+<p class="cmdc">sed -f prog1.sed &lt; mesg1</p>
+<p class="desc">use script <samp>prog1.sed</samp> to process the file <samp>mesg1</samp>;</p>
+
+<div class="file">
+<pre>prog1.sed:
+----------
+10i\
+This is 9th  (insert a str before line #10)
+10a\
+This is 11th (insert a str after line #10)
+$a\
+This is eof; (append the str to the eof)</pre>
+</div>
+
+<p class="cmdc">sed -r 's/\s+$//' fc_upd.lst &gt; fc_upd2.lst</p>
+<p class="desc"><b>remove</b> trailing spaces and save edited lines to a new file;</p>
+
+<p class="cmdc">sed 's/r\.php?\([0-9]*\)/mfchlp\1.html/'<br>
+mfchelp2.html &gt; mfc02.html</p>
+<p class="desc">for each line in <samp>mfchelp2.html</samp>
+<b>substitute</b> the part of the string that looks like
+<samp>&lt;a href="r.php?<span class="arg">XX</span>"&gt;</samp> with
+<samp>&lt;a href="mfchelp<span class="arg">XX</span>.html"&gt;</samp>
+and save the edited lines to a new file (<samp>mfc02.html</samp>);</p>
+
+<p class="cmdc">sed 's/H:.*OG32[\]/\/\/SRV3\/USER\//' list.txt</p>
+<p class="desc">for each line in the file <samp>list.txt</samp> <b>substitute</b>
+the substring that looks like <samp>H:\PROG32\</samp> with <samp>//SRV3/USER/</samp>;</p>
+
+<p class="cmdc">sed 's/.*/CREATE ROLE &amp; IDENTIFIED BY pass;/'<br>
+roles.txt &gt; roles.sql</p>
+<p class="desc">convert a list of words (<samp>roles.txt</samp>) to an
+SQL script that can be used to create Oracle database roles with the
+corresponding names;</p>
+
+<p class="cmdc">echo 1234567 | sed -n 's/^\(..\)\(.*\)/\1/p'</p>
+<p class="desc"><b>cut out</b> the first two digits from '1234567'
+(the result is '12');</p>
+
+<p class="cmdc">echo 1234567 | sed -n 's/^\(...\)\(.*\)/\2\1/p'</p>
+<p class="desc"><b>move</b> the first three digits to the end
+(the result is '4567123');</p>
+
+<p class="cmdc">count=`ifconfig eth1 |<br>
+sed -n 's/.*RX bytes://p' |<br>
+sed -n 's/\s.*//p'`</p>
+<p class="cmdc">echo $count</p>
+<p class="desc">fetch the number of the received bytes (RX) from
+<a href="cmds_i.html#ifconfig"><code>ifconfig</code></a>;</p>
+<p>
+Apply substitution to the lines matching regexp:</p>
+
+<div class="file">
+<pre>the black cat was chased by the brown dog
+the black cat was often chased by the brown dog</pre>
+</div>
+
+<p class="cmdc" style="margin-top:2%;margin-bottom:2%">
+sed -e '/often/s/black/white/g' file1.txt</p>
+
+<div class="file">
+<pre>the black cat was chased by the brown dog
+the white cat was often chased by the brown dog</pre>
+</div>
+
+
+
+<h5><a name="sed_options"></a>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>-n</code>, <code>--quiet</code></p>
+<p class="desc">suppress automatic printing of pattern space;</p>
+
+<p class="fmtc"><code>-e</code> <kbd>script</kbd>,
+<code>--expression=</code><kbd>script</kbd></p>
+<p class="desc">add the specified script to the commands to be executed;</p>
+
+<p class="fmtc"><code>-f</code> <kbd>script_file</kbd>,
+<code>--file=</code><kbd>script_file</kbd></p>
+<p class="desc">add contents of the script file to the cmds to be executed;</p>
+
+<p class="fmtc"><code>-i</code> [<kbd>suffix</kbd>],
+<code>--in-place</code>[<code>=</code><kbd>suffix</kbd>]</p>
+<p class="desc">edit files in place (make backup if extension is supplied);</p>
+
+<p class="fmtc"><code>-l</code> <kbd>length</kbd>,
+<code>--line-length=</code><kbd>length</kbd></p>
+<p class="desc">set the desired line-wrap length for the '<code>l</code>' cmd;</p>
+
+<p class="fmtc"><code>-r</code>, <code>--regexp-extended</code></p>
+<p class="desc">use extended regexp in the script;</p>
+
+<p class="fmtc"><code>-s</code>, <code>--separate</code></p>
+<p class="desc">consider files as separate, rather than as a single
+continuous long stream;</p>
+
+<p class="fmtc"><code>-u</code>, <code>--unbuffered</code></p>
+<p class="desc">load the minimal amounts of data from the input files
+and flush the output buffers more often;</p>
+
+
+
+<h5>Commands</h5>
+<p>
+<samp>Simple command = <span class="arg">pattern</span> + <span class="arg">action</span></samp>.
+If no <kbd>pattern</kbd> is given, the <kbd>action</kbd> is applied to all
+lines, otherwise it is applied only to lines matching the pattern. General
+syntax for a command is:</p>
+
+<p class="fmt">[<kbd>addr1</kbd>[,<kbd>addr2</kbd>]] <kbd>function</kbd> [<kbd>args</kbd>]</p>
+<p>
+If no address is given, a cmd is applied to all lines. If 1 address is given,
+then it is applied to all pattern spaces that match that address.
+If 2 addresses are given, then it is applied to all from <kbd>addr1</kbd>
+to <kbd>addr2</kbd> (including <kbd>addr1</kbd> and <kbd>addr2</kbd>
+themselves). Addresses may be line numbers or patterns. If patterns, then
+the substitution is applied to groups of lines from <kbd>addr1</kbd> to the
+first match of <kbd>addr2</kbd>. If there are several groups like that in one
+file, they all will be affected. There are following cmds (first column
+is the number of args):</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><samp>1</samp></td>
+<td class="opt_desc"><code>!</code><kbd>cmd</kbd></td>
+<td class="opt_desc">exec <kbd>cmd</kbd> only if the line has no matches;</td></tr>
+<tr>
+<td class="opt_name"><samp>0</samp></td>
+<td class="opt_desc"><code>#</code><kbd>com</kbd></td>
+<td class="opt_desc">comment;</td></tr>
+
+<tr>
+<td class="opt_name"><samp>0</samp></td>
+<td class="opt_desc"><code>:</code><kbd>label</kbd></td>
+<td class="opt_desc">label for <code>b</code> and <code>t</code> cmds;</td></tr>
+<tr>
+<td class="opt_name"><samp>1</samp></td>
+<td class="opt_desc"><code>=</code></td>
+<td class="opt_desc">print the current line number;</td></tr>
+<tr>
+<td class="opt_name"><samp>2</samp></td>
+<td class="opt_desc"><code>D</code></td>
+<td class="opt_desc">delete first part of the pattern space;</td></tr>
+<tr>
+<td class="opt_name"><samp>2</samp></td>
+<td class="opt_desc"><code>G</code></td>
+<td class="opt_desc">append contents of the hold area;</td></tr>
+<tr>
+<td class="opt_name"><samp>2</samp></td>
+<td class="opt_desc"><code>H</code></td>
+<td class="opt_desc">append pattern space on buffer;</td></tr>
+<tr>
+<td class="opt_name"><samp>2</samp></td>
+<td class="opt_desc"><code>N</code></td>
+<td class="opt_desc">append next line;</td></tr>
+<tr>
+<td class="opt_name"><samp>2</samp></td>
+<td class="opt_desc"><code>P</code></td>
+<td class="opt_desc">print first part of the pattern space;</td></tr>
+<tr>
+<td class="opt_name"><samp>1</samp></td>
+<td class="opt_desc"><code>a</code></td>
+<td class="opt_desc">append text;</td></tr>
+<tr>
+<td class="opt_name"><samp>2</samp></td>
+<td class="opt_desc"><code>b</code><kbd>label&nbsp;</kbd></td>
+<td class="opt_desc">branch to a label;</td></tr>
+<tr>
+<td class="opt_name"><samp>2</samp></td>
+<td class="opt_desc"><code>c</code></td>
+<td class="opt_desc">change lines;</td></tr>
+<tr>
+<td class="opt_name"><samp>2</samp></td>
+<td class="opt_desc"><code>d</code></td>
+<td class="opt_desc">delete lines;</td></tr>
+<tr>
+<td class="opt_name"><samp>2</samp></td>
+<td class="opt_desc"><code>g</code></td>
+<td class="opt_desc">get contents of the hold area;</td></tr>
+<tr>
+<td class="opt_name"><samp>2</samp></td>
+<td class="opt_desc"><code>h</code></td>
+<td class="opt_desc">hold pattern space (in a hold buffer);</td></tr>
+<tr>
+<td class="opt_name"><samp>1</samp></td>
+<td class="opt_desc"><code>i</code></td>
+<td class="opt_desc">insert lines;</td></tr>
+<tr>
+<td class="opt_name"><samp>2</samp></td>
+<td class="opt_desc"><code>l</code></td>
+<td class="opt_desc">list lines;</td></tr>
+<tr>
+<td class="opt_name"><samp>2</samp></td>
+<td class="opt_desc"><code>n</code></td>
+<td class="opt_desc">next line;</td></tr>
+<tr>
+<td class="opt_name"><samp>2</samp></td>
+<td class="opt_desc"><code>p</code></td>
+<td class="opt_desc">print;</td></tr>
+<tr>
+<td class="opt_name"><samp>1</samp></td>
+<td class="opt_desc"><code>q</code></td>
+<td class="opt_desc">quit <code>~</code> script, print only current pattern space, if auto-print is enabled;</td></tr>
+<tr>
+<td class="opt_name"><samp>1</samp></td>
+<td class="opt_desc"><code>Q</code></td>
+<td class="opt_desc">quit immediately;</td></tr>
+<tr>
+<td class="opt_name"><samp>1</samp></td>
+<td class="opt_desc"><code>r</code> <kbd>file</kbd></td>
+<td class="opt_desc">append text from a file;</td></tr>
+<tr>
+<td class="opt_name"><samp>2</samp></td>
+<td class="opt_desc"><code>t</code><kbd>label</kbd></td>
+<td class="opt_desc">test substitutions and branch on success;</td></tr>
+<tr>
+<td class="opt_name"><samp>1</samp></td>
+<td class="opt_desc"><code>w</code> <kbd>file</kbd></td>
+<td class="opt_desc">write to a file;</td></tr>
+<tr>
+<td class="opt_name"><samp>2</samp></td>
+<td class="opt_desc"><code>x</code></td>
+<td class="opt_desc">exchange buffer space with pattern space;</td></tr>
+<tr>
+<td class="opt_name"><samp>2</samp></td>
+<td class="opt_desc"><code>{</code></td>
+<td class="opt_desc">group commands;</td></tr>
+</table>
+
+<table class="options">
+<tr>
+<td class="opt_name"><samp>2</samp></td>
+<td class="opt_desc"><code>s/<span class="arg">regexp</span>/<span class="arg">replacement</span>/</code>[<kbd>flags</kbd>]</td>
+<td class="opt_desc" style="width:40%">substitute;</td></tr>
+</table>
+
+<table class="options">
+<tr>
+<td class="opt_name"><samp>2</samp></td>
+<td class="opt_desc"><code>y/<span class="arg">list1</span>/<span class="arg">list2</span>/</code></td>
+<td class="opt_desc" style="width:64%">translate <kbd>list1</kbd> into <kbd>list2</kbd>;</td></tr>
+</table>
+<p>
+<code>~</code> processes input line by line and does not keep large file
+in memory, so expressions like <samp>$-10</samp> have no sense, because
+<samp>$</samp> is unknown until the EOF is reached.</p>
+
+
+
+
+
+<p class="cmdname"><a name="sfdisk">sfdisk</a></p>
+<p>
+displays or manipulates the disk partition tables. It has 4 main uses:</p>
+<ul>
+<li>List the size of a partition.</li>
+<li>List the partitions on a device.</li>
+<li>Check the partitions on a device.</li>
+<li>Repartition a device (this is unsafe and must be done with care).</li>
+</ul>
+<p>
+<code>sfdisk</code> is supposed to be used in scripts. Starting with version
+2.26 it supports GPT (GUID Partition Table), but does not provide functionality
+for CHS (Cylinder-Head-Sector) addressing anymore.</p>
+
+<p class="cmdc">sfdisk -s</p>
+<p class="desc">show the sizes of all disks;</p>
+
+<p class="cmdc">sfdisk -s /dev/sda2</p>
+<p class="desc">show the size (in blocks) of the specified disk partition (<samp>/dev/sda2</samp>);</p>
+
+<p class="cmdc">sfdisk -l /dev/sda</p>
+<p class="desc">show (list) partition table of the first IDE drive (<samp>/dev/sda</samp>);</p>
+
+<p class="cmdc">sfdisk -l</p>
+<p class="desc">list partitions (show partition tables) of all HDDs;</p>
+
+<p class="cmdc">sfdisk -g /dev/hda</p>
+<p class="desc">show the geometry of <samp>/dev/hda</samp>;</p>
+
+<p class="cmdc">sfdisk -V /dev/sdc</p>
+<p class="desc">perform consistency checks to the partition tables on <samp>/dev/sdc</samp>;</p>
+
+<p class="cmdc">sfdisk -d /dev/sda &gt; sda.pt</p>
+<p class="desc">save the partition table of <samp>/dev/sda</samp> to the file <samp>sda.pt</samp>;</p>
+
+<p class="cmdc">sfdisk /dev/sda &lt; sda.pt</p>
+<p class="desc">create the partition table based on the data from <samp>sda.pt</samp> file (see man page for the format description);</p>
+
+<p class="cmdc">sfdisk --print-id /dev/sda 2</p>
+<p class="desc">show the ID (the type) of the partition 2 on <samp>/dev/sda</samp>;</p>
+
+<p class="cmdc">sfdisk --change-id /dev/sda 2 83</p>
+<p class="desc">change the ID of the partition 2 on <samp>/dev/sda</samp> to <samp>83</samp>;</p>
+
+<p class="fmt"><code>sfdisk&nbsp;</code>[<kbd>options</kbd>] [<kbd>device</kbd>]</p>
+<p class="fmt"><code>sfdisk -s</code> [<kbd>partition</kbd>]</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-?</code> &nbsp;&nbsp; <code>--help</code>
+&nbsp;&nbsp; <code>-v</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-A</code><kbd>n</kbd></td>
+<td class="opt_desc">make the specified partition active, and all others inactive;</td></tr>
+<tr>
+<td class="opt_name"><code>-C</code><kbd>n</kbd></td>
+<td class="opt_desc">specify the number of cylinders (possibly overriding the kernel's idea of this parameter);</td></tr>
+</table>
+
+<p class="fmtc"><code>-c</code> <kbd>n</kbd>,
+<code>--id</code> <kbd>n</kbd></p>
+<p class="desc">show the partition Id (the partition type);</p>
+
+<p class="fmtc"><code>-c</code> <kbd>n</kbd> <kbd>id</kbd>,
+<code>--id</code> <kbd>n</kbd> <kbd>id</kbd></p>
+<p class="desc">change the partition Id;</p>
+
+<p class="fmtc"><code>-D</code>, <code>--DOS</code></p>
+<p class="desc">(for  DOS-compatibility) if a partition cannot contain
+sector 0, e.g. because that is MBR, or contains the partition table of
+an extended partition, then <code>~</code> would make it start the next
+sector; however, when this option is given it skips to the start of the next
+track, wasting some space;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-d</code></td>
+<td class="opt_desc">dump partitions of the specified device in <code>~</code> special format;</td></tr>
+</table>
+
+<p class="fmtc"><code>-E</code>, <code>--DOS-extended</code></p>
+<p class="desc">take the starting sector numbers of "inner" extended
+partitions to be relative to the starting cylinder boundary of the outer
+one (like some versions of DOS do), rather than to the starting sector
+(like Linux does); it means that extended partitions should start at
+cylinder boundaries if DOS and Linux should interpret partition table
+in the same way;</p>
+
+<p class="fmtc"><code>-f</code>, <code>--force</code></p>
+<p class="desc">do what is requested;</p>
+
+<p class="fmtc"><code>-g</code>, <code>--show-geometry</code></p>
+<p class="desc">show the kernel’s idea of the disk's geometry;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-H</code><kbd>n</kbd></td>
+<td class="opt_desc">specify the number of heads (possibly overriding the kernel's idea of it);</td></tr>
+</table>
+
+<p class="fmtc"><code>-IBM</code>, <code>--leave-last</code></p>
+<p class="desc">do not allocate the last cylinder (some IBM diagnostic
+programs use the last cylinder for disk testing; in some cases it contains
+a bad sector table);</p>
+
+<p class="fmtc"><code>-I</code> <kbd>file</kbd></p>
+<p class="desc">restore the old (initial) disk state, if you earlier
+preserved it using <code>-O</code> option;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-i</code></td>
+<td class="opt_desc">number cylinders (etc) starting from <samp>1</samp>
+instead of <samp>0</samp>;</td></tr>
+</table>
+
+<p class="fmtc"><code>-L</code>, <code>--Linux</code></p>
+<p class="desc">don't complain about things irrelevant for Linux;</p>
+
+<p class="fmtc"><code>-l</code>, <code>--list</code></p>
+<p class="desc">list the partitions;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-N</code><kbd>n</kbd></td>
+<td class="opt_desc">change only the single partition indicated;</td></tr>
+<tr>
+<td class="opt_name"><code>-n</code></td>
+<td class="opt_desc">go through all steps, but do not actually write to disk;</td></tr>
+</table>
+
+<p class="fmtc"><code>-O</code> <kbd>file</kbd></p>
+<p class="desc">before writing the new partition, save the sectors that
+are going to be overwritten in the specified file (that resides on another
+disk);</p>
+
+<p class="fmtc"><code>-q</code>, <code>--quiet</code></p>
+<p class="desc">suppress warning messages;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-R</code></td>
+<td class="opt_desc">only execute the <samp>BLKRRPART ioctl</samp> to make
+the kernel re-read the partition  table; this is useful for checking
+in advance that the final <samp>BLKRRPART</samp> will be successful,
+and also when you changed the partition table by hand (e.g., using
+<a href="cmds_d.html#dd"><code>dd</code></a> from a backup); if kernel
+complains ('<samp>device busy for revalidation (usage = 2)</samp>')
+then something still uses the device, and you still have to unmount some
+file system, or to say <a href="#swapon"><code>swapoff</code></a> to some
+swap partition;</td></tr>
+<tr>
+<td class="opt_name"><code>-S</code><kbd>n</kbd></td>
+<td class="opt_desc">specify the number of sectors (possibly overriding the kernel's idea of this parameter);</td></tr>
+</table>
+
+<p class="fmtc"><code>-s</code>, <code>--show-size</code></p>
+<p class="desc">list the size of a partition;</p>
+
+<p class="fmtc"><code>-T</code>, <code>--list-types</code></p>
+<p class="desc">print the recognized types (system Id’s);</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-u</code><kbd>c</kbd></td>
+<td class="opt_desc">accept/report values in the specified units, where
+<kbd>c</kbd> is one of: <samp>S</samp> (sectors), <samp>B</samp> (blocks),
+<samp>C</samp> (cylinders), <samp>M</samp> (megabytes); the default is
+cylinders;</td></tr>
+</table>
+
+<p class="fmtc"><code>-V</code>, <code>--verify</code></p>
+<p class="desc">test whether the partitions seem correct;</p>
+
+<p class="fmtc"><code>-x</code>, <code>--show-extended</code></p>
+<p class="desc">list also non-primary extended partitions on output,
+and expect descriptors for them on input;</p>
+
+<p class="fmtc"><code>--no-reread</code></p>
+<p class="desc">when starting a repartitioning, <code>~</code> checks
+that disk is not mounted, or used as a swap device, and refuses to continue
+if the check fails; this option suppresses the test;</p>
+
+
+
+
+<p class="cmdname"><a name="showmount">showmount</a></p>
+<p>
+queries the mount daemon on a remote host for info about the state of the NFS server on that machine.</p>
+
+<p class="fmt"><code>/usr/sbin/showmount&nbsp;</code>[<kbd>options</kbd>] [<kbd>host</kbd>]</p>
+<p>
+Without options <code>~</code> lists the set of clients who are mounting from that host. <code>~</code> sorts output and removes
+duplicate entries.</p>
+
+<p class="cmdc">/usr/sbin/showmount -e srv2</p>
+<p class="desc">display export list of <samp>srv2</samp> (assuming it's a NFS server);</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-h</code> &nbsp;&nbsp; <code>--help</code>
+&nbsp;&nbsp; <code>-v</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>-a</code>, <code>--all</code></p>
+<p class="desc">list both client hostname and mounted dir;</p>
+
+<p class="fmtc"><code>-d</code>, <code>--directories</code></p>
+<p class="desc">list only dirs mounted by some client;</p>
+
+<p class="fmtc"><code>-e</code>, <code>--exports</code></p>
+<p class="desc">show the NFS server’s export list;</p>
+
+<p class="fmtc"><code>--no-headers</code></p>
+<p class="desc">suppress the descriptive headings;</p>
+
+
+
+
+
+<p class="cmdname"><a name="shutdown">shutdown</a></p>
+<p>
+<span style="font-family:UbuntuMono;font-size:120%;color:#00606D">(<b>halt</b>,
+<b>reboot</b>, <b>poweroff</b>, <b>suspend</b>, <b>hibernate</b>)</span></p>
+<p>
+With introduction of <b>systemd</b>, the old cmds were replaced by <code>systemctl</code>. They are still available [for backward
+compatibility] but not recommended.</p>
+
+<table class="grid">
+<tr>
+<th class="grid">Old</th>
+<th class="grid">New</th>
+<th class="grid">Description</th></tr>
+<tr>
+<td class="grid_2"><code><a href="cmds_h.html#halt">halt</a></code></td>
+<td class="grid_2"><code>systemctl halt</code></td>
+<td class="grid_2">halts the system</td></tr>
+<tr>
+<td class="grid_2"><code><a href="cmds_h.html#halt">poweroff</a></code></td>
+<td class="grid_2"><code>systemctl poweroff</code></td>
+<td class="grid_2">powers off the system</td></tr>
+<tr>
+<td class="grid_2"><code><a href="cmds_h.html#halt">reboot</a></code></td>
+<td class="grid_2"><code>systemctl reboot</code></td>
+<td class="grid_2">restarts the system</td></tr>
+<tr>
+<td class="grid_2"><code>pm-suspend</code></td>
+<td class="grid_2"><code>systemctl suspend</code></td>
+<td class="grid_2">suspends the system</td></tr>
+<tr>
+<td class="grid_2"><code>pm-hibernate</code></td>
+<td class="grid_2"><code>systemctl hibernate</code></td>
+<td class="grid_2">hibernates the system</td></tr>
+<tr>
+<td class="grid_2"><code>pm-suspend-hybrid</code></td>
+<td class="grid_2"><code>systemctl hybrid-sleep</code></td>
+<td class="grid_2">hibernates and suspends the system</td></tr>
+</table>
+<p>
+The old <code><a href="#old_shutdown">shutdown</a></code> description is left FYI.</p>
+<p>
+The [new] <code>shutdown</code> cmd calls the <code>systemctl</code> utility to
+perform the shutdown. However, it still accepts a time argument and allow to cancel
+the shutdown.</p>
+
+<p>
+<i>You need <b>superuser</b> privs to exec the following cmds!</i></p>
+
+<p class="cmdc">systemctl reboot</p>
+<p class="desc">restart the system (no delay);</p>
+
+<p class="cmdc">systemctl --no-wall reboot</p>
+<p class="desc">restart the system (no delay), do not send
+warning messages to users (logged in);</p>
+
+<p class="cmdc">systemctl halt</p>
+<p class="desc">shut down the system but do not power off the computer
+(starting immediately);</p>
+
+<p class="cmdc">systemctl poweroff</p>
+<p class="desc">shut down the system and power off the computer
+(starting immediately);</p>
+
+<p class="cmdc">systemctl --no-wall poweroff</p>
+<p class="desc">shut down the system and power off the computer, do not send
+warning messages to users (logged in);</p>
+
+<p class="cmdc">shutdown --halt +5</p>
+<p class="desc">shut down the system in <samp>5</samp> minutes from now,
+but do not power off the computer;</p>
+
+<p class="cmdc">shutdown --poweroff 17:30</p>
+<p class="desc">shut down the system and power off the computer at the specified
+time;</p>
+
+<p class="cmdc">shutdown -c</p>
+<p class="desc">cancel a pending shutdown (assuming the timeout is not over yet);</p>
+<p>
+
+
+
+<h5>Suspend / hibernate</h5>
+<p>
+There is <b>suspend</b> aka Suspend To RAM (STR), aka <i>sleep mode</i>.
+And there is <b>hibernate</b> aka Suspend To Disk (STD).</p>
+<p>
+Shortly speaking, suspend is good, <b>hibernate is bad!</b> (especially if your
+system is on SSD). I'm gonna skip the discussion, there is a lot on Internet. And, to be
+honest, I never use hibernate, and I don't need it at all!</p>
+<p>
+As to <b>suspend</b>, for laptop it's simple: you close the lid - suspend; you open the
+lid - resume (wake up from suspend). Desktops in GUI mode usually have menu item with
+"Suspend" (see <i>power off menu</i> at the top/bottom right side of the bar). And it
+(desktop) wakes up from suspend (at least, it must!) when you press some key on the
+keyboard or move your mouse. Alternatively, you can suspend your system by executing
+(as superuser):
+
+<p class="cmd">systemctl suspend</p>
+<p>
+And, at your risk, considering above warning, you can put your system into STD mode,
+i.e. hibernate, with the following cmd:</p>
+
+<p class="cmd">systemctl hibernate</p>
+<p>
+There is also a <b>hybrid sleep</b> (or <i>hybrid suspend</i>) mode when your computer
+does both STR and STD at the same time. In most cases you will get the normal fast
+resume from sleep, but if there was a power loss (or battery depletion) during sleep,
+you will get not so fast resume from STD. It's convenient, and it's supposed to be
+more reliable than STR, but it's still not good for SSD. Anyway, if you want it:</p>
+
+<p class="cmd">systemctl hybrid-sleep</p>
+
+
+
+<h5>
+<a name="old_shutdown">Shutdown (old, deprecated)</a></h5>
+<p>
+brings the system down safely; all logged-in users are notified,
+and within the last <samp>5</samp> minutes of <kbd>time</kbd> new logins
+are forbidden.</p>
+
+<p class="fmt"><code>/sbin/shutdown&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;time&nbsp;</kbd>[<kbd>msg</kbd>]</p>
+<p>
+The <kbd>time</kbd> arg can be an absolute time (<kbd>hh:mm</kbd>, 24h clock
+format), relative time (<code>+</code><kbd>m</kbd>, which means <kbd>m</kbd>
+minutes from now), <code>now</code>, which is equivalent to <code>+0</code>.
+By default it's <code>+1</code> (<samp>1</samp> minute).</p>
+<p>
+Pay attention to subtle differences in terminology: <b>shutdown</b> means
+termination of running apps and system services (daemons), <b>halt</b> means
+executing CPU halt cmd, <b>power off</b> means turning off power supply.</p>
+
+<p class="cmdc">shutdown -h now</p>
+<p class="desc">shutdown system immediately;</p>
+
+<p class="cmdc">shutdown -h +5</p>
+<p class="desc">start shutdown procedure in 5 min from now;</p>
+
+<p class="cmdc">shutdown -h 20:00 "System stops at 20:00."</p>
+<p class="desc">shutdown system at 20:00;</p>
+
+<p class="cmdc">shutdown -r now</p>
+<p class="desc">reboot system immediately;</p>
+
+<p class="cmdc">shutdown -P now</p>
+<p class="desc">shutdown and power off immediately;</p>
+
+<p class="cmdc">shutdown -H +15</p>
+<p class="desc">shutdown and halt system in 15 minutes from now;;</p>
+
+<p class="cmdc">shutdown -c</p>
+<p class="desc">cancel shutdown in progress;</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code></p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-c</code></td>
+<td class="opt_desc">cancel a pending shutdown;</td></tr>
+<tr>
+<td class="opt_name"><code>-h</code></td>
+<td class="opt_desc">same as <code>--poweroff</code>,
+unless <code>--halt</code> is specified;</td></tr>
+<tr>
+<td class="opt_name"><code>-H</code></td>
+<td class="opt_desc">halt the machine (<code>--halt</code>);</td></tr>
+<tr>
+<td class="opt_name"><code>-k</code></td>
+<td class="opt_desc">do not shutdown, just send warning msgs to everybody;</td></tr>
+<tr>
+<td class="opt_name"><code>-P</code></td>
+<td class="opt_desc">power off the machine (default) (<code>--poweroff</code>);</td></tr>
+<tr>
+<td class="opt_name"><code>-r</code></td>
+<td class="opt_desc">reboot after shutdown (<code>--reboot</code>);</td></tr>
+</table>
+<p class="fmt"><code>--no-wall</code> &nbsp;&nbsp; no messages before halt,
+power-off, reboot;</p>
+
+
+
+
+
+<p class="cmdname"><a name="sleep">sleep</a></p>
+<p>
+delays for a specified amount of time. By default, <kbd>n</kbd> is the number of seconds (can be non-integer),
+but <kbd>suffix</kbd> can change the measure to minutes (<code>m</code>), hours (<code>h</code>), days (<code>d</code>).
+
+<p class="cmdc">sleep 5</p>
+<p class="desc">delay for 5 seconds;</p>
+
+<p class="cmdc">sleep 5s</p>
+<p class="desc">delay for 5 seconds;</p>
+
+<p class="cmdc">sleep 0.25m</p>
+<p class="desc">delay for 15 seconds;</p>
+
+<p class="fmt"><code>sleep&nbsp;</code><kbd>n</kbd>[<kbd>suffix</kbd>]</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+
+
+
+
+<p class="cmdname"><a name="slocate">slocate</a></p>
+<p>
+provides a secure way to index/search for files on the system.</p>
+
+<p class="fmt"><code>slocate </code>[<kbd>options</kbd>]<kbd> search_string</kbd></p>
+<p>
+<code>~</code> is a security enhanced version of <code>GNU locate</code>
+and uses incremental encoding to compress its database to make searching
+faster. However, unlike <code>locate</code>, it will also store file
+permissions and ownership so that users cannot see files they are not
+allowed to see.</p>
+
+<p class="cmdc">slocate -l 1 -U /usr --output=sloc-usr.db</p>
+<p class="desc">create a secure <samp>slocate</samp> database for
+<samp>/usr</samp> directory;</p>
+
+<p class="cmdc">slocate -i -d /usr mplayer</p>
+<p class="desc">run the case insensitive search for <samp>mplayer</samp>
+using <samp>slocate</samp> database for <samp>/usr</samp> dir;</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-h</code> &nbsp;&nbsp; <code>--help</code>
+&nbsp;&nbsp; <code>-V</code> &nbsp;&nbsp; <code>--version</code>
+&nbsp;&nbsp; <code>-v</code> &nbsp;&nbsp; <code>--verbose</code></p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-c</code></td>
+<td class="opt_desc">parse <samp>/etc/updatedb.conf</samp> when updating <code>~</code> database;</td><?tr>
+</table>
+
+<p class="fmtc"><code>-d </code> <kbd>path</kbd>,
+<code>--database=</code><kbd>path</kbd></p>
+<p class="desc">the path of db to search in;</p>
+
+<p class="fmtc"><code>-e <span class="arg">dir1</span>,<span class="arg">dir2</span>,<span class="arg">...</span></code></p>
+<p class="desc">exclude the specified dirs from db;</p>
+
+<p class="fmtc"><code>-f <span class="arg">fstype1</span>,<span class="arg">...</span></code></p>
+<p class="desc">exclude files on the filesystems of the specified types from db;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-i</code></td>
+<td class="opt_desc">run a case insensitive search;</td></tr>
+<tr>
+<td class="opt_name"><code>-l</code> <kbd>n</kbd></td>
+<td class="opt_desc">set security level: <samp>0</samp> turns security
+checks off and makes the search faster, <samp>1</samp> turns security
+checks on (default);</td></tr>
+<tr>
+<td class="opt_name"><code>-n</code> <kbd>m</kbd></td>
+<td class="opt_desc">limit the amount of results shown to <kbd>m</kbd>;</td></tr>
+</table>
+
+<p class="fmtc"><code>-o</code> <kbd>file</kbd>,
+<code>--output=</code><kbd>file</kbd></p>
+<p class="desc">the database to create;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-q</code></td>
+<td class="opt_desc">quiet mode, suppress error messages;</td></tr>
+</table>
+
+<p class="fmtc"><code>-r</code> <kbd>exp</kbd>,
+<code>--regexp=</code><kbd>exp</kbd></p>
+<p class="desc">search db using a basic POSIX regexp;</p>
+
+<p class="fmtc"><code>-U</code> <kbd>dir</kbd></p>
+<p class="desc">create <code>~</code> database starting at <kbd>dir</kbd>;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-u</code></td>
+<td class="opt_desc">create <code>~</code>
+database starting at '<samp>/</samp>';</td></tr>
+</table>
+
+
+
+
+
+<p class="cmdname"><a name="smartctl">smartctl</a></p>
+<p>
+is the part of the<samp> smartmontools </samp>package which also includes <b>smartd</b> (SMART Disk Monitoring Daemon).
+S.M.A.R.T. means the <i>Self-Monitoring, Analysis and Reporting Technology</i>, and it is invisibly present in the majority of
+HDDs and SSDs.</p>
+<p>
+Ubuntu Linux 20.04 does not install it by default, so:</p>
+
+<p class="cmd">sudo apt install smartmontools</p>
+<p>
+SMART Disk Monitoring Daemon (<code>smartd</code>) is started auto after installation.
+Note that <code>smartctl</code> cannot get S.M.A.R.T. data without the daemon!</p>
+
+<p class="cmdc">sudo systemctl status smartd</p>
+<p class="cmdc">sudo systemctl start smartd</p>
+<p class="cmd">sudo systemctl stop smartd</p>
+<p>
+To force this daemon to start auto at system startup, open config file<samp> /etc/defaults/smartmontools </samp>and uncomment
+the<samp> start_smartd </samp>line:</p>
+<div class="file"><pre>
+#start_smartd=yes
+#smartd_opts="--interval=1800"
+</pre></div>
+<p>
+The<samp> --interval </samp>(one of the options that can be passed to the daemon at startup) specifies the interval (in seconds)
+between checks. By default it is<samp> 1800</samp>, i.e. every <samp>30</samp> minutes.</p>
+<p>
+Actually, <b>smartd</b> has its own config file<samp> /etc/smartd.conf</samp>.
+
+
+
+<h5>Frontend apps and usage examples</h5>
+<p>
+(to understand SMART data see <a href="#smart_id">SMART IDs</a>)</p>
+<p>
+Most of the time SMART works silently and the majority of users never heard about it. However, if SMART detects a serious problem,
+your computer will pause during boot to display a warning. And probably some info will be written to logs.</p>
+<p>
+But it can happen that you will need to dive deep. And this is why you should be familiar with<code> smartctl</code>, a text-mode
+frontend for <i>smartd</i>. There is also a GUI frontend<code> gsmartcontrol</code>, but it does not come with the package and must
+be installed separately.</p>
+<p>
+These frontends allow to control [mostly, it means "gather info"] S.M.A.R.T. system built into storage devices. The purpose of
+S.M.A.R.T. is to monitor the reliability of the hard (or solid state) drive, to predict drive failures, and to carry out different
+types of drive self-tests.</p>
+<p class="warn">Note!</p>
+<p class="indent">
+<i>The majority of the following cmds require <b>superuser</b> privilege! Device name<samp> /dev/sda </samp>is used just for demo
+purposes!</i></p>
+<p>
+To find if the target drive supports SMART:</p>
+
+<p class="cmd">smartctl -i /dev/sda</p>
+<p>
+The following cmd turns SMART on (or does nothing if it's already enabled):</p>
+
+<p class="cmd">smartctl -s on /dev/sda</p>
+<p>
+Most likely it's a waste of time because all modern drives have built-in SMART support, and usually SMART daemon turns it ON. So,
+people ignore the above cmds and go directly to <b>health status</b> (option<code> -H</code>):</p>
+
+<p class="cmd">smartctl -H /dev/sda</p>
+<p>
+If it fails then either the SMART daemon is not running, or your device really does not support SMART (what a shock!).</p>
+<p>
+But this is not a big deal. The real problem (let's hope it will never happen!) appears when your device reports <i>failing health
+status</i>. It means either that the device has <i>already failed</i> or <i>predicts</i> its own <i>failure within the next 24
+hours</i>. In this situation you can use<code> -a </code>option to get the details, or you can immediately start the rescue
+operation, i.e., moving/copying the important stuff to a safe place.</p>
+<p>
+The following cmd outputs the vendor specific SMART attributes only:</p>
+
+<p class="cmd">smartctl -A /dev/nvme0</p>
+<p>
+It's especially convenient for SSD and provides a short report containing the most important data:</p>
+<div class="term"><pre>
+smartctl 7.1 2019-12-30 r5022 [x86_64-linux-5.8.0-38-generic..
+Copyright (C) 2002-19, Bruce Allen, Christian Franke,..
+
+=== START OF SMART DATA SECTION ===
+SMART/Health Information (NVMe Log 0x02)
+Critical Warning:                   0x00
+Temperature:                        33 Celsius
+Available Spare:                    100%
+Available Spare Threshold:          10%
+Percentage Used:                    0%
+Data Units Read:                    57,583 [29.4 GB]
+Data Units Written:                 334,160 [171 GB]
+Host Read Commands:                 846,816
+Host Write Commands:                2,763,268
+Controller Busy Time:               8
+Power Cycles:                       8
+Power On Hours:                     1,064
+Unsafe Shutdowns:                   1
+Media and Data Integrity Errors:    0
+Error Information Log Entries:      1
+Warning  Comp. Temperature Time:    0
+Critical Comp. Temperature Time:    0
+</pre></div>
+<p>
+To get a full SMART report [related to a specific drive], use<code> -a </code>or<code> --all </code>option:</p>
+
+<p class="cmdc">smartctl -a /dev/sda</p>
+<p class="cmd">smartctl -a -d ata /dev/sda</p>
+<p>
+An optional<code> -d </code>specifies the type of the drive. In most cases it's<samp> ata </samp>
+(directly attached SATA HDD/SSD),<samp> scsi </samp> (directly attached SCSI), or<samp> nvme </samp>(see more in
+<a href="storage.html#ssd">Storage/SSD</a>). There are also convenient types like<samp> auto </samp>(which is used by
+<b>default</b>), and<samp> test</samp>, which prints the <i>guessed type</i>, opens the device and prints the <i>(possibly changed)
+type</i> and then exits without performing any further cmds.</p>
+<p>
+The difficulties with the drive type appear when the drive (like SAS/SCSI) is the part of the RAID. And then you have to use
+non-trivial cmds like:</p>
+
+<p class="cmdc">smartctl -a -d megaraid,0 /dev/sda</p>
+<p class="cmd">smartctl -a -d megaraid,1 /dev/sda</p>
+<p>
+The number after comma specifies the disk number in the MegaRAID controller (they say it works with Dell PERC too).</p>
+<p>
+To slightly clear the situation with the drive types and names, you can use:</p>
+
+<p class="cmd">smartctl --scan</p>
+<p>
+Some information can be found with the help of<code> lspci </code>(it outputs too much if you fail to specify the right <i>search
+pattern</i>):</p>
+
+<p class="cmdc">lspci | egrep -i 'controller'</p>
+<p class="cmdc">lspci | egrep -i 'SATA'</p>
+<p class="cmd">lspci | egrep -i 'raid|adaptec'</p>
+
+
+
+<h5>
+<a name="smart_id">Understanding SMART info</a></h5>
+<p>
+There is no strict standard, and manufacturers have their own opinions about SMART data representation. That is, some values of
+some attributes may have different meaning depending on the model and the manufacturer. Experts advice to focus on <b>critical
+attributes</b> and <b>deltas</b>, i.e. relatively fast or sudden changes of attrib values that were stable before.</p>
+<p>
+The following table shows some interesting SMART attributes.</p>
+<p style="font-size:90%">
+<b>Red color</b> means <i>critical</i>,
+<b>H</b> - higher value is better,
+<b>L</b> - lower value is better.</p>
+<table class="grid">
+<tr>
+<th class="grid">ID</th>
+<th class="grid">ID (hex)</th>
+<th class="grid">Name</th>
+<th class="gridcen">Val</th>
+<th class="grid">Description</th>
+<tr>
+<td class="grid_2_right"><samp>01</samp></td>
+<td class="grid_2_right"><samp>0x01</samp></td>
+<td class="grid_2">Read Error Rate</td>
+<td class="grid_2_cen">L</td>
+<td class="grid_2">(Vendor specific raw value.) Stores data related to the rate of hardware read errors that occurred when reading
+data from a disk surface. The raw value has different structure for different vendors and is often not meaningful as a decimal
+number.</td></tr>
+<tr>
+<td class="grid_2_right"><samp>02</samp></td>
+<td class="grid_2_right"><samp>0x02</samp></td>
+<td class="grid_2">Throughput Performance</td>
+<td class="grid_2_cen">H</td>
+<td class="grid_2">Overall (general) throughput performance of a HDD. If the value of this attribute is decreasing there is a high
+probability that there is a problem with the disk.</td></tr>
+<tr>
+<td class="grid_2_right"><samp>04</samp></td>
+<td class="grid_2_right"><samp>0x04</samp></td>
+<td class="grid_2">Start/Stop Count</td>
+<td class="grid_2_cen">-</td>
+<td class="grid_2">A tally of spindle start/stop cycles. The count is increased each time the spindle turns on (after power-off or
+when it returns from the sleep mode).</td></tr>
+<tr>
+<td class="grid_2_right"><samp>05</samp></td>
+<td class="grid_2_right"><samp>0x05</samp></td>
+<td class="grid_2"><span class="warn">Reallocated Sectors Count</span></td>
+<td class="grid_2_cen">L</td>
+<td class="grid_2">Count of reallocated sectors. The raw value represents a count of the bad sectors that have been found and
+remapped. Thus, the higher the value, the more sectors the drive has had to reallocate. This value is primarily used as a metric
+of the life expectancy of the drive; a drive which has had any reallocations at all is significantly more likely to fail in the
+immediate months.</td></tr>
+<tr>
+<td class="grid_2_right"><samp>08</samp></td>
+<td class="grid_2_right"><samp>0x08</samp></td>
+<td class="grid_2">Seek Time Performance</td>
+<td class="grid_2_cen">H</td>
+<td class="grid_2">Average performance of seek operations of the magnetic heads. If this attribute is decreasing, it is a sign
+of problems in the mechanical subsystem.</td></tr>
+<tr>
+<td class="grid_2_right"><samp>09</samp></td>
+<td class="grid_2_right"><samp>0x09</samp></td>
+<td class="grid_2">Power-On Hours</td>
+<td class="grid_2_cen">-</td>
+<td class="grid_2">Count of hours in power-on state. The raw value of this attribute shows total count of hours (or minutes,
+or seconds, depending on manufacturer) in power-on state. By default, the total expected lifetime of a hard disk in perfect
+condition is defined as<samp> 5 </samp>years (running every day and night on all days). This is equal to <samp>1825</samp>
+days in<samp> 24/7 </samp>mode or <samp>43800</samp> hours.</td></tr>
+<tr>
+<td class="grid_2_right"><samp>10</samp></td>
+<td class="grid_2_right"><samp>0x0A</samp></td>
+<td class="grid_2"><span class="warn">Spin Retry Count</span></td>
+<td class="grid_2_cen">L</td>
+<td class="grid_2">Count of retry of spin start attempts. This attribute stores a total count of the spin start attempts to reach
+the fully operational speed (under the condition that the first attempt was unsuccessful). An increase of this attrib value is a
+sign of problems in the hard disk mechanical subsystem.</td></tr>
+<tr>
+<td class="grid_2_right"><samp>11</samp></td>
+<td class="grid_2_right"><samp>0x0B</samp></td>
+<td class="grid_2">Recalibration Retries<br>or<br>Calibration Retry Count</td>
+<td class="grid_2_cen">L</td>
+<td class="grid_2">This attribute indicates the count that recalibration was requested (under the condition that the first attempt
+was unsuccessful). An increase of this value is a sign of problems in the hard disk mechanical subsystem.</td></tr>
+<tr>
+<td class="grid_2_right"><samp>12</samp></td>
+<td class="grid_2_right"><samp>0x0C</samp></td>
+<td class="grid_2">Power Cycle Count</td>
+<td class="grid_2_cen">-</td>
+<td class="grid_2">The count of full hard disk power on/off cycles.</td></tr>
+<tr>
+<td class="grid_2_right"><samp>13</samp></td>
+<td class="grid_2_right"><samp>0x0D</samp></td>
+<td class="grid_2">Soft Read Error Rate</td>
+<td class="grid_2_cen">L</td>
+<td class="grid_2">Uncorrected read errors reported to the operating system.</td></tr>
+<tr>
+<td class="grid_2_right"><samp>171</samp></td>
+<td class="grid_2_right"><samp>0xAB</samp></td>
+<td class="grid_2">SSD Program Fail Count</td>
+<td class="grid_2_cen">-</td>
+<td class="grid_2">(Kingston) The total number of flash program operation failures since the drive was deployed.
+Identical to attribute<samp> 181</samp>.</td></tr>
+<tr>
+<td class="grid_2_right"><samp>172</samp></td>
+<td class="grid_2_right"><samp>0xAC</samp></td>
+<td class="grid_2">SSD Erase Fail Count</td>
+<td class="grid_2_cen">-</td>
+<td class="grid_2">(Kingston) Counts the number of flash erase failures. This attribute returns the total number of Flash erase
+operation failures since the drive was deployed. This attribute is identical to attribute<samp> 182</samp>.</td></tr>
+<tr>
+<td class="grid_2_right"><samp>173</samp></td>
+<td class="grid_2_right"><samp>0xAD</samp></td>
+<td class="grid_2">SSD Wear Leveling Count</td>
+<td class="grid_2_cen">-</td>
+<td class="grid_2">Counts the maximum worst erase count on any block.</td></tr>
+<tr>
+<td class="grid_2_right"><samp>174</samp></td>
+<td class="grid_2_right"><samp>0xAE</samp></td>
+<td class="grid_2">Unexpected Power Loss Count</td>
+<td class="grid_2_cen">-</td>
+<td class="grid_2">Also known as "Power-off Retract Count" (HDD). Raw value reports the number of unclean shutdowns, cumulative
+over the life of an SSD, where an "unclean shutdown" is the removal of power without STANDBY IMMEDIATE as the last command
+(regardless of PLI activity using capacitor power). Normalized value is always<samp> 100</samp>.</td></tr>
+<tr>
+<td class="grid_2_right"><samp>176</samp></td>
+<td class="grid_2_right"><samp>0xB0</samp></td>
+<td class="grid_2">Erase Fail Count</td>
+<td class="grid_2_cen">-</td>
+<td class="grid_2">The number of flash erase command failures.</td></tr>
+<tr>
+<td class="grid_2_right"><samp>177</samp></td>
+<td class="grid_2_right"><samp>0xB1</samp></td>
+<td class="grid_2">Wear Range Delta</td>
+<td class="grid_2_cen">-</td>
+<td class="grid_2">Delta between most-worn and least-worn Flash blocks. It describes how good/bad the wearleveling of the
+SSD works on a more technical way.</td></tr>
+<tr>
+<td class="grid_2_right"><samp>181</samp></td>
+<td class="grid_2_right"><samp>0xB5</samp></td>
+<td class="grid_2">Program Fail Count Total<br>or<br>Non-4K Aligned Access Count</td>
+<td class="grid_2_cen">L</td>
+<td class="grid_2">Total number of Flash program operation failures since the drive was deployed. Or, number of user data accesses
+(both reads and writes) where LBAs are not<samp> 4 </samp>KiB aligned (<samp>LBA % 8 != 0</samp>) or where size is not
+modulus<samp> 4 </samp>KiB (<samp>block count != 8</samp>), assuming logical block size<samp> (LBS) = 512 B</samp>.</td></tr>
+<tr>
+<td class="grid_2_right"><samp>182</samp></td>
+<td class="grid_2_right"><samp>0xB6</samp></td>
+<td class="grid_2">Erase Fail Count</td>
+<td class="grid_2_cen">-</td>
+<td class="grid_2">"Pre-Fail" attrib used at least in Samsung devices.</td></tr>
+<tr>
+<td class="grid_2_right"><samp>184</samp></td>
+<td class="grid_2_right"><samp>0xB8</samp></td>
+<td class="grid_2"><span class="warn">End-to-End error/IOEDC</span></td>
+<td class="grid_2_cen">L</td>
+<td class="grid_2">This attribute is a part of Hewlett-Packard's SMART IV technology, as well as part of other vendors' IO Error
+Detection and Correction schemas, and it contains a count of parity errors which occur in the data path to the media via the
+drive's cache RAM.</td></tr>
+<tr>
+<td class="grid_2_right"><samp>187</samp></td>
+<td class="grid_2_right"><samp>0xBB</samp></td>
+<td class="grid_2"><span class="warn">Reported Uncorrectable Errors</span></td>
+<td class="grid_2_cen">L</td>
+<td class="grid_2">The count of errors that could not be recovered using hardware ECC (see attribute ID <samp>195</samp>).</td></tr>
+<tr>
+<td class="grid_2_right"><samp>188</samp></td>
+<td class="grid_2_right"><samp>0xBC</samp></td>
+<td class="grid_2"><span class="warn">Command Timeout</span></td>
+<td class="grid_2_cen">L</td>
+<td class="grid_2">The count of aborted operations due to HDD timeout. Normally this value should be<samp> 0</samp>.</td></tr>
+<tr>
+<td class="grid_2_right"><samp>191</samp></td>
+<td class="grid_2_right"><samp>0xBF</samp></td>
+<td class="grid_2">G-sense Error Rate</td>
+<td class="grid_2_cen">L</td>
+<td class="grid_2">The count of errors resulting from externally induced shock and vibration.</td></tr>
+<tr>
+<td class="grid_2_right"><samp>195</samp></td>
+<td class="grid_2_right"><samp>0xC3</samp></td>
+<td class="grid_2">Hardware ECC Recovered</td>
+<td class="grid_2_cen">?</td>
+<td class="grid_2">(Vendor-specific raw value.) The raw value has different structure for diff vendors and is often not meaningful
+as a decimal number.</td></tr>
+<tr>
+<td class="grid_2_right"><samp>196</samp></td>
+<td class="grid_2_right"><samp>0xC4</samp></td>
+<td class="grid_2"><span class="warn">Reallocation Event Count</span></td>
+<td class="grid_2_cen">L</td>
+<td class="grid_2">Count of remap operations. The raw value of this attribute shows the total count of attempts to transfer data
+from reallocated sectors to a spare area. Both successful and unsuccessful attempts are counted.</td></tr>
+<tr>
+<td class="grid_2_right"><samp>197</samp></td>
+<td class="grid_2_right"><samp>0xC5</samp></td>
+<td class="grid_2"><span class="warn">Current Pending Sector Count</span></td>
+<td class="grid_2_cen">L</td>
+<td class="grid_2">Count of "unstable" sectors (waiting to be remapped, because of unrecoverable read errors). If an unstable
+sector is subsequently read successfully, the sector is remapped and this value is decreased. Read errors on a sector will not
+remap the sector immediately (since the correct value cannot be read and so the value to remap is not known, and also it might
+become readable later); instead, the drive firmware remembers that the sector needs to be remapped, and will remap it the next
+time it's written. However, some drives will not immediately remap such sectors when written; instead the drive will first attempt
+to write to the problem sector and if the write operation is successful then the sector will be marked good (in this case, the
+"Reallocation Event Count" (<samp>0xC4</samp>) will not be increased). This is a serious shortcoming, for if such a drive contains
+marginal sectors that consistently fail only after some time has passed following a successful write operation, then the
+drive will never remap these problem sectors.</td></tr>
+<tr>
+<td class="grid_2_right"><samp>198</samp></td>
+<td class="grid_2_right"><samp>0xC6</samp></td>
+<td class="grid_2"><span class="warn">(Offline)<br>Uncorrectable Sector Count</span></td>
+<td class="grid_2_cen">L</td>
+<td class="grid_2">The total count of uncorrectable errors when reading/writing a sector. A rise in the value of this attribute
+indicates defects of the disk surface and/or problems in the mechanical subsystem.</td></tr>
+<tr>
+<td class="grid_2_right"><samp>199</samp></td>
+<td class="grid_2_right"><samp>0xC7</samp></td>
+<td class="grid_2">UltraDMA CRC Error Count</td>
+<td class="grid_2_cen">L</td>
+<td class="grid_2">The count of errors in data transfer via the interface cable as determined by ICRC (Interface Cyclic Redundancy
+Check).</td></tr>
+<tr>
+<td class="grid_2_right"><samp>201</samp></td>
+<td class="grid_2_right"><samp>0xC9</samp></td>
+<td class="grid_2"><span class="warn">Soft Read Error Rate</span><br>
+or<br>
+<span class="warn">TA Counter Detected</span></td>
+<td class="grid_2_cen">L</td>
+<td class="grid_2">Count indicates the number of uncorrectable software read errors.</td></tr>
+<tr>
+<td class="grid_2_right"><samp>206</samp></td>
+<td class="grid_2_right"><samp>0xCE</samp></td>
+<td class="grid_2">Flying Height</td>
+<td class="grid_2_cen">-</td>
+<td class="grid_2">Height of heads above the disk surface. If too low, head crash is more likely; if too high, read/write errors
+are more likely.</td></tr>
+<tr>
+<td class="grid_2_right"><samp>221</samp></td>
+<td class="grid_2_right"><samp>0xDD</samp></td>
+<td class="grid_2">G-Sense Error Rate</td>
+<td class="grid_2_cen">L</td>
+<td class="grid_2">The count of errors resulting from externally induced shock and vibration.</td></tr>
+<tr>
+<td class="grid_2_right"><samp>228</samp></td>
+<td class="grid_2_right"><samp>0xE4</samp></td>
+<td class="grid_2">Power-Off Retract Cycle</td>
+<td class="grid_2_cen">L</td>
+<td class="grid_2">The number of power-off cycles which are counted whenever there is a "retract event" and the heads are loaded
+off of the media such as when the machine is powered down, put to sleep, or is idle.</td></tr>
+<tr>
+<td class="grid_2_right"><samp>231</samp></td>
+<td class="grid_2_right"><samp>0xE7</samp></td>
+<td class="grid_2">Life Left (SSDs)<br>or<br>Temperature</td>
+<td class="grid_2_cen">-</td>
+<td class="grid_2">Indicates the approximate SSD life left, in terms of program/erase cycles or available reserved blocks.
+A normalized value of <samp>100</samp> represents a new drive, with a threshold value at <samp>10</samp> indicating a need for
+replacement. A value of <samp>0</samp> may mean that the drive is operating in read-only mode to allow data recovery. Previously
+(pre-2010) occasionally used for Drive Temperature (more typically reported at <samp>0xC2</samp>).</td></tr>
+<tr>
+<td class="grid_2_right"><samp>232</samp></td>
+<td class="grid_2_right"><samp>0xE8</samp></td>
+<td class="grid_2">Endurance Remaining<br>or<br>Available Reserved Space</td>
+<td class="grid_2_cen">-</td>
+<td class="grid_2">Number of physical erase cycles completed on the SSD as a percentage of the maximum physical erase cycles the
+drive is designed to endure. Intel SSDs report the available reserved space as a percentage of the initial reserved space.</td></tr>
+<tr>
+<td class="grid_2_right"><samp>233</samp></td>
+<td class="grid_2_right"><samp>0xE9</samp></td>
+<td class="grid_2">Media Wearout Indicator (SSDs)<br>or<br>Power-On Hours</td>
+<td class="grid_2_cen">-</td>
+<td class="grid_2">Intel SSDs report a normalized value from <samp>100</samp>, a new drive, to a minimum of <samp>1</samp>.
+It decreases while the NAND erase cycles increase from <samp>0</samp> to the maximum-rated cycles. Previously (pre-2010)
+occasionally used for Power-On Hours (more typically reported in <samp>0x09</samp>).</td></tr>
+<tr>
+<td class="grid_2_right"><samp>249</samp></td>
+<td class="grid_2_right"><samp>0xF9</samp></td>
+<td class="grid_2">NAND Writes (1GiB)</td>
+<td class="grid_2_cen">-</td>
+<td class="grid_2">Total NAND Writes. Raw value reports the number of writes to NAND in <samp>1</samp> GB increments.</td></tr>
+<tr>
+<td class="grid_2_right"><samp>250</samp></td>
+<td class="grid_2_right"><samp>0xFA</samp></td>
+<td class="grid_2">Read Error Retry Rate</td>
+<td class="grid_2_cen">L</td>
+<td class="grid_2">Count of errors while reading from a disk.</td></tr>
+<tr>
+<td class="grid_2_right"><samp>251</samp></td>
+<td class="grid_2_right"><samp>0xFB</samp></td>
+<td class="grid_2">Minimum Spares Remaining</td>
+<td class="grid_2_cen">-</td>
+<td class="grid_2">The Minimum Spares Remaining attribute indicates the number of remaining spare blocks as a percentage of the
+total number of spare blocks available.</td></tr>
+<tr>
+<td class="grid_2_right"><samp>252</samp></td>
+<td class="grid_2_right"><samp>0xFC</samp></td>
+<td class="grid_2">Newly Added Bad Flash Block</td>
+<td class="grid_2_cen">?</td>
+<td class="grid_2">The Newly Added Bad Flash Block attribute indicates the total number
+of bad flash blocks the drive detected since it was first initialized in manufacturing.</td></tr>
+<tr>
+<td class="grid_2_right"><samp>254</samp></td>
+<td class="grid_2_right"><samp>0xFE</samp></td>
+<td class="grid_2">Free Fall Protection</td>
+<td class="grid_2_cen">L</td>
+<td class="grid_2">Count of "Free Fall Events" detected.</td></tr>
+</table>
+
+
+
+<h5>SMART Self-tests</h5>
+<p>
+Usually we limit our disk tests to filesystem checks. But sometimes you really want to test you storage device. And
+<samp>smartmontools</samp> is exactly what you need: SMART provides tests that are best suited for your specific device model.</p>
+<p>
+The bad news: <i>if test ends with errors it is usually bad!</i></p>
+<p>
+There are several types of SMART self-tests. To find what tests are available for a specific drive, and how much time they are
+supposed to take, use</p>
+
+<p class="cmd">smartctl -c /dev/sda</p>
+<p>
+In fact,<code> -c </code> (or<code> --capabilities</code>) shows what SMART features are implemented and how the device responds
+to some cmds. For example, it shows if device logs errors, if it supports offline surface scanning, etc. If the device can perform
+self-tests, this option shows the estimated time required to run a specific test.</p>
+<p>
+The type of test to run is specified by<code> -t </code>option. The most basic is <samp>short</samp> (SMART Short Self Test):</p>
+
+<p class="cmd">smartctl -t short /dev/sda</p>
+<p>
+Usually it takes no more than 10 minutes, runs in the background, checks the electrical and mechanical performance, the <i>read</i>
+performance of the disk.</p>
+<p>
+The <samp>long</samp> (SMART Extended Self Test) can take several hours or, at least, tens of minutes:</p>
+
+<p class="cmd">smartctl -t long /dev/sda</p>
+<p>
+This is a thorough version of the <i>Short Self Test</i>.</p>
+<p>
+The <samp>conveyance</samp> [ATA only] runs a SMART Conveyance Self Test which can take several minutes. This routine is intended
+to identify damage incurred during transportation:</p>
+
+<p class="cmd">smartctl -t coveyance /dev/sda</p>
+<p>
+All tests can be run during normal system operation unless you add<code> -C </code>option, captive mode (or "foreground mode" for
+SCSI). However, running self-test can [temporarily] degrade drive performance. On the other hand, intensive use of device by the
+operating system can increase test time.</p>
+<p>
+Important note! Do not use <i>captive mode</i> on drives with mounted partition/filesystem!</p>
+<p>
+Since these tests run in the background, you cannot see the progress and must wait until the end. Then you can get your test
+results with</p>
+
+<p class="cmd">smartctl -l selftest /dev/sda</p>
+<p>
+Note that some drives break the test procedure if you issue the above cmd while the test is still running. Usually the appropriate
+warning is present in the drive capabilities report (<code>-c</code>).</p>
+
+
+
+
+
+<p class="cmdname"><a name="sort">sort</a></p>
+<p>
+sorts lines of the specified text files and writes the sorted concatenation
+of all files to stdout.</p>
+
+<p class="cmdc">sort -b report04.txt</p>
+<p class="desc">sort a text file ignoring leading blanks;</p>
+
+<p class="fmt"><code>sort&nbsp;</code>[<kbd>options</kbd>] [<kbd>file ...</kbd>]</p>
+
+
+
+<h5>Ordering options</h5>
+
+<p class="fmtc"><code>-b</code>,
+<code>--ignore-leading-blanks</code></p>
+<p class="desc">ignore leading blanks;</p>
+
+<p class="fmtc"><code>-d</code>,
+<code>--dictionary-order</code></p>
+<p class="desc">consider only blanks and alphanum chars;</p>
+
+<p class="fmtc"><code>-f</code>, <code>--ignore-case</code></p>
+<p class="desc">fold lower case to upper case;</p>
+
+<p class="fmtc"><code>-g</code>,
+<code>--general-numeric-sort</code></p>
+<p class="desc">compare according to general numerical value;</p>
+
+<p class="fmtc"><code>-h</code>,
+<code>--human-numeric-sort</code></p>
+<p class="desc">compare human readable numbers (e.g., <samp>2K 1G</samp>);</p>
+
+<p class="fmtc"><code>-i</code>,
+<code>--ignore-nonprinting</code></p>
+<p class="desc">consider only printable chars;</p>
+
+<p class="fmtc"><code>-M</code>, <code>--month-sort</code></p>
+<p class="desc">compare (unknown) &lt; 'JAN' &lt; ... &lt; 'DEC';</p>
+
+<p class="fmtc"><code>-n</code>, <code>--numeric-sort</code></p>
+<p class="desc">compare according to string numerical value;</p>
+
+<p class="fmtc"><code>-R</code>, <code>--random-sort</code></p>
+<p class="desc">sort by random hash of keys;</p>
+
+<p class="fmtc"><code>--random-source=</code><kbd>file</kbd></p>
+<p class="desc">get random bytes from <kbd>file</kbd>;</p>
+
+<p class="fmtc"><code>-r</code>, <code>--reverse</code></p>
+<p class="desc">reverse the results of the comparisions;</p>
+
+<p class="fmtc"><code>--sort=</code><kbd>word</kbd></p>
+<p class="desc">sort according to <kbd>word</kbd>: general-numeric
+<code>-g</code>, human-numeric <code>-h</code>, month <code>-M</code>,
+numeric <code>-n</code>, random <code>-R</code>, version <code>-V</code>;</p>
+
+<p class="fmtc"><code>-V</code>, <code>--version-sort</code></p>
+<p class="desc">natural sort of (version) numbers within text;</p>
+
+
+
+<h5>General options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>--batch-size=</code><kbd>n</kbd></p>
+<p class="desc">merge at most <kbd>n</kbd> inputs at once; for more use
+temp files;</p>
+
+<p class="fmtc"><code>-c</code>, <code>--check</code></p>
+<p class="desc">don't sort, just check whether input is sorted;</p>
+
+<p class="fmtc"><code>-C</code>, <code>--check=quiet</code>,
+<code>--check=silent</code></p>
+<p class="desc">like prev, but do not report first bad line;</p>
+
+<p class="fmtc"><code>--compress-program=</code><kbd>prog</kbd></p>
+<p class="desc">compress temporaries with <kbd>prog</kbd>; decompress with
+<kbd>prog</kbd> <code>-d</code>;</p>
+
+<p class="fmtc"><code>--files0-from=</code><kbd>file</kbd></p>
+<p class="desc">read input from the files specified by NULL-terminated names in
+<kbd>file</kbd> (<code>-</code> means stdin);</p>
+
+<p class="fmtc"><code>-k</code>
+<kbd>pos1</kbd>[<code>,</code><kbd>pos2</kbd>],
+<code>--key=</code><kbd>pos1</kbd>[<code>,</code><kbd>pos2</kbd>]</p>
+<p class="desc">start a key at <kbd>pos1</kbd> (by default it is position
+<samp>1</samp>), end it at <kbd>pos2</kbd> (by default it is EOL);</p>
+
+<p class="fmtc"><code>-m</code>, <code>--merge</code></p>
+<p class="desc">don't sort, just merge already sorted files;</p>
+
+<p class="fmtc"><code>-o</code> <kbd>file</kbd>,
+<code>--output=</code><kbd>file</kbd></p>
+<p class="desc">write to a file instead of stdout;</p>
+
+<p class="fmtc"><code>-S</code> <kbd>n</kbd>,
+<code>--buffer-size=</code><kbd>n</kbd></p>
+<p class="desc">set the size of mem buffer; <kbd>n</kbd> can be followed by
+<samp>%</samp> (perc of mem to use), <samp>b</samp> (bytes),
+<samp>K</samp> (kilobytes, default), <samp>M</samp> (megabytes), etc;</p>
+
+<p class="fmtc"><code>-s</code>, <code>--stable</code></p>
+<p class="desc">stabilize sort by disabling last-resort comparison;</p>
+
+<p class="fmtc"><code>-T</code> <kbd>dir</kbd>,
+<code>--temporary-directory=</code><kbd>dir</kbd></p>
+<p class="desc">use <kbd>dir</kbd> for temporaries (instead of
+<samp>$TMPDIR</samp> or <samp>/tmp</samp>);</p>
+
+<p class="fmtc"><code>-t</code> <kbd>sep</kbd>,
+<code>--field-separator=</code><kbd>sep</kbd></p>
+<p class="desc">use the specified separator instead of non-blank to blank
+transition;</p>
+
+<p class="fmtc"><code>-u</code>, <code>--unique</code></p>
+<p class="desc">with <code>-c</code>, check for strict ordering;
+without <code>-c</code>, output only the first of an equal run;</p>
+
+<p class="fmtc"><code>-z</code>, <code>--zero-terminated</code></p>
+<p class="desc">end lines with a zero byte ('<samp>\0</samp>'),
+instead of a newline;</p>
+<p>
+<kbd>pos</kbd> is <kbd>f</kbd>[.<kbd>c</kbd>][<kbd>opts</kbd>], where
+<kbd>f</kbd> is the field number and <kbd>c</kbd> is the char position in
+the field. <kbd>opts</kbd> is one or more single-letter ordering options,
+which override global ordering options for that key. If no key is given,
+use the entire line as the key.</p>
+<p>
+The locale specified by env affects sort order, e.g.,
+<samp>LC_ALL=C</samp> provides the traditional sort order that uses
+native byte values.</p>
+
+
+
+
+
+<p class="cmdname"><a name="split">split</a></p>
+<p>
+splits a file into fixed-size pieces.</p>
+
+<p class="cmdc">split -b 1440k arc04.tar.gz</p>
+<p class="desc">split <samp>arc04.tar.gz</samp> into separate files with
+the size no more than 1440 Kbytes each;</p>
+
+<p class="fmt"><code>split&nbsp;</code>[<kbd>options</kbd>] [<kbd>file&nbsp;</kbd>[<kbd>prefix</kbd>]]</p>
+<p>
+If <kbd>file</kbd> is missing, or '<code>-</code>', the input data is taken
+from stdin. By default, <code>~</code> puts 1000 lines of the input file into
+each output file. The output names consist of <kbd>prefix</kbd>
+('<samp>x</samp>' is default) followed by a group of chars
+('<samp>aa</samp>', '<samp>ab</samp>', ...). There is also
+<code>csplit</code>, which cuts file into sections determined by patterns.</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp;
+<code>--version</code> &nbsp;&nbsp; <code>--verbose</code></p>
+
+<p class="fmtc"><code>-a</code> <kbd>n</kbd>,
+<code>--suffix-length=</code><kbd>n</kbd></p>
+<p class="desc">use suffixes of length <kbd>n</kbd> (default is
+<samp>2</samp>); the splitting process will be aborted if all possible
+char combinations of the specified length are used but end of the input
+file is not reached yet;</p>
+
+<p class="fmtc"><code>-b</code> <kbd>n</kbd>,
+<code>--bytes=</code><kbd>n</kbd></p>
+<p class="desc">put <kbd>n</kbd> bytes into each output file;</p>
+
+<p class="fmtc"><code>-C</code> <kbd>n</kbd>,
+<code>--line-bytes=</code><kbd>n</kbd></p>
+<p class="desc">put into each output file as many complete lines
+as possible without exceeding size of <kbd>n</kbd> bytes;</p>
+
+<p class="fmtc"><code>-d</code>,
+<code>--numeric-suffixes</code></p>
+<p class="desc">use numeric suffixes;</p>
+
+<p class="fmtc"><code>-l</code> <kbd>n</kbd>,
+<code>--lines=</code><kbd>n</kbd></p>
+<p class="desc">put <kbd>n</kbd> lines into each output file;</p>
+<p>
+Size spec for <code>-b</code>, <code>-C</code> options may have a multiplier:
+<code>b</code> for <samp>512</samp> (block), <code>k</code> for
+<samp>1024</samp> (<samp>1K</samp>), <code>m</code> for <samp>1048576</samp>
+(<samp>1M</samp>).</p>
+
+
+
+
+
+<p class="cmdname"><a name="ss">ss</a></p>
+<p>
+displays socket statistics and other useful network-related info.
+You must prepend it with <code>sudo</code> to get full info.</p>
+
+<p class="cmdc">ss -s</p>
+<p class="desc">show socket summary stat;</p>
+
+<p class="cmdc">ss -tulpn</p>
+<p class="desc">similar to
+<code><a href="cmds_n.html#netstat">netstat</a></code>, i.e.: show listening
+sockets for <samp>tcp</samp> and <samp>udp</samp> protocols, do not resolve
+names, show related programs;</p>
+
+<p class="cmdc">ss -lp</p>
+<p class="desc">show listening sockets and related processes;</p>
+
+<p class="cmdc">ss -nlt</p>
+<p class="desc">show listening TCP sockets only, and do not perform the name
+resolution;</p>
+
+<p class="cmdc">ss -t -a</p>
+<p class="desc">show all TCP sockets;</p>
+
+<p class="cmdc">ss -u -a</p>
+<p class="desc">show all UDP sockets;</p>
+
+<p class="cmdc">ss -t state established</p>
+<p class="desc">list all established TCP connections;</p>
+
+<p class="cmdc">ss -tp state established</p>
+<p class="desc">list all established TCP connections and local apps (processes)
+using them;</p>
+
+<p class="cmdc">ss -t4 state established</p>
+<p class="desc">list all established TCP IPv4 connections;</p>
+
+<p class="cmdc">ss -t4 state closed</p>
+<p class="desc">list all closed TCP IPv4 connections;</p>
+
+<p class="cmdc">ss -o state established<br>'( dport = :http or sport = :http )'</p>
+<p class="desc">display all established <samp>HTTP</samp> connections;</p>
+
+<p class="cmdc">ss -o state established<br>'( dport = :ssh or sport = :ssh )'</p>
+<p class="desc">display all established <samp>SSH</samp> connections;</p>
+
+<p class="cmdc">ss -o state fin-wait-1<br>
+'( sport = :http or sport = :https )'<br>
+dst 192.168.0/24</p>
+<p class="desc">list all <samp>TCP</samp> sockets in state
+<samp>FIN-WAIT-1</samp> for <code>httpd</code> to the specified network and
+look at their timers;</p>
+
+<p class="fmt"><code>ss&nbsp;</code>[<kbd>options</kbd>] [<kbd>filter</kbd>]
+<p>
+Where</p>
+
+<p class="fmt"><kbd>filter</kbd> <kbd>:=</kbd> [ <code>state</code> <kbd>tcp-state</kbd> ] [ <kbd>expression</kbd> ]</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-h</code> &nbsp;&nbsp; <code>--help</code>
+&nbsp;&nbsp; <code>-V</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-0</code></td>
+<td class="opt_desc">(zero) show <samp>PACKET</samp> sockets;</td></tr>
+
+<tr><td class="opt_name"><code>-4</code></td>
+<td class="opt_desc">show only IPv4 sockets;</td></tr>
+
+<tr><td class="opt_name"><code>-6</code></td>
+<td class="opt_desc">show only IPv6 sockets;</td></tr>
+</table>
+
+<p class="fmtc"><code>-A</code> <kbd>query</kbd>,
+<code>--query=</code><kbd>query</kbd></p>
+<p class="desc">a comma-separated list of socket tables to dump:
+<samp>all</samp>, <samp>inet</samp>, <samp>tcp</samp>, <samp>udp</samp>,
+<samp>raw</samp>, <samp>unix</samp>, <samp>packet</samp>, <samp>netlink</samp>,
+<samp>unix_dgram</samp>, <samp>unix_stream</samp>, <samp>packet_raw</samp>,
+<samp>packet_dgram</samp>;</p>
+
+<p class="fmtc"><code>-a</code>, <code>--all</code></p>
+<p class="desc">show all sockets;</p>
+
+<p class="fmtc"><code>-D</code> <kbd>file</kbd></p>
+<p class="desc">apply filters and dump raw TCP sockets info to a file;</p>
+
+<p class="fmtc"><code>-d</code>, <code>--dccp</code></p>
+<p class="desc">show all DCCP sockets (Datagram Congestion Control Protocol);</p>
+
+<p class="fmtc"><code>-e</code>, <code>--extended</code></p>
+<p class="desc">show detailed socket info;</p>
+
+<p class="fmtc"><code>-f</code> <kbd>family</kbd>,
+<code>--family=</code><kbd>family</kbd></p>
+<p class="desc">show sockets of type <kbd>family</kbd>; there are now:
+<samp>unix</samp>, <samp>inet</samp>, <samp>inet6</samp>, <samp>link</samp>,
+<samp>netlink</samp>;</p>
+
+<p class="fmtc"><code>-i</code>, <code>--info</code></p>
+<p class="desc">show internal TCP info;</p>
+
+<p class="fmtc"><code>-l</code>, <code>--listening</code></p>
+<p class="desc">show listening sockets only;</p>
+
+<p class="fmtc"><code>-m</code>, <code>--memory</code></p>
+<p class="desc">show socket memory usage;</p>
+
+<p class="fmtc"><code>-n</code>, <code>--numeric</code></p>
+<p class="desc">do not resolve service names;</p>
+
+<p class="fmtc"><code>-o</code>, <code>--options</code></p>
+<p class="desc">show timer info;</p>
+
+<p class="fmtc"><code>-p</code>, <code>--processes</code></p>
+<p class="desc">show processes using sockets;</p>
+
+<p class="fmtc"><code>-r</code>, <code>--resolve</code></p>
+<p class="desc">try to resolve numeric addr / port;</p>
+
+<p class="fmtc"><code>-s</code>, <code>--summary</code></p>
+<p class="desc">dump statistics summary;</p>
+
+<p class="fmtc"><code>-t</code>, <code>--tcp</code></p>
+<p class="desc">show TCP sockets only;</p>
+
+<p class="fmtc"><code>-u</code>, <code>--udp</code></p>
+<p class="desc">show UDP sockets only;</p>
+
+<p class="fmtc"><code>-w</code>, <code>--raw</code></p>
+<p class="desc">show RAW sockets only;</p>
+
+<p class="fmtc"><code>-x</code>, <code>--unix</code></p>
+<p class="desc">show UNIX domain sockets only;</p>
+
+
+
+
+
+<p class="cmdname"><a name="ssh">ssh</a></p>
+<p>
+(Secure Shell <b>client</b> program) provides remote access (<samp>tcp/22</samp>) to another host (remote login, cmd execution)
+using secure encrypted communication between two untrusted hosts over an insecure network.</p>
+
+<p class="cmdc">ssh root@srv4</p>
+<p class="desc">connect as user <samp>root</samp> to the host <samp>srv4</samp>;</p>
+
+<p class="cmdc">ssh -v root@srv4</p>
+<p class="desc">connect as user <samp>root</samp> to the host <samp>srv4</samp>, show debug messages during connection;</p>
+
+<p class="cmdc">ssh -l root -C ws4.home.net</p>
+<p class="desc">connect as user <samp>root</samp> to the host <samp>ws4.home.net</samp> and switch on the data compression;</p>
+
+<p class="cmdc">ssh srv2 vmstat 3 5 &gt; vmstat.txt</p>
+<p class="desc">redirect the output of '<code>vmstat 3 5</code>' executed on the remote host (<samp>srv2</samp>) to the file
+<samp>vmstat.txt</samp> on the local host;</p>
+
+<p class="cmdc">df | ssh srv2 cat \&gt; hdd_info.txt</p>
+<p class="desc">redirect the output of the locally executed cmd (<code>df</code>) to a file (<samp>hdd_info.txt</samp>) on the
+remote host (<samp>srv2</samp>);</p>
+
+<p class="cmdc">fdisk -l /dev/sda | ssh srv2 cat \&gt;\&gt; hdd_info.txt</p>
+<p class="desc">redirect the output of the locally executed cmd (<code>fdisk -l /dev/sda</code>) and append it to an existing file
+(<samp>hdd_info.txt</samp>) on the remote host (<samp>srv2</samp>);</p>
+
+<p class="cmdc">tar zcf - ./doc | ssh srv4 tar zxft -</p>
+<p class="desc">transfer the specified dir (<samp>./doc</samp>) to the remote host using compression and retaining the access
+rights;</p>
+
+<p class="fmt"><code>ssh&nbsp;</code>[<code>-l</code> <kbd>user</kbd>]
+[<kbd>user</kbd><code>@</code>]<kbd>host&nbsp;</kbd>[<kbd>cmd</kbd>]</p>
+<p>
+<code>~</code> can also forward over the secure channel <samp>X11</samp> connections and arbitrary TCP ports.</p>
+
+<p class="cmdc">ssh -f -L 1234:localhost:6667 srv.acme.com sleep 10</p>
+<p class="cmdc">irc -p 1234 ...</p>
+<p class="desc">tunnel connection to IRC server <samp>srv.acme.com</samp> using <samp>tcp/1234</samp>; connection is forwarded to
+port <samp>6667</samp> on the remote server; remote cmd '<samp>sleep 10</samp>' is specified to allow to start service which is to
+be tunnelled;</p>
+<p>
+Other related programs are: <code>scp</code> (provides secure file transfer between two hosts), <code>ssh-keygen</code> (auth key
+gen, management, conversion), <code>ssh-agent</code> and <code>ssh-add</code> (authentication agent), <code>sshd</code> (SSH
+daemon, <samp>tcp/22</samp>).</p>
+
+<p class="cmdc">scp app.tar.gz root@srv2:app2.tar.gz</p>
+<p class="desc">upload <samp>app.tar.gz</samp> as <samp>app2.tar.gz</samp> to <samp>root</samp>'s home on <samp>srv2</samp>;</p>
+
+<p class="cmdc">scp -p error.log root@srv5:error.log</p>
+<p class="desc">upload <samp>error.log</samp> to the remote host <samp>srv5</samp>, preserving modif / access time and mode of the
+original file;</p>
+
+<p class="cmdc">scp -r root@srv7:config/ config</p>
+<p class="desc">download <samp>/root/config</samp> dir from the remote host <samp>srv7</samp>;</p>
+
+
+
+<h5>Options</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-V</code></td>
+<td class="opt_desc">version;</td></tr>
+<tr>
+<td class="opt_name"><code>-v</code></td>
+<td class="opt_desc">verbose;</td></tr>
+<tr>
+<td class="opt_name"><code>-1</code></td>
+<td class="opt_desc">force <code>~</code> to try protocol version 1 only;</td></tr>
+<tr>
+<td class="opt_name"><code>-2</code></td>
+<td class="opt_desc">force <code>~</code> to try protocol version 2 only;</td></tr>
+<tr>
+<td class="opt_name"><code>-4</code></td>
+<td class="opt_desc">force <code>~</code> to use IPv4 addresses only;</td></tr>
+<tr
+><td class="opt_name"><code>-6</code></td>
+<td class="opt_desc">force <code>~</code> to use IPv6 addresses only;</td></tr>
+<tr>
+<td class="opt_name"><code>-a</code></td>
+<td class="opt_desc">disable forwarding of the authentication agent connection;</td></tr>
+<tr>
+<td class="opt_name"><code>-A</code></td>
+<td class="opt_desc">enable forwarding of the authentication agent connection;</td></tr>
+</table>
+
+<p class="fmtc"><code>-b</code> <kbd>bind_addr</kbd></p>
+<p class="desc">specify the interface to transmit from;</p>
+
+<p class="fmtc"><code>-c blowfish</code> | <code>3des</code> | <code>des</code></p>
+<p class="desc">select the cipher to encrypt this session; <samp>3des</samp> is default;</p>
+
+<p class="fmtc"><code>-c</code> <kbd>cipher_spec</kbd></p>
+<p class="desc">like previous, but use comma-separated list of ciphers in order of preference (version 2);</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-C</code></td>
+<td class="opt_desc">compress all data (may be useful for slow connections);</td></tr>
+</table>
+
+<p class="fmtc"><code>-e</code> <kbd>ch</kbd> | <code>^</code><kbd>ch</kbd> | <code>none</code></p>
+<p class="desc">set the escape char for session with <samp>pty</samp>;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-f</code></td>
+<td class="opt_desc">force <code>~</code> to go to background just before <kbd>cmd</kbd> execution;</td></tr>
+</table>
+
+<p class="fmtc"><code>-F</code> <kbd>config</kbd></p>
+<p class="desc">ignore system-wide <samp>/etc/ssh/ssh_config</samp>, use an alternative per-user config file (the default per-user
+config is <samp>$HOME/.ssh/config</samp>);</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-g</code></td>
+<td class="opt_desc">allow remote hosts to connect to local forwarded ports;</td></tr>
+</table>
+
+<p class="fmtc"><code>-i</code> <kbd>identity_file</kbd></p>
+<p class="desc">select a file from which the identity (private key) for RSA/DSA auth is read; the defaults are:</p>
+
+<p class="fmtc" style="margin-left:10%"><samp>$HOME/.ssh/identity</samp> (v.1)</p>
+<p class="fmtc" style="margin-left:10%"><samp>$HOME/.ssh/id_rsa</samp> (v.2)</p>
+<p class="fmt" style="margin-left:10%"><samp>$HOME/.ssh/id_dsa</samp> (v.2);</p>
+
+<p class="fmtc"><code>-I</code> <kbd>smartcard_device</kbd></p>
+<p class="desc">use smart card device specified;</p>
+
+<p class="fmtc"><code>-l</code> <kbd>user</kbd></p>
+<p class="desc">use the specified user name to log in on the remote host; this also may be specified on a per-host basis in the
+config file;</p>
+
+<p class="fmtc"><code>-L</code>
+[<kbd>bind_addr</kbd><code>:</code>]<kbd>port</kbd><code>:</code><kbd>host</kbd><code>:</code><kbd>port</kbd></p>
+<p class="desc">forward given port on the local host to the specified host and port on the remote side;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-n</code></td>
+<td class="opt_desc">redirect <samp>stdin</samp> from <samp>/dev/null</samp>;</td></tr>
+<tr>
+<td class="opt_name"><code>-N</code></td>
+<td class="opt_desc">do not execute a remote cmd;</td></tr>
+</table>
+
+<p class="fmtc"><code>-p</code> <kbd>port</kbd></p>
+<p class="desc">port to connect to on the remote machine;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-q</code></td>
+<td class="opt_desc">quiet mode (suppress warnings and diagnostics);</td></tr>
+</table>
+
+<p class="fmtc"><code>-R</code>
+[<kbd>bind_addr</kbd><code>:</code>]<kbd>port</kbd><code>:</code><kbd>host</kbd><code>:</code><kbd>port</kbd></p>
+<p class="desc">forward given port on the remote side to the specified host and port on the local side;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-s</code></td>
+<td class="opt_desc">request invocation of a subsystem on the remote machine;</td></tr>
+<tr>
+<td class="opt_name"><code>-t</code></td>
+<td class="opt_desc">force pseudo-tty allocation;</td></tr>
+<tr>
+<td class="opt_name"><code>-T</code></td>
+<td class="opt_desc">disable pseudo-tty allocation;</td></tr>
+<tr>
+<td class="opt_name"><code>-x</code></td>
+<td class="opt_desc">disable X11 forwarding;</td></tr>
+<tr>
+<td class="opt_name"><code>-X</code></td>
+<td class="opt_desc">enable X11 forwarding;</td></tr>
+<tr>
+<td class="opt_name"><code>-Y</code></td>
+<td class="opt_desc">enable trusted X11 forwarding;</td></tr>
+</table>
+
+
+
+<h5>Escape characters</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>~.</code></td>
+<td class="opt_desc">disconnect;</td></tr>
+<tr>
+<td class="opt_name"><code>~^Z</code></td>
+<td class="opt_desc">background <code>ssh</code>;</td></tr>
+<tr>
+<td class="opt_name"><code>~#</code></td>
+<td class="opt_desc">list forwarded connections;</td></tr>
+<tr>
+<td class="opt_name"><code>~&amp;</code></td>
+<td class="opt_desc">background <code>ssh</code> at logout when waiting for forwarded connection / X11 sessions to terminate;</td></tr>
+<tr>
+<td class="opt_name"><code>~?</code></td>
+<td class="opt_desc">display a list of escape chars;</td></tr>
+<tr>
+<td class="opt_name"><code>~C</code></td>
+<td class="opt_desc">open cmd line (only useful for adding port forwarding with <code>-L</code> and <code>-R</code> options);</td></tr>
+<tr>
+<td class="opt_name"><code>~R</code></td>
+<td class="opt_desc">request re-keying of the connection (v.2);</td></tr>
+</table>
+
+
+
+
+<h4>Authentication methods</h4>
+<p>
+At the connection initiation, the user identity must be proved to the remote machine using one of the following methods (in the
+specified order):</p>
+<ul>
+<li>GSSAPI-based authentication (Generic Security Service API);</li>
+<li>host-based authentication;</li>
+<li>public key authentication;</li>
+<li>challenge-response authentication;</li>
+<li>password authentication;</li>
+</ul>
+<p>
+For <b>host-based authentication</b>, file <samp>/etc/hosts.equiv</samp> on the server (or <samp>/etc/ssh/shosts.equiv</samp>)
+must contain the name of the client computer, and user names on both sides must be the same. Also, server must be able to verify
+the client's host key. Host keys are stored in <samp>~/.ssh/known_hosts</samp> in user's home dir at user's computer. A new key is
+added to this file automatically when you connect to a new server for the first time. There is also system-wide file
+<samp>/etc/ssh/ssh_known_hosts</samp> that in general should contain the public host keys of all machines in the organization.</p>
+<p>
+To use <b>public key authentication</b>, you should run<code> ssh-keygen </code>to create necessary authentication files
+(see<samp> $HOME/.ssh/ </samp>dir).</p>
+<p>
+The <b>password authentication</b> is the simplest of all. It requires no manual config at all: you just initiate connection,
+<code> ssh </code>prompts you for password and sends it to the remote server; all communications are encrypted.</p>
+
+
+
+
+<h4>Using ssh-keygen</h4>
+<p>
+The <b>SSH protocol</b> uses <b>public key cryptography</b> for authenticating hosts and users. The authentication keys (aka
+<b>SSH keys</b>) are created with<code> ssh-keygen</code>. This is a tool for creating authentication key pairs for auto logins,
+SSO, and host authentication. If you run<code> ssh-keygen </code>without args, it will prompt you for some data (the file to store
+the keys, the passphrase, etc).</p>
+<p>
+Currently, SSH protocol supports the following public key algorithms for authentication keys:</p>
+<ul>
+<li><samp>rsa</samp> - an old algorithm based on the difficulty of factoring large numbers. The min key size recommended
+<samp>2048</samp> bits, but <samp>4096</samp> would be better. <b>Note!</b> So far RSA is good, but it's possible that in the
+future it will become breakable.</li>
+
+<li><samp>dsa</samp> - an old US government Digital Signature Algorithm. The key size is <samp>1024</samp> bits. <b>Not
+recommended</b>, <b>deprecated</b> (e.g. on GitHub)!</li>
+
+<li><samp>ecdsa</samp> - a new DSA using elliptic curves and supporting three key sizes: <samp>256</samp>, <samp>384</samp>,
+<samp>521</samp> bits. <b>But!</b> Some people think there is <b>NSA backdoor</b> hidden in OpenSSH (?) implementation of ecdsa...</li>
+
+<li><samp>ed25519</samp> - this is a new algorithm added in OpenSSH. And probably the best. But not all apps support it!</li>
+</ul>
+<p>
+So, the recommended choices are <samp>rsa</samp> [with <samp>3072/4096</samp> key] and <samp>ed25519</samp>.</p>
+<p>
+Here are some examples, <code>-t</code> specifies algorithm, <code>-b</code> sets key size (if possible):</p>
+
+<p class="cmdc">ssh-keygen -t rsa -b 4096</p>
+<p class="cmdc">ssh-keygen -t dsa</p>
+<p class="cmdc">ssh-keygen -t ecdsa -b 521</p>
+<p class="cmd">ssh-keygen -t ed25519</p>
+<p>
+You can also create ed25519 with some additional options:</p>
+
+<p class="cmd">ssh-keygen -o -a 100 -t ed25519 -f ~/.ssh/id_ed25519 -C "zorro@example.com"</p>
+<p>
+The <code>-o</code> requires to save the private key using new OpenSSH format (default for ed25519?) rather than PEM.
+The <code>-a</code> sets the numbers of KDF (Key Derivation Function) rounds. Higher numbers result in the slower passphrase
+verification thus increasing the resistance to brute force password cracking (in case your private key is stolen).
+The <code>-C</code> is just a comment, it can be anything, usually <samp>&lt;login&gt;@&lt;hostname&gt;</samp> of the person
+generating the key.</p>
+<p>
+Files <samp>*.pub</samp> are not secret, their contents should be added to<samp> $HOME/.ssh/authorized_keys </samp>on all remote
+machines where user wants to log in using public key authentication. For example, you generate RSA public / private key pair [on
+your computer], then you upload RSA public key to your home dir at the remote machine and add it to <samp>authorized_keys</samp>
+file:</p>
+
+<p class="cmd">cat id_rsa.pub &gt;&gt; ./ssh/authorized_keys</p>
+<p>
+Check rights for <samp>.ssh</samp> dir and <samp>authorized_keys</samp>, because OpenSSH does not accept key if access rights are
+incorrect (unsafe):</p>
+
+<p class="cmdc">chmod 700 .ssh</p>
+<p class="cmdc">chmod 600 ./.ssh/authorized_keys</p>
+<p class="cmd">rm id_rsa.pub</p>
+<p>
+Now you can login to a remote host from your computer without password (usernames here and there must be the same).</p>
+<p>
+The SSH protocol allows the client to offer multiple keys, and the server must select the appropriate one. However, we can directly
+specify the private key to use:</p>
+
+<p class="cmd">ssh -i ~/.ssh/id_ed25519 zorro@212.114...</p>
+
+
+
+
+<h4>Using ssh-agent, ssh-add</h4>
+<p>
+The <samp>ssh-agent</samp> is a key manager for SSH. It holds your keys and certs in memory, unencrypted, and ready for use by
+<samp>ssh</samp>. It runs in the background and saves you from typing a passphrase every time you connect to a server. It usually
+starts up when you run <code>ssh</code> for the first time after reboot, or it can be auto started as a part of the login procedure.
+To be sure it's running, you can check one of the env vars it sets:</p>
+
+<p class="cmd">echo $SSH_AUTH_SOCK</p>
+<p>
+It's supposed to output smth like this:</p>
+<div class="term"><pre>
+/run/user/1000/keyring/ssh
+</pre></div>
+<p>
+You can also use</p>
+
+<p class="cmd">ps ax | grep ssh-agent</p>
+<p>
+To start this agent manually,</p>
+
+<p class="cmdc">eval "$(ssh-agent -s)"</p>
+<p class="or">or</p>
+<p class="cmd">eval `ssh-agent`</p>
+<p>
+The <code>-t</code> lets you specify a num of seconds as the maximum lifetime of identities added to the agent. By default the
+agent keeps keys stored in memory as long as it's running. The following cmd limits identity lifetime to 24 hours:</p>
+
+<p class="cmd">eval `ssh-agent -t 86400`</p>
+<p>
+The <code>-k</code> kills the currently running <i>ssh-agent</i>, using current env vars to identify the agent:</p>
+
+<p class="cmd">eval `ssh-agent -k`</p>
+<p>
+The SSH agent keeps private keys safe because</p>
+<ul>
+    <li>It does not write any key material to disk.</li>
+    <li>It does not allow your private keys to be exported.</li>
+</ul>
+<p>
+Private keys stored in the agent can only be used for one purpose: signing a message.
+The following cmd auto adds to the <i>ssh-agent</i> all private keys stored in<samp> ~/.ssh </samp>dir:</p>
+
+<p class="cmd">ssh-add</p>
+<p>
+To list the keys added to the agent:</p>
+
+<p class="cmd">ssh-add -l</p>
+
+
+
+
+
+<p class="cmdname"><a name="stat">stat</a></p>
+<p>
+displays file or filesystem status.</p>
+
+<p class="cmdc">stat -f /var</p>
+<p class="desc">show the status of the filesystem <samp>/var</samp>;</p>
+
+<p class="cmdc">stat test.sh</p>
+<p class="desc">show the status of <samp>test.sh</samp> in the default format;</p>
+
+<p class="cmdc">stat -c '%A  dev: %d  type: %F  %U/%G' test.sh</p>
+<p class="desc">show the status of <samp>test.sh</samp> in the specified format;</p>
+
+<p class="fmt"><code>stat&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;file ...</kbd></p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>-f</code>, <code>--filesystem</code></p>
+<p class="desc">display filesystem status;</p>
+
+<p class="fmtc"><code>-c</code> <kbd>frm</kbd>,
+<code>--format=</code><kbd>frm</kbd></p>
+<p class="desc">use the specified format;</p>
+
+<p class="fmtc"><code>-L</code>, <code>--dereference</code></p>
+<p class="desc">follow links;</p>
+
+<p class="fmtc"><code>-t</code>, <code>--terse</code></p>
+<p class="desc">display info in terse form;</p>
+
+<p class="fmtc"><code>-Z</code>, <code>--context</code></p>
+<p class="desc">display security context info for SELinux if available;</p>
+
+
+
+<h5>Format sequences (for files)</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>%A</code></td>
+<td class="opt_desc">access rights in human readable (<code>%a</code> - octal) form;</td></tr>
+<tr>
+<td class="opt_name"><code>%B</code></td>
+<td class="opt_desc">the size in bytes of each block reported by <code>%b</code>;</td></tr>
+<tr>
+<td class="opt_name"><code>%b</code></td>
+<td class="opt_desc">the number of blocks allocated;</td></tr>
+<tr>
+<td class="opt_name"><code>%C</code></td>
+<td class="opt_desc">SELinux security context;</td></tr>
+<tr>
+<td class="opt_name"><code>%D</code></td>
+<td class="opt_desc">device number in hex (<code>%d</code> - decimal);</td></tr>
+<tr>
+<td class="opt_name"><code>%F</code></td>
+<td class="opt_desc">file type;</td></tr>
+<tr>
+<td class="opt_name"><code>%f</code></td>
+<td class="opt_desc">raw mode in hex;</td></tr>
+<tr>
+<td class="opt_name"><code>%G</code></td>
+<td class="opt_desc">group name (<code>%g</code> - group ID) of owner;</td></tr>
+<tr>
+<td class="opt_name"><code>%h</code></td>
+<td class="opt_desc">the number of hard links;</td></tr>
+<tr>
+<td class="opt_name"><code>%i</code></td>
+<td class="opt_desc">inode number;</td></tr>
+<tr>
+<td class="opt_name"><code>%N</code></td>
+<td class="opt_desc">quoted file name (with dereference if symlink);</td></tr>
+<tr>
+<td class="opt_name"><code>%n</code></td>
+<td class="opt_desc">file name;</td></tr>
+<tr>
+<td class="opt_name"><code>%o</code></td>
+<td class="opt_desc">IO block size;</td></tr>
+<tr>
+<td class="opt_name"><code>%s</code></td>
+<td class="opt_desc">total size in bytes;</td></tr>
+<tr>
+<td class="opt_name"><code>%T</code></td>
+<td class="opt_desc">minor (<code>%t</code> - major) device type in hex;</td></tr>
+<tr>
+<td class="opt_name"><code>%U</code></td>
+<td class="opt_desc">user name (<code>%u</code> - user ID) of the owner;</td></tr>
+<tr>
+<td class="opt_name"><code>%x</code></td>
+<td class="opt_desc">time of last access (<code>%X</code> - as seconds since Epoch);</td></tr>
+<tr>
+<td class="opt_name"><code>%y</code></td>
+<td class="opt_desc">time of last modification (<code>%Y</code> - as seconds since Epoch);</td></tr>
+<tr>
+<td class="opt_name"><code>%z</code></td>
+<td class="opt_desc">time of last change (<code>%Z</code> - as seconds since Epoch);</td></tr>
+</table>
+
+
+
+<h5>Format sequences (for filesystems)</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>%a</code></td>
+<td class="opt_desc">free blocks available to non-superuser;</td></tr>
+<tr>
+<td class="opt_name"><code>%b</code></td>
+<td class="opt_desc">total (<code>%f</code> - free) data blocks in a filesystem;</td></tr>
+<tr>
+<td class="opt_name"><code>%c</code></td>
+<td class="opt_desc">total (<code>%d</code> - free) file nodes in a filesystem;</td></tr>
+<tr>
+<td class="opt_name"><code>%i</code></td>
+<td class="opt_desc">filesystem id in hex;</td></tr>
+<tr>
+<td class="opt_name"><code>%l</code></td>
+<td class="opt_desc">maximum length of file name;</td></tr>
+<tr>
+<td class="opt_name"><code>%n</code></td>
+<td class="opt_desc">file name;</td></tr>
+<tr>
+<td class="opt_name"><code>%s</code></td>
+<td class="opt_desc">optimal transfer block size;</td></tr>
+<tr>
+<td class="opt_name"><code>%T</code></td>
+<td class="opt_desc">type in human readable (<code>%t</code> - hex) form;</td></tr>
+</table>
+
+
+
+
+
+<p class="cmdname"><a name="strace">strace</a></p>
+<p>
+traces system calls and signals. It's a diagnostic and debugging tool.</p>
+
+<p class="fmt"><code>strace </code>[<kbd>options</kbd>] [<kbd>cmd </kbd>[<kbd>arg ...</kbd>]]</p>
+<p>
+<code>~</code> runs the specified cmd until it exits, intercepts and records
+system calls and signals which are received by a process. The name of each
+system call, its args and return value are send to stderr (or to a file).</p>
+
+<p class="cmdc">strace -e trace=network -o net.trc -p 2818</p>
+<p class="desc">trace network-related system calls for the earlier started
+process with pid=2818; send the trace data to <samp>net.trc</samp>;</p>
+
+<p class="cmdc">strace -T -o apptest.trc apptest conf.dat</p>
+<p class="desc">trace <samp>apptest</samp>, send the trace output to
+<samp>apptest.trc</samp>; <samp>conf.dat</samp> is an argument to
+<samp>apptest</samp> executable;</p>
+
+<p class="cmdc">strace -p 17055 2>&1 | grep -i io</p>
+<p class="desc">trace the process with pid = 17055, search for lines
+containing '<samp>io</samp>', redirect stderr to stdout;</p>
+
+
+
+<h5>Options</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-h</code></td>
+<td class="opt_desc">help;</td></tr>
+<tr>
+<td class="opt_name"><code>-V</code></td>
+<td class="opt_desc">version;</td></tr>
+<tr>
+<td class="opt_name"><code>-v</code></td>
+<td class="opt_desc">verbose;</td></tr>
+<tr>
+<td class="opt_name"><code>-c</code></td>
+<td class="opt_desc">count time, calls, and errors for each syscall and
+report a summary on program exit;</td></tr>
+<tr>
+<td class="opt_name"><code>-f</code></td>
+<td class="opt_desc">follow forks (trace child processes as they are created
+by currently traced processes as a result of the <samp>fork</samp> system call);</td></tr>
+<tr>
+<td class="opt_name"><code>-ff</code></td>
+<td class="opt_desc">when <code>-o</code> <kbd>file</kbd> option is in effect,
+each process trace is written to a separate file
+<kbd>file</kbd><code>.</code><kbd>pid</kbd>;</td></tr>
+<tr>
+<td class="opt_name"><code>-F</code></td>
+<td class="opt_desc">attempt to follow <samp>vforks</samp>;</td></tr>
+<tr>
+<td class="opt_name"><code>-i</code></td>
+<td class="opt_desc">print the instruction pointer at the time of the
+system call;</td></tr>
+<tr>
+<td class="opt_name"><code>-q</code></td>
+<td class="opt_desc">suppress messages about attaching, detaching, etc;</td></tr>
+<tr>
+<td class="opt_name"><code>-r</code></td>
+<td class="opt_desc">print a relative timestamp upon entry to each syscall
+(time difference between the beginnings of successive syscalls);</td></tr>
+<tr>
+<td class="opt_name"><code>-t</code></td>
+<td class="opt_desc">prefix each line of the trace with the time of day;</td></tr>
+<tr>
+<td class="opt_name"><code>-tt</code></td>
+<td class="opt_desc">like prev, include microseconds;</td></tr>
+</table>
+
+<p class="fmtc"><code>-ttt</code></p>
+<p class="desc">like prev, but the leading portion will be printed as the
+number of seconds since the epoch;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-T</code></td>
+<td class="opt_desc">show the time spent in each syscall;</td></tr>
+<tr>
+<td class="opt_name"><code>-x</code></td>
+<td class="opt_desc">print all non-ASCII strings in hex string format;</td></tr>
+<tr>
+<td class="opt_name"><code>-xx</code></td>
+<td class="opt_desc">print all strings in hex string format;</td></tr>
+<tr>
+<td class="opt_name"><code>-a</code> <kbd>n</kbd></td>
+<td class="opt_desc">align return values in a specific column (default
+column 40);</td></tr>
+</table>
+
+<p class="fmtc"><code>-e</code> <kbd>expr</kbd></p>
+<p class="desc">a qualifying expression that modifies which events to trace
+or how to trace them; the format of <kbd>expr</kbd> is:</p>
+
+<p class="fmt" style="margin-left:40px">[<kbd>qualifier</kbd><code>=</code>][<code>!</code>]<kbd>value1</kbd>[<code>,</code><kbd>value2</kbd>]<kbd>...</kbd></p>
+
+<p class="desc"> where <kbd>qualifier</kbd> is one of <code>trace</code>,
+<code>abbrev</code>, <code>verbose</code>, <code>raw</code>,
+<code>signal</code>, <code>read</code>, or <code>write</code> and
+<kbd>value</kbd> is a qualifier-dependent symbol or number (default qualifier
+is <code>trace</code>);</p>
+
+<p class="fmtc"><code>-e trace=</code><kbd>set</kbd></p>
+<p class="desc">trace only the specified set of system calls, for example
+<code>trace=open,close,read,write</code> (by default <code>trace=all</code>);</p>
+
+<p class="fmtc"><code>-e trace=file</code></p>
+<p class="desc">trace all system calls which take a filename as arg;</p>
+
+<p class="fmtc"><code>-e trace=process</code></p>
+<p class="desc">trace all system calls which involve process management;</p>
+
+<p class="fmtc"><code>-e trace=network</code></p>
+<p class="desc">trace all network-related system calls;</p>
+
+<p class="fmtc"><code>-e trace=signal</code></p>
+<p class="desc">trace all signal-related system calls;</p>
+
+<p class="fmtc"><code>-e trace=ipc</code></p>
+<p class="desc">trace all IPC-related system calls;</p>
+
+<p class="fmtc"><code>-o</code> <kbd>file</kbd></p>
+<p class="desc">send the trace output to <kbd>file</kbd> instead of stderr;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-O</code> <kbd>n</kbd></td>
+<td class="opt_desc">set the overhead for tracing syscalls to <kbd>n</kbd>
+microseconds;</td></tr>
+</table>
+
+<p class="fmtc"><code>-p</code> <kbd>pid</kbd></p>
+<p class="desc">attach to the process with the process ID <kbd>pid</kbd>
+and begin tracing; the trace (not the process!) may be terminated at any
+time by a keyboard interrupt signal (<span class="keys">CTRL+C</span>);</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-s</code> <kbd>n</kbd></td>
+<td class="opt_desc">specify the max string size to print (the default is 32);</td></tr>
+</table>
+
+<p class="fmtc"><code>-S</code> <kbd>sortby</kbd></p>
+<p class="desc">sort the output of the histogram printed when the
+<code>-c</code> option is set, by the specified criterion: <code>time</code>
+(default), <code>calls</code>, <code>name</code>, <code>nothing</code>;</p>
+
+<p class="fmtc"><code>-u</code> <kbd>username</kbd></p>
+<p class="desc">run cmd with the user ID, group ID, and supplementary
+groups of <kbd>username</kbd>;</p>
+
+<p class="fmtc"><code>-E</code>
+<kbd>var</kbd><code>=</code><kbd>value</kbd></p>
+<p class="desc">run cmd with env variable <kbd>var</kbd> set to <kbd>value</kbd>;</p>
+
+<p class="fmtc"><code>-E</code> <kbd>var</kbd></p>
+<p class="desc">remove env variable <kbd>var</kbd> from the inherited list
+of env variables before passing it on to the cmd;</p>
+
+
+
+
+
+<p class="cmdname"><a name="su">su</a></p>
+<p>
+changes the effective user and group IDs to that of the specified user.</p>
+
+<p class="cmdc">su -</p>
+<p class="desc">become <samp>root</samp> (if you know the password); start a new [default]
+shell as <samp>root</samp> and work within <samp>root</samp>’s environment;</p>
+
+<p class="cmdc">su - oracle</p>
+<p class="desc">start a new [default] shell on behalf of the user
+<samp>oracle</samp> and work within the <samp>oracle</samp>’s environment;</p>
+
+<p class="cmdc">su -c "make install"</p>
+<p class="desc">perform a system-wide installation of a new application
+(regular users can only install software to their home dir);</p>
+
+<p class="fmt"><code>su&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;...&nbsp;</kbd>
+[<code>-</code>] [<kbd>user&nbsp;</kbd>[<kbd>arg</kbd>]<kbd>&nbsp;...</kbd> ]</p>
+<p>
+By default, <kbd>user</kbd> is <samp>root</samp>, '<code>-</code>'
+is equivalent to <code>-l</code> (<code>--login</code>).</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>-c</code> <kbd>cmd</kbd>,
+<code>--command=</code><kbd>cmd</kbd></p>
+<p class="desc">pass a single cmd to the shell;</p>
+
+<p class="fmtc"><code>-f</code>, <code>--fast</code></p>
+<p class="desc">pass <code>-f</code> to <code>csh</code> or <code>tcsh</code>;</p>
+
+<p class="fmtc"><code>-l</code>, <code>--login</code></p>
+<p class="desc">make the shell a login shell;</p>
+
+<p class="fmtc"><code>-m</code>, <code>-p</code>,
+<code>--preserve-environment</code></p>
+<p class="desc">do not reset env vars;</p>
+
+<p class="fmtc"><code>-s</code> <kbd>shell</kbd>,
+<code>--shell=</code><kbd>shell</kbd></p>
+<p class="desc">run the specified shell if <samp>/etc/shells</samp> allows it;</p>
+
+
+
+
+
+<p class="cmdname"><a name="sudo">sudo</a></p>
+<p>
+is a limited and restricted version of <a href="#su"><code>su</code></a>.
+It allows some users to exec cmds that are usually supposed to be
+executed by a superuser (or some other users).
+
+<p class="fmtc"><code>sudo </code><kbd>cmd</kbd></p>
+<p class="fmt"><code>sudo&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;cmd</kbd></p>
+
+<p class="cmdc">sudo apt install mc</p>
+<p class="cmdc">sudo adduser gamer2</p>
+<p class="cmd">sudo shutdown -h +5</p>
+<p>
+To work properly, <code>~</code> requires <i>correct</i> config file
+<samp>/etc/sudoers</samp>. You should <b>never edit this file</b> with any
+editor except <a href="cmds_v.html#visudo"><code>visudo</code></a> (a "special
+version" of <a href="cmds_v.html#vi"><code>vi</code></a> editor):</p>
+
+<p class="cmd">sudo visudo</p>
+<p>
+Actually, you probably should not edit it at all! If you want to add
+something, create a file in <samp>/etc/sudoers.d/</samp> dir and put
+your stuff in that file. Make sure this file has no extention, belongs to
+<samp>root/root</samp>, has <samp>0440</samp> mode, follows <i>sudoers</i>
+rules and is edited like this (file name can be different):</p>
+
+<p class="cmd">sudo visudo -f /etc/sudoers.d/appsrv</p>
+<p>
+Note that the directive</p>
+
+<p class="fmt"><samp>#includedir /etc/sudoers.d</samp></p>
+<p>
+in <samp>/etc/sudoers</samp> must be exactly like this, i.e.,
+prefixed with <samp>#</samp>, it's a </i>directive</i>, not a comment.</p>
+<p>
+If, nevertheless, you messed up with your <samp>/etc/sudoers</samp> and
+cannot run <code>sudo</code> anymore, and you cannot login as superuser to
+correct your foolish mistakes, then, maybe, the following command will save
+you (not all Linux distros support it, but Ubuntu does):</p>
+
+<p class="cmd">pkexec visudo</p>
+<p>
+The alternative is to reboot in single user mode, mount/remount root fs
+in r/w mode, etc .. obviously it will be longer and not so simple.</p>
+
+<p class="warn">Note!</p>
+<p class="indent">
+When <code>~</code> prompts you for password, it wants your account's pass,
+not superuser's pass.</p>
+<p>
+On success the return value is the ret val of the program that was
+executed. Otherwise <code>~</code> quits with an exit value <samp>1</samp>
+(sometimes an err msg is sent to stderr).</p>
+<p>
+In some Linux distributions (e.g. Ubuntu) <samp>root</samp> account is
+disabled after installation, i.e. you cannot login directly or use
+<code>su</code> to become a superuser. But the account still exists, and it
+is possible to exec cmds with superuser privs. Some of the following cmds
+are marked BAD, because they defeat the purpose of <code>~</code>, and
+because working in superuser mode is quite dangerous (for your system).</p>
+
+<p class="cmdc">sudo !!</p>
+<p class="desc">if the last command has failed due to unsifficient
+permissions, run it again, this time as <code>sudo</code> <kbd>cmd</kbd>;</p>
+
+<p class="cmdc">sudo -s</p>
+<p class="desc">start a root shell, but keep the current
+shell's env (<span class="warn">bad!</span>);</p>
+
+<p class="cmdc">sudo -i</p>
+<p class="desc">start a root shell, root's env and root's
+login scripts (<span class="warn">bad!</span>);</p>
+
+<p class="cmdc">sudo gnome-terminal</p>
+<p class="desc">start a new GNOME terminal with root prompt
+and privs (<span class="warn">bad!</span>);</p>
+
+<p class="warn">Note!</p>
+<p class="indent">
+For GUI apps you should use <code>gksudo</code> (or <code>kdesudo</code>
+for KDE env). These cmds set <samp>HOME=~root</samp>, and copy
+<samp>.Xauthority</samp> to a tmp dir. This prevents files in your home dir
+becoming owned by <samp>root</samp>.</p>
+
+<p class="cmdc">gksudo nautilus</p>
+<p class="desc">start a GUI app (<code>nautilus</code> file browser)
+with <samp>root</samp> privs (to enter this cmd in GUI mode, you can use
+<span class="keys">ALT+F2</span>);</p>
+
+<p class="cmdc">gksudo gedit /etc/fstab</p>
+<p class="desc">edit system file that cannot be modified by a regular user;</p>
+
+
+
+<h5>Who can run sudo</h5>
+<p>
+The priv to exec <code>~</code> is given to members of group <samp>sudo</samp>.
+In Ubuntu versions before 12.04 the group was <samp>admin</samp>.
+To create a new user with the priv to run <code>~</code>:</p>
+
+<p class="cmd">adduser <span class="arg">username</span> sudo</p>
+<p>
+To give the priv to an existing user:</p>
+
+<p class="cmd">usermod -a -G sudo <span class="arg">username</span></p>
+
+
+
+<h5>Some notes on the subj</h5>
+<p>
+The real and effective <samp>uid</samp> and <samp>gid</samp> are set to
+match those of the target user as specified in the <samp>/etc/passwd</samp>.</p>
+<p>
+By default you must authenticate yourself with your own
+(not <samp>root</samp>'s) password. After this you can use <code>~</code>
+for a limited period of time (5 .. 15 min), then you're once again prompted
+for pass. To cut this timeout short:</p>
+
+<p class="cmd">sudo -k</p>
+<p>
+For security reasons <code>~</code> removes form env some variables that are
+passed to the program to be executed (<code>sudo -V</code> on behalf of
+<samp>root</samp> shows the list). Though in general <code>~</code> is much
+safer than <code>su</code>, there is risk that some user gets full
+<samp>root</samp> privileges due to superuser mistake. This happens when user
+is allowed to run some program with shell escape (some editors, for example),
+or is granted permission to execute <code>sudo su</code> or
+<code>sudo sh</code>.</p>
+
+
+
+<h5>Files</h5>
+
+<p class="fmtc"><samp>/etc/sudoers</samp></p>
+<p class="desc">defines authorized users; use
+<a href="cmds_v.html#visudo"><code>visudo</code></a> (special version of
+<a href="cmds_v.html#vi"><code>vi</code></a> editor) to edit this file,
+otherwise there'll be problems;</p>
+
+<p class="fmtc"><samp>/var/run/sudo</samp></p>
+<p class="desc">this is a dir containing timestamps;</p>
+
+
+
+<h5>Some options</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-h</code></td>
+<td class="opt_desc">help;</td></tr>
+<tr>
+<td class="opt_name"><code>-V</code></td>
+<td class="opt_desc">version;</td></tr>
+<tr>
+<td class="opt_name"><code>-b</code></td>
+<td class="opt_desc">run the given cmd in the background (you cannot use
+shell job control to manipulate such process);</td></tr>
+<tr>
+<td class="opt_name"><code>-H</code></td>
+<td class="opt_desc">set the <samp>HOME</samp> env variable to the homedir
+of the target user (<samp>root</samp> by default) as specified in
+<samp>passwd</samp>;</td></tr>
+<tr>
+<td class="opt_name"><code>-k</code></td>
+<td class="opt_desc">invalidate the user’s timestamp; the next time
+<code>~</code> is run a password will be required; this option itself
+does not require a password;</td></tr>
+<tr>
+<td class="opt_name"><code>-K</code></td>
+<td class="opt_desc">remove the user’s timestamp entirely;</td></tr>
+<tr>
+<td class="opt_name"><code>-l</code></td>
+<td class="opt_desc">list allowed and forbidden cmds for the current user;</td></tr>
+<tr>
+<td class="opt_name"><code>-L</code></td>
+<td class="opt_desc">list params that may be set in a <samp>Defaults</samp> line;</td></tr>
+<tr>
+<td class="opt_name"><code>-P</code></td>
+<td class="opt_desc">preserve user’s group vector (the real and effective
+group IDs are nevertheless set to match the target user); by default,
+the group vector will be initialized to the list of groups the target user
+is in;</td></tr>
+</table>
+
+<p class="fmtc"><code>-r</code> <kbd>role</kbd></p>
+<p class="desc">set SELinux security context to have the specified role;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-s</code></td>
+<td class="opt_desc">run shell specified by <samp>SHELL</samp> env var
+(if set), or by <samp>passwd</samp>;</td></tr>
+<tr>
+<td class="opt_name"><code>-S</code></td>
+<td class="opt_desc">read the password from stdin instead of terminal device;</td></tr>
+</table>
+
+<p class="fmtc"><code>-t</code> <kbd>type</kbd></p>
+<p class="desc">set SELinux security context to have the specified type
+(domain); if no type is given, the default type is derived from the specified
+role;</p>
+
+<p class="fmtc"><code>-u</code> <kbd>usr</kbd></p>
+<p class="desc">run cmd as the specified user (not <samp>root</samp>);
+user can be given by the username or uid prefixed with '<code>#</code>';</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-v</code></td>
+<td class="opt_desc">uptate the user’s timestamp, prompting for password
+if necessary; it extends <code>~</code> timeout for another 5 min;</td></tr>
+<tr>
+<td class="opt_name"><code>--</code></td>
+<td class="opt_desc">stop processing command line arguments;</td></tr>
+</table>
+
+
+
+<h5>You should not do this!</h5>
+<p>
+In Linux systems where <samp>root</samp> login is disabled (e.g. Ubuntu),
+you can return to old-style behaviour by setting <samp>root</samp>'s pass:</p>
+
+<p class="cmd">sudo passwd root</p>
+<p>
+GUI login must be configured separately:</p>
+
+<p class="fmt"><samp>System -&gt; Administration -&gt; Login screen, ...</samp></p>
+<p>
+But logging in to <b>X</b> as <samp>root</samp> may cause serious problems!</p>
+<p>
+To re-disable <samp>root</samp> account:</p>
+
+<p class="cmd">sudo passwd -dl root</p>
+
+
+
+
+
+<p class="cmdname"><a name="swapon">swapon, swapoff</a></p>
+<p>
+enables / disables devices (or files) for paging and swapping.</p>
+
+<p class="cmdc">swapon /dev/sda6</p>
+<p class="desc">enable swap area on the disk partition <samp>/dev/sda6</samp>;</p>
+
+<p class="cmdc">swapoff /dev/sdb2</p>
+<p class="desc">disable swap area on the disk partition <samp>/dev/sdb2</samp>;</p>
+
+<p class="cmdc">swapon -a</p>
+<p class="desc">enable all swap devices specified in <samp>/etc/fstab</samp>;</p>
+
+<p class="cmdc">swapoff -a</p>
+<p class="desc">disable all swap devices specified in <samp>/etc/fstab</samp>;</p>
+
+<p class="cmdc">swapon -s</p>
+<p class="desc">show swap usage summary for all available devices
+(this is equivalent to <code>cat proc/swaps</code>);</p>
+
+<p class="fmt"><code>swapon&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;special_file</kbd></p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-h</code>
+&nbsp;&nbsp; <code>-V</code> &nbsp;&nbsp; <code>-v</code></p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-a</code></td>
+<td class="opt_desc">make available for swapping all devices marked as
+"<samp>swap</samp>" in <samp>/etc/fstab</samp>; skip silently those that
+are used already;</td></tr>
+<tr>
+<td class="opt_name"><code>-e</code></td>
+<td class="opt_desc">skip silently non-existing devices (can be used with <code>-a</code>);</td></tr>
+</table>
+
+<p class="fmtc"><code>-L</code> <kbd>label</kbd></p>
+<p class="desc">use the partition that has the specified label;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-p</code> <kbd>n</kbd></td>
+<td class="opt_desc">set <code>~</code> priority (0..32767); higher numbers
+mean higher priority; it also can be specified in <samp>/etc/fstab</samp> as
+<samp>pri=</samp><kbd>n</kbd>;</td></tr>
+<tr>
+<td class="opt_name"><code>-s</code></td>
+<td class="opt_desc">show swap usage summary by device;</td></tr>
+</table>
+
+<p class="fmtc"><code>-U</code> <kbd>uuid</kbd></p>
+<p class="desc">use the partition that has the specified uuid;</p>
+
+
+
+
+
+<p class="cmdname"><a name="sysctl">sysctl</a></p>
+<p>
+(do not confuse with<code><a href="#systemctl"> systemctl </a></code>) is
+used to modify kernel parameters at runtime. The params available are those
+listed under <samp>/proc/sys/</samp>.</p>
+
+<p class="fmt"><code>sysctl&nbsp;</code><kbd>options</kbd></p>
+<p class="fmt"><code>sysctl&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;var ...</kbd></p>
+<p class="fmt"><code>sysctl&nbsp;</code>[<kbd>options</kbd>]<code>&nbsp;-w</code> <kbd>var</kbd><code>=</code><kbd>value ...</kbd></p>
+<p>
+<kbd>var</kbd> is the name of a key to read from
+(like <samp>kernel.ostype</samp>); note that '<code>/</code>' can be
+used instead of '<code>.</code>');</p>
+
+<p class="cmdc">/sbin/sysctl -a</p>
+<p class="desc">show all available values;</p>
+
+<p class="cmdc">/sbin/sysctl -n kernel.hostname</p>
+<p class="desc">show the current value of <samp>kernel.hostname</samp>;</p>
+
+<p class="cmdc">/sbin/sysctl -w kernel.domainname="home.net"</p>
+<p class="desc">set <samp>kernel.domainname</samp> to <samp>home.net</samp>;</p>
+
+<p class="cmdc">sysctl -a | grep disable_ipv6</p>
+<p class="desc">check if IPv6 support is disabled (there are usually several
+lines, pay attention to <samp>net.ipv6.conf.all.disable_ipv6</samp>,<br>
+<samp>0</samp> means "enabled", <samp>1</samp> - "disabled");</p>
+
+
+
+<h5>Options</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-a</code></td>
+<td class="opt_desc">display all values currently available;</td></tr>
+<tr>
+<td class="opt_name"><code>-A</code></td>
+<td class="opt_desc">display all values currently available in table form;</td></tr>
+<tr>
+<td class="opt_name"><code>-e</code></td>
+<td class="opt_desc">ignore errors about unknown keys;</td></tr>
+<tr>
+<td class="opt_name"><code>-n</code></td>
+<td class="opt_desc">disable printing of the key name when printing values;</td></tr>
+</table>
+
+<p class="fmtc"><code>-p</code> <kbd>file</kbd></p>
+<p class="desc">load settings from the specified file
+(by default it is <samp>/etc/sysctl.conf</samp>);</p>
+
+<p class="fmtc"><code>-w</code> <kbd>var</kbd><code>=</code><kbd>value</kbd></p>
+<p class="desc">set a key to the specified value; value may be enclosed
+in double quotes, if it contains qoutes or some other chars parsed by shell;</p>
+
+
+
+
+
+<p class="cmdname"><a name="systemctl">systemctl</a></p>
+<p>
+This is a front-end utility for <a href="boot.html#init">systemd</a>, it allows
+to manage services, timers, sockets, mount points, etc. In most cases it requires
+<i>superuser</i>'s priv though some cmds (e.g. <i>reboot</i>, <i>status</i>) work
+without <code>sudo</code>.</p>
+
+<p class="cmdc">systemctl reboot</p>
+<p class="cmdc">systemctl suspend</p>
+<p class="cmdc">systemctl poweroff</p>
+<p class="cmdc">systemctl show-environment</p>
+<p class="cmdc">systemctl set-environment
+<span class="arg">var</span>=<span class="arg">value</span></p>
+<p class="cmdc">systemctl unset-environment <span class="arg">var</span></p>
+<p class="cmd">systemctl list-dependencies --all</p>
+<p>
+The last cmd shows relationships between services in <code>pstree</code>-style.</p>
+<p>
+Usage examples for Apache web server:</p>
+
+<p class="cmdc">systemctl status apache2.service</p>
+<p class="cmdc">sudo systemctl start apache2.service</p>
+<p class="cmdc">sudo systemctl restart apache2.service</p>
+<p class="cmdc">sudo systemctl stop apache2</p>
+<p class="cmd">sudo systemctl reload apache2</p>
+<p>
+Of the above cmds only <samp>status</samp> prints the output. Others produce
+output in case of failure. <samp>reload</samp> asks to reload service-specific
+config.</p>
+
+<p class="cmd">systemctl kill apache2</p>
+<p>
+sends a signal to one or more processes of the unit; to specify the
+signal use <code>--signal=<span class="arg">sig</span></code> option;</p>
+<p>
+The following cmds are used to configure service auto start at boot time:
+<samp>enable</samp> creates the required symlinks, but it does not start
+service immediately (you should do it manually, if necessary);
+<samp>disable</samp> removes symlinks, but does not stop the running service.
+
+<p class="cmdc">systemctl is-active apache2.service</p>
+<p class="cmdc">systemctl enable apache2.service</p>
+<p class="cmd">systemctl disable apache2.service</p>
+<p>
+Note that <b>active</b> means "running".
+If some service is <b>disabled</b> it does not start at boot. However, you
+still can start it manually. The following cmds control the service
+availability: if service is <b>masked</b>, it cannot be started neither
+manually nor auto. Usually it's better to <b>mask</b> with
+<code>--runtime</code> option (to be cleared after reboot).</p>
+
+<p class="cmdc">systemctl mask apache2.service</p>
+<p class="cmdc">systemctl --runtime mask apache2.service</p>
+<p class="cmd">systemctl unmask apache2.service</p>
+<p>
+Other cmds:</p>
+
+<p class="cmdc">systemctl list-unit-files</p>
+<p class="desc">list all the available units;</p>
+
+<p class="cmdc">systemctl list-units</p>
+<p class="desc">list all running units;</p>
+
+<p class="cmdc">systemctl list-unit-files --type=service</p>
+<p class="desc">list all services (including enabled and disabled);</p>
+
+<p class="cmdc">systemctl list-unit-files --type=mount</p>
+<p class="desc">list all system mount points;</p>
+
+<p class="cmdc">systemctl list-unit-files --type=socket</p>
+<p class="desc">list all available system sockets;</p>
+<p>
+See other usage examples:
+<p class="menu">
+<a href="#shutdown">Shutdown</a>&nbsp;//
+<a href="net.html#net_restart">Network</a>&nbsp;//
+<a href="psql.html#startup">PostgreSQL</a>&nbsp;//
+<a href="mysql.html">MySQL</a>
+</p>
+
+
+
+<h5>
+<a name="rc.local">About /etc/rc.local</a></h5>
+<p>
+In latest Linux distros (e.g. Ubuntu 20.04 and newer) there is no
+<samp>rc.local</samp>. Not that it's gone forever .. if you need it, you still
+can create it [yourself]. But internal mechanics has changed. Now it's handled
+by <b>systemd</b>, and you have to set it right because it won't work by default.
+Due to some unexplainable reasons, in Ubuntu 20.04 the corresponding unit
+file</p>
+
+<p class="fmt"><samp>/usr/lib/systemd/system/rc-local.service</samp></p>
+<p>
+is bad, and</p>
+
+<p class="cmd">sudo systemctl enable rc-local</p>
+<p>
+fails with error messages. So, you have to create two files. First, classic
+<code>rc.local</code> (which is actually a BASH script, do not forget to set
+mode <samp>755</samp>):</p>
+<div class="file" style="font-size:80%"><pre>
+#!/bin/bash
+
+# The following steps are required because '/var/log' and '/var/spool'
+# in my system are 'tmpfs' filesystems, they both are lost when system
+# goes down and recreated at system startup. However, some apps cannot
+# cope with such non-standard behavior. The following commands are
+# supposed to handle problems with 'anacron' and 'apache'.
+
+cd /var/spool
+
+if [ `pwd` = '/var/spool' ]; then
+  mkdir anacron
+fi
+
+# It's supposed that Apache is configured to run all the time when system
+# is up. However, it fails to start if '/var/log/apache2' is missing. Unlike
+# '/var'/log' which is auto created after each system restart, 'apache2' is
+# only created during Apache installation. At least this is right for
+# Ubuntu Linux 20.04 and related Apache versions.
+
+cd /var/log
+
+if [ `pwd` = '/var/log' ]; then
+  mkdir apache2
+  systemctl start apache2
+
+  # Now, my own service.
+  # It's supposed to be auto started by systemctl when user logs in,
+  # and it will be stopped when user logs out. The following cmds are
+  # required to provide correct log writing (once again, because '/var/log'
+  # is 'tmpfs' and is totally lost at system shutdown).
+
+  mkdir my_svc_01
+  chown syslog.adm my_svc_01
+  chmod 755 my_svc_01
+fi
+
+cd -
+
+exit 0
+</pre></div>
+<p>
+And second, unit file <samp>/etc/systemd/system/rc-local.service</samp>. Note that
+<samp>/etc/systemd/...</samp> has higher priority, so the original unit file in
+<samp>usr/lib/systemd/...</samp> does not matter anymore (<b>Warning!</b> Do not
+remove it).</p>
+<div class="file"><pre>
+[Unit]
+Description=/etc/rc.local Compatibility
+ConditionPathExists=/etc/rc.local
+
+[Service]
+Type=forking
+ExecStart=/etc/rc.local start
+TimeoutSec=0
+StandardOutput=tty
+RemainAfterExit=yes
+SysVStartPriority=99
+
+[Install]
+WantedBy=multi-user.target
+</pre></div>
+<p>
+When files are ready, try to enable service:</p>
+
+<p class="cmd">sudo systemctl enable rc-local</p>
+<p>
+In case of success it outputs</p>
+<div class="term"><pre>
+Created symlink /etc/systemd/system/multi-user.target.wants/rc-local.service
+...
+</pre></div>
+<p>
+You can start the service and check it's state as usualy:</p>
+
+<p class="cmdc">sudo systemctl start rc-local</p>
+<p class="cmd">sudo systemctl status rc-local</p>
+
+
+</div>
+
+</body></html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (yes, yum)</title>
+<meta name="description" content="linux quick reference, yes, yum" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+
+
+<p class="cmdname"><a name="yes">yes</a></p>
+<p>
+continuously outputs the specified string. By default it's "<samp>y</samp>":</p>
+
+<p class="fmt"><code>yes </code>[<kbd>string</kbd>]</p>
+<p>
+For example:</p>
+
+<p class="cmd">yes FIRE ALARM! Leave the building!</p>
+<p>
+fills the terminal screen with</p>
+<div class="term">
+<pre>
+FIRE ALARM! Leave the building!
+FIRE ALARM! Leave the building!
+FIRE ALARM! Leave the building!
+FIRE ALARM! Leave the building!
+FIRE ALARM! Leave the building!
+FIRE ALARM! Leave the building!
+FIRE ALARM! Leave the building!</pre>
+</div>
+<p>
+You must press <span class="keys">CTRL+C</span> to stop it.</p>
+<p>
+The only options are <code>--help</code> and <code>--version</code>.</p>
+
+
+
+
+
+<p class="cmdname"><a name="yum">yum</a></p>
+<p>
+(Yellowdog Updater Modified) is an interactive, automated update program
+for rpm-based systems.</p>
+
+<p class="fmt"><code>yum&nbsp;</code>[<kbd>options</kbd>] [<kbd>cmd</kbd>] [<kbd>pkg ...</kbd>]</p>
+<p>
+While installing or updating packages <code>~</code> ensures that all
+dependencies are satisfied. If no package matches <kbd>pkg</kbd>, it’s
+assumed to be a shell glob and any matches are then installed (updated).</p>
+
+<p class="cmdc">yum list all</p>
+<p class="desc">list all available and installed packages;</p>
+
+<p class="cmdc">yum list available</p>
+<p class="desc">list all packages in the repositories available for
+installation;</p>
+
+<p class="cmdc">yum list updates</p>
+<p class="desc">list all packages with updates available in the repositories;</p>
+
+<p class="cmdc">yum clean packages</p>
+<p class="desc">eliminate any cached pkgs from the system
+(downloaded pkgs are not automatically deleted);</p>
+
+<p class="cmdc">yum clean headers</p>
+<p class="desc">eliminate all files which <code>~</code> uses to determine
+the remote availability of pkgs; it will force <code>~</code> to download all
+headers at the next run;</p>
+
+<p class="cmdc">yum clean all</p>
+<p class="desc">this is the combination of previous two;</p>
+
+<p class="cmdc">yum update</p>
+<p class="desc">update all pkgs that can be udated (condition is: pkg must
+be installed and update for it must be available);</p>
+
+
+
+<h5>Commands</h5>
+
+<p class="fmtc"><code>install</code></p>
+<p class="desc">install the latest version of a package or group of pkgs;</p>
+
+<p class="fmtc"><code>update</code></p>
+<p class="desc">if no package name is given, update every currently installed
+pkg; if one or more pkgs are specified, update only those packages;</p>
+
+<p class="fmtc"><code>check-update</code></p>
+<p class="desc">check if any updates are available; if there is nothing
+suitable, returns exit value <samp>0</samp>; otherwise, returns exit value
+<samp>100</samp> and a list of pkgs to be updated;</p>
+
+<p class="fmtc"><code>remove</code></p>
+<p class="desc">remove the specified pkgs and their dependants from the
+system;</p>
+
+<p class="fmtc"><code>list</code></p>
+<p class="desc">list information about available pkgs;</p>
+
+<p class="fmtc"><code>provides</code></p>
+<p class="desc">find out which pkg provides some file or feature;</p>
+
+<p class="fmtc"><code>search</code></p>
+<p class="desc">find any packages matching the string in the description,
+summary, packager / package name field of an rpm file;</p>
+
+<p class="fmtc"><code>info</code></p>
+<p class="desc">list a description / summary of the available pkgs;</p>
+
+<p class="fmtc"><code>clean</code></p>
+<p class="desc">clean up various things which accumulate in the
+<code>~</code> cashe dir over time;</p>
+
+<p class="fmtc"><code>generate-rss</code></p>
+<p class="desc">create a rss file containing changelogs for all pkgs in
+the enabled repositories (by default it lists the most recent only);</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-h</code> &nbsp;&nbsp; <code>--help</code>
+&nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>-c</code> [<kbd>file</kbd>]</p>
+<p class="desc">use the specified config file (by default <samp>/etc/yum.conf</samp>);</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-C</code></td>
+<td class="opt_desc">run entirely from cache, do not download or update any
+headers unless it’s necessary to perform requested action;</td></tr>
+</table>
+
+<p class="fmtc"><code>-d</code> [<kbd>n</kbd>]</p>
+<p class="desc">set the debugging level (reasonable range is
+<samp>0..10</samp>);</p>
+
+<p class="fmtc"><code>-e</code> [<kbd>n</kbd>]</p>
+<p class="desc">set the error level (the range is <samp>0..10</samp>);
+<samp>0</samp> means print only critical errors; <samp>1</samp> means
+print all errors;</p>
+
+<p class="fmtc"><code>-R</code> [<kbd>t</kbd>]</p>
+<p class="desc">set the max amount of time (in minutes) <code>~</code>
+will wait before performing a command;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-t</code></td>
+<td class="opt_desc">be tolerant to the errors on the command line with
+regard to packages specified (suppress unnecessary error messages);</td></tr>
+<tr>
+<td class="opt_name"><code>-y</code></td>
+<td class="opt_desc">assume "yes" to any questions;</td></tr>
+</table>
+
+<p class="fmtc"><code>--disablerepo=</code><kbd>repoid</kbd></p>
+<p class="desc">disable a specific repository;</p>
+
+<p class="fmtc"><code>--enablerepo=</code><kbd>repoid</kbd></p>
+<p class="desc">enable a specific repository, that was disabled in the config
+file;</p>
+
+<p class="fmtc"><code>--exclude=</code><kbd>pkg</kbd></p>
+<p class="desc">exclude a specific package by name or glob from updates on
+all repositories;</p>
+
+<p class="fmtc"><code>--installroot=</code><kbd>root</kbd></p>
+<p class="desc">use an alternative <samp>installroot</samp>,
+relative to which all pkgs will be installed;</p>
+
+<p class="fmtc"><code>--obsoletes</code></p>
+<p class="desc">(for updates only) signals <code>~</code> to include pkg
+obsoletes in its calculations which is convenient when upgrading to a new
+distro-version (e.g., from SomeLinux 1.0 to SomeLinux 2.0);</p>
+
+<p class="fmtc"><code>--rss-filename=</code><kbd>fname</kbd></p>
+<p class="desc">output <samp>rss</samp> data for the <code>generate-rss</code>
+cmd to the specified file;</p>
+<p>
+Though <code>~</code> is supposed to access repositories over the Internet,
+it's also possible to use it locally. Repository is just a directory with
+rpm pkgs plus metadata, which can be generated by <code>createrepo</code>
+utility. The procedure is like follows (fedora packages):</p>
+<ul>
+<li>download / install <code>createrepo</code>, if missing in distro;</li>
+<li>create an empty dir for RPM packages in an appropriate place;</li>
+<li>move packages to this directory;</li>
+<li>create metadata, assuming <samp>/var/yum/base</samp> will be a repository:</li>
+
+<p class="cmd">createrepo /var/yum/base</p>
+
+<li>edit <samp>/etc/yum.conf</samp> or one of the files in
+<samp>/etc/yum.repos.d</samp>, set <samp>baseurl</samp> which must
+look like:</li>
+
+<div class="file">
+<pre>baseurl=file:///var/yum/base/</pre>
+</div>
+
+<li>try something like:</li>
+
+<p class="cmd">yum list updates</p>
+<p>
+to be sure that config is O.K. (must output a list of pkgs available).</p>
+</ul>
+
+</div>
+
+</body></html>

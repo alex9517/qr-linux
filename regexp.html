@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (regular expressions)</title>
+<meta name="description" content="linux quick reference, regex, regexp, regular expression, ere, pcre, anchor, quantifier, match, metacharacter" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<h1 class="part">
+<a name="regexp">Regular expressions</a></h1>
+<p>
+A regular expression provides a compact description of a set [of strings],
+without having to list all elements. There are several versions of regexp:
+basic (<samp>BRE</samp>), extended (<samp>ERE</samp>), perl compatible
+(<samp>PCRE</samp>) and other [less important] versions related to misc
+programming languages and applications. In <samp>BRE</samp> metacharacters
+<code>?</code>, <code>+</code>, <code>{</code>, <code>|</code>,
+<code>(</code>, <code>)</code> lose their special meaning, instead the
+backslashed versions should be used:
+<code>\?</code>, <code>\+</code>, <code>\{</code>, <code>\|</code>,
+<code>\(</code>, and <code>\)</code>. See reference table below.</p>
+
+
+
+<h5>Anchors</h5>
+
+<table class="options">
+<tr><td class="opt_name"><code>^</code></td><td class="opt_desc">beginning of line;</td></tr>
+<tr><td class="opt_name"><code>$</code></td><td class="opt_desc">end of line;</td></tr>
+<tr><td class="opt_name"><code>&lt;</code></td><td class="opt_desc">left word boundary;</td></tr>
+<tr><td class="opt_name"><code>&gt;</code></td><td class="opt_desc">right word boundary;</td></tr>
+<tr><td class="opt_name"><code>\b</code></td><td class="opt_desc">word boundary;</td></tr>
+<tr><td class="opt_name"><code>\B</code></td><td class="opt_desc">not a word boundary;</td></tr>
+</table>
+
+
+
+<h5>Quantifiers</h5>
+
+<table class="options">
+<tr><td class="opt_name"><code>?</code></td><td class="opt_desc">0 or 1;</td></tr>
+<tr><td class="opt_name"><code>*</code></td><td class="opt_desc">0, 1 or more;</td></tr>
+<tr><td class="opt_name"><code>+</code></td><td class="opt_desc">1 or more;</td></tr>
+<tr><td class="opt_name"><code>{</code><kbd>n</kbd><code>}</code></td><td class="opt_desc">exactly <kbd>n</kbd>;</td></tr>
+<tr><td class="opt_name"><code>{</code><kbd>n</kbd><code>,}</code></td><td class="opt_desc"><kbd>n</kbd> or more;</td></tr>
+<tr><td class="opt_name"><code>{,</code><kbd>m</kbd><code>}</code></td><td class="opt_desc">at most <kbd>m</kbd>;</td></tr>
+<tr><td class="opt_name"><code>{</code><kbd>n</kbd><code>,</code><kbd>m</kbd><code>}</code></td><td class="opt_desc">at least <kbd>n</kbd>, but no more than <kbd>m</kbd>;</td></tr>
+</table>
+<p>
+By default <code>?</code>, <code>*</code>, <code>+</code> are greedy
+quantifiers (i.e., they match as much as possible). To make them lazy
+(matching as little as possible) add <code>?</code> (<code>??</code>,
+<code>*?</code>, <code>+?</code>).</p>
+
+
+
+<h5>Alternation</h5>
+
+<table class="options">
+<tr><td class="opt_name"><code>|</code></td><td class="opt_desc">separates alternative patterns to be matched;</td></tr>
+</table>
+
+<p style="margin-top:4%">
+Most chars are treated as literals (they match only themselves).
+Any metachar with special meaning may be quoted by preceding it with
+a backslash.</p>
+
+
+
+<h5>Matches (Unix-style)</h5>
+
+<table class="options">
+<tr><td class="opt_name"><code>.</code></td><td class="opt_desc">any single character;</td></tr>
+<tr><td class="opt_name"><code>[</code><kbd>...</kbd><code>]</code></td><td class="opt_desc">any single character contained within <code>[ ]</code>;</td></tr>
+<tr><td class="opt_name"><code>[^</code><kbd>...</kbd><code>]</code></td><td class="opt_desc">any single character not contained within <code>[ ]</code>;</td></tr>
+<tr><td class="opt_name"><code>\d</code></td><td class="opt_desc">any single digit;</td></tr>
+<tr><td class="opt_name"><code>\D</code></td><td class="opt_desc">any single non-digit;</td></tr>
+<tr><td class="opt_name"><code>\s</code></td><td class="opt_desc">any single whitespace (space, <code>\t</code>, <code>\v</code>, <code>\n</code>, <code>\r</code>, <code>\f</code>);</td></tr>
+<tr><td class="opt_name"><code>\S</code></td><td class="opt_desc">any single non-whitespace;</td></tr>
+<tr><td class="opt_name"><code>\w</code></td><td class="opt_desc">any single alphanumeric character;</td></tr>
+<tr><td class="opt_name"><code>\W</code></td><td class="opt_desc">any single non-alphanumeric character;</td></tr>
+<tr><td class="opt_name"><code>\c</code></td><td class="opt_desc">control character (example: <code>\c[</code> matches Esc);</td></tr>
+<tr><td class="opt_name"><code>\n</code></td><td class="opt_desc">newline;</td></tr>
+<tr><td class="opt_name"><code>\r</code></td><td class="opt_desc">carriadge return;</td></tr>
+<tr><td class="opt_name"><code>\t</code></td><td class="opt_desc">Tab (horizontal Tab);</td></tr>
+<tr><td class="opt_name"><code>\v</code></td><td class="opt_desc">vertical Tab;</td></tr>
+<tr><td class="opt_name"><code>\( \)</code></td><td class="opt_desc">define a marked subexpression;</td></tr>
+<tr><td class="opt_name"><code>\</code><kbd>n</kbd></td><td class="opt_desc">where <kbd>n</kbd> is a digit (1..9); matches what the <kbd>n</kbd>th marked subexpression matched;</td></tr>
+</table>
+
+
+
+<h5>Matches (POSIX-style)</h5>
+
+<table class="options">
+<tr><td class="opt_name"><code>[:alnum:]</code></td><td class="opt_desc">any alphanumeric character (<code>[0-9A-Za-z]</code>);</td></tr>
+<tr><td class="opt_name"><code>[:alpha:]</code></td><td class="opt_desc">any alpha character (<code>[A-Za-z]</code>);</td></tr>
+<tr><td class="opt_name"><code>[:blank:]</code></td><td class="opt_desc">space or Tab;</td></tr>
+<tr><td class="opt_name"><code>[:ctrl:]</code></td><td class="opt_desc">any control character;</td></tr>
+<tr><td class="opt_name"><code>[:digit:]</code></td><td class="opt_desc">any digit (<code>[0-9]</code>);</td></tr>
+<tr><td class="opt_name"><code>[:graph:]</code></td><td class="opt_desc">any pseudographic character;</td></tr>
+<tr><td class="opt_name"><code>[:lower:]</code></td><td class="opt_desc">any lowercase character;</td></tr>
+<tr><td class="opt_name"><code>[:print:]</code></td><td class="opt_desc">any printable character;</td></tr>
+<tr><td class="opt_name"><code>[:punct:]</code></td><td class="opt_desc">any punctuation character;</td></tr>
+<tr><td class="opt_name"><code>[:space:]</code></td><td class="opt_desc">any whitespace (space, <code>\t</code>, <code>\n</code>, <code>\r</code>, <code>\f</code>, <code>\v</code>);</td></tr>
+<tr><td class="opt_name"><code>[:upper:]</code></td><td class="opt_desc">any uppercase character;</td></tr>
+<tr><td class="opt_name"><code>[:xdigit:]</code></td><td class="opt_desc">any hexadecimal digit;</td></tr>
+</table>
+
+<p style="margin-top:4%;margin-bottom:2%">
+Repetition takes precedence over concatenation, which in turn takes
+precedence over alternation. A whole subexpression may be enclosed in
+parentheses to override these rules.</p>
+
+<table class="grid_2" style="width:100%">
+<tr><td class="grid_2"></td>
+<td class="grid_2_cen"><code>.</code></td>
+<td class="grid_2_cen"><code>[ ]</code></td>
+<td class="grid_2_cen"><code>^</code></td>
+<td class="grid_2_cen"><code>$</code></td>
+<td class="grid_2_cen"><code>\( \)</code></td>
+<td class="grid_2_cen"><code>\{ \}</code></td>
+<td class="grid_2_cen"><code>?</code></td>
+<td class="grid_2_cen"><code>+</code></td>
+<td class="grid_2_cen"><code>|</code></td>
+<td class="grid_2_cen"><code>( )</code></td></tr>
+
+<tr><td class="grid_2"><code>awk</code></td>
+<td class="grid_2_cen"><samp>x</samp></td><td class="grid_2_cen"><samp>x</samp></td><td class="grid_2_cen"><samp>x</samp></td>
+<td class="grid_2_cen"><samp>x</samp></td><td class="grid_2_cen"></td><td class="grid_2_cen"></td>
+<td class="grid_2_cen"><samp>x</samp></td><td class="grid_2_cen"><samp>x</samp></td><td class="grid_2_cen"><samp>x</samp></td>
+<td class="grid_2_cen"><samp>x</samp></td></tr>
+
+<td class="grid_2"><code>grep</code></td>
+<td class="grid_2_cen"><samp>x</samp></td><td class="grid_2_cen"><samp>x</samp></td><td class="grid_2_cen"><samp>x</samp></td>
+<td class="grid_2_cen"><samp>x</samp></td><td class="grid_2_cen"><samp>x</samp></td><td class="grid_2_cen"><samp>x</samp></td>
+<td class="grid_2_cen"></td><td class="grid_2_cen"></td><td class="grid_2_cen"></td>
+<td class="grid_2_cen"></td></tr>
+
+<td class="grid_2"><code>egrep</code></td>
+<td class="grid_2_cen"><samp>x</samp></td><td class="grid_2_cen"><samp>x</samp></td><td class="grid_2_cen"><samp>x</samp></td>
+<td class="grid_2_cen"><samp>x</samp></td><td class="grid_2_cen"><samp>x</samp></td><td class="grid_2_cen"></td>
+<td class="grid_2_cen"><samp>x</samp></td><td class="grid_2_cen"><samp>x</samp></td><td class="grid_2_cen"><samp>x</samp></td>
+<td class="grid_2_cen"><samp>x</samp></td></tr>
+
+<td class="grid_2"><code>fgrep</code></td>
+<td class="grid_2_cen"><samp>x</samp></td><td class="grid_2_cen"><samp>x</samp></td><td class="grid_2_cen"><samp>x</samp></td>
+<td class="grid_2_cen"><samp>x</samp></td><td class="grid_2_cen"><samp>x</samp></td><td class="grid_2_cen"></td>
+<td class="grid_2_cen"></td><td class="grid_2_cen"></td><td class="grid_2_cen"></td>
+<td class="grid_2_cen"></td></tr>
+
+<td class="grid_2"><code>sed</code></td>
+<td class="grid_2_cen"><samp>x</samp></td><td class="grid_2_cen"><samp>x</samp></td><td class="grid_2_cen"><samp>x</samp></td>
+<td class="grid_2_cen"><samp>x</samp></td><td class="grid_2_cen"><samp>x</samp></td><td class="grid_2_cen"><samp>x</samp></td>
+<td class="grid_2_cen"></td><td class="grid_2_cen"></td><td class="grid_2_cen"></td>
+<td class="grid_2_cen"></td></tr>
+
+<td class="grid_2"><code>perl</code></td>
+<td class="grid_2_cen"><samp>x</samp></td><td class="grid_2_cen"><samp>x</samp></td><td class="grid_2_cen"><samp>x</samp></td>
+<td class="grid_2_cen"><samp>x</samp></td><td class="grid_2_cen"><samp>x</samp></td><td class="grid_2_cen"></td>
+<td class="grid_2_cen"><samp>x</samp></td><td class="grid_2_cen"><samp>x</samp></td><td class="grid_2_cen"><samp>x</samp></td>
+<td class="grid_2_cen"><samp>x</samp></td></tr>
+
+<td class="grid_2"><code>vi</code></td>
+<td class="grid_2_cen"><samp>x</samp></td><td class="grid_2_cen"><samp>x</samp></td><td class="grid_2_cen"><samp>x</samp></td>
+<td class="grid_2_cen"><samp>x</samp></td><td class="grid_2_cen"><samp>x</samp></td><td class="grid_2_cen"></td>
+<td class="grid_2_cen"></td><td class="grid_2_cen"></td><td class="grid_2_cen"></td>
+<td class="grid_2_cen"></td></tr>
+</table>
+
+
+
+<h5>Examples</h5>
+
+<table class="options">
+<tr><td class="opt_name"><code>/^$/</code></td><td class="opt_desc">an empty line;</td></tr>
+<tr><td class="opt_name"><code>/./</code></td><td class="opt_desc">a line with at least one char;</td></tr>
+<tr><td class="opt_name"><code>/^/</code></td><td class="opt_desc">all lines;</td></tr>
+<tr><td class="opt_name"><code>/thing/</code></td><td class="opt_desc"><samp>thing</samp> somewhere in the line;</td></tr>
+<tr><td class="opt_name"><code>/^thing/</code></td><td class="opt_desc"><samp>thing</samp> at the beginning of the line;</td></tr>
+<tr><td class="opt_name"><code>/thing$/</code></td><td class="opt_desc"><samp>thing</samp> at the end of the line;</td></tr>
+<tr><td class="opt_name"><code>/^thing$/</code></td><td class="opt_desc">a line consisting of <samp>thing</samp> only;</td></tr>
+<tr><td class="opt_name"><code>/thing.$/</code></td><td class="opt_desc"><samp>thing</samp> plus some other chars;</td></tr>
+<tr><td class="opt_name"><code>/thing\.$/</code></td><td class="opt_desc"><samp>thing.</samp> at the end of the line;</td></tr>
+<tr><td class="opt_name"><code>/\/thing\//</code></td><td class="opt_desc"><samp>/thing/</samp> somewhere in the line;</td></tr>
+<tr><td class="opt_name"><code>/[tT]hing/</code></td><td class="opt_desc"><samp>thing</samp> or <samp>Thing</samp>;</td></tr>
+<tr><td class="opt_name"><code>/thing[0-9]/</code></td><td class="opt_desc"><samp>thing</samp> followed by one digit;</td></tr>
+<tr><td class="opt_name"><code>/thing[^0-9]/</code></td><td class="opt_desc"><samp>thing</samp> followed by a non-digit;</td></tr>
+<tr><td class="opt_name"><code>tele(f|ph)one</code></td><td class="opt_desc"><samp>telefone</samp> or <samp>telephone</samp>;</td></tr>
+</table>
+
+<p class="cmdc">/thing[0-9][^0-9]/</p>
+<p class="desc"><samp>thing</samp> followed by digit and non-digit;</p>
+
+<p class="cmdc">/thing1.*thing2/</p>
+<p class="desc"><samp>thing1</samp> followed by some chars, then <samp>thing2</samp>;</p>
+
+<p class="cmdc">/^thing1.*thing2$/</p>
+<p class="desc"><samp>thing1</samp> at the beginning, <samp>thing2</samp> at the end;</p>
+
+</div>
+
+</body></html>

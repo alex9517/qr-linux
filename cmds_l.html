@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Linux quick reference (lastlog, less, ln, ls, lsattr, lshw, lsof, lspci, lsusb)</title>
+<meta name="description" content="linux quick reference, lastlog, less, ln, ls, lsattr, lshw, lsof, lspci, lsusb" />
+<meta name="charset" content="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="css/main.css" />
+<script src="js/jquery.js"></script>
+<script src="js/z002.js"></script>
+</head><body>
+
+<div id="main">
+
+<div id="topmenu">
+<p class="menu">
+<a href="#lastlog">lastlog</a>&nbsp;|
+<a href="#less">less</a>&nbsp;|
+<a href="#ln">ln</a>&nbsp;|
+<a href="#ls">ls</a>&nbsp;|
+<a href="#lsattr">lsattr</a>&nbsp;|
+<a href="#lshw">lshw</a>&nbsp;|
+<a href="#lsof">lsof</a>&nbsp;|
+<a href="#lspci">lspci</a>&nbsp;|
+<a href="#lsusb">lsusb</a></p>
+</div>
+
+<p class="cmdname"><a name="lastlog">lastlog</a></p>
+<p>
+formats and displays <samp>/var/log/lastlog</samp> (last login log file).
+This file is a database containing info on the last login of each user.
+You should not rotate it. It is a sparse file, its size on the disk is much
+smaller than the one reported by <code>ls -l</code> (for real size use
+<code>ls -s</code>).</p>
+
+<p class="fmt"><code>lastlog&nbsp;</code>[<kbd>options</kbd>]</p>
+<p>
+By default <code>~</code> entries are sorted by their order in
+<samp>/etc/passwd</samp>.</p>
+
+<p class="cmdc">lastlog -u zorg</p>
+<p class="desc">report when user <samp>zorg</samp> entered this system last time;</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-h</code> &nbsp;&nbsp; <code>--help</code></p>
+
+<p class="fmtc"><code>-t</code> <kbd>n</kbd>,
+<code>--time</code> <kbd>n</kbd></p>
+<p class="desc">show only records for last <kbd>n</kbd> days;</p>
+
+<p class="fmtc"><code>-u</code> <kbd>name</kbd>,
+<code>--user</code> <kbd>name</kbd></p>
+<p class="desc">show only records for user with the specified login name; <code>-t</code>
+overrides <code>-u</code>;</p>
+
+
+
+
+
+<p class="cmdname"><a name="less">less</a></p>
+<p>
+displays contents of text files; its cmd set is based on <code>more</code>
+and <a href="#vi"><code>vi</code></a>.</p>
+
+<p class="cmdc">less /var/log/messages</p>
+<p class="desc">browse <samp>/var/log/messages</samp> system log file;</p>
+
+<p class="fmt"><code>less&nbsp;</code>[<kbd>options</kbd>] [<code>--</code>] [<kbd>file</kbd>]<kbd>&nbsp;...</kbd></p>
+
+
+
+<h5>Some options</h5>
+
+<p class="fmt"><code>-?</code> &nbsp;&nbsp; <code>--help</code>
+&nbsp;&nbsp; <code>-V</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-a</code></td>
+<td class="opt_desc">start search after the last line displayed on the screen;</td></tr>
+<tr>
+<td class="opt_name"><code>-E</code></td>
+<td class="opt_desc">exit when we reach EOF first time;</td></tr>
+<tr>
+<td class="opt_name"><code>-e</code></td>
+<td class="opt_desc">exit when we reach EOF second time;</td></tr>
+<tr>
+<td class="opt_name"><code>-f</code></td>
+<td class="opt_desc">force non-regular file to be opened; suppress warning
+when a binary file is opened;</td></tr>
+<tr>
+<td class="opt_name"><code>-i</code></td>
+<td class="opt_desc">ignore case when searching (doesn’t work if pattern
+contains uppercase letters);</td></tr>
+<tr>
+<td class="opt_name"><code>-I</code></td>
+<td class="opt_desc">ignore case when searching (no matter what pattern contains);</td></tr>
+<tr>
+<td class="opt_name"><code>-N</code></td>
+<td class="opt_desc">show line numbers;</td></tr>
+<tr>
+<td class="opt_name"><code>-n</code></td>
+<td class="opt_desc">suppress line numbers;</td></tr>
+<tr>
+<td class="opt_name"><code>-s</code></td>
+<td class="opt_desc">squeeze consecutive blank lines into a single blank line;</td></tr>
+</table>
+
+<p class="fmtc"><code>--shift</code> <kbd>n</kbd><code>, -</code><kbd>n</kbd></p>
+<p class="desc">specifies the default number of positions to scroll horizontally in the
+<span class="keys">&#8594;</span> / <span class="keys">&#8592;</span> arrow keys cmds;</p>
+
+
+
+<h5>Some commands</h5>
+
+<p class="fmtc"><code>h</code>, <code>H</code></p>
+<p class="desc">help;</p>
+
+<p class="fmtc"><span class="keys">Space</span>, <span class="keys">PageDown</span>,
+<code>f</code>, <span class="keys">CTRL+F</span></p>
+<p class="desc">scroll forward <kbd>n</kbd> lines, default is one window;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>z</code></td>
+<td class="opt_desc">like prev, but if <kbd>n</kbd> is specified,
+it becomes new window size;</td></tr>
+</table>
+
+<p class="fmtc"><span class="keys">&#8595;</span>, <span class="keys">Enter</span>,
+<code>e</code>, <code>j</code></p>
+<p class="desc">scroll forward <kbd>n</kbd> lines, default is <samp>1</samp>;</p>
+
+<p class="fmtc"><code>d</code>, <span class="keys">CTRL+D</span></p>
+<p class="desc">scroll forward <kbd>n</kbd> lines, default is one half of the screen size;
+if <kbd>n</kbd> is specified, it becomes new default for <code>d</code>
+and <code>u</code> cmds;</p>
+
+<p class="fmtc"><span class="keys">PageUp</span>, <code>b</code>, <span class="keys">CTRL+B</span></p>
+<p class="desc">scroll backward <kbd>n</kbd> lines, default is one window;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>w</code></td>
+<td class="opt_desc">like prev, but if <kbd>n</kbd> is specified, it becomes
+new window size;</td></tr>
+</table>
+
+<p class="fmtc"><span class="keys">&#8593;</span>, <code>y</code>, <code>k</code>,
+<span class="keys">CTRL+K</span>, <span class="keys">CTRL+P</span></p>
+<p class="desc">scroll backward <kbd>n</kbd> lines, default is <samp>1</samp>;</p>
+
+<p class="fmtc"><code>u</code>, <span class="keys">CTRL+U</span></p>
+<p class="desc">scroll backward <kbd>n</kbd> lines, default is one half
+of the screen size; if <kbd>n</kbd> is specified, it becomes new default
+for <code>d</code> and <code>u</code> cmds;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><span class="keys">&#8594;</span></td>
+<td class="opt_desc">scroll horizontally right <kbd>n</kbd> chars, default is half the screen width;</td></tr>
+<tr>
+<td class="opt_name"><span class="keys">&#8592;</span></td>
+<td class="opt_desc">scroll horizontally left <kbd>n</kbd> chars, default
+half the screen width;</td></tr>
+</table>
+
+<p class="fmtc"><code>r</code>, <span class="keys">CTRL+R</span></p>
+<p class="desc">repaint the screen;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>F</code></td>
+<td class="opt_desc">scroll forward at the EOF (similar to <code>tail –f</code>);</td></tr>
+<tr>
+<td class="opt_name"><code>&lt;</code></td>
+<td class="opt_desc">go to the first line;</td></tr>
+<tr>
+<td class="opt_name"><code>g</code></td>
+<td class="opt_desc">go to the line <kbd>n</kbd> (by default first line);</td></tr>
+<tr>
+<td class="opt_name"><code>&gt;</code></td>
+<td class="opt_desc">go to the EOF;</td></tr>
+<tr>
+<td class="opt_name"><code>G</code></td>
+<td class="opt_desc">go to the line <kbd>n</kbd> (by default EOF);</td></tr>
+</table>
+
+<p class="fmtc"><code>p</code>, <code>%</code></p>
+<p class="desc">go to a position <kbd>n</kbd>% into the file;</p>
+
+<p class="fmtc"><code>/</code><kbd>pattern</kbd></p>
+<p class="desc">search forward for a pattern;</p>
+
+<p class="fmtc"><code>?</code><kbd>pattern</kbd></p>
+<p class="desc">search backward for a pattern;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>n</code></td>
+<td class="opt_desc">repeat previous search;</td></tr>
+<tr>
+<td class="opt_name"><code>v</code></td>
+<td class="opt_desc">invoke an editor to edit the current file;</td></tr>
+<tr>
+<td class="opt_name"><code>q</code></td>
+<td class="opt_desc">quit;</td></tr>
+</table>
+
+
+
+
+
+<p class="cmdname"><a name="ln">ln</a></p>
+<p>
+creates hard or symbolic links between files and directories.</p>
+
+<p class="cmdc">ln -s libocci.so.11.1 libocci.so</p>
+<p class="desc">create a symbolic link (<samp>libocci.so</samp>)
+for a shared library (<samp>libocci.so.11.1</samp>); all happens
+in the current dir; this is a typical method of hiding version
+differences in lib names;</p>
+
+<p class="cmdc">ln -s linux-2.6.38 linux</p>
+<p class="desc">create a symlink (<samp>linux</samp>)
+for a dir (<samp>linux-2.6.38</samp>);</p>
+
+<p class="cmdc">ln -s /media media</p>
+<p class="desc">(assuming that you are in your home dir) create
+a symlink (<samp>media</samp>) in your home dir for a convenient
+access to removable devices mounted in <samp>/media</samp> (common
+system dir in root dir);</p>
+
+<p class="cmdc">ln today reports</p>
+<p class="desc">create a hard link for the file <samp>today</samp> in the
+directory <samp>reports</samp>;</p>
+
+<p class="cmdc">ln today reports/wed</p>
+<p class="desc">in the directory <samp>reports</samp> create hard link
+<samp>wed</samp> for <samp>today</samp>;</p>
+
+<p class="fmt"><code>ln&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;target&nbsp;</kbd>[<kbd>link_name</kbd>]</p>
+
+<p class="fmt"><code>ln&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;target dir</kbd></p>
+<p>
+If <kbd>link_name</kbd> is not specified, a link with the same base name
+as that of the target is created in the current directory. The second form of
+this command creates links to each target in the directory <kbd>dir</kbd>.
+Hard link is default, symbolic link must be explicitly specified.</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>-b</code>, <code>--backup</code></p>
+<p class="desc">make a backup of each existing dest file;</p>
+
+<p class="fmtc"><code>-d</code>, <code>-F</code>, <code>--directory</code></p>
+<p class="desc">hard link dirs (only superuser can do this; anyway it may
+fail due to system restrictions);</p>
+
+<p class="fmtc"><code>-f</code>, <code>--force</code></p>
+<p class="desc">remove existing destination files;</p>
+
+<p class="fmtc"><code>-i</code>, <code>--interactive</code></p>
+<p class="desc">ask whether to remove destinations;</p>
+
+<p class="fmtc"><code>-n</code>, <code>--no-dereference</code></p>
+<p class="desc">treat dest that is a symlink to a dir as if it were
+a normal file;</p>
+
+<p class="fmtc"><code>-S</code> <kbd>sfx</kbd>,
+<code>--suffix=</code><kbd>sfx</kbd></p>
+<p class="desc">override the usual backup suffix;</p>
+
+<p class="fmtc"><code>-s</code>, <code>--symbolic</code></p>
+<p class="desc">make a symlink instead of a hard link;</p>
+
+<p class="fmtc"><code>--target-directory=</code><kbd>dir</kbd></p>
+<p class="desc">specify dir in which to create links;</p>
+
+<p class="fmtc"><code>-v</code>, <code>--verbose</code></p>
+<p class="desc">print name of each file before linking;</p>
+
+
+
+
+
+<p class="cmdname"><a name="ls">ls</a></p>
+<p>
+lists directory contents.</p>
+
+<p class="cmdc">ls -al | more</p>
+<p class="desc">list current directory contents, show all entries (files,
+dir, hidden files, hidden dirs) in a long format, filenames in alphabet order,
+pipe output through the paging filter <code>more</code>;</p>
+
+<p class="cmdc">ls -l | more</p>
+<p class="desc">like previous, but don't show hidden entries;</p>
+
+<p class="cmdc">ls -lh | awk '{print $9, $5}'</p>
+<p class="desc">output only filenames [in alphabet order] and file sizes
+in human-readable format (i.e., kilobytes and megabytes instead of blocks);</p>
+
+<p class="cmdc">ls -d $HOME/.* | more</p>
+<p class="desc">show only hidden entries (files and dirs);</p>
+
+<p class="cmdc">ls -ald $HOME/.* | more</p>
+<p class="desc">show only hidden entries in a long format;</p>
+
+<p class="cmdc">ls -Z</p>
+<p class="desc">list current dir contents in a long format
+(like <code>ls -l</code>) including SELinux security context;</p>
+
+<p class="cmdc">ls -lF</p>
+<p class="desc">list dir contents in a long format adding type indicator
+(<samp>*</samp> for executable file, <samp>/</samp> for dir, etc);</p>
+
+<p class="cmdc">ls -Flt</p>
+<p class="desc">list dir contents in a long format, with type indicators,
+sorted by modification time, last modified goes first;</p>
+
+<p class="cmdc">ls -lt</p>
+<p class="desc">list all files by modification time (last modified goes first);</p>
+
+<p class="cmdc">ls -l hda*</p>
+<p class="desc">list files with <samp>hda</samp> at the beginning of
+filename;</p>
+
+<p class="cmdc">ls | sort -f</p>
+<p class="desc">sort filenames in alphabet order ignoring case;</p>
+
+<p class="cmdc">ls -s | sort -n</p>
+<p class="desc">sort filenames by size (small first);</p>
+
+<p class="cmdc">ls -ls | sort -nr</p>
+<p class="desc">sort filenames by size (large first);</p>
+
+<p class="cmdc">ls -l | grep '^d'</p>
+<p class="desc">list directories only;</p>
+
+<p class="cmdc">ls -l | grep '^-'</p>
+<p class="desc">list regular files only;</p>
+
+<p class="cmdc">ls -al | wc -l</p>
+<p class="desc">count all files and dirs, including hidden ones;</p>
+
+<p class="fmt"><code>ls&nbsp;</code>[<kbd>options</kbd>] [<kbd>file</kbd>]<kbd>&nbsp;...</kbd></p>
+<p>
+If the filesystem supports POSIX ACL, then a plus sign (<samp>+</samp>) after
+the permission string in the output produced by <code>ls -l</code> means that
+this file (dir) has a default ACL or an access ACL containing more than 3
+required entries (owner / group / others). See <code>getfacl</code> and
+<code>setfacl</code> for details. Also note, that
+<code>-Z --lcontext --scontext</code> are available only if SELinux is
+supported.</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>-A</code>, <code>--almost-all</code></p>
+<p class="desc">do not list implied <samp>.</samp> and <samp>..</samp>;</p>
+
+<p class="fmtc"><code>-a</code>, <code>--all</code></p>
+<p class="desc">do not hide entries starting with <samp>.</samp> (dot);</p>
+
+<p class="fmtc"><code>-B</code>, <code>--ignore-backups</code></p>
+<p class="desc">do not list entries ending with <samp>~</samp>;</p>
+
+<p class="fmtc"><code>-b</code>, <code>--escape</code></p>
+<p class="desc">print octal escapes for non-graphic chars;</p>
+
+<p class="fmtc"><code>--block-size=</code><kbd>n</kbd></p>
+<p class="desc">use <kbd>n</kbd>-byte blocks;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-C</code></td>
+<td class="opt_desc">list entries by columns (opposite to <code>–x</code>);</td></tr>
+<tr>
+<td class="opt_name"><code>-c</code></td>
+<td class="opt_desc">sort by change time; with <code>-l</code> show ctime;</td></tr>
+</table>
+
+<p class="fmtc"><code>--color=</code><kbd>when</kbd></p>
+<p class="desc">control whether color is used to distinguish file types
+(<kbd>when</kbd> may be <samp>never</samp>, <samp>always</samp>,
+<samp>auto</samp>);</p>
+
+<p class="fmtc"><code>-d</code>, <code>--directory</code></p>
+<p class="desc">list dir entries instead of contents, and do not dereference
+symlinks;</p>
+
+<p class="fmtc"><code>-F</code>, <code>--classify</code></p>
+<p class="desc">append indicator (one of <samp>* / = @ |</samp>);</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-f</code></td>
+<td class="opt_desc">do not sort, enable <code>-aU</code>, disable <code>-lst</code>;</td></tr>
+</table>
+
+<p class="fmtc"><code>-G</code>, <code>--no-group</code></p>
+<p class="desc">inhibit display of group information;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-g</code></td>
+<td class="opt_desc">like <code>-l</code>, but do not list owner;</td></tr>
+</table>
+
+<p class="fmtc"><code>--full-time</code></p>
+<p class="desc">like <code>-l --time-style=full-iso</code>;</p>
+
+<p class="fmtc"><code>-h</code>, <code>--human-readable</code></p>
+<p class="desc">show sizes in human readable format;</p>
+
+<p class="fmtc"><code>-I</code> <kbd>ptn</kbd>,
+<code>--ignore=</code><kbd>ptn</kbd></p>
+<p class="desc">do not list entries matching the specified shell pattern;</p>
+
+<p class="fmtc"><code>-i</code>, <code>--inode</code></p>
+<p class="desc">print index number of each file;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-k</code></td>
+<td class="opt_desc">like block-size=1K;</td></tr>
+<tr>
+<td class="opt_name"><code>-l</code></td>
+<td class="opt_desc">use a long listing format;</td><?tr>
+</table>
+
+<p class="fmtc"><code>--lcontext</code></p>
+<p class="desc">display security context (use with <code>-l</code>);</p>
+
+<p class="fmtc"><code>-L</code>, <code>--dereference</code></p>
+<p class="desc">show info for the file the link references rather than for
+the link itself;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-m</code></td>
+<td class="opt_desc">fill width with a comma separated list of entries;</td></tr>
+</table>
+
+<p class="fmtc"><code>-n</code>, <code>--numeric-uid-gid</code></p>
+<p class="desc">like <code>-l</code>, but list numeric UIDs and GIDs instead
+of names;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-o</code></td>
+<td class="opt_desc">like <code>-l</code>, but do not list group info;</td></tr>
+</table>
+
+<p class="fmtc"><code>-p</code>, <code>--file-type</code></p>
+<p class="desc">append indicator (<samp>/ = @ |</samp>) to entries;</p>
+
+<p class="fmtc"><code>-Q</code>, <code>--quote-name</code></p>
+<p class="desc">enclose entry names in double quotes;</p>
+
+<p class="fmtc"><code>-q</code>, <code>--hide-control-chars</code></p>
+<p class="desc">show '<samp>?</samp>' instead of non-graphic chars;</p>
+
+<p class="fmtc"><code>-R</code>, <code>--recursive</code></p>
+<p class="desc">list subdirs recursively;</p>
+
+<p class="fmtc"><code>-r</code>, <code>--reverse</code></p>
+<p class="desc">reverse sorting order;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-S</code></td>
+<td class="opt_desc">sort by file size;</td></tr>
+</table>
+
+<p class="fmtc"><code>-s</code>, <code>--size</code></p>
+<p class="desc">show size of each file in blocks;</p>
+
+<p class="fmtc"><code>--scontext</code></p>
+<p class="desc">display only security context and file name;</p>
+
+<p class="fmtc"><code>--show-control-chars</code></p>
+<p class="desc">show non-graphic chars as is;</p>
+
+<p class="fmtc"><code>--si</code></p>
+<p class="desc">like <code>-h</code>, but use powers of 1000, not 1024;</p>
+
+<p class="fmtc"><code>-T</code> <kbd>n</kbd>,
+<code>--tabsize=</code><kbd>n</kbd></p>
+<p class="desc">assume tab stops at each <kbd>n</kbd> columns (by default,
+8 columns);</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-t</code></td>
+<td class="opt_desc">sort by modification time;</td></tr>
+</table>
+
+<p class="fmtc"><code>--time-style=</code><kbd>style</kbd></p>
+<p class="desc">show times using one of the specified styles:
+<samp>full-iso</samp>, <samp>long-iso</samp>, <samp>iso</samp>,
+<samp>locale</samp>, <code>+</code><kbd>format</kbd>
+(see <a href="cmds_d-f.html#date"><code>date</code></a>);
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-U</code></td>
+<td class="opt_desc">do not sort, list entries in directory order;</td></tr>
+<tr>
+<td class="opt_name"><code>-u</code></td>
+<td class="opt_desc">sort by access time;</td></tr>
+<tr>
+<td class="opt_name"><code>-v</code></td>
+<td class="opt_desc">sort by version;</td></tr>
+</table>
+
+<p class="fmtc"><code>-w</code> <kbd>n</kbd>,
+<code>--width=</code><kbd>n</kbd></p>
+<p class="desc">assume screen width <kbd>n</kbd> columns;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-X</code></td>
+<td class="opt_desc">sort alphabetically by extension;</td></tr>
+<tr>
+<td class="opt_name"><code>-x</code></td>
+<td class="opt_desc">list entries by lines instead of by columns;</td></tr>
+</table>
+
+<p class="fmtc"><code>-Z</code>, <code>--context</code></p>
+<p class="desc">display security context so it fits on display;</p>
+
+
+
+
+
+<p class="cmdname"><a name="lsattr">lsattr</a></p>
+<p>
+lists file attributes on an ext2/ext3/ext4 filesystem.</p>
+
+<p class="cmdc">lsattr -a</p>
+<p class="desc">list attributes of all files in the current dir;</p>
+
+<p class="fmt"><code>lsattr&nbsp;</code>[<kbd>options</kbd>] [<kbd>file ...</kbd>]</p>
+<p>
+See <a href="cmds_c.html#chattr"><code>chattr</code></a> for a description
+of valid attrubutes.</p>
+
+
+
+<h5>Options</h5>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-V</code></td>
+<td class="opt_desc">version;</td></tr>
+<tr>
+<td class="opt_name"><code>-a</code></td>
+<td class="opt_desc">list all files, including hidden;</td></tr>
+<tr>
+<td class="opt_name"><code>-d</code></td>
+<td class="opt_desc">list dirs like files, rather then listing their contents;</td></tr>
+<tr>
+<td class="opt_name"><code>-R</code></td>
+<td class="opt_desc">recursively list attribs of dirs and their contents;</td></tr>
+<tr>
+<td class="opt_name"><code>-v</code></td>
+<td class="opt_desc">list the file’s version/generation number;</td></tr>
+</table>
+
+
+
+
+
+<p class="cmdname"><a name="lshw">lshw</a></p>
+<p>
+extracts info on the computer hardware config (mainboard, bus, CPU, memory,
+firmware versions, etc). It works only on DMI-capable x86 / IA-64 systems and
+on some PowerPC machines.</p>
+
+<p class="cmdc">lshw -short</p>
+<p class="desc">list all HW info in a compact format (kind of a device tree);</p>
+
+<p class="cmdc">lshw -class network</p>
+<p class="desc">list all network interfaces, NICs info, etc;</p>
+
+<p class="cmdc">lshw -class storage</p>
+<p class="desc">show info about storage controllers;</p>
+
+<p class="cmdc">lshw -class disk</p>
+<p class="desc">show info about HDDs, CD/DVD, USB flash (if present);</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-help</code> &nbsp;&nbsp; <code>-version</code></p>
+
+<p class="fmtc"><code>-class</code> <kbd>cls</kbd>,
+<code>-C</code> <kbd>cls</kbd></p>
+<p class="desc">show the specified class of hardware only (available
+classes: <samp>bridge bus communication disk display memory multimedia
+power processor storage system volume</samp>)</p>
+
+<p class="fmtc"><code>-businfo</code></p>
+<p class="desc">show bus info, detailing SCSI, USB, IDE, PCI;</p>
+
+<p class="fmtc"><code>-enable</code> <kbd>test</kbd>,
+<code>-disable</code> <kbd>test</kbd></p>
+<p class="desc">enable/disable a test:
+
+<table class="options" style="margin-left:4em;width:84%">
+<tr>
+<td class="opt_name"><samp>dmi</samp></td>
+<td class="opt_desc">for DMI / SMBIOS extensions;</td></tr>
+<tr>
+<td class="opt_name"><samp>device-tree</samp></td>
+<td class="opt_desc">for OpenFirmware device tree;</td></tr>
+<tr>
+<td class="opt_name"><samp>spd</samp></td>
+<td class="opt_desc">for memory Serial Presence  Detect;</td></tr>
+<tr>
+<td class="opt_name"><samp>memory</samp></td>
+<td class="opt_desc">for  memory-size guessing heuristics;</td></tr>
+<tr>
+<td class="opt_name"><samp>cpuinfo</samp></td>
+<td class="opt_desc">for kernel-reported CPU detection;</td></tr>
+<tr>
+<td class="opt_name"><samp>cpuid</samp></td>
+<td class="opt_desc">for CPU detection;</td></tr>
+<tr>
+<td class="opt_name"><samp>pci</samp></td>
+<td class="opt_desc">for PCI / AGP access;</td></tr>
+<tr>
+<td class="opt_name"><samp>isapnp</samp></td>
+<td class="opt_desc">for ISA PnP extensions;</td></tr>
+<tr>
+<td class="opt_name"><samp>pcmcia</samp></td>
+<td class="opt_desc">for PCMCIA / PCCARD;</td></tr>
+<tr>
+<td class="opt_name"><samp>ide</samp></td>
+<td class="opt_desc">for IDE / ATAPI;</td></tr>
+<tr>
+<td class="opt_name"><samp>usb</samp></td>
+<td class="opt_desc">for USB devices;</td></tr>
+<tr>
+<td class="opt_name"><samp>scsi</samp></td>
+<td class="opt_desc">for SCSI;</td></tr>
+<tr>
+<td class="opt_name"><samp>network</samp></td>
+<td class="opt_desc">for network interfaces detection;</td></tr>
+</table></p>
+
+<p class="fmtc"><code>-html</code></p>
+<p class="desc">output the device tree as an HTML page;</p>
+
+<p class="fmtc"><code>-numeric</code></p>
+<p class="desc">display numeric IDs (for PCI and USB devices);</p>
+
+<p class="fmtc"><code>-quiet</code></p>
+<p class="desc">do not display status;</p>
+
+<p class="fmtc"><code>-sanitize</code></p>
+<p class="desc">remove potentially sensible info from the output
+(like IP addresses, serial numbers, etc.);</p>
+
+<p class="fmtc"><code>-short</code></p>
+<p class="desc">output the device tree showing the hardware paths;</p>
+
+<p class="fmtc"><code>-X</code></p>
+<p class="desc">launch the X11 GUI (if available);</p>
+
+<p class="fmtc"><code>-xml</code></p>
+<p class="desc">output the device tree as an XML tree;</p>
+<p>
+<code>~</code> currently does not detect Firewire (IEEE1394) devices.
+Not all architectures supported by GNU/Linux are fully supported (e.g.
+CPU detection). "Virtual" SCSI interfaces used for SCSI emulation over
+IDE are not reported correctly.</p>
+
+
+
+
+
+<p class="cmdname"><a name="lsof">lsof</a></p>
+<p>
+lists open files (regular files, dirs, block/char special, executing
+text references, libs, streams, network files). For better results you
+should have <b>root</b> privs (e.g. <code>sudo lsof ..</code>).</p>
+
+<p class="fmt"><code>lsof&nbsp;</code>[<kbd>options</kbd>] [<kbd>names</kbd>]</p>
+<p>
+Without options <code>~</code> lists all open files (usually too much to be
+useful), <kbd>names</kbd> are path names of specific files to list, the first
+name can be separated from the preceding options with '<code>--</code>',
+symbolic links are resolved before use.</p>
+
+
+
+<h5>Most popular cmds</h5>
+<p>
+Which processes have opened this file? (use this file? keep it open?):</p>
+
+<p class="cmd">lsof /var/log/nginx/access.log
+<p>
+Note that <samp>FD</samp> (file descriptor) column uses chars <samp>w</samp>
+which means the file was open for writing, <samp>r</samp> - file was open for
+reading, <samp>u</samp> - read/write;</p>
+<p>
+Find all files that a process has opened (first get PID, then ...):</p>
+
+<p class="cmdc">ps aux | grep nginx</p>
+<p class="cmd">lsof -p 7824</p>
+<p>
+Where is the binary for the process ...?</p>
+
+<p class="cmd">lsof -p 1249 | grep bin</p>
+<p>
+What shared libraries were opened by this process?</p>
+
+<p class="cmd">lsof -p 2319 | grep .so</p>
+<p>
+What file is used by this process to write log to?</p>
+
+<p class="cmd">lsof -p 2319 | grep log</p>
+<p>
+List processes that have opened the library ...?</p>
+
+<p class="cmd">lsof /lib/x86_64-linux-gnu/libssl.so.1.0.0</p>
+<p>
+What files were opened by user ... (e.g. <samp>zorro</samp>;
+note that list of those files may be huge if GUI is used)?</p>
+
+<p class="cmd">lsof -u zorro</p>
+<p>
+Which process is listening on port <span class="arg">n</span> (or uses
+protocol <span class="arg">proto_name</span>)?</p>
+
+<p class="cmdc">lsof -i :80</p>
+<p class="cmdc">lsof -i tcp</p>
+<p class="cmd">lsof -i udp</p>
+
+
+
+<h5>Miscellaneous command examples</h5>
+
+<p class="cmdc">lsof | head -20</p>
+<p class="desc">list all open files / show first 20 entries;</p>
+
+<p class="cmdc">lsof /dev/sda5</p>
+<p class="desc">list all open files on device <samp>/dev/sda5</samp>;</p>
+
+<p class="cmdc">lsof -p 7280</p>
+<p class="desc">list all open files owned by process 7280 (PID = 7280);</p>
+
+<p class="cmdc">lsof -i</p>
+<p class="desc">list all open TCP and UDP ports;</p>
+
+<p class="cmdc">lsof -i -P</p>
+<p class="desc">list all open TCP and UDP ports;
+display ports in numerical form;</p>
+
+<p class="cmdc">lsof -i :27017</p>
+<p class="desc">what process listens on port 27017?</p>
+
+<p class="cmdc">lsof -i -U</p>
+<p class="desc">list all open Internet, x.25, Unix domain files;</p>
+
+<p class="cmdc">lsof -i 4 -a -p 5497</p>
+<p class="desc">list all open IPv4 network files used by process with pid = 5497;</p>
+
+<p class="cmdc">lsof -u oracle</p>
+<p class="desc">list all files opened by processes owned by user <samp>oracle</samp>;</p>
+
+<p class="cmdc">lsof /home/alice/abc.dat</p>
+<p class="desc">find the process that has opened <samp>/home/alice/abc.dat;</samp></p>
+
+<p class="cmdc">kill -HUP `lsof -t /opt/proj4/index.dat`</p>
+<p class="desc">send <samp>SIGHUP</samp> to all processes that have opened
+file <samp>/opt/proj4/index.dat</samp>;</p>
+
+<p class="cmdc">lsof -i @mace.cc.perdue.edu</p>
+<p class="desc">list all files using any proto/port of <samp>mace.cc...</samp>;</p>
+
+<p class="cmdc">lsof -i @mace.cc.perdue.edu:100-145</p>
+<p class="desc">list all files using any protocol on ports
+<samp>100..145</samp> of <samp>mace.cc.perdue.edu</samp>;</p>
+
+<p class="cmdc">lsof -bw /nfs/mount/point</p>
+<p class="desc">find processes with open files on NFS filesystem whose
+server is inaccessible, presuming your mount table supplies device number
+for <samp>/nfs/mount/point</samp>, suppress warnings;</p>
+
+<p class="cmdc">lsof -c /^..o.$/i -a -d cwd</p>
+<p class="desc">list the current working dir of processes running a cmd that
+is exactly 4 chars long and has '<samp>o</samp>' or '<samp>O</samp>' at the
+position 3;</p>
+
+<p class="cmdc">lsof -i @128.210.15.17</p>
+<p class="desc">find an IPv4 socket file by its associated numeric dot-form
+address;</p>
+
+<p class="cmdc">lsof -i @[0:1:2:3:4:5:6:7]</p>
+<p class="desc">find an IPv6 socket file by its associated numeric
+colon-form address;</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-?</code> &nbsp;&nbsp; <code>-h</code></p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-v</code></td>
+<td class="opt_desc">version number and misc info about program;</td></tr>
+<tr>
+<td class="opt_name"><code>-a</code></td>
+<td class="opt_desc">means "AND" selections (default is "OR");</td></tr>
+<tr>
+<td class="opt_name"><code>-b</code></td>
+<td class="opt_desc">avoid kernel functions that might block;</td></tr>
+<tr>
+<td class="opt_name"><code>-c</code> <kbd>c</kbd></td>
+<td class="opt_desc">list files for processes executing the cmd that begins
+with <kbd>c</kbd>-char; multiple cmds may be specified, using multiple
+<code>-c</code> options joined by AND/OR; if <kbd>c</kbd> goes between
+<samp>2</samp> slashes, it is interpreted as a regexp:
+<table class="opts" style="margin-left:0.5em;width:90%">
+<tr><td class="opt_name"><code>/</code><kbd>c</kbd><code>/b</code></td><td class="opt_desc">basic regexp;</td></tr>
+<tr><td class="opt_name"><code>/</code><kbd>c</kbd><code>/i</code></td><td class="opt_desc">extended regexp, ignore letter case;</td></tr>
+<tr><td class="opt_name"><code>/</code><kbd>c</kbd><code>/x</code></td><td class="opt_desc">extended regexp (default);</td></tr>
+</table>
+shell meta-chars in regexp must be quoted to prevent their
+interpretation by shell;</td></tr>
+<tr>
+<td class="opt_name"><code>+c</code> <kbd>n</kbd></td>
+<td class="opt_desc">set max num of initial chars in the name of the Unix
+cmd to be printed in the COMMAND column (default is 9);</td></tr>
+<tr>
+<td class="opt_name"><code>-C</code></td>
+<td class="opt_desc">disable reporting of any path name components from
+the kernel’s name cache;</td></tr>
+</table>
+
+<p class="fmtc"><code>+D</code> <kbd>dir</kbd></p>
+<p class="desc">search for all open instances of directory <kbd>dir</kbd>
+and all files/dirs it contains to its complete depth (symlinks are not
+followed); this may be slow and consuming a large amount of dynamic memory;</p>
+
+<p class="fmtc"><code>-D</code> <kbd>func</kbd></p>
+<p class="desc">set usage of the device cache file; <kbd>func</kbd> may be:</p>
+<table class="opts" style="margin-left:4em;width:84%">
+<tr><td class="opts">?</td><td class="opt_desc">report device cache file paths;</td></tr>
+<tr><td class="opts">b</td><td class="opt_desc">build the device cache file;</td></tr>
+<tr><td class="opts">i</td><td class="opt_desc">ignore the device cache file;</td></tr>
+<tr><td class="opts">r</td><td class="opt_desc">read the device cache file;</td></tr>
+<tr><td class="opts">u</td><td class="opt_desc">read and update the device cache file;</td></tr>
+</table>
+
+<p class="fmtc"><code>+d</code> <kbd>dir</kbd></p>
+<p class="desc">search for all open instances of directory <kbd>dir</kbd>
+and files/dirs it contains at its top level; do not descend the dir tree,
+do not follow symlinks;</p>
+
+<p class="fmtc"><code>-d</code> <kbd>list</kbd></p>
+<p class="desc">use a comma-separated list of file descriptors to include in
+or exclude from the output; all file descriptors to exclude must be prefixed
+with <samp>^</samp>; list is either inclusive or exclusive, no mixture is
+permitted;</p>
+
+<p class="fmtc"><code>-i</code> [<kbd>addr</kbd>]</p>
+<p class="desc">select inet files with addresses matching <kbd>addr</kbd>;
+<code>-i4</code>, <code>-i6</code> specifies IP version, while <code>-i</code>
+selects both; also you can specify hostname, protocol, port, service, etc
+(for example, <samp>TCP:25, UDP:dns</samp>);</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-l</code></td>
+<td class="opt_desc">inhibit conversion of UIDs to login names;</td></tr>
+</table>
+
+<p class="fmtc"><code>-L</code> / <code>+L</code> [<kbd>n</kbd>]</p>
+<p class="desc">disable / enable listing of file link counts; if <kbd>n</kbd>
+is specified, only files with link counts less than <kbd>n</kbd> will be listed
+(by default - all);</p>
+
+<p class="fmtc"><code>+M</code> / <code>-M</code></p>
+<p class="desc">enable / disable the reporting of portmapper registration
+for local TCP and UDP ports;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-N</code></td>
+<td class="opt_desc">list NFS files;</td></tr>
+<tr>
+<td class="opt_name"><code>-n</code></td>
+<td class="opt_desc">inhibit conversion of network numbers to host names
+for network files (program may run faster);</td></tr>
+<tr>
+<td class="opt_name"><code>-o</code></td>
+<td class="opt_desc">display file offset at all times, not file size;</td></tr>
+<tr>
+<td class="opt_name"><code>-o</code> <kbd>n</kbd></td>
+<td class="opt_desc">set the number of decimal digits (default is
+<samp>8</samp>) to be printed after <samp>0t</samp> for a file offset before
+the form is switched to <samp>0x...</samp>; <kbd>n</kbd> = <samp>0</samp>
+directs to use <samp>0t</samp> for all offset output;</td></tr>
+<tr>
+<td class="opt_name"><code>-P</code></td>
+<td class="opt_desc">inhibit conversion of port numbers to port names for
+network files (program may run a little bit faster);</td></tr>
+</table>
+
+<p class="fmtc"><code>-p</code> <kbd>list</kbd></p>
+<p class="desc">select files for processes specified as a comma-separated
+list of PIDs;</p>
+
+<p class="fmtc"><code>+r</code> / <code>-r</code> [<kbd>t</kbd>]</p>
+<p class="desc">list files in repeat mode with interval 15 sec or <kbd>t</kbd>
+sec, if specified; <code>-r</code> runs until terminated; <code>+r</code>
+terminates at the first cycle when there are no files to list;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-S</code> <kbd>t</kbd></td>
+<td class="opt_desc">set optional time-out for kernel functions
+<samp>lstat</samp>, <samp>readlink</samp>, <samp>stat</samp>, that might
+otherwise deadlock (default is <samp>15</samp> sec, min is <samp>2</samp>
+sec);</td></tr>
+<tr>
+<td class="opt_name"><code>-s</code></td>
+<td class="opt_desc">display file size at all times, not file offset;</td></tr>
+<tr>
+<td class="opt_name"><code>-t</code></td>
+<td class="opt_desc">produce terse output with PIDs only and no header,
+so that it can be piped to <a href="#kill"><code>kill</code></a>;
+this option selects <code>-w</code>;</td></tr>
+</table>
+
+<p class="fmtc"><code>-u</code> <kbd>list</kbd></p>
+<p class="desc">select files for users whose login names or UIDs are
+supplied in a comma-separated list;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-U</code></td>
+<td class="opt_desc">select the listing of Unix domain socket files;</td></tr>
+<tr>
+<td class="opt_name"><code>-V</code></td>
+<td class="opt_desc">verbose search;</td></tr>
+</table>
+
+<p class="fmtc"><code>+w</code> / <code>-w</code></p>
+<p class="desc">enable / disable suppression of warning messages;</p>
+
+
+
+<h5>Output</h5>
+
+<p class="fmtc"><samp>COMMAND</samp></p>
+<p class="desc">the first 9 chars of cmd associated with the process
+(<code>+c</code> <kbd>w</kbd> can change col width);</p>
+
+<p class="fmtc"><samp>PID</samp></p>
+<p class="desc">process ID;</p>
+
+<p class="fmtc"><samp>PPID</samp></p>
+<p class="desc">parent process ID (only displayed if <code>-R</code> specified);</p>
+
+<p class="fmtc"><samp>PGID</samp></p>
+<p class="desc">process group ID (only displayed if <code>-g</code> specified);</p>
+
+<p class="fmtc"><samp>USER</samp></p>
+<p class="desc">UID or login name of the process owner;</p>
+
+<table class="options">
+<td class="opt_name"><samp>FD</samp></td>
+<td class="opt_desc">file descriptor (number) of the file or:
+
+<table class="options" style="margin-left:0.5em;width:86%">
+<tr><td class="opt_name"><samp>cwd</samp></td><td class="opt_desc">current working directory;</td></tr>
+<tr><td class="opt_name"><samp>ltx</samp></td><td class="opt_desc">shared library text (code and data);</td></tr>
+<tr><td class="opt_name"><samp>Mxx</samp></td><td class="opt_desc">hex mem-mapped type number xx;</td></tr>
+<tr><td class="opt_name"><samp>m86</samp></td><td class="opt_desc">DOS Merge mapped file;</td></tr>
+<tr><td class="opt_name"><samp>mem</samp></td><td class="opt_desc">memory-mapped file;</td></tr>
+<tr><td class="opt_name"><samp>mmap</samp></td><td class="opt_desc">memory-mapped device;</td></tr>
+<tr><td class="opt_name"><samp>pd</samp></td><td class="opt_desc">parent directory;</td></tr>
+<tr><td class="opt_name"><samp>rtd</samp></td><td class="opt_desc">root directory;</td></tr>
+<tr><td class="opt_name"><samp>txt</samp></td><td class="opt_desc">program text (code and data);</td></tr>
+<tr><td class="opt_name"><samp>v86</samp></td><td class="opt_desc">VP/ix mapped file;</td></tr>
+</table>
+<p>
+FD is followed by mode under which the file is open:</p>
+
+<table class="options" style="margin-left:0.5em;width:86%">
+<tr><td class="opt_name"><samp>r</samp></td><td class="opt_desc">for read access;</td></tr>
+<tr><td class="opt_name"><samp>w</samp></td><td class="opt_desc">for write access;</td></tr>
+<tr><td class="opt_name"><samp>u</samp></td><td class="opt_desc">for read and write access;</td></tr>
+<tr><td class="opt_name"><samp>-</samp></td><td class="opt_desc">mode unknown and lock char follows;</td></tr>
+<tr><td class="opt_name"><samp>space</samp></td><td class="opt_desc">mode unknown and no lock char follows;</td></tr>
+</table>
+<p>
+Lock characters:</p>
+
+<table class="options" style="margin-left:0.5em;width:86%">
+<tr><td class="opt_name"><samp>N</samp></td><td class="opt_desc">lock of unknown type (Solaris NFS);</td></tr>
+<tr><td class="opt_name"><samp>r</samp></td><td class="opt_desc">read lock on part of the file;</td></tr>
+<tr><td class="opt_name"><samp>R</samp></td><td class="opt_desc">read lock on the entire file;</td></tr>
+<tr><td class="opt_name"><samp>w</samp></td><td class="opt_desc">write lock on part of the file;</td></tr>
+<tr><td class="opt_name"><samp>W</samp></td><td class="opt_desc">write lock on the entire file;</td></tr>
+<tr><td class="opt_name"><samp>u</samp></td><td class="opt_desc">read and write lock of any length;</td></tr>
+<tr><td class="opt_name"><samp>U</samp></td><td class="opt_desc">lock of unknown type;</td></tr>
+</table>
+
+</td></tr>
+</table>
+
+<p class="fmtc"><samp>TYPE</samp></p>
+<p class="desc">type of node associated with file:</p>
+
+<table class="options">
+<tr><td class="opt_name"></td>
+<td class="opt_desc">
+
+<table class="options" style="margin-left:0.5em;width:86%">
+<tr><td class="opt_name"><samp>IPv4</samp></td><td class="opt_desc">IPv4 socket;</td></tr>
+<tr><td class="opt_name"><samp>IPv6</samp></td><td class="opt_desc">IPv6 network file;</td></tr>
+<tr><td class="opt_name"><samp>inet</samp></td><td class="opt_desc">Internet domain socket;</td></tr>
+<tr><td class="opt_name"><samp>rte</samp></td><td class="opt_desc">AF_ROUTE socket;</td></tr>
+<tr><td class="opt_name"><samp>sock</samp></td><td class="opt_desc">socket of unknown domain;</td></tr>
+<tr><td class="opt_name"><samp>unix</samp></td><td class="opt_desc">Unix domain socket;</td></tr>
+<tr><td class="opt_name"><samp>BLK</samp></td><td class="opt_desc">block special file;</td></tr>
+<tr><td class="opt_name"><samp>CHR</samp></td><td class="opt_desc">character special file;</td></tr>
+<tr><td class="opt_name"><samp>DEL</samp></td><td class="opt_desc">Linix map file that has been deleted;</td></tr>
+<tr><td class="opt_name"><samp>DIR</samp></td><td class="opt_desc">directory;</td></tr>
+<tr><td class="opt_name"><samp>PIPE</samp></td><td class="opt_desc">pipe;</td></tr>
+<tr><td class="opt_name"><samp>REG</samp></td><td class="opt_desc">regular file;</td></tr>
+<tr><td class="opt_name"><samp>SMT</samp></td><td class="opt_desc">shared memory transport file;</td></tr>
+<tr><td class="opt_name"><samp>STSO</samp></td><td class="opt_desc">stream socket;</td></tr>
+</table>
+
+</td></tr>
+</table>
+
+<p class="fmtc"><samp>DEVICE</samp></p>
+<p class="desc">device numbers;</p>
+
+<p class="fmtc"><samp>SIZE/OFF</samp></p>
+<p class="desc">the size of the file or the file offset in bytes;</p>
+
+<p class="fmtc"><samp>NODE</samp></p>
+<p class="desc">node number of the local file, inode number of an NFS file,
+Internet protocol type, etc;</p>
+
+<p class="fmtc"><samp>NAME</samp></p>
+<p class="desc">name of the file, mount point, block/char special file, etc;</p>
+
+
+
+
+
+<p class="cmdname"><a name="lspci">lspci</a></p>
+<p>
+shows info about all PCI buses in the system and
+all devices connected to them).</p>
+
+<p class="cmdc">lspci -v</p>
+<p class="desc">display detailed info about all PCI devices;</p>
+
+<p class="fmt"><code>lspci&nbsp;</code>[<kbd>options</kbd>]</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--version</code></p>
+
+<p class="fmtc"><code>-v</code>, <code>-vv</code></p>
+<p class="desc">verbose, more verbose;</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-b</code></td>
+<td class="opt_desc">show PCI addresses and IRQ’s as seen by the cards on
+the PCI bus instead of those seen by CPU (bus-centric view);</td></tr>
+</table>
+
+<p class="fmtc"><code>-d</code> [<kbd>vendor</kbd>]<code>:</code>[<kbd>device</kbd>]</p>
+<p class="desc">show only selected devices specified by vendor and device ID's (hex);</p>
+
+<p class="fmtc"><code>-i</code> <kbd>file</kbd></p>
+<p class="desc">use the specified file as PCI ID database instead of
+<a href="#pci_id_db">default</a>;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-M</code></td>
+<td class="opt_desc">enable "bus mapping" mode which performs a thorough
+scan of all PCI devices, including those behind misconfigured bridges,
+etc (risky; only root can use it);</td></tr>
+<tr>
+<td class="opt_name"><code>-m</code></td>
+<td class="opt_desc">dump PCI device data in machine readable form;</td></tr>
+<tr>
+<td class="opt_name"><code>-n</code></td>
+<td class="opt_desc">show numeric ID’s of the PCI vendors and devices;</td></tr>
+</table>
+
+<p class="fmtc"><code>-p</code> <kbd>dir</kbd></p>
+<p class="desc">use the specified dir as containing PCI bus info
+instead of default <samp>/proc/bus/pci</samp>;</p>
+
+<p class="fmtc"><code>-s</code> [[[[<kbd>domain</kbd>]<code>:</code>]<kbd>bus</kbd>]<code>:</code>][<kbd>slot</kbd>][<code>.</code>[<kbd>func</kbd>]]</p>
+<p class="desc">display only devices in the specified domain
+(<samp>0..ffff</samp>), bus (<samp>0..ff</samp>), slot (<samp>0..1f</samp>),
+function (<samp>0..7</samp>); each component can be omitted or set to
+<samp>*</samp> (meaning "any value");</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-t</code></td>
+<td class="opt_desc">show a tree-like diagram of buses, bridges, devices;</td></tr>
+<tr>
+<td class="opt_name"><code>-x</code></td>
+<td class="opt_desc">show hex dump of first 64 bytes of the PCI configuration
+space (the standard header); useful for debugging;</td></tr>
+</table>
+
+<p class="fmtc"><code>-xxx</code></p>
+<p class="desc">show hex dump of the whole PCI configuration space
+(risky; only <samp>root</samp> can use it);</p>
+
+
+
+<h5>PCILIB options</h5>
+
+<p class="fmtc"><code>-F</code> <kbd>file</kbd></p>
+<p class="desc">read config data from the specified file;</p>
+
+<table class="options">
+<tr>
+<td class="opt_name"><code>-G</code></td>
+<td class="opt_desc">increase debug level of the library (<samp>PCILIB</samp>);</td></tr>
+<tr>
+<td class="opt_name"><code>-H1</code></td>
+<td class="opt_desc">use direct hardware access via Intel config mechanism 1
+(i386-compatible only);</td></tr>
+<tr>
+<td class="opt_name"><code>-H2
+<td class="opt_desc">use direct hardware access via Intel config mechanism 2
+(is able to address only first 16 devices on any bus; unreliable);
+(i386-compatible only);</td></tr>
+</table>
+
+<p class="fmtc"><code>-P</code> <kbd>dir</kbd></p>
+<p class="desc">force use of Linux <samp>/proc/bus/pci</samp>
+style config access, while using specified <kbd>dir</kbd> instead of
+<samp>/proc/bus/pci</samp>;</p>
+
+
+
+<h5>Files</h5>
+
+<p class="fmtc"><samp>/proc/bus/pci</samp></p>
+<p class="desc">PCI bus info;</p>
+
+<p class="fmtc"><a name="pci_id_db"><samp>/usr/share/hwdata/pci.ids</samp></a></p>
+<p class="desc">the default PCI IDs database;</p>
+
+
+
+
+
+<p class="cmdname"><a name="lsusb">lsusb</a></p>
+<p>
+shows info about all USB buses in the system and all devices connected
+to them.</p>
+
+<p class="cmdc">lsusb -v</p>
+<p class="desc">show info about all USB devices;</p>
+
+<p class="fmt"><code>lsusb&nbsp;</code>[<kbd>options</kbd>]</p>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>-V</code> &nbsp;&nbsp; <code>--version</code>
+&nbsp;&nbsp; <code>-v</code> &nbsp;&nbsp; <code>--verbose</code></p>
+
+<p class="fmtc"><code>-D</code> <kbd>dev</kbd></p>
+<p class="desc">do not scan the <samp>/proc/bus/usb</samp> dir, display only
+info about the specified device; <kbd>dev</kbd> (device file) must be something
+like <samp>/proc/bus/usb/001/001</samp>;</p>
+
+<p class="fmtc"><code>-d</code> <kbd>vendor</kbd>[<code>:</code><kbd>product</kbd>]</p>
+<p class="desc">display only devices with the specified vendor and product IDs
+(must be in hex);</p>
+
+<p class="fmtc"><code>-p</code> <kbd>path</kbd></p>
+<p class="desc">use the specified path instead of <samp>/proc/bus/usb</samp>;</p>
+
+<p class="fmtc"><code>-s</code> [[<kbd>bus</kbd>]][<code>:</code><kbd>devnum</kbd>]</p>
+<p class="desc">display only devices on the specified bus and / or device
+number (args must be in hex);</p>
+
+<table class="options">
+<tr><td class="opt_name"><code>-t</code></td>
+<td class="opt_desc">dump the physical USB device hierarchy as a tree;</td></tr>
+</table>
+<p>
+Some options are available for root only (<code>-v</code>, <code>-D</code>).</p>
+
+
+
+<h5>Files</h5>
+
+<p class="fmtc"><samp>/proc/bus/usb</samp></p>
+<p class="desc">USB bus info;</p>
+
+<p class="fmtc"><a name="pci_id_db"><samp>/usr/share/hwdata/usb.ids</samp></a></p>
+<p class="desc">a list of all known USB IDs;</p>
+
+</div>
+
+</body></html>
