@@ -69,40 +69,74 @@ drive (<samp>/dev/sda</samp>);</p>
 
 <p class="cmdname"><a name="gpg"></a>gpg</p>
 <p>
-or GnuPG (GNU Privacy Guard) is a free implementation of the OpenPGP
-standard (and replacement of PGP). <code>~</code> provides public key
-encryption and signing, key management, etc.</p>
+<b>GnuPG</b> (GNU Privacy Guard) is a free implementation of the OpenPGP standard (and replacement of PGP). It provides public key
+encryption, symmetric encryption, signing, key management, etc.</p>
+
 <p class="fmt"><code>gpg&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;cmd&nbsp;</kbd>[<kbd>args</kbd>]</p>
 <p>
-If no <kbd>cmd</kbd> is given, <code>~</code> performs a reasonable action
-depending on the type of the input file. In all cases when a passphrase is
-required, use reasonably long (7+) hard-to-guess char sequencies
-(inclusion of non-alphanumeric symbols is recommended). The default file
-extension for an encrypted file is <samp>.gpg</samp>.</p>
+If no <kbd>cmd</kbd> is given, <code>~</code> performs a reasonable action depending on the type of the input file.</p>
+<p>
+In all cases when a <b>passphrase</b> is required, use <b>reasonably long hard-to-guess char sequencies</b> (inclusion of
+non-alphanumeric symbols is recommended). <i>Reasonably long</i> nowdays means at least <samp>10..12</samp>, maybe even more...</p>
+<p>
+The default file extension for an encrypted file is <samp>.gpg</samp>, but you can use whatever you want.</p>
 
 <p class="cmdc">gpg --version</p>
-<p class="desc">show version info and list of supported cipher algorythms;</p>
+<p class="desc">shows the version and other useful info (e.g., a list of supported cipher algorythms);</p>
 
 
 
 <h5>Symmetric encryption</h5>
 <p>
-is very simple: no PKI, no keys (in fact, the key is created and used
-implicitly), the user only has to type a password (passphrase) that must be
-the same for both encryption and decryption.</p>
+is simple: no PKI, no keys (i.e., the key is required, created, and used, but it all happens somewhere deeply inside, the user
+should only care about the <b>passphrase</b>). The passphrase (some people call it <i>password</i>) is required for both encryption
+and decryption.</p>
+<p>
+To request a symmetric-key encryption, use <samp>--symmetric</samp> or just <samp>-c</samp>. To decrypt a symmetrically encrypted
+file, use <samp>-d</samp> (don't care about algo, it will be auto detected unless it's bad, illegal, incorrect, ..).</p>
+<p>
+The <samp>-o</samp> specifies the output filename; works for both encryption/decryption, not required, just for convenience.</p>
 
 <p class="cmdc">gpg -o mesg.dat -c mesg.doc</p>
-<p class="desc">encrypt<samp> mesg.doc</samp>,
-write result to<samp> mesg.dat </samp>(<code>~</code> prompts you for
-a passphrase twice);</p>
+<p class="desc">encrypt<samp> mesg.doc</samp>, write result to<samp> mesg.dat </samp>(you will be prompted for a passphrase twice);
+since algorithm is not specified, the default one will be used (usually it's <samp>CAST5</samp>);</p>
 
 <p class="cmdc">gpg -o priv_data.txt -d priv_data.arc</p>
-<p class="desc">decrypt<samp> priv_data.gpg</samp>, save result
-to<samp> priv_data.txt</samp>;</p>
+<p class="desc">decrypt<samp> priv_data.gpg</samp>, save result to<samp> priv_data.txt</samp>;</p>
 
 <p class="cmdc">gpg -o - -d priv_data.arc | less</p>
-<p class="desc">display the decrypted contents of the encrypted text
-file<samp> priv_data.gpg </samp>without creating a plain text file;
+<p class="desc">display the decrypted contents of the encrypted text file<samp> priv_data.gpg </samp>without creating a plain text
+file;</p>
+
+<p class="cmdc">gpg -c --cipher-algo AES256 archive007.tar</p>
+<p class="cmdc">gpg --symmetric --cipher-algo AES256 archive007.tar</p>
+<p class="cmdc">gpg -o arc007.dat -c --cipher-algo AES256 archive007.tar</p>
+<p class="cmdc">gpg -o arc007.dat --symmetric --cipher-algo AES256 archive007.tar</p>
+<p class="desc">ecrypt <samp>archive007.tar</samp> using AES256 algorithm; in first and second examples the output file will be
+<samp>archive007.tar.gpg</samp>, in other examples the output filename is specified explicitly;</p>
+
+<p class="cmdc">gpg --armor -c --cipher-algo AES256 sec02.txt</p>
+<p class="desc">encrypt <samp>sec02.txt</samp> using AES256 algorithm, encode the encrypted file with <samp>base64</samp> to make
+it <b>ASCII armored text file</b> appropriate for e-mail message; the default output file in this case would be
+<samp>sec02.txt.asc</samp>;</p>
+
+<p class="cmdc">gpg -o sec02.txt -d sec02.txt.asc</p>
+<p class="desc">decrypt armored file <samp>sec02.txt.asc</samp>;</p>
+
+
+
+<h5>Digitally signing symmetrically encrypted data</h5>
+<p>
+In this case you need a public/private key pair, and your private key will be used to <b>sign the data before symmetrically
+encrypting</b> it. For example, to sign and symmetrically encrypt a text file:</p>
+
+<p class="cmdc">gpg --sign --symmetric --cipher-algo AES256 important.txt</p>
+<p class="or">or</p>
+<p class="cmd">gpg --sign -c --cipher-algo AES256 important.txt</p>
+<p>
+To verify the signature and decrypt,</p>
+
+<p class="cmd">gpg -d important.txt.gpg</p>
 
 
 
