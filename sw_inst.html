@@ -45,102 +45,20 @@ mostly applicable to Ubuntu Linux 19.04 desktop 64-bit</p>
 Ubuntu Linux ISO file can be downloaded from
 <a href="https://releases.ubuntu.com" target="_top">releases.ubuntu.com</a>.</p>
 <p>
-It would be reasonable to check the integrity of the downloaded ISO before
-installation, but, let's be honest: many people skip this step and go directly
-to <a href="live_usb.html">Live USB creation</a>. Anyway, think for yourself.</p>
+Check the integrity of the downloaded ISO before installation (see <code><a href="cmds_s.html#sha256sum">sha256sum</a></code>).
+Then go to <a href="live_usb.html">Live USB creation</a>.</p>
 
 
 
-<h5>Checking the archive integrity</h5>
+<h5>I usually install this</h5>
 <p>
-There are several methods to check the downloaded archive integrity.</p>
+The standard Ubuntu desktop installation procedure is quite simple if you stick to defaults. And in most cases you should - save
+your time, leave non-standard stuff to experts with <i>special requirements</i>.</p>
 <p>
-For Ubuntu 20.04.1 you can use the following script, unless you want to enter all
-that stuff manually (I've named it <samp>verify_ubuntu_20_04_1.sh</samp>):</p>
-<div class="file"><pre>
-#!/bin/bash
-# To verify the SHA256 checksum, run this cmd in your
-# terminal in the directory the *.iso was downloaded to:
-
-echo "b45165ed3cd437b9ffad02a2aad22a4ddc69162470e
-  2622982889ce5826f6e3d
-  *ubuntu-20.04.1-desktop-amd64.iso" | shasum -a 256 --check
-
-# You should get the following output:
-#     ubuntu-20.04.1-desktop-amd64.iso: OK
-</pre></div>
+When I install a new Linux version on SSD, the first thing I do after installation is a std set of
+<a href="storage.html#ssd">config modifications for the Solid State Drive</a>.</p>
 <p>
-Note that <samp>echo "b45165... ... ...</samp> <b>must be one line</b>!</p>
-<p>
-The <code>shasum</code> is a PERL script. In my system (19.04) it was installed
-by default. Once again, make sure that the downloaded archive and the above BASH
-script are in the same directory, and archive's name/version in the script is
-correct. The hash (<samp>b45165..</samp>) is unique for each archive, look for it
-on the Ubuntu download site.</p>
-
-
-
-<h5>Checking the archive integrity (old-style?)</h5>
-<p>
-The classical approach is to download ISO and two additional files:</p>
-<ul class="tight">
-<li><samp>SHA256SUMS</samp></li>
-<li><samp>SHA256SUMS.gpg</samp></li>
-</ul>
-<p>
-You put all three files to the same directory, and exec following cmd
-(<code>sha256sum</code> is included in the <a href="coreutils.html">Coreutils</a>
-pkg which is always installed):</p>
-
-<p class="cmd">sha256sum -c SHA256SUMS 2&gt;&amp;1 | grep OK</p>
-<p>
-The output should be like:</p>
-<div class="term">
-<pre>
-ubuntu-19.04-desktop-amd64.iso: OK</pre>
-</div>
-<p>
-Of course, it will be 'OK' only if the calculated hash matches the hash
-from <samp>SHA256SUMS</samp> file.</p>
-<p>
-An <b>alternative method</b> (no need to download SHA* files):</p>
-
-<p class="cmd">sha256sum ubuntu-19.04-desktop-amd64.iso</p>
-<p>
-You are supposed to get a single line that looks like:</p>
-
-<p class="fmt"><samp>2da6f8b5c65b71b040c5c510311eae1798545b8ba801<br>
-c9b63e9e3fd3c0457cbe *ubuntu-19.04-desktop-amd64.iso</samp></p>
-<p>
-Compare this calculated hash with the corresponding hash in the
-<samp>SHA256SUMS</samp> file (you can open that file on the web-site).
-If it's exactly the same, then ISO is OK. Otherwise, you should probably
-try to download from another site/mirror.</p>
-
-<!--
-2da6f8b5c65b71b040c5c510311eae1798545b8ba801c9b63e9e3fd3c0457cbe *ubuntu-19.04-desktop-amd64.iso
-25d483341ccd0d522a6660b00db933787c86c47b42f1845bcf997127f4b61e9d *ubuntu-19.04-live-server-amd64.iso
--->
-
-<p>
-The same approach can be used to check any downloaded files/archives
-(if, of course, developers provide the appropriate files). See, for example,
-<a href="#maven">Maven</a>.</p>
-
-
-
-<h5>I usually do this</h5>
-<p>
-The standard Ubuntu desktop installation procedure is quite simple if you
-stick to defaults. And in most cases you should, - save your time, leave
-non-standard stuff to experts with <i>special requirements</i>.</p>
-<p>
-When I install a new Linux version on SSD, the first thing I do after installation
-is a std set of <a href="storage.html#ssd">config modifications for the Solid
-State Drive</a>.</p>
-<p>
-Then, of course, the <b>latest updates</b>. See<code><a href="cmds_a.html#apt">
-apt upgrade</a></code>.</p>
+Then, of course, the <b>latest updates</b>. See<code><a href="cmds_a.html#apt"> apt upgrade</a></code>.</p>
 <p>
 And since my favorite file manager is <b>Midnight Commander</b>,</p>
 
@@ -151,20 +69,16 @@ Also, I usually install:</p>
 <p class="cmdc">sudo apt install nmap</p>
 <p class="cmd">sudo apt install openssh-server</p>
 <p>
-However, if you don't know what is
-<code><a href="cmds_n.html#nmap">nmap</a></code>, you probably don't need it.
-And if you're not planning to connect to your system remotely using
-<code><a href="cmds_s.html#ssh">ssh</a></code>, then you don't need SSH server.</p>
+However, if you don't know what is <code><a href="cmds_n.html#nmap">nmap</a></code>, you probably don't need it. And if you're not
+planning to connect to your system remotely using <code><a href="cmds_s.html#ssh">ssh</a></code>, then you don't need SSH server.</p>
 <div class="box1">
 <p>
 If you prefer the old stuff like<code><a href="cmds_i.html#ifconfig">
-ifconfig </a></code>and<code><a href="cmds_t.html#traceroute"> traceroute
-</a></code>(both are not installed by default in latest Linux versions),
-read (!) about<samp><a href="net.html#net-tools"> net-tools</a></samp>, try
+ifconfig </a></code>and<code><a href="cmds_t.html#traceroute"> traceroute </a></code>(both are not installed by default in latest
+Linux versions), read (!) about<samp><a href="net.html#net-tools"> net-tools</a></samp>, try
 <code><a href="cmds_i.html#ip"> ip</a></code>,
 <code><a href="cmds_m.html#mtr"> mtr</a></code>,
-<code><a href="cmds_n.html#nmcli"> nmcli </a></code>and then, if you still
-want it:</p>
+<code><a href="cmds_n.html#nmcli"> nmcli </a></code>and then, if you still want it:</p>
 
 <p class="cmdc">sudo apt install net-tools</p>
 <p class="cmd">sudo apt install traceroute</p>
@@ -174,12 +88,10 @@ want it:</p>
 -->
 </div>
 <p>
-Now comes the moment when I configure <a href="net.html#avahi">mDNS</a> and
-<a href="cmds_i.html#iptables">firewall</a>.</p>
+Now comes the moment when I configure <a href="net.html#avahi">mDNS</a> and <a href="cmds_i.html#iptables">firewall</a>.</p>
 <p>
-Of course, if your computer is connected to a large corporate network, or if
-your computer is the only device in your home net (besides router providing
-Internet connection), then you most likely don't need mDNS.</p>
+Of course, if your computer is connected to a large corporate network, or if your computer is the only device in your home net
+(besides router providing Internet connection), then you most likely don't need mDNS.</p>
 <p>
 Linux <b>firewall</b> is the part of the kernel, you don't have to install it,
 it's already there. But you must configure it, and this is a separate story

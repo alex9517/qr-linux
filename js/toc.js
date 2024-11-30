@@ -187,6 +187,7 @@ const cmds = new Array(
 "<a name=\"sss\"></a>",
 "cmds_s.html#sed=sed",
 "cmds_s.html#sfdisk=sfdisk",
+"cmds_s.html#sha256sum=sha256sum",
 "cmds_s.html#showmount=showmount",
 "cmds_s.html#shutdown=shutdown",
 "cmds_s.html#sleep=sleep",

@@ -112,12 +112,12 @@ file;</p>
 <p class="cmdc">gpg --symmetric --cipher-algo AES256 archive007.tar</p>
 <p class="cmdc">gpg -o arc007.dat -c --cipher-algo AES256 archive007.tar</p>
 <p class="cmdc">gpg -o arc007.dat --symmetric --cipher-algo AES256 archive007.tar</p>
-<p class="desc">ecrypt <samp>archive007.tar</samp> using AES256 algorithm; in first and second examples the output file will be
+<p class="desc">encrypt <samp>archive007.tar</samp> using AES256 algorithm; in first and second examples the output file will be
 <samp>archive007.tar.gpg</samp>, in other examples the output filename is specified explicitly;</p>
 
 <p class="cmdc">gpg --armor -c --cipher-algo AES256 sec02.txt</p>
 <p class="desc">encrypt <samp>sec02.txt</samp> using AES256 algorithm, encode the encrypted file with <samp>base64</samp> to make
-it <b>ASCII armored text file</b> appropriate for e-mail message; the default output file in this case would be
+it <b>ASCII armored text file</b> appropriate for messaging; the default output file in this case would be
 <samp>sec02.txt.asc</samp>;</p>
 
 <p class="cmdc">gpg -o sec02.txt -d sec02.txt.asc</p>

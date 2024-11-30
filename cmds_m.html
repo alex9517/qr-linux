@@ -1156,6 +1156,12 @@ mounts filesystems.</p>
 <p class="cmdc">mount -l</p>
 <p class="desc">list all mounted filesystems and their labels;</p>
 
+<p class="cmdc">mount /dev/sdc2 /u02</p>
+<p class="desc">mount device <samp>/dev/sdc2</samp> on <samp>/u02</samp>;</p>
+
+<p class="cmdc">mount UUID="547afe78-e77f-4af2-b2b1-89607efd153e" /mnt</p>
+<p class="desc">mount device on <samp>/mnt</samp> using device's UUID;</p>
+
 <p class="fmt"><code>mount&nbsp;</code>[<kbd>options</kbd>] [<code>-t</code> <kbd>type</kbd>]<kbd>&nbsp;device dir</kbd></p>
 <p>
 <kbd>device</kbd> can be one of the following:</p>
@@ -1170,16 +1176,13 @@ You can get UUIDs and labels using following cmds:</p>
 <p class="cmdc">blkid</p>
 <p class="cmd">blkid /dev/sda5</p>
 <p>
-<kbd>dir</kbd> is a mount point, i.e., some directory (should be
-empty, though it's not mandatory). The removable devices (CD, DVD, USB Flash)
-are usually auto mounted in <samp>/media</samp> dir. For random and rare
-tasks use <samp>/mnt</samp> (unless already occupied), or create some temporary
-mount point (<samp>/tmp</samp> dir is one of possible locations).</p>
+<kbd>dir</kbd> is a mount point, i.e., some directory (should be empty, though it's not mandatory). The removable devices (CD, DVD,
+USB Flash) are usually auto mounted in <samp>/media</samp> dir. For random and rare tasks use <samp>/mnt</samp> (unless already
+occupied), or create some temporary mount point.</p>
 <p>
-Note that <samp>/boot</samp>, <samp>/home</samp>, <samp>/opt</samp>,
-<samp>/var</samp> can be mount points for the corresponding HDD partitions.
-Also, <samp>/tmp</samp>, <samp>/var/run</samp>, <samp>/var/lock</samp> can be
-mount points for the <samp>tempfs</samp> filesystems.</p>
+Note that <samp>/boot</samp>, <samp>/home</samp>, <samp>/opt</samp>, <samp>/var</samp> can be mount points for the corresponding
+HDD partitions. Also, <samp>/tmp</samp>, <samp>/var/run</samp>, <samp>/var/lock</samp> can be mount points for the
+<samp>tempfs</samp> filesystems.</p>
 <p>
 Option <code>-t</code> <kbd>type</kbd> is not usually required, however,
 you can find currently supported fs types, with one of the following cmds:</p>
@@ -1187,19 +1190,46 @@ you can find currently supported fs types, with one of the following cmds:</p>
 <p class="cmdc">cat /proc/filesystems</p>
 <p class="cmd">cat /etc/filesystems</p>
 <p>
-File <samp>/etc/fstab</samp> defines what filesystems should be mounted
-at the system startup and how. Normally, only root can mount filesystems,
-however, option user in <samp>/etc/fstab</samp> gives permission to mount
-corresponding fs to other people. File <samp>/etc/mtab</samp> contains
-the list of currently mounted filesystems. Note that
-<a href="cmds_d.html#df"><code>df</code></a> (disk free) also gives info
-about mounted filesystem.</p>
+Unmounting is simple unless it's some problematic share or busy file/dir on the mounted device (see below):</p>
 
-<p class="cmdc">mount /dev/sdc2 /u02</p>
-<p class="desc">mount device <samp>/dev/sdc2</samp> on <samp>/u02</samp> dir;</p>
+<p class="cmdc">umount /u02</p>
+<p class="desc">unmount whatever is mounted on <samp>u02</samp>;</p>
 
-<p class="cmdc">mount UUID="547afe78-e77f-4af2-b2b1-89607efd153e" /mnt</p>
-<p class="desc">mount device on <samp>/mnt</samp> dir using device's UUID;</p>
+<p class="cmdc">sudo mount -t nfs 192.168.10.22:/u01/tmp /mnt</p>
+<p class="desc">mount NFS share on <samp>/mnt</samp> (assuming it exists and accessible);</p>
+
+<p class="cmdc">sudo umount /mnt</p>
+<p class="desc">unmount NFS share:</p>
+
+<p>
+To unmount a stale NFS share, try:</p>
+
+<p class="cmdc">sudo umount -f /mnt</p>
+<p class="cmdc">sudo umount -l /mnt</p>
+<p class="cmd">sudo umount -lf /mnt</p>
+<p>
+If it does not work, try to find and kill the guilty process and then apply the above cmds:</p>
+
+<p class="cmdc">lsof | grep /mnt</p>
+<p class="cmd">... ... ...</p>
+<p class="cmd">sudo umount -lf</p>
+<p>
+This strategy can be used for any mounted resource (<samp>-f</samp> is for NFS only).</p>
+<p>
+File <samp>/etc/fstab</samp> defines what filesystems should be mounted at the system startup and how. Normally, only root can
+mount filesystems, however, option user in <samp>/etc/fstab</samp> gives permission to mount corresponding fs to other people.
+File <samp>/etc/mtab</samp> contains the list of currently mounted filesystems. Note that
+<a href="cmds_d.html#df"><code>df</code></a> (disk free) also gives info about mounted filesystem.</p>
+<p>
+The <samp>defaults</samp> mount option which is often used in <samp>/etc/fstab</samp> depends on the kernel version and the
+filesystem type. To see the actual interpretation of this option here and now, try</p>
+
+<p class="cmdc">less /etc/mtab</p>
+<p class="or">or</p>
+<p class="cmd">cat /proc/mounts</p>
+
+<p>
+More examples:</p>
 
 <p class="cmdc">mount -o remount,rw /</p>
 <p class="desc">remount the root filesystem in read/write mode;</p>

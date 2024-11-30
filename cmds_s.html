@@ -20,6 +20,7 @@
 <p class="menu">
 <a href="#sed">sed</a>&nbsp;|
 <a href="#sfdisk">sfdisk</a>&nbsp;|
+<a href="#sha256sum">sha256sum</a>&nbsp;|
 <a href="#showmount">showmount</a>&nbsp;|
 <a href="#shutdown">shutdown</a>&nbsp;|
 <a href="#sleep">sleep</a>&nbsp;|
@@ -40,7 +41,7 @@
 
 
 
-<p class="cmdname"><a name="sed">sed</a></p>
+<p class="cmdname"><a name="sed"></a>sed</p>
 <p>
 is a stream editor used to perform basic text transformations on an input
 stream (file or pipe). <code>sed</code> reads one line at a time, chops off
@@ -409,7 +410,7 @@ in memory, so expressions like <samp>$-10</samp> have no sense, because
 
 
 
-<p class="cmdname"><a name="sfdisk">sfdisk</a></p>
+<p class="cmdname"><a name="sfdisk"></a>sfdisk</p>
 <p>
 displays or manipulates the disk partition tables. It has 4 main uses:</p>
 <ul>
@@ -598,7 +599,86 @@ if the check fails; this option suppresses the test;</p>
 
 
 
-<p class="cmdname"><a name="showmount">showmount</a></p>
+
+<p class="cmdname"><a name="sha256sum"></a>sha256sum</p>
+<p>
+computes/checks SHA256 encrypted message digest. If <i>file</i> spec is <code>-</code> or totally missing, it reads <i>stdin</i>.</p>
+
+<p class="fmt"><code>sha256sum&nbsp;</code>[<kbd>options</kbd>] [<kbd>files</kbd>]</p>
+<p>
+Nowdays any important downloadable archive must be somehow secured, protected, made verifiable. And you, user, consumer, client,
+etc. should be reasonably cautious. That is, if you can verify a checksum, do it. Of course, this is not 100% warranty: site can
+be hacked, DNS record can be maliciously modified, ... But these are the problems of the higher order. You do your part: verify
+checksum and hope for best.</p>
+
+<p class="cmdc">sha256sum go1.23.1.linux-amd64.tar.gz</p>
+<p class="desc">generates the checksum of the downloaded archive; it's supposed that you will <b>compare it with the checksum on
+the archive's web-site</b>;</p>
+<p>
+The prev cmd outputs smth like this (all in one line if display has space):</p>
+<div class="term"><pre>
+49bbb517cfa9eee677e1e7897f7cf9cfdbcf49e05f61984a2789136de359f9bd  go1.23.1.linux-amd64.tar.gz
+</pre></div>
+
+<p class="cmdc">sha256sum go1.23.1.linux-amd64.tar.gz &gt; chksum.txt</p>
+<p class="desc">generates the checksum of the downloaded archive and saves it in a text file;</p>
+
+<p>
+The following cmd</p>
+
+<p class="cmd">sha256sum ubuntu-24.04-desktop-amd64.iso</p>
+<p>
+takes some time to finish (~60 sec), probably because it's a big archive (6GB+), and outputs:</p>
+<div class="term"><pre>
+81fae9cc21e2b1e3a9a4526c7dad3131b668e346c580702235ad4d02645d9455  ubuntu-24.04-desktop-amd64.iso
+</pre></div>
+
+
+
+<h5>Options</h5>
+
+<p class="fmt"><code>--help</code> &nbsp;&nbsp; <code>--version</code></p>
+
+<p class="fmtc"><code>-b</code>, <code>--binary</code></p>
+<p class="desc">read in binary mode; <b>Note!</b> There is no difference between binary and text mode options on GNU systems;</p>
+
+<p class="fmtc"><code>-c</code>, <code>--check</code></p>
+<p class="desc">read SHA256 sums from the <kbd>files</kbd> and check them;</p>
+
+<p class="fmtc"><code>--tag</code></p>
+<p class="desc">create a BSD-style checksum; <b>Note!</b> BSD checksum algo is legacy, ... useless from a security perspective,
+and weaker than the CRC-32 cksum for error detection;</p>
+
+<p class="fmtc"><code>-t</code>, <code>--text</code></p>
+<p class="desc">read in text mode (default);</p>
+
+<p class="fmtc"><code>-z</code>, <code>--zero</code></p>
+<p class="desc">end each output line with NUL, not newline, and disable file name escaping;</p>
+
+<p>
+<i>The options for checksum verification..</i></p>
+
+<p class="fmtc"><code>--ignore-missing</code></p>
+<p class="desc">don't fail or report status for missing files;</p>
+
+<p class="fmtc"><code>--quiet</code></p>
+<p class="desc">don't print OK for each successfully verified file;</p>
+
+<p class="fmtc"><code>--status</code></p>
+<p class="desc">don't output anything, status code shows success;</p>
+
+<p class="fmtc"><code>--strict</code></p>
+<p class="desc">exit non-zero for improperly formatted checksum lines;</p>
+
+<p class="fmtc"><code>-w</code>, <code>--warn</code></p>
+<p class="desc">warn about improperly formatted checksum lines;</p>
+
+
+
+
+
+
+<p class="cmdname"><a name="showmount"></a>showmount</p>
 <p>
 queries the mount daemon on a remote host for info about the state of the NFS server on that machine.</p>
 

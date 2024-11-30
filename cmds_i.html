@@ -1000,26 +1000,22 @@ time of the last <samp>semop()</samp> on semaphores;</td></tr>
 
 <p class="cmdname"><a name="iptables"></a>iptables</p>
 <p>
-is a <b>firewall config tool</b> used by admins (and experienced users) to
-set/modify rules for packet filtering and NAT (Network Address Translation);
-<code>iptables</code> works with IPv4 only, <code>ip6tables</code> handles
-IPv6. See also:</p>
+is a <b>firewall config tool</b> used by admins (and experienced users) to set/modify rules for packet filtering and NAT
+(Network Address Translation); <code>iptables</code> works with IPv4 only, <code>ip6tables</code> handles IPv6.</p>
+<!--
+See also:</p>
 <ul>
-<li><a href="files/iptabs_init.sh">iptabs_init.sh</a> script that I
-use for initial configuration of my firewall (see comments in
+<li><a href="files/iptabs_init.sh">iptabs_init.sh</a> script that I use for initial configuration of my firewall (see comments in
 <a href="#iptab_script">Sample&nbsp;Script</a>),</li>
-<li><a href="files/iptabs_remove.sh">iptabs_remove.sh</a> script that
-I use to remove all firewall rules,</li>
+<li><a href="files/iptabs_remove.sh">iptabs_remove.sh</a> script that I use to remove all firewall rules,</li>
 <li><a href="#iptab_theory">More about Linux firewall</a></li>
 </ul>
+-->
 <p>
-In Linux, firewall (<b>netfilter</b>) is the part of the Linux kernel
-(a bunch of loadable modules). Technically, it's a <b>stateful firewall</b>
-of the type <b>packet filter</b> (there are also <i>proxy</i>-type firewalls,
-e.g., <samp>SQUID</samp>). Linux firewall has a modular struct and its
-functionality depends on the kernel config. Distro kernels usually provide
-a reasonable set of firewall features, but if you want something exotic,
-you may have to build your own kernel from source.</p>
+In Linux, firewall (<b>netfilter</b>) is the part of the Linux kernel (a bunch of loadable modules). Technically, it's a
+<b>stateful firewall</b> of the type <b>packet filter</b> (there are also <b>proxy-type firewalls</b>, e.g., <samp>SQUID</samp>).
+Linux firewall has a modular struct and its functionality depends on the kernel config. Distro kernels usually provide
+a reasonable set of firewall features, but if you want something exotic, you may have to build your own kernel from source.</p>
 
 <div id="topmenu">
 <p class="menu">
@@ -1275,29 +1271,45 @@ packets with destination port <samp>443/tcp</samp>;</p>
 <h5>
 <a name="iptab_script">A set of rules for a typical Home PC</a></h5>
 <p>
-These scripts were mentioned at the beginning of the chapter:
-<samp><a href="files/iptabs_init.sh">iptabs_init.sh</a></samp> sets
-the rules for a typical Home PC (or any PC used as a workstation),
-<samp><a href="files/iptabs_remove.sh">iptabs_remove.sh</a></samp> removes
-those rules. Note that the last script would only work correctly for the rules
-created by the first script, if you add/remove some chains you must modify the
-second script.</p>
+You can enter firewall rules manually. However, it's inconvenient. I prefer to copy/paste long iptables cmds from some reliable
+source, like my own script or manual. As to initial setup on a newly installed system, the best way (IMHO) is a prepared BASH
+script like <samp><a href="files/iptabs_init.sh">iptabs_init.sh</a></samp> (the name is random). This is just a sequence of cmds to
+set the rules for a typical Home PC (or any PC used as a workstation). Of course, the rules for servers should be different. The
+other script, <samp><a href="files/iptabs_remove.sh">iptabs_remove.sh</a></samp>, removes those rules. Note that the last script
+would only work correctly for the rules created by the first script. That is, if you add/remove some chains you must modify the
+second script. You cannot just remove those rules - it should be done in a specific order.</p>
 <p>
-With the rules configured by <samp>iptabs_init.sh</samp>, your computer
-would respond to <code>ping</code>, but would not accept any connection
-requests from the outside (except SSH, HTTP/HTTPS, DLNA, and some other
-protocols). Forwarding is totally blocked, output is not restricted.</p>
+With the rules configured by <samp>iptabs_init.sh</samp>, your computer would respond to <code>ping</code>, but would not accept
+any connection requests from the outside (except SSH, HTTP/HTTPS, DLNA, and some other protocols). Forwarding is totally blocked,
+output is not restricted.</p>
 <p>
-In fact, such scripts are quite personal, i.e., some people want this, some
-people want that. So, the last part of the script is supposed to be modified
-according to your requirements. For example, you can (and should) comment out
-all lines from SSH (<samp>tcp/22</samp>) to the end of the script, unless you
-really need to connect from outside to SSHD on your comp, to web-server (some
-people want to have their own locally), to MiniDLNA (good service to watch on
-TV movies that you keep on your PC), etc.</p>
+In fact, such scripts are quite personal, i.e., some people want this, some people want that. So, the last part of the script is
+supposed to be modified according to your requirements. For example, you can (and should) comment out all lines from SSH
+(<samp>tcp/22</samp>) to the end of the script, unless you really need to connect from outside to SSHD on your comp, to web-server
+(some people want to have their own locally), to MiniDLNA (good service to watch on TV movies that you keep on your PC), etc.</p>
 <p>
-You can run <samp>iptabs_init.sh</samp> [as <samp>root</samp>] once after
-system installation, and if it's good for you, save it using following cmds:</p>
+So, rules are carefully set, everything works good. But after reboot all those rules will be erased unless you save them.
+Of course, you can auto (or manually) run the rules-setting BASH script each time after reboot. But there is a better way to
+save/restore iptables rules. In Ubuntu Linux (since version 20.xx?) the rules must be saved in <samp>/etc/iptables/*</samp>, and
+the cmds are:</p>
+
+<p class="cmdc">sudo iptables-save -c &gt; /etc/iptables/rules.v4</p>
+<p class="cmd">sudo ip6tables-save -c &gt; /etc/iptables/rules.v6</p>
+<p>
+The saved rules can be restored with,</p>
+
+<p class="cmdc">sudo iptables-restore &lt; /etc/iptables/rules.v4</p>
+<p class="cmd">sudo ip6tables-restore &lt; /etc/iptables/rules.v6</p>
+<p>
+You can also merge some new rules with the saved ones:</p>
+
+<p class="cmd">sudo iptables-restore -n &lt; /etc/iptables/rules.v4</p>
+<p>
+However, even if you saved your rules as described above, it doesn't mean they will be auto restored after reboot. To automate the
+restore process you need <b>iptables-persistent</b> to handle the loading of the saved rules:</p>
+
+<p class="cmd">sudo apt install iptables-persistent</p>
+
 <!--
 <div class="file">
 <pre>iptables -F
@@ -1447,38 +1459,29 @@ ip6tables -A INPUT -s fe80::/10
 #  --dports 80,443 --syn -m conntrack --ctstate NEW -j ACCEPT</pre>
 </div>
 -->
-
+<div class="box1">
+<p>
+<b>Note!</b> In the past it was</p>
 <p class="cmdc">iptables-save &gt; /etc/iptables.rules</p>
 <p class="cmd">ip6tables-save &gt; /etc/ip6tables.rules</p>
 <p>
-To configure auto restore of the saved rules after reboot,
-add the following lines to <samp>/etc/network/interfaces</samp>:</p>
+And the following lines in <samp>/etc/network/interfaces</samp>:</p>
 <div class="file"><pre>
 pre-up /sbin/iptables-restore &lt; /etc/iptables.rules
 pre-up /sbin/ip6tables-restore &lt; /etc/ip6tables.rules
 </pre></div>
 <p>
-The above cmds are good for Ubuntu/Debian, but RedHat/Fedora store those
-rules by default in <samp>/etc/sysconfig/iptables</samp>, and handle all
-these things in a different way.</p>
+to configure auto restore of the saved rules after reboot.</p>
+</div>
+<p>
+The above cmds are good for Ubuntu/Debian, but RedHat/Fedora store those rules by default in <samp>/etc/sysconfig/iptables</samp>,
+and handle all these things in a different way.</p>
 <p>
 You can also configure auto saving of <code>iptables</code> rules,
 however it has sense only if the rules are often modified or if you
 want to save/restore packet counters (in the last case option
 <code>-c</code> should be added to both <code>iptables-save</code> and
 <code>iptables-restore</code>).</p>
-<p>
-The script <samp>iptabs_remove.sh</samp> is supposed to be used in two
-cases:</p>
-<ul>
-<li>if you mess up with the firewall config and want to start from the
-beginning;</li>
-<li>if you modified <samp>iptabs_init.sh</samp> and want to re-run it without
-system restart;</li>
-</ul>
-<p>
-You should modify <samp>iptabs_remove.sh</samp> only when you add/remove some
-user-defined chains; modification of rules does not affect it.</p>
 
 
 
@@ -1489,24 +1492,21 @@ user-defined chains; modification of rules does not affect it.</p>
 <p class="desc">append rule(s) to the end of the selected chain;</p>
 
 <p class="fmtc"><code>-D</code>, <code>--delete</code></p>
-<p class="desc">delete rule(s) from the selected chain (specify exactly
-the rule or its number; the first rule is #1);</p>
+<p class="desc">delete rule(s) from the selected chain (specify exactly the rule or its number; the first rule is #1);</p>
 
 <p class="fmtc"><code>-E</code> <kbd>old new</kbd>,
 <code>--rename-chain</code> <kbd>old new</kbd></p>
 <p class="desc">rename a user-defined chain;</p>
 
 <p class="fmtc"><code>-F</code>, <code>--flush</code></p>
-<p class="desc">flush the selected chain (all chains of the table,
-if not specified);</p>
+<p class="desc">flush the selected chain (all chains of the table, if not specified);</p>
 
 <p class="fmtc"><code>-I</code>, <code>--insert</code></p>
-<p class="desc">insert rule(s) in the selected chain as the given rule
-numbers; if not specified, #1 is default;</p>
+<p class="desc">insert rule(s) in the selected chain as the given rule numbers; if not specified, #1 is default;</p>
 
 <p class="fmtc"><code>-L</code>, <code>--list</code></p>
-<p class="desc">list all rules in the selected chain (in all chains,
-if not specified); use <code>-n</code> to avoid reverse DNS lookup;</p>
+<p class="desc">list all rules in the selected chain (in all chains, if not specified); use <code>-n</code> to avoid reverse DNS
+lookup;</p>
 
 <p class="fmtc"><code>-N</code> <kbd>name</kbd>,
 <code>--new-chain</code> <kbd>name</kbd></p>
@@ -1514,20 +1514,17 @@ if not specified); use <code>-n</code> to avoid reverse DNS lookup;</p>
 
 <p class="fmtc"><code>-P</code> <kbd>chain target</kbd>,
 <code>--policy</code> <kbd>chain target</kbd></p>
-<p class="desc">set the policy for the chain to the given target; only
-built-in chains can have policies;</p>
+<p class="desc">set the policy for the chain to the given target; only built-in chains can have policies;</p>
 
 <p class="fmtc"><code>-R</code>, <code>--replace</code></p>
-<p class="desc">replace a rule in the selected chain (if src and/or dest
-names resolve to multiple addresses, the cmd will fail);</p>
+<p class="desc">replace a rule in the selected chain (if src and/or dest names resolve to multiple addresses, the cmd will fail);</p>
 
 <p class="fmtc"><code>-X</code> <kbd>name</kbd>,
 <code>--delete-chain</code> <kbd>name</kbd></p>
 <p class="desc">delete a user-defined chain;</p>
 
 <p class="fmtc"><code>-Z</code>, <code>--zero</code>
-<p class="desc">zero (reset) packet and byte counters in the specified chain
-(all chains, if not specified);</p>
+<p class="desc">zero (reset) packet and byte counters in the specified chain (all chains, if not specified);</p>
 
 
 
@@ -1536,28 +1533,25 @@ names resolve to multiple addresses, the cmd will fail);</p>
 
 <p class="fmtc"><code>--icmp-type</code>
 [<code>!</code>] <kbd>n</kbd></p>
-<p class="desc">match by ICMP type, usually numeric, typically <samp>8</samp>
-and <samp>11</samp> (see <a href="tcpip.html#icmp">TCP/IP</a>);</p>
+<p class="desc">match by ICMP type, usually numeric, typically <samp>8</samp> and <samp>11</samp>
+(see <a href="tcpip.html#icmp">TCP/IP</a>);</p>
 
 <p class="fmtc"><code>--length</code>
 <kbd>n</kbd>[<code>:</code><kbd>m</kbd>]</p>
 <p class="desc">match the packet length against a numeric value or range;</p>
 
 <p class="fmtc"><code>--limit</code> <kbd>rate</kbd></p>
-<p class="desc">max average matching rate, where rate may be
-<kbd>n</kbd>/second, <kbd>n</kbd>/minute, <kbd>n</kbd>/hour, <kbd>n</kbd>/day
-(default is 3/hour);</p>
+<p class="desc">max average matching rate, where rate may be <kbd>n</kbd>/second, <kbd>n</kbd>/minute, <kbd>n</kbd>/hour,
+<kbd>n</kbd>/day (default is 3/hour);</p>
 
 <p class="fmtc"><code>--mac-source</code> [<code>!</code>] <kbd>addr</kbd></p>
-<p class="desc">match src MAC address; appropriate only for pkts coming
-from Ethernet devices and entering <samp>INPUT</samp>, <samp>FORWARD</samp>,
-<samp>PREROUTING</samp> chains;</p>
+<p class="desc">match src MAC address; appropriate only for pkts coming from Ethernet devices and entering <samp>INPUT</samp>,
+<samp>FORWARD</samp>, <samp>PREROUTING</samp> chains;</p>
 
 <p class="fmtc"><code>--source-ports <span class="arg">lst</span></code></p>
 <p class="fmtc"><code>--destination-ports <span class="arg">lst</span></code></p>
 <p class="fmtc"><code>--ports <span class="arg">lst</span></code></p>
-<p class="desc">multiport match (up to 15 ports can be specified);
-<kbd>lst</kbd> - comma-separated list of port numbers;
+<p class="desc">multiport match (up to 15 ports can be specified); <kbd>lst</kbd> - comma-separated list of port numbers;
 should be used only with <code>-p tcp</code> or <code>-p udp</code>;</p>
 
 <p class="fmtc"><code>--pkt-type
@@ -1566,8 +1560,7 @@ unicast</code>|<code>broadcast</code>|<code>multicast</code></p>
 
 <p class="fmtc"><code>--state</code> <kbd>st</kbd></p>
 <p class="fmtc"><code>--ctstate</code> <kbd>st</kbd></p>
-<p class="desc">match by the connection state, see
-<a href="#iptab_states">more about states</a>;</p>
+<p class="desc">match by the connection state, see <a href="#iptab_states">more about states</a>;</p>
 
 <p class="fmtc"><code>--sport</code>,
 <code>--source-port</code> [<code>!</code>]
@@ -1582,9 +1575,8 @@ unicast</code>|<code>broadcast</code>|<code>multicast</code></p>
 
 <p class="fmtc"><code>--tcp-flags</code>
 [<code>!</code>] <kbd>mask comp</kbd></p>
-<p class="desc">match by TCP flags; the first arg is a comma separated list
-of flags that we examine, the second arg is a comma separated list of flags
-that must be set:
+<p class="desc">match by TCP flags; the first arg is a comma separated list of flags that we examine, the second arg is a comma
+separated list of flags that must be set:
 <samp>SYN</samp>, <samp>ACK</samp>, <samp>FIN</samp>, <samp>RST</samp>,
 <samp>URG</samp>, <samp>PSH</samp>, <samp>ALL</samp>, <samp>NONE</samp>;</p>
 

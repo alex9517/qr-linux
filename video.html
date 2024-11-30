@@ -20,14 +20,14 @@
 <a name="video">Video</a></h1>
 
 <p class="menu">
-<a href="#ffmpeg">FFmpeg</a>&nbsp;//
-<a href="#mplayer">Mplayer</a>&nbsp;//
+<a href="#ffmpeg">ffmpeg</a>&nbsp;//
+<a href="#mplayer">mplayer</a>&nbsp;//
 <a href="#video_dvd">Video DVD creation</a>
 </p>
 
 
 <h3 class="part">
-<a name="ffmpeg">FFmpeg</a></h3>
+<a name="ffmpeg"></a>ffmpeg</h3>
 <p>
 <b>FFmpeg</b> software project includes programs and libraries for audio/video
 processing, and for handling multimedia files and streams. The core program
@@ -51,17 +51,19 @@ project. Ubuntu/Debian supported <samp>avconv/Libav</samp> since 2011, but in
 </div>
 
 <p class="menu" style="font-size:120%">
-<a href="#one_pass">One-pass enc</a>&nbsp;//
-<a href="#two_pass">Two-pass enc</a>&nbsp;//
-<a href="#opts">Some&nbsp;options</a>&nbsp;//
-<a href="#mp4towebm">MP4&nbsp;to&nbsp;WEBM</a>&nbsp;//
-<a href="#resize">Resize/Rotate</a>&nbsp;//
-<a href="#cutting">Cut&nbsp;fragment</a>&nbsp;//
-<a href="#merge">Merge&nbsp;files</a>&nbsp;//
-<a href="#fade">Fade-in/Fade-out</a>&nbsp;//
-<a href="#audio">Audio</a>&nbsp;//
-<a href="#poster">Poster&nbsp;for&nbsp;video</a>&nbsp;//
-<a href="#anim">Animated&nbsp;GIF</a>
+
+<a href="#anim">Animated&nbsp;GIF</a> ||
+<a href="#audio">Audio</a> ||
+<a href="#cutting">Cut&nbsp;fragment</a> ||
+<a href="#fade">Fade-in/Fade-out</a> ||
+<a href="#mp4towebm">mp4_to_webm</a> ||
+<a href="#one_pass">One-pass-enc</a> ||
+<a href="#poster">Poster_for_video</a> ||
+<a href="#resize">Resize/Rotate</a> ||
+<a href="#opts">Some&nbsp;options</a> ||
+<a href="#two_pass">Two-pass-enc</a> ||
+<a href="#video_plus_audio">Video+Audio</a> ||
+<a href="#video_plus_video">Video+Video</a>
 </p>
 <p>
 You can get some info using following cmds:</p>
@@ -77,7 +79,7 @@ You can get some info using following cmds:</p>
 
 
 <h4 class="part3">
-<a name="one_pass">One-pass encoding / Constant Rate Factor (CRF)</a></h4>
+<a name="one_pass"></a>One-pass encoding / Constant Rate Factor (CRF)</h4>
 <p>
 This method provides a certain output quality
 for the whole file. Each frame gets the bitrate it needs to keep the
@@ -107,10 +109,9 @@ and provides better visual quality when comparing the total file sizes.</p>
 
 
 <h4 class="part3">
-<a name="two_pass">Two-pass encoding</a></h4>
+<a name="two_pass"></a>Two-pass encoding</h4>
 <p>
-is used if you want a specific output file size while output quality from
-frame to frame is of less importance.
+is used if you want a specific output file size while output quality from frame to frame is of less importance.</p>
 
 <p class="cmdc">ffmpeg -y -i clip05.vob -c:v libx264 -preset medium -b:v 800k -pass 1 -an -f mp4 /dev/null &amp;&amp; \</p>
 <p class="cmd">ffmpeg -i clip05.vob -c:v libx264 -preset medium -b:v 800k -pass 2 -c:a libfdk_aac -b:a 128k clip05.mp4</p>
@@ -136,13 +137,13 @@ frameref=15:fast_pskip=0 video04.mp4</p>
 
 
 <h4 class="part3">
-<a name="opts">Options and settings</a></h4>
+<a name="opts"></a>Options and settings</h4>
 <p>
 Most used only.</p>
 
 <p class="fmt"><code>-an</code> &nbsp;&nbsp;
-disable audio processing; usually it is used during the first pass of
-the two-pass encoding, because only video stats is recorded anyway;</p>
+disable audio processing; usually it is used during the first pass of the two-pass encoding, because only video stats is recorded
+anyway;</p>
 
 <p class="fmtc"><code>-aq </code><kbd>n</kbd></p>
 <p class="desc">use a variable bitrate for audio;<kbd> n </kbd>can be
@@ -270,7 +271,7 @@ will degrade to lower quality.</p>
 
 
 <h4 class="part3">
-<a name="mp4towebm">Converting MP4 to WEBM</a></h4>
+<a name="mp4towebm"></a>Converting MP4 to WEBM</h4>
 <p>
 With the<samp> libvpx </samp>used for WebM, quality depends
 on quantization levels<code> -qmin </code>and<code> -qmax </code>
@@ -338,16 +339,22 @@ used when transcoding,<code> -pass </code>provides 2-pass encoding.</p>
 
 
 <h4 class="part3">
-<a name="resize">Resize / Rotate</a></h4>
+<a name="resize"></a>Resize / Rotate</h4>
 
 <h5>Resizing video</h5>
 <p>
 The original file is <samp>640x480</samp>, we're going to resize it to
 <samp>320x240</samp> (remember about aspect ratio):</p>
 
-<p class="cmdc">ffmpeg -i clip01.mp4 -s&nbsp;320x240 -c:v&nbsp;libx264 -c:a&nbsp;copy clip01sm.mp4</p>
+<p class="cmdc">ffmpeg -i clip01.mp4 -s 320x240 -c:v libx264 -c:a copy clip01sm.mp4</p>
 <p class="or">or</p>
-<p class="cmd">ffmpeg -i clip01.mp4 -vf&nbsp;scale=320:240 -c:v&nbsp;libx264 -c:a&nbsp;copy clip01sm.mp4</p>
+<p class="cmd">ffmpeg -i clip01.mp4 -vf scale=320:240 -c:v libx264 -c:a copy clip01sm.mp4</p>
+<p>
+<p>
+The original file is <samp>1920x1080</samp>, we're going to resize it to <samp>1280x720</samp> (aspect ratio
+<samp>1.777777778</samp>):</p>
+
+<p class="cmd">ffmpeg -i clip02.mp4 -vf scale=1280:720 -c:v libx264 -c:a copy clip03.mp4</p>
 
 <!--
 <p class="cmd" style="margin-bottom:1%">
@@ -388,31 +395,35 @@ audio as is, and saves it all to a new file:</p>
 
 
 <h4 class="part3">
-<a name="cutting">Cuttung a fragment</a></h4>
+<a name="cutting"></a>Cuttung a fragment</h4>
 <p>
-The following cmd cuts a fragment from <samp>Movie.vob</samp> starting at
-1 hour 1 min 30 sec from the beginning (<code>-ss</code>), the length of the
-fragment is 122 sec (<code>-t</code>). It's also important to notice that
-streams to be copied are explicitly specified: video stream
-(<code>-map 0.0</code>) and audio track # 2 (129) (<code>-map 0.2</code>):</p>
+Note that the starting point and the ending point of the clip may not be exactly what you want, because the clip can only start
+at the <b>base frame</b>. Since VOB files usually have more base frames then AVI or MP4 or FLV, they are more suitable for
+cutting.</p>
+<p>
+Simple case, cutting off the end. The original video <samp>clip_orig.mp4</samp> will be made shorter, 32 sec only
+(supposing it was more than that):</p>
+
+<p class="cmd">ffmpeg -ss 00:00:00 -i clip_orig.mp4 -t 32 -c:v copy -c:a copy clip24.mp4</p>
+<p>
+The following cmd cuts a fragment from <samp>Movie.vob</samp> starting at 1 hour 1 min 30 sec from the beginning
+(<code>-ss</code>), the length of the fragment is 122 sec (<code>-t</code>). It's also important to notice that streams to be
+copied are explicitly specified: video stream (<code>-map 0.0</code>) and audio track # 2 (129) (<code>-map 0.2</code>):</p>
 
 <p class="cmd">ffmpeg -ss 01:01:30 -t 00:02:02 -i Movie.vob -vcodec copy -acodec copy TinManSong.vob -map 0.0 -map 0.2</p>
 <p>
-Note that <code>-ss</code> and <code>-t</code> must precede input file,
-otherwise the result could be strange. Anyway, the starting point and
-the ending point of the clip may not be exactly what you want, because
-the clip can only start at the base frame. Since VOB files have more base
-frames then AVI or MP4 or FLV, they are the most suitable for cutting.</p>
+About <b>map</b>: you can try <code>ffmpeg -i file.vob</code> to find what maps are hidden within that file.</p>
 <p>
-The following sequence of cmds cuts a fragment from MP4 (60s), reduces
-frame rate from 30 to 25, converts and resizes to FLV:</p>
+There were advices to put <code>-ss</code> and <code>-t</code> before input file, otherwise the result could be strange (I didn't
+test, just keep in mind).</p>
+<p>
+The following sequence of cmds cuts a fragment from MP4 (60s), reduces frame rate from 30 to 25, converts and resizes to FLV:</p>
 
 <p class="cmdc">ffmpeg -ss 00:00:06 -t 00:01:00 -i clip20.mp4 -c:v copy -c:a copy clip21.mp4</p>
 <p class="cmdc">ffmpeg -i clip21.mp4 -r 25 -c:v libx264 -c:a copy clip22.mp4</p>
 <p class="cmd">ffmpeg -i clip22.mp4 -s 320x240 -c:v libx264 -c:a copy -q:v 5 clip22.flv</p>
 <p>
-Cutting fragments from the MP3 audio files is even simpler. The following cmd
-cuts first 9 sec from the specified input file:</p>
+Cutting fragments from the MP3 audio files is even simpler. The following cmd cuts first 9 sec from the specified input file:</p>
 
 <p class="cmd">ffmpeg -i file22.mp3 -t 9 -c copy file22short.mp3</p>
 <p>
@@ -424,7 +435,33 @@ The next cmd cuts an 11 sec fragment starting at the 5th sec of the input file:<
 
 
 <h4 class="part3">
-<a name="merge">Merging two (or more) video files</a></h4>
+<a name="video_plus_audio"></a>Video + audio (merging video and audio files)</h4>
+<p>
+This is mostly about video-only and audio-only files downloaded from the Internet (e.g. from YouTube) when the files are supposed
+to be compatible by definition. For example, you have some YouTube link and use <i>yt-dlp</i> to download that video. First you
+should find what formats are available for this particular video:</p>
+
+<p class="cmd">yt-dlp -F https://www.youtube.com/...</p>
+<p>
+The above cmd shows all available formats, but the format you want is video-only (video without sound). You download this video</p>
+
+<p class="cmd">yt-dlp -f 136 https://www.youtube.com/...</p>
+<p>
+then you download the correct audio:</p>
+
+<p class="cmd">yt-dlp -f 140 https://www.youtube.com/...</p>
+<p>
+Make sure you select files with the <b>compatible codecs</b>. And probably you should not rename them before merging. Technically,
+some video players can work with this two-file combination. But wouldn't it be more convenient to have a single file?</p>
+
+<p class="cmd">ffmpeg -i clip_video_only.mp4 -i clip_audio_only.m4a -c:v copy -c:a copy clip26.mp4</p>
+<p>
+Merging random audio and video is a bigger problem.</p>
+
+
+
+<h4 class="part3">
+<a name="video_plus_video"></a>Video + video (merging video files)</h4>
 <p>
 Create a simple text file (e.g. <samp>files.txt</samp>) containing the names
 of all video files you want to concatenate:</p>
@@ -442,7 +479,7 @@ File's paths can be absolute or relative. Now join these files with:</p>
 
 
 <h4 class="part3">
-<a name="fade">Applying fade-in/out filters</a></h4>
+<a name="fade"></a>Applying fade-in/fade-out filters</h4>
 <p>
 The following cmd applies simultaneously audio/video fade-in and fade-out:</p>
 
@@ -464,7 +501,7 @@ frame <samp>3541</samp>.</p>
 
 
 <h4 class="part3">
-<a name="audio">Audio</a></h4>
+<a name="audio"></a>Audio</h4>
 
 <h5>Changing audio volume</h5>
 <p>
@@ -535,7 +572,7 @@ WAV to WMA (Windows Audio Media v2):</p>
 
 
 <h4 class="part3">
-<a name="poster">Creating a poster for video</a></h4>
+<a name="poster"></a>Creating a poster for video</h4>
 <p>
 HTML5 video players have a <samp>poster</samp> property that requires
 a picture of the appropriate size. The following cmds give you the simplest
@@ -558,7 +595,7 @@ The same trick, but skip the first 9 seconds of video, and only than create
 
 
 <h4 class="part3">
-<a name="anim">Creating animated GIF from video</a></h4>
+<a name="anim"></a>Creating animated GIF from video</h4>
 <p>
 First, we need an appropriate video file, i.e., MP4, AVI, quite small
 (like 160x120), with low framerate (~15 frames/s), 30..100 sec length.
@@ -597,7 +634,7 @@ while <samp>10x100</samp> would make it essentially slower:</p>
 
 
 <h3 class="part">
-<a name="mplayer">Mplayer</a></h3>
+<a name="mplayer"></a>mplayer</h3>
 <p>
 (playing, ripping, encoding video)</p>
 <p>
@@ -676,7 +713,7 @@ dvd://1 -aid 138 -dvd-device /dev/hda</p>
 
 
 <h3 class="part">
-<a name="video_dvd">Video DVD creation</a></h3>
+<a name="video_dvd"></a>Video DVD creation</h3>
 <p>
 It's assumed that files were ripped from the original DVD to some dir
 on HDD (dir <samp>matrix</samp>, in the following example). For reference:
