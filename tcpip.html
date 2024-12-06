@@ -58,14 +58,12 @@ mostly from Wikipedia!</i></p>
 -->
 
 <p>
-<b>TCP</b> (Transmission Control Protocol) and <b>IP</b> (Internet Protocol)
-are the foundational protocols of the <b>Internet protocol suite</b>. In the
-past it was known as <i>DoD model</i> because it was developed by the US
-Department of Defense project agency.</p>
+<b>TCP</b> (Transmission Control Protocol) and <b>IP</b> (Internet Protocol) are the foundational protocols of the <b>Internet
+protocol suite</b>. In the past it was known as <i>DoD model</i> because it was developed by the US Department of Defense project
+agency.</p>
 <p>
-<b>OSI</b> (Open System Interconnect) is rather theoretical (conceptual)
-model, some experts call it <i>a reference model used for understanding and
-designing the system architecture</i>.</p>
+<b>OSI</b> (Open System Interconnect) is rather theoretical (conceptual) model, some experts call it <i>a reference model used for
+understanding and designing the system architecture</i>.</p>
 
 <a name="network_arch"></a>
 <table style="margin-left:auto;margin-right:auto">
@@ -91,8 +89,7 @@ designing the system architecture</i>.</p>
 
 <p class="warn">Note!</p>
 <p class="indent">
-<i>Experts have some disagreements concerning TCP/IP architecture,
-relations of TCP/IP layers to OSI layers, naming of layers, etc.</i></p>
+<i>Experts have some disagreements concerning TCP/IP architecture, relations of TCP/IP layers to OSI layers, naming of layers, etc.</i></p>
 
 
 <h5>
@@ -117,24 +114,18 @@ and secure (TLS/SSL) POP3S (<samp>tcp/995</samp>),</li>
 <li>etc</li>
 </ul>
 <p>
-Application layer also includes some basic network support services such as
-protocols for routing (e.g., RIP, the Routing Information Protocol,
-<samp>udp/520</samp>) and host configuration (e.g., DHCP, the Dynamic Host
-Configuration Protocol, <samp>udp/67</samp>, <samp>udp/68</samp>).</p>
+Application layer also includes some basic network support services such as protocols for routing (e.g., RIP, the Routing
+Information Protocol, <samp>udp/520</samp>) and host configuration (e.g., DHCP, the Dynamic Host Configuration Protocol,
+<samp>udp/67</samp>, <samp>udp/68</samp>).</p>
 <p>
-The TCP/IP model does not consider the specifics of formatting and presenting
-data, and does not define additional layers between the application and
-transport layers as in the OSI model. Such functions are supposed to be
-provided by libraries and APIs. Application layer protocols treat the
-transport layer (and lower) protocols as black boxes, though apps are usually
-aware of key qualities of the transport layer connection such as the endpoint
-IP addresses and port numbers.</p>
+The TCP/IP model does not consider the specifics of formatting and presenting data, and does not define additional layers between
+the application and transport layers as in the OSI model. Such functions are supposed to be provided by libraries and APIs.
+Application layer protocols treat the transport layer (and lower) protocols as black boxes, though apps are usually aware of key
+qualities of the transport layer connection such as the endpoint IP addresses and port numbers.</p>
 <p>
-The transport and lower layers are unconcerned with the specifics of app layer,
-routers and switches do not typically examine the encapsulated traffic.
-However, some firewall and bandwidth throttling apps must interpret app data.
-It is also sometimes necessary for NAT (Network Address Translator) traversal
-to consider the application payload.</p>
+The transport and lower layers are unconcerned with the specifics of app layer, routers and switches do not typically examine the
+encapsulated traffic. However, some firewall and bandwidth throttling apps must interpret app data. It is also sometimes necessary
+for NAT (Network Address Translator) traversal to consider the application payload.</p>
 
 
 <h5>
@@ -984,6 +975,7 @@ a directly attached link</td></tr>
 <h4>
 <a name="ip">IPv4 packet</a></h4>
 
+<div style="background:black">
 <table class="grid_mc" style="margin-top:1em;margin-bottom:1em;font-family:Open-Sans;font-size:80%">
 <tr>
 <th class="gridcen_small_mc1">0</th>
@@ -1043,7 +1035,7 @@ a directly attached link</td></tr>
 <tr>
 <td class="gridcen_mc" colspan="32" style="background:#add8fa">Data (variable length)</td></tr>
 </table>
-
+</div>
 <p class="fmt" style="padding-top:12px"><samp>Version (4 bits)</samp></p>
 <p class="desc">The version of IP used to generate the datagram. For IPv4,
 this is <samp>4</samp>. The purpose is to ensure compatibility between
@@ -1200,8 +1192,8 @@ take advantage of MTUs greater than the smallest MTU of <samp>1280</samp>
 octets. A node may use the IPv6 Fragment header to fragment the packet at the
 source and have it reassembled at the destination(s).</p>
 
+<div style="background:black">
 <table class="grid_mc" style="margin-top:1em;margin-bottom:1em;font-family:Open-Sans;font-size:80%">
-<caption>IPv6 fixed header</caption>
 <tr>
 <th class="gridcen_small_mc1">0</th>
 <th class="gridcen_small_mc1">1</th>
@@ -1263,6 +1255,7 @@ source and have it reassembled at the destination(s).</p>
 <tr>
 <td class="gridcen_mc" colspan="32">D e s t i n a t i o n &nbsp; A d d r e s s (p a r t # 4)</td></tr>
 </table>
+</div>
 
 <p class="fmt"><samp>Version (4 bits)</samp></p>
 <p class="desc">The constant value <samp>6</samp> represented by bit sequence
@@ -1676,9 +1669,10 @@ of its connection termination request. The max timeout is <samp>240</samp> sec
 <h4>
 <a name="tcp">TCP packet</a></h4>
 <p>
-A TCP header follows IP header, supplying info
-specific to the TCP protocol. The <em>minimal</em> length of a TCP header
-is 20 bytes.</p>
+A TCP header follows IP header, supplying info specific to the TCP protocol. The <em>minimal</em> length of a TCP header is
+20 bytes.</p>
+
+<div style="background:black">
 <table class="grid_mc" style="margin-top:1em;margin-bottom:1em;font-family:Open-Sans;font-size:80%">
 <tr>
 <th class="gridcen_small_mc1">0</th>
@@ -1723,8 +1717,8 @@ is 20 bytes.</p>
 <td class="gridcen_mc" colspan="32">Acknowledgment Number</td></tr>
 <tr>
 <td class="gridcen_mc" colspan="4" style="width:12.5%">Data ofs</td>
-<td class="gridcen_mc" colspan="3">Rsrv</td>
-<td class="gridcen_mc" colspan="9" style="width:28%">Control bits</td>
+<td class="gridcen_mc" colspan="4">Rsrvd</td>
+<td class="gridcen_mc" colspan="8" style="width:28%">Flags</td>
 <td class="gridcen_mc" colspan="16" style="width:50%">Window</td></tr>
 <tr>
 <td class="gridcen_mc" colspan="16">Checksum</td>
@@ -1735,99 +1729,91 @@ is 20 bytes.</p>
 <tr>
 <td class="gridcen_mc" colspan="32" style="background:#add8fa">D a t a</td></tr>
 </table>
+</div>
 
 <p class="fmt" style="padding-top:12px">
 <samp>Sequence Number (32 bits)</samp></p>
-<p class="desc">If SYN flag is set, then this is the <i>initial sequence
-number</i>, and the first data octet is ISN+1. If SYN is <samp>0</samp>, then
-this is the accumulated sequence number of the first data byte of this segment
-for the current session.</p>
+<p class="desc">If SYN flag is set, then this is the <i>initial sequence number</i>, and the first data octet is ISN+1. If SYN is
+<samp>0</samp>, then this is the accumulated sequence number of the first data byte of this segment for the current session.</p>
 
 <p class="fmt"><samp>Acknowledgment Number (32 bits)</samp></p>
-<p class="desc">If ACK bit is set, then this field contains the next sequence
-number the sender of this ACK is expecting. This acknowledges the successful
-receipt of all prior bytes (if any). The first ACK sent by each side
-acknowledges the other side's initial sequence number.</p>
+<p class="desc">If ACK bit is set, then this field contains the next sequence number the sender of this ACK is expecting. This
+acknowledges the successful receipt of all prior bytes (if any). The first ACK sent by each side acknowledges the other side's
+initial sequence number.</p>
 
 <p class="fmt"><samp>Data Offset (4 bits)</samp></p>
-<p class="desc">The size of TCP header, i.e., the number of 32-bit words
-in TCP header (<samp>5..15</samp> words or <samp>20..60</samp> bytes). It can
-also be considered as offset from the start of the TCP segment to the actual
-data.</p>
+<p class="desc">The size of TCP header, i.e., the number of 32-bit words in TCP header (<samp>5..15</samp> words or
+<samp>20..60</samp> bytes). It can also be considered as offset from the start of the TCP segment to the actual data.</p>
 
-<p class="fmt"><samp>Reserved (3 bits)</samp></p>
+<p class="fmt"><samp>Reserved (Rsrvd) (4 bits)</samp></p>
 <p class="desc">Reserved for future use. Must be zero.</p>
 
-<p class="fmt"><samp>Control Bits (9 bits)</samp></p>
+<p class="fmt"><samp>Flags (or Control Bits) (8 bits)</samp></p>
 <table class="grid_2" style="margin-left:3.6em;margin-bottom:1em">
+<!--
 <tr>
 <td class="grid_2"><samp>NS</samp></td>
 <td class="grid_2">ECN-nonce - concealment protection (experimental)</td></tr>
+-->
 <tr>
 <td class="grid_2"><samp>CWR</samp></td>
-<td class="grid_2">Congestion Window Reduced flag is set by the sending host
-to indicate that it received a TCP segment with the ECE flag set and had
-responded in congestion control mechanism</td></tr>
+<td class="grid_2">Congestion Window Reduced flag is set by the sending host to indicate that it received a TCP segment with the
+ECE flag set and had responded in congestion control mechanism</td></tr>
 <tr>
 <td class="grid_2"><samp>ECE</samp></td>
-<td class="grid_2">ECN-Echo. If SYN is set, than ECE=1 means that TCP peer
-is ECN capable. If SYN is clear, than ECE=1 means that a pkt with Congestion
-Experienced flag set (ECN=11) in IP header was received during normal
-transmission, and it indicates network congestion (or impending congestion)
-to the TCP sender.</td></tr>
+<td class="grid_2">ECN-Echo. If SYN is set, than ECE=1 means that TCP peer is ECN capable. If SYN is clear, than ECE=1 means that
+a pkt with Congestion Experienced flag set (ECN=11) in IP header was received during normal transmission, and it indicates network
+congestion (or impending congestion) to the TCP sender.</td></tr>
 <tr>
 <td class="grid_2"><samp>URG</samp></td>
 <td class="grid_2">Urgent Pointer field is significant.</td></tr>
 <tr>
 <td class="grid_2"><samp>ACK</samp></td>
-<td class="grid_2">Acknowledgment field is significant. All pkts sent by the
-client after initial SYN pkt, should have this flag set.</td></tr>
+<td class="grid_2">Acknowledgment field is significant. All pkts sent by the client after initial SYN pkt, should have this flag
+set.</td></tr>
 <tr>
 <td class="grid_2"><samp>PSH</samp></td>
-<td class="grid_2">Push Function. Asks to push the buffered data to the
-receiving app.</td></tr>
+<td class="grid_2">Push Function. Asks to push the buffered data to the receiving app.</td></tr>
 <tr>
 <td class="grid_2"><samp>RST</samp></td>
 <td class="grid_2">Reset the connection.</td></tr>
 <tr>
 <td class="grid_2"><samp>SYN</samp></td>
-<td class="grid_2">Synchronize sequence numbers. Only the first pkt sent from
-each end should have it set. Some other flags and fields change meaning based
-on this flag, and some are only valid when it is set, and others when it is
-clear.</td></tr>
+<td class="grid_2">Synchronize sequence numbers. Only the first pkt sent from each end should have it set. Some other flags and
+fields change meaning based on this flag, and some are only valid when it is set, and others when it is clear.</td></tr>
 <tr>
 <td class="grid_2"><samp>FIN</samp></td>
 <td class="grid_2">Last packet, no more data from sender.</td></tr>
 </table>
 
 <p class="fmt"><samp>Window (16 bits)</samp></p>
-<p class="desc">The number of data octets beginning with the one
-indicated in the acknowledgment field which the sender of this segment
-wants to receive.</p>
+<p class="desc">The number of data octets beginning with the one indicated in the acknowledgment field which the sender of this
+segment wants to receive.</p>
 
 <p class="fmt"><samp>Checksum (16 bits)</samp></p>
-<p class="desc">The 16-bit checksum used for error-checking of the header,
-the Payload and a Pseudo-Header. The Pseudo-Header consists of the Source IP
-addr, the Destination IP addr, the protocol number (<samp>0x0006</samp> for
-TCP) and the length of the TCP-Headers including Payload (in bytes).</p>
+<p class="desc">The 16-bit checksum used for error-checking of the header, the Payload and a Pseudo-Header. The Pseudo-Header
+consists of the Source IP addr, the Destination IP addr, the protocol number (<samp>0x0006</samp> for TCP) and the length of the
+TCP-Headers including Payload (in bytes).</p>
 
 <p class="fmt"><samp>Urgent Pointer (16 bits)</samp></p>
-<p class="desc">If URG flag is set, this 16-bit field is an offset from the
-sequence number indicating the last urgent data byte.</p>
+<p class="desc">If URG flag is set, this 16-bit field is an offset from the sequence number indicating the last urgent data byte.</p>
 
 <p class="fmt"><samp>Options (variable length, 0..320 bits, divisible by 32)</samp></p>
-<p class="desc">The length of this field is determined by the data offset
-field. It can have up to three fields: <i>Option-Kind</i> (1 byte),
-<i>Option-Length</i> (1 byte), <i>Option-Data</i> (variable). The Option-Kind
-field indicates the type of option, and unlike other two is not optional.
-Depending on this field, the Option-Length can indicate the total length of
-the option, and the Option-Data can contain the value of the option, if
-applicable. An Option-Kind <samp>0x01</samp> indicates that this is a
+<p class="desc">The length of this field is determined by the data offset field. It can have up to three fields: <i>Option-Kind</i>
+(1 byte), <i>Option-Length</i> (1 byte), <i>Option-Data</i> (variable). The Option-Kind field indicates the type of option, and
+unlike other two is not optional. Depending on this field, the Option-Length can indicate the total length of the option, and the
+Option-Data can contain the value of the option, if applicable. An Option-Kind <samp>0x01</samp> indicates that this is a
 <i>No-Op</i> option used only for padding.</p>
 
 <p class="fmt"><samp>Padding</samp></p>
-<p class="desc">If TCP header does not end on a 32-bit boundary, as it should,
-then padding composd of zeros is added.</p>
+<p class="desc">If TCP header does not end on a 32-bit boundary, as it should, then padding composd of zeros is added.</p>
+<p>
+<b>Note!</b>
+From 2003 to 2017, there were 3 reserved bit. The 4th bit (bit 103 of the header) was defined as the NS (Nonce Sum) flag by the
+experimental RFC 3540, ECN-nonce. ECN-nonce never gained widespread use and the RFC was moved to Historic status. So, there are
+now again 4 reserved bits and 8 flags.</p>
+
+
 
 
 
@@ -1886,6 +1872,7 @@ to dynamically create communication endpoints as needed</li>
 <h4>
 <a name="udp">UDP packet</a></h4>
 
+<div style="background:black">
 <table class="grid_mc" style="margin-top:1em;margin-bottom:1em;font-family:Open-Sans;font-size:80%">
 <tr>
 <th class="gridcen_small_mc1">0</th>
@@ -1930,6 +1917,7 @@ to dynamically create communication endpoints as needed</li>
 <tr>
 <td class="gridcen_mc" colspan="32" style="background:#add8fa">D a t a</td></tr>
 </table>
+</div>
 
 <p class="fmt" style="padding-top:12px"><samp>Source Port (16 bits)</samp></p>
 <p class="desc">The port number of the process that originated
@@ -1957,6 +1945,7 @@ entire UDP datagram plus a special "pseudo header" of fields.</p>
 <h3>
 <a name="icmp">ICMP packet</a></h3>
 
+<div style="background:black">
 <table class="grid_mc" style="margin-bottom:1em;font-family:Open-Sans;font-size:80%">
 <tr>
 <th class="gridcen_small_mc1">0</th>
@@ -1999,6 +1988,7 @@ entire UDP datagram plus a special "pseudo header" of fields.</p>
 <tr>
 <td class="gridcen_mc" colspan="32">Message Body</td></tr>
 </table>
+</div>
 
 <p class="fmt" style="padding-top:12px"><samp>Type (8 bits)</samp>
 <p class="desc">Message type. For ICMPv6, values from
