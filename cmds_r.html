@@ -274,11 +274,12 @@ that path name;</p>
 
 
 <p class="cmdname_dep"><a name="route">route</a></p>
-<p class="dep">Deprecated</p>
+<p class="dep">Deprecated ?</p>
 <p>
 manipulates the kernel's IP routing tables (mainly to set up the static routes). When <code>add</code> or <code>del</code> are
-used, <code>~</code> modifies kernel table, otherwise displays current contents. Since it is deprecated, you should probably
-try to use <code>ip</code> (specifically<code> ip route </code>...).</p>
+used, <code>~</code> modifies kernel table, otherwise displays current contents. Since it is <b>deprecated</b> (?), you should
+probably try to use <code>ip</code> (specifically<code> ip route </code>...). However, in my Ubuntu Linux 24.04 LTS <code>~</code>
+is installed by default, as well as <i>arp</i> and <i>hostname</i>, though other old stuff, like <i>ifconfig</i>, is missing!</p>
 
 <p class="cmdc">route -n</p>
 <p class="desc">show routing table using numerical addresses;</p>

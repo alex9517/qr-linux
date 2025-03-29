@@ -308,13 +308,14 @@ current root dir of processes they do not own);</td></tr>
 
 
 <p class="cmdname"><a name="ping">ping</a></p>
-<p class="dep">Deprecated ?</p>
+<p class="dep">Deprecated</p>
 <p>
 sends <samp>ICMP ECHO_REQUEST</samp> datagrams to a network host to find whether it is up and running; <code>~</code> runs
 continuously (unless <code>-c</code> or <code>-w</code>), and can be stopped with <span class="keys">CTRL+C</span>.</p>
 <p>
-Actually, there are better progs to probe network hosts, e.g. <code>nmap</code>. However, the official replacement is probably
-<code><a href="cmds_m.html#mtr">mtr</a></code>.</p>
+Actually, there are better progs to probe network hosts, e.g. <code>nmap</code>. However, the official replacement is
+<code><a href="cmds_m.html#mtr">mtr</a></code>. See more about the <b>deprecated</b> <a href="net.html#net-tools">net-tools</a>
+pkg.</p>
 
 <p class="cmdc">ping www.microsift.com</p>
 <p class="desc">ping <samp>www.microsoft.com</samp> using default parameters;</p>
@@ -323,16 +324,14 @@ Actually, there are better progs to probe network hosts, e.g. <code>nmap</code>.
 <p class="desc">ping host <samp>192.168.0.8</samp> sending one packet every <samp>10 sec</samp>;</p>
 
 <p class="cmdc">ping -p ff 192.168.0.12</p>
-<p class="desc">ping host <samp>192.168.0.12</samp> sending packets filled
-with <samp>1</samp>'s (binary presentation of hex <samp>0xff</samp>);</p>
+<p class="desc">ping host <samp>192.168.0.12</samp> sending packets filled with <samp>1</samp>'s (binary presentation of hex
+<samp>0xff</samp>);</p>
 
 <p class="cmdc">ping -I eth0 ws10</p>
-<p class="desc">ping host <samp>ws10</samp> sending packets through the
-network card <samp>eth0</samp>;</p>
+<p class="desc">ping host <samp>ws10</samp> sending packets through the network card <samp>eth0</samp>;</p>
 
 <p class="cmdc">ping -I 192.168.0.2 srv5</p>
-<p class="desc">ping host <samp>srv5</samp> sending packets through the
-network card with IP address <samp>192.168.0.2</samp>;</p>
+<p class="desc">ping host <samp>srv5</samp> sending packets through the network card with IP address <samp>192.168.0.2</samp>;</p>
 
 <p class="fmt"><code>ping&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;host</kbd></p>
 
@@ -364,12 +363,10 @@ network card with IP address <samp>192.168.0.2</samp>;</p>
 <td class="opt_desc">do not allow ping to change source address of probes;</td></tr>
 <tr>
 <td class="opt_name"><code>-c</code> <kbd>n</kbd></td>
-<td class="opt_desc">stop after sending <kbd>n</kbd> <samp>ECHO_REQUEST</samp>
-pkts;</td></tr>
+<td class="opt_desc">stop after sending <kbd>n</kbd> <samp>ECHO_REQUEST</samp> pkts;</td></tr>
 <tr>
 <td class="opt_name"><code>-f</code></td>
-<td class="opt_desc">flood ping; interval is set to <samp>0</samp>
-unless specified explicitly;</td></tr>
+<td class="opt_desc">flood ping; interval is set to <samp>0</samp> unless specified explicitly;</td></tr>
 <tr>
 <td class="opt_name"><code>-i</code> <kbd>n</kbd></td>
 <td class="opt_desc">send pkts with an interval <kbd>n</kbd> seconds;</td></tr>
@@ -381,8 +378,7 @@ unless specified explicitly;</td></tr>
 <table class="options">
 <tr>
 <td class="opt_name"><code>-l</code> <kbd>n</kbd></td>
-<td class="opt_desc">send <kbd>n</kbd> pkts not waiting for reply;
-only <samp>root</samp> can use values more than <samp>3</samp>;</td></tr>
+<td class="opt_desc">send <kbd>n</kbd> pkts not waiting for reply; only <samp>root</samp> can use values more than <samp>3</samp>;</td></tr>
 <tr>
 <td class="opt_name"><code>-L</code></td>
 <td class="opt_desc">suppress loopback of multicast packets;</td></tr>
@@ -392,36 +388,29 @@ only <samp>root</samp> can use values more than <samp>3</samp>;</td></tr>
 </table>
 
 <p class="fmtc"><code>-p</code> <kbd>pattern</kbd></p>
-<p class="desc">send pkts filled with a specified pattern
-(up to 16 bytes); useful for data-related problem diagnostic;</p>
+<p class="desc">send pkts filled with a specified pattern (up to 16 bytes); useful for data-related problem diagnostic;</p>
 
 <p class="fmtc"><code>-Q</code> <kbd>tos</kbd></p>
-<p class="desc">set quality or service-related bits in ICMP datagrams
-(bits 1-4 for TOS, bits 5-7 for precedence); TOS can be: <samp>0x02</samp>
-(minimal cost), <samp>0x04</samp> (reliability), <samp>0x08</samp>
-(throughput), <samp>0x10</samp> (low delay); precedence range from priority
-(<samp>0x20</samp>) to net control (<samp>0xE0</samp>);</p>
+<p class="desc">set quality or service-related bits in ICMP datagrams (bits 1-4 for TOS, bits 5-7 for precedence); TOS can be:
+<samp>0x02</samp> (minimal cost), <samp>0x04</samp> (reliability), <samp>0x08</samp> (throughput), <samp>0x10</samp> (low delay);
+precedence range from priority (<samp>0x20</samp>) to net control (<samp>0xE0</samp>);</p>
 
 <table class="options">
 <tr>
 <td class="opt_name"><code>-q</code></td>
-<td class="opt_desc">quiet output (nothing, except summary at
-the start/finish);</td></tr>
+<td class="opt_desc">quiet output (nothing, except summary at the start/finish);</td></tr>
 <tr>
 <td class="opt_name"><code>-R</code></td>
-<td class="opt_desc">include <samp>RECORD_ROUTE</samp> option in the
-<samp>ECHO_REQUEST</samp> pkt and display the route buffer on returned
-pkts; many hosts ignore (discard) this option;</td></tr>
+<td class="opt_desc">include <samp>RECORD_ROUTE</samp> option in the <samp>ECHO_REQUEST</samp> pkt and display the route buffer on
+returned pkts; many hosts ignore (discard) this option;</td></tr>
 <tr>
 <td class="opt_name"><code>-r</code></td>
-<td class="opt_desc">bypass the normal routing tables and send directly to
-a host on an attached interface; unless the host is on a directly attached
-network, error is returned;</td></tr>
+<td class="opt_desc">bypass the normal routing tables and send directly to a host on an attached interface; unless the host is on
+a directly attached network, error is returned;</td></tr>
 </table>
 
 <p class="fmtc"><code>-s</code> <kbd>size</kbd></p>
-<p class="desc">set the number of data bytes to be sent;
-default is 56 (plus 8 bytes ICMP header);</p>
+<p class="desc">set the number of data bytes to be sent; default is 56 (plus 8 bytes ICMP header);</p>
 
 <p class="fmtc"><code>-t</code> <kbd>ttl</kbd></p>
 <p class="desc">set IP time to live;</p>
@@ -435,8 +424,7 @@ default is 56 (plus 8 bytes ICMP header);</p>
 timestamp prespecified hops;</p>
 
 <p class="fmtc"><code>-w</code> <kbd>deadline</kbd></p>
-<p class="desc">set timeout in seconds before <code>~</code>
-exits regardless of how many pkts have been sent or received;</p>
+<p class="desc">set timeout in seconds before <code>~</code> exits regardless of how many pkts have been sent or received;</p>
 
 <p class="fmtc"><code>-W</code> <kbd>time</kbd></p>
 <p class="desc">time to wait for response in seconds;</p>

@@ -23,9 +23,8 @@ See also <a href="tomcat.html">Apache Tomcat</a>.</p>
 
 <h5>Maybe it's already installed. How to find?</h5>
 <p>
-The following cmds explain the situation with Apache. To be sure,
-prepend them with <code>sudo</code>, though in many systems <i>status</i>
-does not require <samp>root</samp> priv.</p>
+The following cmds explain the situation with Apache. To be sure, prepend them with <code>sudo</code>, though in many systems
+<i>status</i> does not require <samp>root</samp> priv.</p>
 
 <p class="cmd">systemctl status apache2</p>
 <p>
@@ -35,8 +34,7 @@ In older systems without <samp>systemd</samp></p>
 <p class="or">or</p>
 <p class="cmd">/etc/init.d/apache2 status</p>
 <p>
-If the output includes<samp> ... no such service</samp>, then Apache is not
-installed.</p>
+If the output includes<samp> ... no such service</samp>, then Apache is not installed.</p>
 <p>
 When Apache is running,</p>
 
@@ -53,8 +51,7 @@ Also, when Apache is running, it usually responds to the browser's request</p>
 
 <p class="cmd">http://localhost</p>
 <p>
-and displays its welcoming page, or some other page, if config was changed
-after installation.</p>
+and displays its welcoming page, or some other page, if config was changed after installation.</p>
 <p>
 You can find detailed info about Apache with:</p>
 
@@ -66,23 +63,28 @@ You can find detailed info about Apache with:</p>
 In most cases, no <i>manual</i> means no <i>program</i>.</p>
 
 
+
 <h5>Before installation</h5>
 <p>
-It would be good for your web-server to have a real FQDN (fully qualified
-domain name). To see your current situation, try:</p>
+It would be good for your web-server to have a real FQDN (fully qualified domain name). To see your current situation, try:</p>
 
 <p class="cmd">hostname --fqdn</p>
 <p>
-Even if this is going to be an internal server, you should probably use
-some name resolution technology, like, e.g., <a href="net.html#mdns">mDNS</a>.
-Using pure IPs within URLs will cause problems sooner or later.</p>
+Even if this is going to be an internal server, you should probably use some name resolution technology, like
+<samp>/etc/hosts</samp> or <a href="net.html#mdns">mDNS</a>. Using pure IPs within URLs will cause problems sooner or later.</p>
 <p>
-Also, check/change date/time and TZ (must correspond to the server's
-location). To change time zone data in Ubuntu:</p>
+Also, check/change date/time and TZ (must correspond to the server's location). For systems with <samp>systemd</samp>:</p>
+
+<p class="cmdc">timedatectl</p>
+<p class="cmdc">timedatectl list-timezones</p>
+<p class="cmd">timedatectl set-timezone 'Europe/Amsterdam'</p>
+<p>
+Another way [ Ubuntu/Debian way ] to change the time zone:</p>
 
 <p class="cmd">dpkg-reconfigure tzdata</p>
 <p>
-It's especially important for a server accessible from the Internet.</p>
+It's especially important for a server accessible from the Internet. Do not forget <code>sudo ...</code> when you modify TZ.</p>
+
 
 
 <h5>
@@ -96,19 +98,17 @@ then install the package:</p>
 
 <p class="cmd">sudo apt install apache2</p>
 <p>
-In the past it was <code>httpd</code> (HTTP daemon), but now they call it
-<code>apache2</code>.</p>
+In the past it was <code>httpd</code> (HTTP daemon), but now it is <code>apache2</code>.</p>
 <p>
-Note that by default Apache web-server accepts connection requests
-on <samp>80/tcp</samp>, and your <b>firewall must be configured</b>
-appropriately.</p>
+Note that by default Apache web-server accepts HTTP requests on <samp>80/tcp</samp>, HTTPS requests on <samp>443/tcp</samp> and
+your <b>firewall must be configured</b> appropriately.</p>
+
 
 
 <h5>Startup/shutdown</h5>
 <p>
-In Ubuntu, it's usually configured to start auto after installation.
-And there are, of course, well-known standard commands (most of them must be
-prepended with <code>sudo</code>):</p>
+In Ubuntu, it's usually configured to start auto after installation. And there are, of course, well-known standard commands
+(most of them must be prepended with <code>sudo</code>):</p>
 
 <p class="cmdc">systemctl start apache2</p>
 <p class="cmdc">systemctl stop apache2</p>
@@ -136,8 +136,7 @@ or, you can manage your web-server using its init script:</p>
 <p class="cmdc">/etc/init.d/apache2 force-reload</p>
 <p class="cmd">/etc/init.d/apache2 status</p>
 <p>
-And, there is also <code>apache2ctl</code>, a shell script
-(<samp>/usr/sbin/apache2ctl</samp>), aka Apache web-server's
+And, there is also <code>apache2ctl</code>, a shell script (<samp>/usr/sbin/apache2ctl</samp>), aka Apache web-server's
 <i>front-end</i>:</p>
 
 <p class="cmdc">apache2ctl start</p>
@@ -145,8 +144,7 @@ And, there is also <code>apache2ctl</code>, a shell script
 <p class="cmdc">apache2ctl status</p>
 <p class="cmd">...</p>
 <p>
-The main binary file is <samp>/usr/bin/apache2</samp>, but you shouldn't
-start it directly.
+The main binary file is <samp>/usr/bin/apache2</samp>, but you shouldn't start it directly.</p>
 
 
 
@@ -156,12 +154,9 @@ start it directly.
 
 <h5>Basic stuff</h5>
 <p>
-The main config file is <samp>/etc/apache2/apache2.conf</samp>, but it's
-just the core; the whole config is the assembly of multiple files stored in
-<samp>/etc/apache2</samp> and subdirs. For example, <samp>ports.conf</samp>
-allows to change the listening port for connection requests
-(<samp>80/tcp</samp> by default), <samp>envvars</samp> defines env variables,
-etc.</p>
+The main config file is <samp>/etc/apache2/apache2.conf</samp>, but it's just the core; the whole config is the assembly of
+multiple files stored in <samp>/etc/apache2</samp> and subdirs. For example, <samp>ports.conf</samp> allows to change the listening
+port for connection requests (<samp>80/tcp</samp> by default), <samp>envvars</samp> defines env variables, etc.</p>
 <p>
 Many config tasks can be done (and should be done) by "helpers":</p>
 
@@ -172,89 +167,100 @@ Many config tasks can be done (and should be done) by "helpers":</p>
 <p class="cmdc">a2enconf</p>
 <p class="cmd">a2disconf</p>
 <p>
-These are PERL scripts in <samp>/usr/sbin/</samp>. They manipulate symlinks
-allowing to include/exclude misc config parts. For example, to allow access to
-<samp>public_html</samp> in user's home dir(s), you do</p>
+These are PERL scripts in <samp>/usr/sbin/</samp>. They manipulate symlinks allowing to include/exclude misc config parts.
+For example, to allow access to <samp>public_html</samp> in user's home dir(s), you do</p>
 
 <p class="cmd">sudo a2enmod userdir</p>
 <p>
-and that script correctly modifes all necessary symlinks, so that
-you (and any other regular user of your system) can have a web-site
-in <samp>public_html</samp> dir within the home dir tree (i.e., in
-<samp>~/public_html</samp>). Note that the <b>name</b>
-(<samp>public_html</samp>) and the <b>location</b> (at the root of your
-home dir) are <b>important!</b> And you must restart Apache after config
-changes:</p>
+and that script correctly modifes all necessary symlinks, so that you (and any other regular user of your system) can have
+a web-site in <samp>public_html</samp> dir within the home dir tree (i.e., in <samp>~/public_html</samp>). Note that the
+<b>name</b> (<samp>public_html</samp>) and the <b>location</b> (at the root of your home dir) are <b>important!</b> And you must
+restart Apache after config changes:</p>
 
 <p class="cmd">sudo systemctl restart apache2</p>
 <p>
-To allow execution of web-applications/scripts in <samp>cgi-bin</samp>
-(or <samp>/usr/lib/cgi-bin</samp>):</p>
+To allow execution of web-applications/scripts in <samp>cgi-bin</samp> (or <samp>/usr/lib/cgi-bin</samp>):</p>
 
 <p class="cmd">sudo a2enmod cgi</p>
 <p>
-The default document root is <samp>/var/www/html</samp>. By default,
-web-browsers are not allowed to access files outside the document root,
-<samp>~/public_html</samp> and <samp>/usr/share</samp> (web-apps only).</p>
+The default document root is <samp>/var/www/html</samp>. By default, web-browsers are not allowed to access files outside the
+document root, <samp>~/public_html</samp> and <samp>/usr/share</samp> (web-apps only).</p>
 
 
-<h5>Log files, user/group, etc</h5>
+
+<h5>Log files, user/group, etc.</h5>
 <p>
-By default (see <samp>/etc/apache2/envvars</samp> for details), Apache process
-belongs to user <samp>www-data</samp>, group <samp>www-data</samp>. Log files
-reside in</p>
+By default (see <samp>/etc/apache2/envvars</samp> for details), Apache process belongs to user <samp>www-data</samp>, group
+<samp>www-data</samp>. Log files reside in</p>
 
 <p class="fmt"><samp>/var/log/apache2/</samp></p>
 
 <p class="warn">Note!</p>
-<p class="indent">If your <samp>/var/log/</samp> is <b>tmpfs</b> (which is
-typical when OS resides on SSD), then you will have problems with the default
-Apache config. It looks like <samp>/var/log/apache2/</samp> is created by
-installation procedure and disappears during reboot. Apache daemon does not
-try to re-create that dir, it just complains about missing log dir and rejects
+<p class="indent">If your <samp>/var/log/</samp> is <b>tmpfs</b> (which is typical when OS resides on SSD), then you will have
+problems with the default Apache config. It looks like <samp>/var/log/apache2/</samp> is created by installation procedure and
+disappears during reboot. Apache daemon does not try to re-create that dir, it just complains about missing log dir and rejects
 to start.</p>
 <p>
-There are at least two simple solutions: you can manually create
-<samp>/var/log/apache2/</samp> (ownership: <samp>root.root</samp>) each
-time after reboot, and then manually start Apache; or, you can modify
-<samp>/etc/apache2/apache2.conf</samp> and move log files to some non-volatile
-locaction, e.g., <samp>/var/local/apache2/</samp>.</p>
+The possible solutions are:</p>
+<ul>
+<li>you can manually re-create <samp>/var/log/apache2/</samp> dir (ownership: <samp>root.root</samp>) each time after reboot, and
+then manually start Apache. This is inconvenient, but if your web-server is a real web-server that writes an awful quantity of log
+data [and you mostly ignore it], then ... think about it;</li>
+<li>or, you can write a script to automate the above task;</li>
+<li>or, you can change <samp>APACHE_LOG_DIR</samp> in <samp>/etc/apache2/envvars</samp> file: point it to some non-volatile
+location, e.g. <samp>/var/local/apache2/</samp>, don't forget to create the dir itself (<code>sudo mkdir ...</code>), and
+start/restart Apache. Probably <i>logrotate</i> won't take care of this dir, so you have to clean it from time to time.</li>
+</ul>
+
+
+
+<h5>About /home/*/public_html</h5>
+<p>
+Even if you've done</p>
+
+<p class="cmd">sudo a2enmod userdir</p>
+<p>
+you may not be able to access pages in your home dir (errors like <i>403 Forbidden ... permission ...</i>). The most probable
+cause is that your home dir is only accessible to you and to your group while Apache process belongs to user <samp>www-data</samp>
+(safety reasons, never run it as <i>root</i>). There are two ways to handle this situation:</p>
+<ul>
+<li>(bad, unsafe, avoid it) do <code>chmod 755 <span class="arg">my_home_dir</span></code></li>
+<li>(better, though not ideal) add user named <samp>www-data</samp> to your own group:<br>
+<code>sudo usermod -a -G alex www-data</code> (<i>alex</i> here is a group name)</li>
+</ul>
+<p>
+You may also need <code>chmod 755 ~/public_html</code> unless it's already good.</p>
+
 
 
 <h5>Virtual hosting</h5>
 <p>
-feature provides hosting for multiple domains (multiple web-sites) deployed
-on a single server. To set a virtual domain you need, of course, a registered
-domain name (it's a separate story). The following example uses
-<samp>mydomain.com</samp> which is obviously just for demo!</p>
+feature provides hosting for multiple domains (multiple web-sites) deployed on a single server. To set a virtual domain you need,
+of course, a registered domain name (it's a separate story). The following example uses <samp>mydomain.com</samp> which is
+obviously just for demo!</p>
 <p>
-First of all, you create a directory named similarly to your domain name,
-then you create <samp>html</samp> subdir within this dir. There are many ways
-to perform this task, for example:</p>
+First of all, you create a directory named similarly to your domain name, then you create <samp>html</samp> subdir within this dir.
+There are many ways to perform this task, for example:</p>
 
 <p class="cmd">sudo mkdir -p /var/www/mydomain.com/html</p>
 <p>
-The <code>-p</code> options is used to create both dirs in one step
-(see <code><a href="cmds_m.html#mkdir">mkdir</a></code> for details).</p>
+The <code>-p</code> options is used to create both dirs in one step (see <a href="cmds_m.html#mkdir"><code>mkdir</code></a> for
+details).</p>
 <p>
 The next step is to set correct ownership and permissions:</p>
 
 <p class="cmd">sudo chown -R <span class="arg">username</span>:<span class="arg">groupname</span> /var/www/mydomain.com</p>
 <p>
-Permissions [for dirs] must be <samp>755</samp>. If not, use
-<code><a href="cmds_c.html#chmod">chmod</a></code>:</p>
+Permissions [for dirs] must be <samp>755</samp>. If not, use <a href="cmds_c.html#chmod"><code>chmod</code></a>:</p>
 
 <p class="cmd">sudo chmod -R 755 /var/www/mydomain.com</p>
 <p>
-Now, you can already move all prepared content into
-<samp>/var/www/mydomain.com/html</samp>, or, at least, put there some
+Now, you can already move all prepared content into <samp>/var/www/mydomain.com/html</samp>, or, at least, put there some
 <samp>index.html</samp> file appropriate for testing.</p>
 <p>
-After that, comes the most tricky part: you have to create a config file
-in <samp>/etc/apache2/sites-available</samp> dir; the name of the file should
-correspond to the virtual domain name, i.e., <samp>mydomain.com.conf</samp>.
-Probably, it's not a strict requirement (?) but a reasonable recommendation.
-Carefully check each line before testing.</p>
+After that, comes the most tricky part: you have to create a config file in <samp>/etc/apache2/sites-available</samp> dir; the name
+of the file should correspond to the virtual domain name, i.e., <samp>mydomain.com.conf</samp>. Probably, it's not a strict
+requirement (?) but a reasonable recommendation. Carefully check each line before testing.</p>
 <div class="file">
 <pre>
 &lt;VirtualHost *:80&gt;
@@ -267,15 +273,14 @@ Carefully check each line before testing.</p>
 &lt;/VirtualHost&gt;
 </pre></div>
 <p>
-Note that the <samp>ServerName</samp> in the file above has nothing to do
-with the name of the real server storing all this stuff.</p>
+Note that the <samp>ServerName</samp> in the file above has nothing to do with the name of the real server storing all this stuff.</p>
 <p>
 To activate (enable) this new site:</p>
 
 <p class="cmd">sudo a2ensite mydomain.com.conf</p>
 <p>
-Also, you should disable the default virtual site (which is a useful template
-for virtual host config files with explanations of misc options):</p>
+Also, you should disable the default virtual site (which is a useful template for virtual host config files with explanations of
+misc options):</p>
 
 <p class="cmd">sudo a2dissite 000-default.conf</p>
 <p>
@@ -285,10 +290,10 @@ And the last two steps (assuming there is no erros in config):</p>
 <p class="cmd">sudo systemctl restart apache2</p>
 
 
+
 <h5>SSL with self-signed certificate</h5>
 <p>
-I skip the details of certificate creation ...
-see <a href="cmds_o.html#openssl">openssl</a>. Here is a command:</p>
+I skip the details of certificate creation ... see <a href="cmds_o.html#openssl">openssl</a>. Here is a command:</p>
 
 <p class="cmd">sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout
 /etc/ssl/private/apache.key -out /etc/ssl/certs/apache.crt</p>
@@ -301,8 +306,7 @@ which is used to sign the certificate:</p>
 
 <p class="fmt"><samp>/etc/ssl/certs/apache.crt</samp></p>
 <p>
-Now create <samp>/etc/apache2/conf-available/ssl-params.conf</samp> file with
-the following content:</p>
+Now create <samp>/etc/apache2/conf-available/ssl-params.conf</samp> file with the following content:</p>
 <div class="file"><pre>
 SSLCipherSuite EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH
 SSLProtocol All -SSLv2 -SSLv3 -TLSv1 -TLSv1.1
@@ -315,28 +319,24 @@ SSLStaplingCache "shmcb:logs/stapling-cache(150000)"
 SSLSessionTickets Off
 </pre></div>
 <p>
-Open <samp>/etc/apache2/sites-available/default-ssl.conf</samp> (the default
-SSL Virtual Host file) and make sure the following lines point to your certificate
-and key:</p>
+Open <samp>/etc/apache2/sites-available/default-ssl.conf</samp> (the default SSL Virtual Host file) and make sure the following
+lines point to your certificate and key:</p>
 <div class="file"><pre>
 SSLCertificateFile /etc/ssl/certs/apache.crt
 SSLCertificateKeyFile /etc/ssl/private/apache.key
 </pre></div>
 <p>
-Check <samp>ServerName</samp>, <samp>ServerAdmin</samp>, and
-<samp>DocumentRoot</samp>. They must be the same as in
+Check <samp>ServerName</samp>, <samp>ServerAdmin</samp>, and <samp>DocumentRoot</samp>. They must be the same as in
 <samp>000-default.conf</samp> (assuming it was working good before).</p>
 <p>
-To redirect HTTP traffic to HTTPS, add the following lines to
-<samp>/etc/apache2/apache2.conf</samp> file:</p>
+To redirect HTTP traffic to HTTPS, add the following lines to <samp>/etc/apache2/apache2.conf</samp> file:</p>
 <div class="file"><pre>
-RewriteEngine On 
-RewriteCond %{SERVER_PORT} 80 
+RewriteEngine On
+RewriteCond %{SERVER_PORT} 80
 RewriteRule ^(.*)$ https://www.yourdomain.com/$1 [R,L]
 </pre></div>
 <p>
-Note that if your system uses a firewal, it must accept requests on
-<samp>tcp/443</samp>.</p>
+Note that if your system uses a firewal, it must accept requests on <samp>tcp/443</samp>.</p>
 <p>
 To activate the new config, restart service:</p>
 
@@ -356,8 +356,8 @@ If Apache starts good, it still does not mean everything is OK. Use</p>
 
 <p class="cmd">ss -nlt</p>
 <p>
-to be sure that web-server listens on <samp>tcp/443</samp>. If not, the problem
-is usually related to modules. First, you need to enable the SSL module:</p>
+to be sure that web-server listens on <samp>443/tcp</samp>. If not, the problem is usually related to modules. First, you need to
+enable the SSL module:</p>
 
 <p class="cmd">sudo a2enmod ssl</p>
 <p>
@@ -367,12 +367,9 @@ Then you need to enable the site:</p>
 <p>
 After that restart the service again.</p>
 <p>
-Do not forget that your web-server has a <b>self-signed certificate</b>.
-It means that when you try to connect, your <b>browser will throw some disturbing
-warning</b>, and you must accept the risk. It may look bad, but technically you
-just acknowledge the validity of your own certificate which cannot be acknowledged
-by a real trustworthy CA (Certification Authority).</p>
-
+Do not forget that your web-server has a <b>self-signed certificate</b>. It means that when you try to connect, your <b>browser
+will throw some disturbing warning</b>, and you must accept the risk. It may look bad, but technically you just acknowledge the
+validity of your own certificate which cannot be acknowledged by a real trustworthy CA (Certification Authority).</p>
 
 <!--
 <p>

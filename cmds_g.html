@@ -592,19 +592,16 @@ id = 508;</p>
 <p class="fmt"><code>-h</code> &nbsp;&nbsp; <code>--help</code></p>
 
 <p class="fmtc"><code>-f</code>, <code>--force</code></p>
-<p class="desc">causes to exit with success status if the specified group
-already exists; with <code>-g</code>, if specified GID already exists,
-other (unique) GID is chosen (i.e., <code>-g</code> is turned off);</p>
+<p class="desc">causes to exit with success status if the specified group already exists; with <code>-g</code>, if specified GID
+already exists, other (unique) GID is chosen (i.e., <code>-g</code> is turned off);</p>
 
 <p class="fmtc"><code>-g</code> <kbd>n</kbd>, <code>--gid</code> <kbd>n</kbd></p>
-<p class="desc">create new group with the group ID = <kbd>n</kbd> (must be
-positive, beyond the <a href="#gid_range">system-reserved limit</a>, and
-unique, unless <code>-o</code> is given);</p>
+<p class="desc">create new group with the group ID = <kbd>n</kbd> (must be positive, beyond the
+<a href="#gid_range">system-reserved limit</a>, and unique, unless <code>-o</code> is given);</p>
 
 <p class="fmtc"><code>-K</code> <kbd>key</kbd><code>=</code><kbd>val</kbd>,
 <code>--key</code> <kbd>key</kbd><code>=</code><kbd>val</kbd></p>
-<p class="desc">override <samp>/etc/login.defs</samp> defaults
-(<samp>GID_MIN</samp>, <samp>GID_MAX</samp> and others); multiple
+<p class="desc">override <samp>/etc/login.defs</samp> defaults (<samp>GID_MIN</samp>, <samp>GID_MAX</samp> and others); multiple
 <code>-K</code> options can be specified;</p>
 
 <p class="fmtc"><code>-o</code>, <code>--non-unique</code></p>
@@ -612,8 +609,7 @@ unique, unless <code>-o</code> is given);</p>
 
 <p class="fmtc"><code>-p</code> <kbd>pass</kbd>,
 <code>--password</code> <kbd>pass</kbd></p>
-<p class="desc">(unsafe) the encrypted password, as returned by
-<code>crypt</code>; the default is to disable the password;</p>
+<p class="desc">(unsafe) the encrypted password, as returned by <code>crypt</code>; the default is to disable the password;</p>
 
 <p class="fmtc"><code>-r</code>, <code>--system</code></p>
 <p class="desc">create a system group;</p>
@@ -661,20 +657,19 @@ unique, unless <code>-o</code> is given);</p>
 
 
 
+
 <p class="cmdname"><a name="groupdel"></a>groupdel</p>
 <p>
-deletes an existing group, modifies the system account files,
-removes all entries that refer to the specified group. However, some
-files and dirs referring to the deleted group may still exist in the
-filesystem, you should remove them manually, if it's necessary.</p>
+deletes an existing group, modifies the system account files, removes all entries that refer to the specified group.
+However, some files and dirs referring to the deleted group may still exist in the filesystem, you should remove them manually,
+if it's necessary.</p>
 
 <p class="fmtc"><code>groupdel oper</code></p>
 <p class="desc">delete group <samp>oper</samp>;</p>
 
 <p class="fmt"><code>groupdel <span class="arg">grp_name</span></code></p>
 <p>
-You cannot remove the primary group of any existing user. If nevertheless
-you want to remove such group, delete the user first.</p>
+You cannot remove the primary group of any existing user. If nevertheless you want to remove such group, delete the user first.</p>
 
 <table class="exit">
 <caption>Exit values</caption>
@@ -690,8 +685,8 @@ you want to remove such group, delete the user first.</p>
 <td class="exit_code">10</td><td class="code_desc">can’t update group file</td></tr>
 </table>
 <p>
-See also <a href="#group_files">related files</a> in <code>groupadd</code>
-description.</p>
+See also <a href="#group_files">related files</a> in <code>groupadd</code> description.</p>
+
 
 
 
@@ -705,13 +700,13 @@ modifies a group definition in the system.</p>
 <p class="fmt"><code>groupmod&nbsp;</code>[<kbd>options</kbd>]<kbd>&nbsp;grp_name</kbd></p>
 
 
+
 <h5>Options</h5>
 
 <p class="fmt"><code>-h</code> &nbsp;&nbsp; <code>--help</code></p>
 
 <p class="fmtc"><code>-g</code> <kbd>n</kbd>, <code>--gid</code> <kbd>n</kbd></p>
-<p class="desc">change the numerical value of the group ID (there are some
-rectrictions, see the corresponding
+<p class="desc">change the numerical value of the group ID (there are some rectrictions, see the corresponding
 <a href="#groupadd"><code>groupadd</code></a> option);</p>
 
 <p class="fmtc"><code>-n</code> <kbd>new_grp_name</kbd>,
@@ -719,16 +714,13 @@ rectrictions, see the corresponding
 <p class="desc">change the name of the group to <kbd>new_grp_name</kbd>;</p>
 
 <p class="fmtc"><code>-o</code>, <code>--non-unique</code></p>
-<p class="desc">when used with the <code>-g</code>, allows to change the group
-ID to a non-unique value;</td></tr>
+<p class="desc">when used with the <code>-g</code>, allows to change the group ID to a non-unique value;</td></tr>
 
 <p class="fmtc"><code>-p</code> <kbd>pass</kbd>,
 <code>--password</code> <kbd>pass</kbd></p>
-<p class="desc">(unsafe) the encrypted password, as returned by
-<code>crypt</code>;</p>
+<p class="desc">(unsafe) the encrypted password, as returned by <code>crypt</code>;</p>
 <p>
-When you change the numerical value of GID, files and dirs referring
-to the old GID will not automatically reflect this change.</p>
+When you change the numerical value of GID, files and dirs referring to the old GID will not automatically reflect this change.</p>
 
 <table class="exit">
 <caption>Exit values</caption>
@@ -748,8 +740,8 @@ to the old GID will not automatically reflect this change.</p>
 <td class="exit_code">10</td><td class="code_desc">can’t update group file</td></tr>
 </table>
 <p>
-See also <a href="#group_files">related files</a> in <code>groupadd</code>
-description.</p>
+See also <a href="#group_files">related files</a> in <code>groupadd</code> description.</p>
+
 
 
 
@@ -766,6 +758,13 @@ To show all existing groups:</p>
 To show all users in group <samp>cartoon</samp>:</p>
 
 <p class="cmd">getent group | grep -i '^cartoon'</p>
+<p>
+A better way to find all members of some group:</p>
+
+<p class="cmd">getent group <span class="arg">group_name</span></p>
+<p>
+See more in <a href="howto.html#user_group">Howto, User/Group info</a>.</p>
+
 
 
 <h5>Some Ubuntu groups</h5>
@@ -793,18 +792,17 @@ To show all users in group <samp>cartoon</samp>:</p>
 <td class="grid"><samp>vboxusers</samp></td><td class="grid">Virtual Box</td></tr>
 </table>
 <p>
-Typical set of groups of a regular user in Ubuntu 19.04 (<samp>kvm</samp>
-may be required to run emulator in Android Studio):</p>
+Typical set of groups of a regular user in Ubuntu 19.04 (<samp>kvm</samp> may be required to run emulator in Android Studio):</p>
 <div class="term">
 <pre>alex adm cdrom sudo dip plugdev kvm lpadmin sambashare</pre>
 </div>
 <p>
-This is slightly bigger set of groups of a regular user (<samp>audio</samp>
-may be required to work with professional Audio stuff, e.g., <b>jack</b>; you
-don't need <samp>audio</samp> to listen music and watch movies):</p>
+This is slightly bigger set of groups of a regular user (<samp>audio</samp> may be required to work with professional Audio stuff,
+e.g., <b>jack</b>; you don't need <samp>audio</samp> to listen music and watch movies):</p>
 <div class="term">
 <pre>alex adm cdrom sudo audio dip plugdev kvm lpadmin sambashare libvirtd</pre>
 </div>
+
 
 
 

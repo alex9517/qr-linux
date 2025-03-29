@@ -32,10 +32,12 @@ $(document).ready(function() {
 <a href="#fd_num"><b>File descriptors</b> used by this process</a><br>
 <a href="#find_fs_type"><b>Filesystem's type</b></a><br>
 <a href="#mount_opts"><b>Filesystem's mount options</b></a><br>
+<a href="#user_group"><b>Group/User info</b></a><br>
 <a href="#kernel_version"><b>Kernel version</b></a><br>
 <a href="#lib_dep"><b>Libraries</b> used by this binary executable</a><br>
 <a href="#proc_info">Linux <b>process</b>, misc info</a><br>
 <a href="#libc"><b>Libc (glibc) version</b></a><br>
+<a href="#link"><b>Link: is it hard or symbolic?</b></a><br>
 <a href="#release"><b>Linux version</b> (release)</a><br>
 <a href="#mem_page"><b>Memory page size</b></a><br>
 <a href="#mem_mmu"><b>MMU</b> (Memory Management Unit)</a><br>
@@ -44,7 +46,8 @@ $(document).ready(function() {
 <a href="#service"><b>Service</b>, <b>daemon</b></a><br>
 <a href="#squashfs"><b>squashfs</b> (filesystem type)</a><br>
 <a href="net.html#static_ip"><b>Static IP</b></a><br>
-<a href="#ubu-deb"><b>Ubuntu -- Debian</b> version's names and numbers.</a><br>
+<a href="#ubu-deb"><b>Ubuntu -- Debian</b> version's names and numbers</a><br>
+<a href="#user_group"><b>User/Group info</b></a><br>
 <a href="#x86-64">What is <b>x86-64</b>?</a><br>
 <a href="#yaml"><b>YAML</b> (.yml)</a><br>
 <a href="#zero-copy"><b>Zero-copy</b></a>
@@ -168,6 +171,34 @@ incorrect. For example, it often happens with Go apps because they are usually s
 
 
 <h5>
+<a name="link">Link: is it hard or soft (symbolic)?</a></h5>
+<p>
+In fact, every file on the Linux filesystem has at least one hard link: the link between the filename and the actual data stored
+on the fs. That's why <code>ls</code> displays the number <samp>1</samp> (or bigger) after the mode in the listing.</p>
+<p>
+To find if a file is hard-linked, i.e. is referenced by two or more different filenames, use <code>ls -i</code> to view file's
+<b>inode</b> number:</p>
+
+<p class="cmd">ls -li fastapi</p>
+<p>
+The hard-linked files have the same <b>inode</b> number because it's actually one file referenced by several <i>path/filename</i>.
+Pay attention to the number after the <i>mode</i> in <code>ls</code> output: if it is bigger than <samp>1</samp> then this file is
+hard-linked to another location (path/filename) in this (!) filesystem. You cannot hard-link files from the different filesystems,
+but it's another story.</p>
+<p>
+The <b>soft link</b> (aka symbolic link, symlink) is a kind of file that points to another file. That is, a symlink is a file by
+itself, it has its own inode, and it can exist after the symlinked file was deleted, renamed, moved to another dir, etc. In such
+case symlink points to nothing and is referred to as a <b>dangling soft link</b>. In <code>ls -al</code> output a symlink looks
+like this (it must be one line):</p>
+<div class="term"><pre>
+lrwxrwxrwx 1 alex alex    54 Jan 24 12:50 fastapi -&gt; /home/alex/.venv/bin/fastapi
+</pre></div>
+<p>
+Notice <samp>l</samp> char at the beginning, and <samp>-&gt;</samp> pointing to the other file.</p>
+
+
+
+<h5>
 <a name="kernel_version">Kernel version..</a></h5>
 <p>
 To find the current version of your <a href="kernel.html">Linux kernel</a>,
@@ -281,156 +312,123 @@ know beforehand what do you want (e.g. device name would be helpful):</p>
 <h5>
 <a name="hw_mon">CPU temperature, fan speed, HDD temperature, ...</a></h5>
 <p>
-Make sure your system has<code> sensors </code>and<code> hddtemp</code>.
-If not, see <a href="sw_inst.html#sensors">Hardware Monitoring / Sensors</a>.
-To see the current HW parameters (or, to be exact, sensors' data),</p>
+Make sure your system has<code> sensors </code>and<code> hddtemp</code>. If not, see <a href="sw_inst.html#sensors">Hardware
+Monitoring / Sensors</a>. To see the current HW parameters (or, to be exact, sensors' data),</p>
 
 <p class="cmd">sensors</p>
 <p>
-This is a console app, the output is not exactly user friendly, but all
-important info is present: temperatures, fan speeds, voltages, etc.</p>
+This is a console app, the output is not exactly user friendly, but all important info is present: temperatures, fan speeds,
+voltages, etc.</p>
 <p>
-<i><b>Note # 1</b>: It does not display fans connected directly to Power Supply
-Unit! You can only see fans connected to motherboard!</i></p>
+<i><b>Note # 1</b>: It does not display fans connected directly to Power Supply Unit! You can only see fans connected to
+motherboard!</i></p>
 <p>
-<i><b>Note # 2</b>: Your system may not support some sensor chips, and in this
-case you won't be able to see all info supplied by sensors. You can try to run
-<code>sensors-detect</code>, but it's not safe (see<code> man
-sensors-detect</code>).</i></p> 
+<i><b>Note # 2</b>: Your system may not support some sensor chips, and in this case you won't be able to see all info supplied by
+sensors. You can try to run <code>sensors-detect</code>, but it's not safe (see<code> man sensors-detect</code>).</i></p>
 <p>
-To find the temperatures of HDDs and SSDs,
-use<code><a href="cmds_h.html#hddtemp"> hddtemp</a></code>:</p>
+To find the temperatures of HDDs and SSDs, use<code><a href="cmds_h.html#hddtemp"> hddtemp</a></code>:</p>
 
 <p class="cmdc">sudo hddtemp /dev/sda</p>
 <p class="cmd">sudo hddtemp /dev/sdb</p>
 <p>
-You can get even more info about storage devices with
-<code><a href="cmds_s.html#smartctl">smartctl</a></code>.</p>
+You can get even more info about storage devices with <code><a href="cmds_s.html#smartctl">smartctl</a></code>.</p>
 
 
 
 <h5>
-<a name="mem_mmu">Memory Management Unit</a></h5>
+<a name="mem_mmu"></a>Memory Management Unit</h5>
 <p>
 See also <a href="memory.html">Memory</a>.</p>
 <p>
-MMU, sometimes called PMMU (paged memory management unit), is a computer
-<b>hardware unit</b> having all memory references passed through itself,
-primarily performing the translation of virtual memory addresses to physical
-addresses.</p>
+MMU, sometimes called PMMU (paged memory management unit), is a computer <b>hardware unit</b> having all memory references passed
+through itself, primarily performing the translation of virtual memory addresses to physical addresses.</p>
 <p>
-MMU performs virtual memory management, handling at the same time memory
-protection, cache control, bus arbitration and, in simpler computer
-architectures (e.g. 8-bit systems), bank switching.</p>
+MMU performs virtual memory management, handling at the same time memory protection, cache control, bus arbitration and, in simpler
+computer architectures (e.g. 8-bit systems), bank switching.</p>
 <p>
-Typical MMU divides the virtual address space (the range of addresses used by
-the processor) into <b>pages</b>, each having a size which is a power of
-<samp>2</samp>, usually a few kilobytes or larger. The bottom bits of the
-address (the offset within a page) are left unchanged. The upper address bits
-are the virtual page numbers.</p>
+Typical MMU divides the virtual address space (the range of addresses used by the processor) into <b>pages</b>, each having a size
+which is a power of <samp>2</samp>, usually a few kilobytes or larger. The bottom bits of the address (the offset within a page)
+are left unchanged. The upper address bits are the virtual page numbers.</p>
 
 <p id="show_mmu"><span class="ref">PTE, TLB, paging, segmentation fault...</span></p>
 
 <div class="box1" id="mmu" style="display:none">
 <p>
-Most MMUs use an in-memory table of items called a <b>page table</b>, containing
-one <i>page table entry</i> (PTE) per page, to map virtual page numbers to physical
-page numbers in main memory. An associative cache of PTEs is called a <i>translation
-lookaside buffer</i> (TLB) and is used to avoid the necessity of accessing the main
-memory every time a virtual address is mapped. Other MMUs may have a private array
-of memory or registers that hold a set of page table entries. The physical page
-number is combined with the page offset to give the complete physical address.</p>
+Most MMUs use an in-memory table of items called a <b>page table</b>, containing one <i>page table entry</i> (PTE) per page, to map
+virtual page numbers to physical page numbers in main memory. An associative cache of PTEs is called a <i>translation lookaside
+buffer</i> (TLB) and is used to avoid the necessity of accessing the main memory every time a virtual address is mapped. Other MMUs
+may have a private array of memory or registers that hold a set of page table entries. The physical page number is combined with
+the page offset to give the complete physical address.</p>
 <p>
-A PTE may also include info about whether the page has been written to (the
-<i>dirty bit</i>), when it was last used (the <i>accessed bit</i>, for a least
-recently used (LRU) page replacement algorithm), what kind of processes (<i>user
-mode</i> or <i>supervisor</i> mode) may read and write it, and whether it should
-be cached.</p>
+A PTE may also include info about whether the page has been written to (the <i>dirty bit</i>), when it was last used (the
+<i>accessed bit</i>, for a least recently used (LRU) page replacement algorithm), what kind of processes (<i>user mode</i> or
+<i>supervisor</i> mode) may read and write it, and whether it should be cached.</p>
 <p>
-Sometimes, a PTE prohibits access to a virtual page, perhaps because no physical
-random access memory has been allocated to that virtual page. In this case, the MMU
-signals a <b>page fault</b> to the CPU. The OS then handles the situation, perhaps
-by trying to find a spare frame of RAM and set up a new PTE to map it to the requested
-virtual address. If no RAM is free, it may be necessary to choose an existing page,
-using some replacement algorithm, and save it to disk (a process called <b>paging</b>).
-With some MMUs, there can also be a shortage of PTEs, in which case the OS will have
-to free one for the new mapping.</p>
+Sometimes, a PTE prohibits access to a virtual page, perhaps because no physical random access memory has been allocated to that
+virtual page. In this case, the MMU signals a <b>page fault</b> to the CPU. The OS then handles the situation, perhaps by trying to
+find a spare frame of RAM and set up a new PTE to map it to the requested virtual address. If no RAM is free, it may be necessary
+to choose an existing page, using some replacement algorithm, and save it to disk (a process called <b>paging</b>). With some MMUs,
+there can also be a shortage of PTEs, in which case the OS will have to free one for the new mapping.</p>
 <p>
-The MMU may also generate illegal access error conditions or <b>invalid page faults</b>
-upon illegal or non-existing memory accesses, respectively, leading to <b>segmentation
-fault</b> or <b>bus error</b> conditions when handled by OS.</p>
+The MMU may also generate illegal access error conditions or <b>invalid page faults</b> upon illegal or non-existing memory
+accesses, respectively, leading to <b>segmentation fault</b> or <b>bus error</b> conditions when handled by OS.</p>
 </div>
 
 
 
 <h5>
-<a name="service">Service vs daemon</a></h5>
+<a name="service"></a>Service vs daemon</h5>
 <p>
 The border line between <i>daemons</i> and <i>services</i> in Linux is fuzzy.</p>
 <p>
-The majority of experts would probably agree that<samp> systemd</samp>,<samp>
-networkd</samp>,<samp> sshd </samp>are <i>daemons</i>. Not because their names
-end with 'd' (this is rather a tradition), but because they are specifically
-created to run at the background. Unix/Linux <i>daemons</i> (the name speaks
-for itself) are invisible programs (maybe for user, but not for<code> ps
-</code>or<code> top</code>) working somewhere inside a computer system and
-magically performing important job.</p>
+The majority of experts would probably agree that<samp> systemd</samp>,<samp> networkd</samp>,<samp> sshd </samp>are
+<i>daemons</i>. Not because their names end with 'd' (this is rather a tradition), but because they are specifically created to run
+at the background. Unix/Linux <i>daemons</i> (the name speaks for itself) are invisible programs (maybe for user, but not
+for<code> ps </code>or<code> top</code>) working somewhere inside a computer system and magically performing important job.</p>
 <p>
-In fact, <b>daemon</b> is just a computer program that at some moment (usually
-soon after start) disconnects itself from display and keyboard, writes some
-(mostly diagnostic) messages into a log file, and you can only control it with
-the help of another program, like<code> systemctl </code>or<code> kill
-</code>(this name is awkward and misleading).</p>
+In fact, <b>daemon</b> is just a computer program that at some moment (usually soon after start) disconnects itself from display
+and keyboard, writes some (mostly diagnostic) messages into a log file, and you can only control it with the help of another
+program, like<code> systemctl </code>or<code> kill </code>(this name is awkward and misleading).</p>
 <p>
-The term <b>service</b> (in the sense <i>application</i>, <i>program</i>) came
-in the Linux world relatively late, probably when a universal abstract idea of
-<i>service</i> started to gain popularity due to the appearance of concrete
-implementations like web-services (first SOAP, then REST).</p>
+The term <b>service</b> (in the sense <i>application</i>, <i>program</i>) came in the Linux world relatively late, probably when
+a universal abstract idea of <i>service</i> started to gain popularity due to the appearance of concrete implementations like
+web-services (first SOAP, then REST).</p>
 <p>
-In general, Linux <b>service</b> is supposed to be something bigger, more
-complicated, or, at least, more user-oriented than a <i>daemon</i>. Take, for
-example, <i>Oracle database server</i>: Oracle instance runs simultaneously
-more than ten processes handling shared memory segments, database files, redo
-log (transaction journals), user's connections, etc. So, we would rather call
-it a <i>service</i> than a daemon.</p>
+In general, Linux <b>service</b> is supposed to be something bigger, more complicated, or, at least, more user-oriented than
+a <i>daemon</i>. Take, for example, <i>Oracle database server</i>: Oracle instance runs simultaneously more than ten processes
+handling shared memory segments, database files, redo log (transaction journals), user's connections, etc. So, we would rather
+call it a <i>service</i> than a daemon.</p>
 <p>
-Some experts, however, prefer to draw the line in accordance with the target
-area: <i>daemons</i> serve the internal system needs, <i>services</i> work for
-users.</p>
+Some experts, however, prefer to draw the line in accordance with the target area: <i>daemons</i> serve the internal system needs,
+<i>services</i> work for users.</p>
 <p>
-Technically, many Linux <i>services</i> are implemented as <i>daemons</i>.
-But it can also be a <i>web-service</i> or a <i>web-application</i> packed into
-a single big JAR that starts as a console app.</p>
+Technically, many Linux <i>services</i> are implemented as <i>daemons</i>. But it can also be a <i>web-service</i> or a
+<i>web-application</i> packed into a single big JAR that starts as a console app.</p>
 <p>
 However,</p>
 <p class="center">
-<i>For <b>systemd</b>, everything (i.e. any executable specified in a<samp>
-*.service </samp>file) is <b>service</b>! It's just a terminology, and the above
-discussion has nothing to do with it.</i></p>
+<i>For <b>systemd</b>, everything (i.e. any executable specified in a<samp> *.service </samp>file) is <b>service</b>!
+It's just a terminology, and the above discussion has nothing to do with it.</i></p>
 
 
 
 <h5>
-<a name="squashfs">Squashfs (filesystem type)</a></h5>
+<a name="squashfs"></a>Squashfs (filesystem type)</h5>
 <p>
-<b>Squashfs</b> is a compressed read-only file system for Linux. It compresses
-files, inodes and directories, and supports block sizes from <samp>4</samp>
-KiB up to <samp>1</samp> MiB (for better compression). Several compression
-algorithms are supported. Squashfs is intended for general read-only
-filesystem use and in constrained block-device memory systems (e.g. embedded
-systems) where low overhead is needed.</p>
+<b>Squashfs</b> is a compressed read-only file system for Linux. It compresses files, inodes and directories, and supports block
+sizes from <samp>4</samp> KiB up to <samp>1</samp> MiB (for better compression). Several compression algorithms are supported.
+Squashfs is intended for general read-only filesystem use and in constrained block-device memory systems (e.g. embedded systems)
+where low overhead is needed.</p>
 <p>
-Since Linux kernel 4.14 <i>squashfs</i> supports <samp>GZIP</samp>,
-<samp>LZMA</samp>, <samp>LZO</samp>, <samp>LZMA2</samp>, <samp>LZ4</samp>,
-and <samp>Zstd</samp> compression.</p>
+Since Linux kernel 4.14 <i>squashfs</i> supports <samp>GZIP</samp>, <samp>LZMA</samp>, <samp>LZO</samp>, <samp>LZMA2</samp>,
+<samp>LZ4</samp>, and <samp>Zstd</samp> compression.</p>
 <p>
-Many Live CDs use <i>squashfs</i>, e.g. Arch Linux, Debian, Fedora, Gentoo
-Linux, Linux Mint, Ubuntu and other.</p>
+Many Live CDs use <i>squashfs</i>, e.g. Arch Linux, Debian, Fedora, Gentoo Linux, Linux Mint, Ubuntu and other.</p>
 
 
 
 <h5>
-<a name="ubu-deb">Ubuntu -- Debian (version names &amp; numbers)</a></h5>
+<a name="ubu-deb"></a>Ubuntu -- Debian (version names &amp; numbers)</h5>
 
 <table class="grid_2">
 <tr>
@@ -490,53 +488,74 @@ Ubuntu 20.04 LTS   Focal Fossa      Apr 23, 2020     Apr 2025     Apr 2030
 
 
 <h5>
-<a name="x86-64">x86-64</a></h5>
+<a name="user_group"></a>User/Group info</h5>
 <p>
-(based on Wikipedia article
-<a href="https://en.wikipedia.org/wiki/X86-64" target="_top">x86-64</a>)</p>
+Show me the <b>members of the specified group</b>.
+There are cmds like <code>members</code> and <code>libuser-lid</code> (or <code>lid</code>), but they are not always
+installed by default. Probably because you can find the members of the group like this:</p>
+
+<p class="cmd">getent group <span class="arg">group_name</span></p>
 <p>
-<b>64-bit</b> architecture usually means <b>x86-64</b> when we talk
-about personal computers and servers with Intel or AMD processors.</p>
+User's <b>groups</b>. The following command shows the groups that I (the current user) am the member of:</p>
+
+<p class="cmd">groups</p>
+<p>
+You can also find group membership of other users:</p>
+
+<p class="cmd">groups www-data</p>
+<p>
+(<samp>www-data</samp> is the user running Apache2)</p>
+<p>
+Another way to get user's groups:</p>
+
+<p class="cmd">id <span class="arg">username</span></p>
+<p>
+Technically, it lists user/group real/effective IDs, but you will see groups too.</p>
+<p>
+Remember that there are two types of groups:</p>
+<ul>
+<li><b>Primary group</b> is the main group that is associated with the user account. Each user is a member of <b>exactly one
+primary group</b>.</li>
+<li><b>Secondary groups</b> is used to provide additional rights, like access to the dvd/cdrom drive, etc.</li>
+</ul>
+
+
+
+<h5>
+<a name="x86-64"></a>x86-64</h5>
+<p>
+(based on Wikipedia article <a href="https://en.wikipedia.org/wiki/X86-64" target="_top">x86-64</a>)</p>
+<p>
+When we talk about PCs and servers with Intel or AMD processors, <b>x86-64</b> usually means <b>64-bit</b> architecture.</p>
 
 <img class="float_right" src="images/AMD_Opteron_2005.jpg" />
 <p>
-The original x86-64 specification was released by AMD in 2000. It was later
-implemented by Intel and VIA, but AMD K8 processor was the first CPU with
-this architecture.</p>
+The original x86-64 specification was released by AMD in 2000. It was later implemented by Intel and VIA, but AMD K8 processor was
+the first CPU with this architecture.</p>
 <p>
-<b>x86-64</b> (aka x64, x86_64, AMD64 and Intel 64) is the 64-bit version
-of the x86 instruction set. It supports vastly larger amounts of virtual
-and physical <a href="memory.html">memory</a> than 32-bit systems. It also
-provides 64-bit general-purpose registers and numerous other enhancements.
-x86-64 processors can boot in a fully backward compatible <b>legacy mode</b>,
-without 64-bit support, for 16-bit and 32-bit x86 software that requires real
-mode, or in a <b>compatibility mode</b> that allows 64-bit apps to coexist
-with 16- and 32-bit protected mode software if the 64-bit system software
-supports them. Since x86 16-bit &amp; 32-bit instruction sets remain
-implemented in hardware without any intervening emulation, these older
-executables can run with little or no performance penalty, while newer or
-recoded apps can take advantage of new features.</p>
+<b>x86-64</b> (aka x64, x86_64, AMD64 and Intel 64) is the 64-bit version of the x86 instruction set. It supports vastly larger
+amounts of virtual and physical <a href="memory.html">memory</a> than 32-bit systems. It also provides 64-bit general-purpose
+registers and numerous other enhancements. x86-64 processors can boot in a fully backward compatible <b>legacy mode</b>, without
+64-bit support, for 16-bit and 32-bit x86 software that requires real mode, or in a <b>compatibility mode</b> that allows 64-bit
+apps to coexist with 16- and 32-bit protected mode software if the 64-bit system software supports them. Since x86 16-bit &amp;
+32-bit instruction sets remain implemented in hardware without any intervening emulation, these older executables can run with
+little or no performance penalty, while newer or recoded apps can take advantage of new features.</p>
 <p>
-Intel's implementation of x86-64, known as <b>Intel 64</b>, has some minor
-differences from AMD spec. This may be important for low-level system
-programming, but regular app developers should not bother about it.</p>
+Intel's implementation of x86-64, known as <b>Intel 64</b>, has some minor differences from AMD spec. This may be important for
+low-level system programming, but regular app developers should not bother about it.</p>
 
 
 
 <h5>
 <a name="yaml">YAML</a></h5>
 <p>
-YAML is a <b>human-readable data-serialization language</b>. It is commonly
-used for configuration files and in apps where data is being stored or
-transmitted. YAML was supposed to replace XML (Extensible Markup Language) in
-config files, like those config files used in Java EE, Spring Framework, etc.
-YAML does not use XML/HTML <i>tags</i>, its syntax is shorter and simpler
-than XML's. The acronym itself means "YAML Ain't Markup Language". Recursive,
-in traditions of Open Soft.</p>
+YAML is a <b>human-readable data-serialization language</b>. It is commonly used for configuration files and in apps where data is
+being stored or transmitted. YAML was supposed to replace XML (Extensible Markup Language) in config files, like those config files
+used in Java EE, Spring Framework, etc. YAML does not use XML/HTML <i>tags</i>, its syntax is shorter and simpler than XML's. The
+acronym itself means "YAML Ain't Markup Language". Recursive, in traditions of Open Soft.</p>
 <p>
-YAML uses Python-style indentation to indicate nesting, and a more compact
-format with<samp> [] </samp>for lists and<samp> {} </samp>for maps making
-YAML 1.2 a superset of JSON.</p>
+YAML uses Python-style indentation to indicate nesting, and a more compact format with<samp> [] </samp>for lists
+and<samp> {} </samp>for maps making YAML 1.2 a superset of JSON.</p>
 
 
 
