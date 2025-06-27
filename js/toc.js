@@ -184,6 +184,7 @@ const cmds = new Array(
 "cmds_r.html#rmdir=rmdir",
 "cmds_r.html#route=route",
 "cmds_r.html#rpm=rpm",
+"cmds_r.html#rsync=rsync",
 "<a name=\"sss\"></a>",
 "cmds_s.html#sed=sed",
 "cmds_s.html#sfdisk=sfdisk",

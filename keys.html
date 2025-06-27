@@ -19,17 +19,26 @@
 <h1 class="part">
 <a name="keys">Keys &amp; key combinations</a></h1>
 <p class="center" style="color:steelblue">
-<i>(Assuming PC keyboard)</i></p>
+(for a standard PC keyboard)</p>
+
 <p class="menu">
-<a href="boot.html#hw_boot">Boot</a>&nbsp;//
-<a href="#bash_keys">Bash</a>&nbsp;//
-<a href="#commander">Midnight</a>&nbsp;//
+<a href="#bash_keys">Bash</a> |
+<a href="boot.html#hw_boot">Boot</a> |
+<a href="#chrome">Chrome</a> |
+<a href="#firefox">Firefox</a> |
 <a href="#gnome_keys">Gnome</a>
+<br>
+<a href="#commander">Midnight</a> |
+<a href="#vscode">VSCode</a>
 </p>
 
 
-<h4 class="part2">
-<a name="bash_keys">BASH</a></h4>
+
+<h2>
+<a name="bash_keys"></a>BASH</h2>
+
+<p class="center" style="font-size:116%">
+See also <a href="#gnome_term">Gnome Terminal..</a></p>
 
 <p class="fmt"><code>echo $SHELL &nbsp;&nbsp;</code> what do we have?</p>
 
@@ -39,11 +48,13 @@ have been run ...;</p>
 <p class="fmt"><a href="cmds_h.html#history"><code>history 20 &nbsp;&nbsp;</code></a> show the last 20 cmds that
 have been run ... ;</p>
 
+<p class="fmt"><a href="cmds_h.html#history"><code>history | grep rsync &nbsp;&nbsp;</code></a> show cmds with <i>rsync</i>;</p>
+
 <p class="fmt"><code>!912 &nbsp;&nbsp;</code> run command #912 from the history list;</p>
 
 <table class="grid_2" style="width:100%">
 <tr>
-<td class="grid_2_middle" style="width:6rem"><span class="keys">CTRL+C</span></td>
+<td class="grid_2_middle" style="width:7rem"><span class="keys">CTRL+C</span></td>
 <td class="grid_2_middle">kill foreground process (interrupt app/proc/task);</td></tr>
 <tr>
 <td class="grid_2_middle"><span class="keys">CTRL+Z</span></td>
@@ -108,36 +119,510 @@ have been run ... ;</p>
 
 
 
-<h4 class="part2" style="margin-top:1.5em">
-<a name="commander">Midnight Commander</a></h4>
+<h2>
+<a name="chrome"></a>Google Chrome browser</h2>
 
 <table class="grid_2" style="width:100%">
-<caption>Navigation &amp; operation</caption>
+<tr>
+<td class="grid" style="width:12rem"><span class="keys">CTRL+N</span></td>
+<td class="grid">open a new window</td></tr>
+
+<tr>
+<td class="grid"><span class="keys">CTRL+T</span></td>
+<td class="grid">open a new tab</td></tr>
+
+<tr>
+<td class="grid"><span class="keys">CTRL+F4</span></td>
+<td class="grid">close the current tab</td></tr>
+
+<tr>
+<td class="grid"><span class="keys">CTRL+SHIFT+T</span></td>
+<td class="grid">reopen closed tabs in the order they were closed</td></tr>
+
+<tr>
+<td class="grid"><span class="keys">CTRL+PgDn</span>/<span class="keys">PgUp</span></td>
+<td class="grid">jump to the next/prev open tab</td></tr>
+
+<tr>
+<td class="grid"><span class="keys">CTRL+1</span>/<span class="keys">2</span>/<span class="keys">3</span>/<span class="keys">..</span></td>
+<td class="grid">jump to a specific tab</td></tr>
+
+<tr>
+<td class="grid"><span class="keys">ALT+Home</span></td>
+<td class="grid">open your home page in the current tab</td></tr>
+
+<tr>
+<td class="grid"><span class="keys">ALT+&#8592;</span>/<span class="keys">&#8594;</span></td>
+<td class="grid">open prev/next page from your browsing history</td></tr>
+
+<tr>
+<td class="grid"><span class="keys">CTRL+SHIFT+PgUp</span><br>
+<span class="keys">CTRL+SHIFT+PgDn</span></td>
+<td class="grid">move tab left/right</td></tr>
+
+<tr>
+<td class="grid"><span class="keys">CTRL+SHIFT+J</span></td>
+<td class="grid">open developer tools (also <span class="keys">F12</span>)</td></tr>
+
+<tr>
+<td class="grid"><span class="keys">ALT+F</span></td>
+<td class="grid">open menu (i.e. Chrome menu, settings, etc)</td></tr>
+
+<tr>
+<td class="grid"><span class="keys">CTRL+F</span></td>
+<td class="grid">open "Find Bar" (also <span class="keys">F3</span>)</td></tr>
+
+<tr>
+<td class="grid"><span class="keys">CTRL+G</span></td>
+<td class="grid">jump to the next match to your Find Bar search</td></tr>
+
+<tr>
+<td class="grid"><span class="keys">CTRL+R</span></td>
+<td class="grid">reload curr page (also <span class="keys">F5</span>)</td></tr>
+
+<tr>
+<td class="grid"><span class="keys">CTRL+SHIFT+R</span></td>
+<td class="grid">reload curr page, ignore cache (also <span class="keys">SHIFT+F5</span>)</td></tr>
+
+<tr>
+<td class="grid"><span class="keys">F11</span></td>
+<td class="grid">toggle full screen mode</td></tr>
+</table>
+
+
+
+
+
+<h2>
+<a name="firefox"></a>Mozilla Firefox browser</h2>
+
+<table class="grid_2" style="width:100%">
+<tr>
+<td class="grid" style="width:12rem"><span class="keys">CTRL+Tab</span></td>
+<td class="grid">move to the next tab</td></tr>
+<tr>
+<td class="grid"><span class="keys">CTRL+T</span></td>
+<td class="grid">new tab</td></tr>
+<tr>
+<td class="grid"><span class="keys">CTRL+N</span></td>
+<td class="grid">new window</td></tr>
+<tr>
+<td class="grid"><span class="keys">CTRL+S</span></td>
+<td class="grid">save page as..</td></tr>
+<tr>
+<td class="grid"><span class="keys">CTRL+F</span></td>
+<td class="grid">find in page</td></tr>
+<tr>
+<td class="grid"><span class="keys">CTRL+D</span></td>
+<td class="grid">bookmark this page</td></tr>
+<tr>
+<td class="grid"><span class="keys">CTRL+SHIFT+Y</span></td>
+<td class="grid">downloads</td></tr>
+<tr>
+<td class="grid"><span class="keys">CTRL+SHIFT+PgDn</span><br>
+<span class="keys">CTRL+SHIFT+PgUp</span></td>
+<td class="grid">move current tab to the right/left</td></tr>
+<tr>
+<td class="grid"><span class="keys">CTRL+SHIFT+DEL</span></td>
+<td class="grid">clear recent history</td></tr>
+<tr>
+<td class="grid"><span class="keys">CTRL+SHIFT+K</span></td>
+<td class="grid">open web console</td></tr>
+<tr>
+<td class="grid"><span class="keys">CTRL+SHIFT+J</span></td>
+<td class="grid">open browser console</td></tr>
+<tr>
+<td class="grid"><span class="keys">CTRL+U</span></td>
+<td class="grid">show page source</td></tr>
+</table>
+
+
+
+
+
+<h2>
+<a name="gnome_keys"></a>Gnome Shell</h2>
+<table>
+<tr>
+<td style="width:5%"><img class="cell" style="margin-left:0" src="images/win-logo_old.png" /></td>
+<td rowspan="3">Some experts use the term <span class="keys">Super</span> key in the description of Linux key-combination. I prefer
+to call it <span class="keys">Win</span> key. On a standard PC keyboard this is a key with the MS Windows logo on it.</td></tr>
+<tr>
+<td><img class="cell" style="margin-left:0" src="images/win-logo_7.png" /></td></tr>
+<tr>
+<td><img class="cell" style="margin-left:0" src="images/win-logo_2017.png" /></td></tr>
+</table>
+
+<table class="grid_2" style="width:100%;margin-bottom:1em">
+<caption>Gnome Shell, most essential</caption>
+
+<tr>
+<td class="grid_2_middle" style="width:11rem"><span class="keys">ALT+Tab</span></td>
+<td class="grid_2_middle">switch to next app/window</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">ALT+F4</span></td>
+<td class="grid_2_middle">close current (active) window (exit app)</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">ALT+F2</span></td>
+<td class="grid_2_middle">open cmdline prompt (use <span class="keys">Esc</span> to cancel/close)</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">WIN+A</span></td>
+<td class="grid_2_middle">open apps panel (use <span class="keys">Esc</span> to cancel/close)</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">WIN+M</span></td>
+<td class="grid_2_middle">open/close messages tray (<span class="keys">Esc</span> closes too)</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">WIN+&#8593</span></td>
+<td class="grid_2_middle">max active window (also <span class="keys">ALT+F10</span>)</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">WIN+&#8595</span></td>
+<td class="grid_2_middle">unmax (restore) active window (also <span class="keys">ALT+F5</span>)</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">WIN+H</span></td>
+<td class="grid_2_middle">min[imize] (hide) active window</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">WIN+D</span></td>
+<td class="grid_2_middle">min/restore all windows (toggle switch)</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">ALT+F7</span></td>
+<td class="grid_2_middle">move current window (using arrow keys)</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">ALT+F8</span></td>
+<td class="grid_2_middle">resize current window (using arrow keys)</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">WIN+L</span></td>
+<td class="grid_2_middle">lock the screen</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">ALT+Space</span></td>
+<td class="grid_2_middle">pop-up window menu (like the right-click on titlebar)</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">PrtScrn</span></td>
+<td class="grid_2_middle">take a screenshot of the entire screen</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">SHIFT+PrtScrn</span></td>
+<td class="grid_2_middle">take a screenshot of selected area</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">Alt+PrtScrn</span></td>
+<td class="grid_2_middle">take a screenshot of a certain window</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">CTRL+ALT+→</span></td>
+<td class="grid_2_middle">switch to next workspace</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">CTRL+ALT+←</span></td>
+<td class="grid_2_middle">switch to previous workspace</td></tr>
+
+</table>
+
+
+<table class="grid_2" style="width:100%;margin-bottom:1em">
+<caption>Files browser (Nautilus)</caption>
+
+<tr>
+<td class="grid_2_middle" style="width:12rem"><span class="keys">ALT+←</td>
+<td class="grid_2_middle">change dir, go back</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">ALT+→</td>
+<td class="grid_2_middle">change dir, go forward</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">ALT+Home</td>
+<td class="grid_2_middle">change dir, go to Home dir</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">F2</td>
+<td class="grid_2_middle">rename</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">Del</td>
+<td class="grid_2_middle">move to trash</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">SHIFT+Del</td>
+<td class="grid_2_middle">delete permanently</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">CTRL+H</td>
+<td class="grid_2_middle">show hidden files in active "Files" browser</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">CTRL+T</td>
+<td class="grid_2_middle">create a new Tab in active "Files" browser</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">CTRL+PgDn</span></td>
+<td class="grid_2_middle">switch to the next Tab in active "Files" browser</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">CTRL+PgUp</span></td>
+<td class="grid_2_middle">switch to the prev Tab in active "Files" browser</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">CTRL+SHIFT+PgDn</span></td>
+<td class="grid_2_middle">move Tab to the right in active "Files" browser</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">CTRL+SHIFT+PgUp</span></td>
+<td class="grid_2_middle">move Tab to the left in active "Files" browser</td></tr>
+</table>
+
+
+<a name="gnome_term"></a>
+<table class="grid_2" style="width:100%;margin-bottom:1em">
+<caption>Gnome Terminal</caption>
+<tr>
+<td class="grid_2_middle" style="width:12rem"><span class="keys">CTRL+ALT+T</span></td>
+<td class="grid_2_middle">Start a new Gnome Terminal</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">CTRL+SHIFT+T</span></td>
+<td class="grid_2_middle">Create a new tab in active Gnome Terminal</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">CTRL+PgDn</span></td>
+<td class="grid_2_middle">Switch to the next tab in active Gnome Terminal</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">CTRL+PgUp</span></td>
+<td class="grid_2_middle">Switch to the previous tab in active Gnome Terminal</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">CTRL+SHIFT+PgDn</span></td>
+<td class="grid_2_middle">Move tab to the right in active Gnome Terminal</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">CTRL+SHIFT+PgUp</span></td>
+<td class="grid_2_middle">Move tab to the left in active Gnome Terminal</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">ALT+1</span></td>
+<td class="grid_2_middle">Switch to the tab # 1 in active Gnome Terminal</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">ALT+2</span></td>
+<td class="grid_2_middle">Switch to the tab # 2 in active Gnome Terminal</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">CTRL+SHIFT+C</span></td>
+<td class="grid_2_middle">Copy from active Gnome Terminal</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">CTRL+SHIFT+V</span></td>
+<td class="grid_2_middle">Paste into active Gnome Terminal</td></tr>
+</table>
+
+<!--
+<table class="grid_2" style="width:100%;margin-bottom:1em">
+<caption>Navigation</caption>
+<tr>
+<td class="grid_2_middle" style="width:10rem"><span class="keys">Win</span></td>
+<td class="grid_2_middle" rowspan="3" style="vertical-align:middle">Activities overview; switch between the Activities overview
+and desktop; in the overview, start typing to instantly search your apps, contacts, docs)</td></tr>
+<tr>
+<td class="grid_2_middle"><span class="keys">Win+F1</span></td></tr>
+<tr>
+<td class="grid_2_middle"><span class="keys">ALT+F1</span></td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">ALT+F2</span></td>
+<td class="grid_2_middle">command window (run console)</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">Win+N</span></td>
+<td class="grid_2_middle">focus Notification</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">ALT+ESC</span></td>
+<td class="grid_2_middle">switch between windows in the current workspace</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">ALT+SHIFT+ESC</span></td>
+<td class="grid_2_middle">switch between windows in the current workspace (reverse order)</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">Win+TAB</span></td>
+<td class="grid_2_middle">switch to the next window</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">Win+SHIFT+TAB</span></td>
+<td class="grid_2_middle">switch to the previous window</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">ALT+SHIFT+TAB</span></td>
+<td class="grid_2_middle">switch to the previous app</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">ALT+F6</span></td>
+<td class="grid_2_middle" rowspan="2">switch to the next window of the current app</td></tr>
+<tr>
+<td class="grid_2_middle"><span class="keys">Win+`</span></td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">ALT+SHIFT+`</span></td>
+<td class="grid_2_middle" rowspan="2">switch to the prev window of the current app</td></tr>
+<tr>
+<td class="grid_2_middle"><span class="keys">Win+SHIFT+`</span></td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">Win+F10</span></td>
+<td class="grid_2_middle">open the application menu on the top bar</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">CTRL+ALT+DEL</span></td>
+<td class="grid_2_middle">log out/power off (?)</td></tr>
+</table>
+
+<table class="grid_2" style="width:100%;margin-bottom:1em">
+<caption>Window management</caption>
+<tr>
+<td class="grid_2_middle" style="width:9rem"><span class="keys">ALT+F4</span></td>
+<td class="grid_2_middle">close current (active) window (exit app)</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">Win+&#8592</span></td>
+<td class="grid_2_middle">maximize a window vertically along the left side of the screen; press again to restore
+the window to its previous size; use the following key combination to switch sides</td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">Win+&#8594</span></td>
+<td class="grid_2_middle">maximize a window vertically along the right side of the screen; press again to restore
+the window to its previous size; use the previous key combination to switch sides</td></tr>
+</table>
+
+<table class="grid_2" style="width:100%;margin-bottom:1em">
+<caption>Workspace navigation</caption>
+<tr>
+<td class="grid_2_middle" style="width:14rem"><span class="keys">Win+PageDown</span></td>
+<td class="grid_2_middle" rowspan="2">switch to next workspace</td></tr>
+<tr>
+<td class="grid_2_middle"><span class="keys">CTRL+ALT+&#8595</span></td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">Win+PageUp</span></td>
+<td class="grid_2_middle" rowspan="2">switch to previous workspace</td></tr>
+<tr>
+<td class="grid_2_middle"><span class="keys">CTRL+ALT+&#8593</span></td></tr>
+
+<tr>
+<td class="grid_2_middle"><span class="keys">Win+SHIFT+PageDown</span></td>
+<td class="grid_2_middle">move window and switch to next workspace</td></tr>
+<tr>
+<td class="grid_2_middle"><span class="keys">Win+SHIFT+PageUp</span></td>
+<td class="grid_2_middle">move window and switch to prev workspace</td></tr>
+</table>
+
+<table class="grid_2" style="width:100%">
+<caption class="grid_2">Screencasts</caption>
+<tr>
+<td class="grid_2_middle" style="width:12rem"><span class="keys">CTRL+ALT+SHIFT+R</span></td>
+<td class="grid_2_middle">start/stop screen recorder</td></tr>
+</table>
+<p>
+Video will be saved in <samp>~Videos</samp> folder, file name will be <samp>Screencast*</samp>.</p>
+-->
+
+
+<h5 class="v2">Other useful Gnome Shell commands</h5>
+<p>
+Open command window (<span class="keys">ALT+F2</span>), and</p>
+<ul>
+<li>type <code> r </code>to restart Gnome Shell;</li>
+<li>type <code> rt </code>to reload Gnome Shell theme;</li>
+</ul>
+
+
+
+
+
+<h2>
+<a name="commander"></a>Midnight Commander</h2>
+
+<table class="grid_2" style="width:100%">
 
 <tr>
 <td class="grid_2" style="width:9rem"><span class="keys">CTRL+\</span></td>
 <td class="grid_2">hotlist of directories</td></tr>
-<tr>
-<td class="grid_2"><span class="keys">CTRL+PageUp</span></td>
-<td class="grid_2">move up in the dir tree (to the parent dir)</td></tr>
+
 <tr>
 <td class="grid_2"><span class="keys">CTRL+R</span></td>
 <td class="grid_2">refresh (re-read) content of the current dir</td></tr>
-<tr>
-<td class="grid_2"><span class="keys">ALT+I</span></td>
-<td class="grid_2">sync panels</td></tr>
+
 <tr>
 <td class="grid_2"><span class="keys">CTRL+U</span></td>
 <td class="grid_2">swap panels</td></tr>
+
 <tr>
 <td class="grid_2"><span class="keys">CTRL+O</span></td>
 <td class="grid_2">hide/show panels</td></tr>
+
+<tr>
+<td class="grid_2"><span class="keys">CTRL+PageUp</span></td>
+<td class="grid_2">move up (to the parent dir)</td></tr>
+
+<tr>
+<td class="grid_2"><span class="keys">ALT+I</span></td>
+<td class="grid_2">sync panels</td></tr>
+
 <tr>
 <td class="grid_2"><span class="keys">ALT+.</span></td>
 <td class="grid_2">show/hide hidden [ files and dirs ]</td></tr>
+
+<tr>
+<td class="grid_2"><span class="keys">ALT+U</span>/<span class="keys">Y</span></td>
+<td class="grid_2">move to the next/prev dir in the history</td></tr>
+
+<tr>
+<td class="grid_2"><span class="keys">SHIFT+&#8595</span>/<span class="keys">&#8593</span></td>
+<td class="grid_2">select/unselect (tag, mark) entry and move down/up</td></tr>
+
+<tr>
+<td class="grid_2"><span class="keys">ALT+C</span></td>
+<td class="grid_2">open <i>change dir</i> dialog for active panel</td></tr>
+
+</table>
+
+<table class="grid_2" style="width:100%">
+<caption>Obvious or less often used</caption>
+
+<tr>
+<td class="grid_2" style="width:9rem"><span class="keys">&#8593;</span></td>
+<td class="grid_2">move selection bar to the prev entry (also <span class="keys">CTRL+P</span>)</td></tr>
+<tr>
+<td class="grid_2"><span class="keys">&#8595;</span></td>
+<td class="grid_2">move selection bar to the next entry (also <span class="keys">CTRL+N</span>)</td></tr>
+<tr>
+<td class="grid_2"><span class="keys">PageUp</td>
+<td class="grid_2">move selection bar one page up</td></tr>
+<tr>
+<td class="grid_2"><span class="keys">PageDown</span></td>
+<td class="grid_2">move selection bar one page down (also <span class="keys">CTRL+V</span>)</td></tr>
+<tr>
+<td class="grid_2"><span class="keys">Home</span></td>
+<td class="grid_2">move selection bar to the first entry</td></tr>
+<tr>
+<td class="grid_2"><span class="keys">End</span></td>
+<td class="grid_2">move selection bar to the last entry</td></tr>
+
 <tr>
 <td class="grid_2"><span class="keys">ALT+R</span></td>
-<td class="grid_2">move selection bar to the middle of the panel (to the middle of the visible entries)</td></tr>
+<td class="grid_2">move selection bar to the middle of the visible entries</td></tr>
 <tr>
 <td class="grid_2"><span class="keys">ALT+G</span></td>
 <td class="grid_2">move selection bar to the first visible entry</td></tr>
@@ -145,26 +630,11 @@ have been run ... ;</p>
 <td class="grid_2"><span class="keys">ALT+J</span></td>
 <td class="grid_2">move selection bar to the last visible entry</td></tr>
 <tr>
-<td class="grid_2"><span class="keys">ALT+U</span></td>
-<td class="grid_2">move to the next directory in the history</td></tr>
-<tr>
-<td class="grid_2"><span class="keys">ALT+Y</span></td>
-<td class="grid_2">move to the previous directory in the history</td></tr>
-<tr>
 <td class="grid_2"><span class="keys">CTRL+S</span></td>
 <td class="grid_2">quick search</td></tr>
 <tr>
 <td class="grid_2"><span class="keys">ALT+TAB</span></td>
 <td class="grid_2">autocomplete filename, cmd, etc</td></tr>
-<tr>
-<td class="grid_2"><span class="keys">ALT+C</span></td>
-<td class="grid_2">open <i>change dir</i> dialog for active panel</td></tr>
-<tr>
-<td class="grid_2"><span class="keys">SHIFT+&#8595</span></td>
-<td class="grid_2">select/unselect (tag, mark) entry and move down (also <span class="keys">Insert</span>)</td></tr>
-<tr>
-<td class="grid_2"><span class="keys">SHIFT+&#8593</span></td>
-<td class="grid_2">select/unselect (tag, mark) entry and move up</td></tr>
 <tr>
 <td class="grid_2"><span class="keys">+</span></td>
 <td class="grid_2">select a group of files (regex can be used)</td></tr>
@@ -187,24 +657,6 @@ have been run ... ;</p>
 <td class="grid_2"><span class="keys">ALT+SHIFT+?</span></td>
 <td class="grid_2">open the <i>find file</i> dialog</td></tr>
 
-<tr>
-<td class="grid_2"><span class="keys">&#8593;</span></td>
-<td class="grid_2">move selection bar to the prev entry (also <span class="keys">CTRL+P</span>)</td></tr>
-<tr>
-<td class="grid_2"><span class="keys">&#8595;</span></td>
-<td class="grid_2">move selection bar to the next entry (also <span class="keys">CTRL+N</span>)</td></tr>
-<tr>
-<td class="grid_2"><span class="keys">PageUp</td>
-<td class="grid_2">move selection bar one page up</td></tr>
-<tr>
-<td class="grid_2"><span class="keys">PageDown</span></td>
-<td class="grid_2">move selection bar one page down (also <span class="keys">CTRL+V</span>)</td></tr>
-<tr>
-<td class="grid_2"><span class="keys">Home</span></td>
-<td class="grid_2">move selection bar to the first entry</td></tr>
-<tr>
-<td class="grid_2"><span class="keys">End</span></td>
-<td class="grid_2">move selection bar to the last entry</td></tr>
 </table>
 
 
@@ -375,249 +827,68 @@ You can get more info about <i>Midnight Commander</i> at</p>
 
 
 
-
-<h4 class="part2" style="margin-top:1.5em">
-<a name="gnome_keys">GUI (Gnome Shell)</a></h4>
-<table>
-<tr>
-<td style="width:5%"><img class="cell" style="margin-left:0" src="images/win-logo_old.png" /></td>
-<td rowspan="3">Some experts use the term <span class="keys">Super</span> key in the description of Linux key-combination. I prefer
-to call it <span class="keys">Win</span> key. On a standard PC keyboard this is a key with the MS Windows logo on it.</td></tr>
-<tr>
-<td><img class="cell" style="margin-left:0" src="images/win-logo_7.png" /></td></tr>
-<tr>
-<td><img class="cell" style="margin-left:0" src="images/win-logo_2017.png" /></td></tr>
-</table>
-
-
-<table class="grid_2" style="width:100%;margin-bottom:1em">
-<caption>Gnome Terminal</caption>
-<tr>
-<td class="grid_2_middle" style="width:10rem"><span class="keys">CTRL+ALT+T</span></td>
-<td class="grid_2_middle">Start a new Gnome Terminal</td></tr>
-
-<tr>
-<td class="grid_2_middle"><span class="keys">CTRL+SHIFT+T</span></td>
-<td class="grid_2_middle">Create a new tab in active Gnome Terminal</td></tr>
-
-<tr>
-<td class="grid_2_middle"><span class="keys">CTRL+PGDN</span></td>
-<td class="grid_2_middle">Switch to the next tab in active Gnome Terminal</td></tr>
-
-<tr>
-<td class="grid_2_middle"><span class="keys">CTRL+PGUP</span></td>
-<td class="grid_2_middle">Switch to the previous tab in active Gnome Terminal</td></tr>
-
-<tr>
-<td class="grid_2_middle"><span class="keys">CTRL+SHIFT+PGDN</span></td>
-<td class="grid_2_middle">Move tab to the right in active Gnome Terminal</td></tr>
-
-<tr>
-<td class="grid_2_middle"><span class="keys">CTRL+SHIFT+PGUP</span></td>
-<td class="grid_2_middle">Move tab to the left in active Gnome Terminal</td></tr>
-
-<tr>
-<td class="grid_2_middle"><span class="keys">ALT+1</span></td>
-<td class="grid_2_middle">Switch to the tab # 1 in active Gnome Terminal</td></tr>
-
-<tr>
-<td class="grid_2_middle"><span class="keys">ALT+2</span></td>
-<td class="grid_2_middle">Switch to the tab # 2 in active Gnome Terminal</td></tr>
-
-<tr>
-<td class="grid_2_middle"><span class="keys">CTRL+SHIFT+C</span></td>
-<td class="grid_2_middle">Copy from active Gnome Terminal</td></tr>
-
-<tr>
-<td class="grid_2_middle"><span class="keys">CTRL+SHIFT+V</span></td>
-<td class="grid_2_middle">Paste into active Gnome Terminal</td></tr>
-</table>
-
-
-<table class="grid_2" style="width:100%;margin-bottom:1em">
-<caption>Navigation</caption>
-<tr>
-<td class="grid_2_middle" style="width:10rem"><span class="keys">Win</span></td>
-<td class="grid_2_middle" rowspan="3" style="vertical-align:middle">Activities overview; switch between the Activities overview
-and desktop; in the overview, start typing to instantly search your apps, contacts, docs)</td></tr>
-<tr>
-<td class="grid_2_middle"><span class="keys">Win+F1</span></td></tr>
-<tr>
-<td class="grid_2_middle"><span class="keys">ALT+F1</span></td></tr>
-
-<tr>
-<td class="grid_2_middle"><span class="keys">ALT+F2</span></td>
-<td class="grid_2_middle">command window (run console)</td></tr>
-
-<tr>
-<td class="grid_2_middle"><span class="keys">Win+A</span></td>
-<td class="grid_2_middle">show the list of apps</td></tr>
-
-<tr>
-<td class="grid_2_middle"><span class="keys">Win+M</span></td>
-<td class="grid_2_middle">open/close the message tray</td></tr>
-
-<tr>
-<td class="grid_2_middle"><span class="keys">Win+N</span></td>
-<td class="grid_2_middle">focus Notification</td></tr>
-
-<tr>
-<td class="grid_2_middle"><span class="keys">ALT+ESC</span></td>
-<td class="grid_2_middle">switch between windows in the current workspace</td></tr>
-
-<tr>
-<td class="grid_2_middle"><span class="keys">ALT+SHIFT+ESC</span></td>
-<td class="grid_2_middle">switch between windows in the current workspace (reverse order)</td></tr>
-
-<tr>
-<td class="grid_2_middle"><span class="keys">Win+TAB</span></td>
-<td class="grid_2_middle">switch to the next window</td></tr>
-
-<tr>
-<td class="grid_2_middle"><span class="keys">Win+SHIFT+TAB</span></td>
-<td class="grid_2_middle">switch to the previous window</td></tr>
-
-<tr>
-<td class="grid_2_middle"><span class="keys">ALT+TAB</span></td>
-<td class="grid_2_middle">switch to the next app</td></tr>
-
-<tr>
-<td class="grid_2_middle"><span class="keys">ALT+SHIFT+TAB</span></td>
-<td class="grid_2_middle">switch to the previous app</td></tr>
-
-<tr>
-<td class="grid_2_middle"><span class="keys">ALT+F6</span></td>
-<td class="grid_2_middle" rowspan="2">switch to the next window of the current app</td></tr>
-<tr>
-<td class="grid_2_middle"><span class="keys">Win+`</span></td></tr>
-
-<tr>
-<td class="grid_2_middle"><span class="keys">ALT+SHIFT+`</span></td>
-<td class="grid_2_middle" rowspan="2">switch to the prev window of the current app</td></tr>
-<tr>
-<td class="grid_2_middle"><span class="keys">Win+SHIFT+`</span></td></tr>
-
-<tr>
-<td class="grid_2_middle"><span class="keys">Win+F10</span></td>
-<td class="grid_2_middle">open the application menu on the top bar</td></tr>
-
-<tr>
-<td class="grid_2_middle"><span class="keys">Win+L</span></td>
-<td class="grid_2_middle">lock the screen</td></tr>
-
-<tr>
-<td class="grid_2_middle"><span class="keys">CTRL+ALT+DEL</span></td>
-<td class="grid_2_middle">log out/power off (?)</td></tr>
-</table>
-
-
-<table class="grid_2" style="width:100%;margin-bottom:1em">
-<caption>Window management</caption>
-<tr>
-<td class="grid_2_middle" style="width:9rem"><span class="keys">ALT+F4</span></td>
-<td class="grid_2_middle">close current (active) window (exit app)</td></tr>
-
-<tr>
-<td class="grid_2_middle"><span class="keys">ALT+F5</span></td>
-<td class="grid_2_middle" rowspan="2">restore (unmaximize) active window</td></tr>
-<tr>
-<td class="grid_2_middle"><span class="keys">Win+&#8595</span></td></tr>
-
-<tr>
-<td class="grid_2_middle"><span class="keys">ALT+F7</span></td>
-<td class="grid_2_middle">move current window (using arrow keys)</td></tr>
-<tr>
-<td class="grid_2_middle"><span class="keys">ALT+F8</span></td>
-<td class="grid_2_middle">resize current window (using arrow keys)</td></tr>
-
-<tr>
-<td class="grid_2_middle"><span class="keys">ALT+F10</span></td>
-<td class="grid_2_middle" rowspan="2">maximize active window</td></tr>
-<tr>
-<td class="grid_2_middle"><span class="keys">Win+&#8593</span></td></tr>
-
-<tr>
-<td class="grid_2_middle"><span class="keys">Win+H</span></td>
-<td class="grid_2_middle">minimize (hide) active window</td></tr>
-<tr>
-<td class="grid_2_middle"><span class="keys">Win+D</span></td>
-<td class="grid_2_middle">minimize/restore (toggle) all windows</td></tr>
-<tr>
-<td class="grid_2_middle"><span class="keys">Win+&#8592</span></td>
-<td class="grid_2_middle">maximize a window vertically along the left side of the screen; press again to restore
-the window to its previous size; use the following key combination to switch sides</td></tr>
-<tr>
-<td class="grid_2_middle"><span class="keys">Win+&#8594</span></td>
-<td class="grid_2_middle">maximize a window vertically along the right side of the screen; press again to restore
-the window to its previous size; use the previous key combination to switch sides</td></tr>
-<tr>
-<td class="grid_2_middle"><span class="keys">ALT+SPACE</span></td>
-<td class="grid_2_middle">pop-up the window menu (like the right-click on the titlebar)</td></tr>
-<tr>
-<td class="grid_2_middle"><span class="keys">CTRL+T</td>
-<td class="grid_2_middle">Create a new tab in active "Files" browser</td></tr>
-</table>
-
-
-<table class="grid_2" style="width:100%;margin-bottom:1em">
-<caption>Workspace navigation</caption>
-<tr>
-<td class="grid_2_middle" style="width:14rem"><span class="keys">Win+PageDown</span></td>
-<td class="grid_2_middle" rowspan="2">switch to next workspace</td></tr>
-<tr>
-<td class="grid_2_middle"><span class="keys">CTRL+ALT+&#8595</span></td></tr>
-
-<tr>
-<td class="grid_2_middle"><span class="keys">Win+PageUp</span></td>
-<td class="grid_2_middle" rowspan="2">switch to previous workspace</td></tr>
-<tr>
-<td class="grid_2_middle"><span class="keys">CTRL+ALT+&#8593</span></td></tr>
-
-<tr>
-<td class="grid_2_middle"><span class="keys">Win+SHIFT+PageDown</span></td>
-<td class="grid_2_middle">move window and switch to next workspace</td></tr>
-<tr>
-<td class="grid_2_middle"><span class="keys">Win+SHIFT+PageUp</span></td>
-<td class="grid_2_middle">move window and switch to prev workspace</td></tr>
-</table>
-
+<h2>
+<a name="vscode"></a>VSCode</h2>
 
 <table class="grid_2" style="width:100%">
-<caption>Screenshots</caption>
+
 <tr>
-<td class="grid_2_middle" style="width:10rem"><span class="keys">PrtScrn</span></td>
-<td class="grid_2_middle">take a screenshot of the selected area (press <span class="keys">PrtScrn</span>, select area,
-press <span class="keys">Enter</span>)</td></tr>
+<td class="grid" style="width:10rem"><span class="keys">CTRL+C</span></td><td class="grid">copy selection or current line</td></tr>
+
 <tr>
-<td class="grid_2_middle"><span class="keys">Shift+PrtScrn</span></td>
-<td class="grid_2_middle">take a screenshot of the entire screen</td></tr>
+<td class="grid"><span class="keys">CTRL+X</span></td><td class="grid">cut selection or current line</td></tr>
+
 <tr>
-<td class="grid_2_middle"><span class="keys">Alt+PrtScrn</span></td>
-<td class="grid_2_middle">take a screenshot of a certain window</td></tr>
+<td class="grid"><span class="keys">CTRL+V</span></td><td class="grid">paste</td></tr>
+
+<tr>
+<td class="grid"><span class="keys">CTRL+L</span></td><td class="grid">select current line</td></tr>
+
+<tr>
+<td class="grid"><span class="keys">ALT+&#8593</span>/<span class="keys">&#8595</span></td>
+<td class="grid">move line up/down</td></tr>
+
+<tr>
+<td class="grid"><span class="keys">CTRL+/</span></td><td class="grid">comment out line</td></tr>
+
+<tr>
+<td class="grid"><span class="keys">CTRL+O</span>/<span class="keys">S</span>/<span class="keys">N</span></td>
+<td class="grid">open/save/new file</td></tr>
+
+<tr>
+<td class="grid"><span class="keys">CTRL+SHIFT+S</span></td><td class="grid">save as..</td></tr>
+
+<tr>
+<td class="grid"><span class="keys">CTRL+SHIFT+T</span></td><td class="grid">reopen last closed</td></tr>
+
+<tr>
+<td class="grid"><span class="keys">CTRL+SHIFT+K</span></td><td class="grid">delete the current line</td></tr>
+
+<tr>
+<td class="grid"><span class="keys">CTRL+]</span>/<span class="keys">[</span></td>
+<td class="grid">indent/outdent line</td></tr>
+
+<tr>
+<td class="grid"><span class="keys">CTRL+\</span></td><td class="grid">split the editor widow</td></tr>
+
+<tr>
+<td class="grid"><span class="keys">CTRL+W</span></td><td class="grid">close the current editor window</td></tr>
+
+<tr>
+<td class="grid"><span class="keys">CTRL+1</span>/<span class="keys">2</span>/<span class="keys">3</span> .. </td>
+<td class="grid">move to editor's pane (tab) # 1, 2, 3, ..</td></tr>
+
+<tr>
+<td class="grid"><span class="keys">CTRL+&#8594</span>/<span class="keys">&#8592</span></td>
+<td class="grid">move to next/prev pane</td></tr>
+
+<tr>
+<td class="grid"><span class="keys">CTRL+`</span></td><td class="grid">show integrated terminal</td></tr>
+
+<tr>
+<td class="grid"><span class="keys">CTRL+,</span></td><td class="grid">open app settings</td></tr>
+
 </table>
-<p>
-When you make a screenshot, the image is auto saved in your <samp>~Pictures/Screenshots/</samp> folder, the file name will be
-<samp>Screenshot*</samp>.</p>
-
-<!--
-<table class="grid_2" style="width:100%">
-<caption class="grid_2">Screencasts</caption>
-<tr>
-<td class="grid_2_middle" style="width:12rem"><span class="keys">CTRL+ALT+SHIFT+R</span></td>
-<td class="grid_2_middle">start/stop screen recorder</td></tr>
-</table>
-<p>
-Video will be saved in <samp>~Videos</samp> folder, file name will be <samp>Screencast*</samp>.</p>
--->
-
-
-<h5 class="v2">Other useful Gnome Shell commands</h5>
-<p>
-Open command window (<span class="keys">ALT+F2</span>), and</p>
-<ul>
-<li>type <code> r </code>to restart Gnome Shell;</li>
-<li>type <code> rt </code>to reload Gnome Shell theme;</li>
-</ul>
 
 <!--
 sudo apt install kazam
@@ -720,7 +991,6 @@ sudo apt install kazam
 <td class="grid"><span class="keys">Ctrl&nbsp;+&nbsp;Q</span></td>
 <td class="grid">quit application</td></tr>
 </table>
-
 -->
 
 </div>

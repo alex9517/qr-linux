@@ -23,12 +23,13 @@
 <a href="#rm">rm</a>&nbsp;|
 <a href="#rmdir">rmdir</a>&nbsp;|
 <a href="#route">route</a>&nbsp;|
-<a href="#rpm">rpm</a></p>
+<a href="#rpm">rpm</a>&nbsp;|
+<a href="#rsync">rsync</a></p>
 </div>
 
 
 
-<p class="cmdname"><a name="rename">rename</a></p>
+<p class="cmdname"><a name="rename"></a>rename</p>
 <p>
 can be used to rename multiple files. In the past it was available out of
 the box, but in Ubuntu 19.04 it is not installed by default, and probably
@@ -149,7 +150,7 @@ is active, do not overwrite symlinks pointing to existing targets;</p>
 
 
 
-<p class="cmdname"><a name="renice">renice</a></p>
+<p class="cmdname"><a name="renice"></a>renice</p>
 <p>
 alters the scheduling priority of one or more running processes.</p>
 
@@ -176,7 +177,7 @@ is from 0 to 20.</p>
 
 
 
-<p class="cmdname"><a name="rm">rm</a></p>
+<p class="cmdname"><a name="rm"></a>rm</p>
 <p>
 removes files and directories, though does not remove dirs by default.</p>
 
@@ -246,7 +247,7 @@ is on a file system different from that of the corresponding cmdline arg;</p>
 
 
 
-<p class="cmdname"><a name="rmdir">rmdir</a></p>
+<p class="cmdname"><a name="rmdir"></a>rmdir</p>
 <p>
 removes empty directories.</p>
 
@@ -273,7 +274,7 @@ that path name;</p>
 
 
 
-<p class="cmdname_dep"><a name="route">route</a></p>
+<p class="cmdname_dep"><a name="route"></a>route</p>
 <p class="dep">Deprecated ?</p>
 <p>
 manipulates the kernel's IP routing tables (mainly to set up the static routes). When <code>add</code> or <code>del</code> are
@@ -418,7 +419,9 @@ over this route to <kbd>n</kbd> bytes (default is MTU minus headers);</p>
 
 
 
-<p class="cmdname"><a name="rpm">rpm</a></p>
+
+
+<p class="cmdname"><a name="rpm"></a>rpm</p>
 <p>
 (<b>Red Hat Package Manager</b>) is used to install, update,
 remove (erase), query, verify and build individual software packages.</p>
@@ -638,6 +641,75 @@ rpm database.</p>
 <p class="fmtc"><code>--nosize</code>, <code>--nouser</code>,
 <code>--nogroup</code>, <code>--nomtime</code>, <code>--nomode</code></p>
 <p class="desc">don't verify the corresponding file attribute;</p>
+
+
+
+
+
+<p class="cmdname"><a name="rsync"></a>rsync</p>
+<p>
+is a fast and versatile file copying tool. It can copy locally, to/from another host over any <b>remote shell</b>, or to/from a
+<b>remote rsync daemon</b>. It has a large number of options that control every aspect of its behavior and permit very flexible
+specification of the set of files to be copied. It uses a delta-transfer algorithm to reduce the amount of data sent over the net
+(only differences between the source and target files). Consider <code>~</code> as an advanced copy cmd that can be used
+for backups and mirroring.</p>
+
+<p class="cmd">rsync --help</p>
+<p class="cmd">rsync --version</p>
+
+<p class="cmdc">rsync -av /home/alex/Music/ /home/alex/media/media/alex/Transcend-1/Music</p>
+<p class="desc">(<b>local</b>) copy recursively files and dirs from <samp>/home/alex/Music/</samp> to USB flash drive; it's
+supposed that the <samp>Music</samp> dir on the flash drive already exists; if it is empty, files will be copied, subdirs created,
+etc; if it already contains an earlier version of the source dir, then only new files will be copied, the existing files can be
+updated if the source has newer versions, and files that were deleted fron the source, will be removed; <b>Note!</b> The target
+path depends on how you access that USB flash drive!</p>
+
+<p class="cmdc">rsync -a SomeTVshow.s01e0* alex@ws4:tmp/</p>
+<p class="desc">(<b>local &#8594; remote</b>) copy all matched files from the current dir on the local system to the remote host
+<samp>ws4</samp>; it's supposed that user named <samp>alex</samp> has an account on the remote host, and the user's home dir
+(<samp>/home/alex</samp>) has subdir <samp>tmp</samp>;</p>
+
+<p class="cmdc">rsync -auv --delete alex@$REMOTE_HOST:public_html/dict public_html</p>
+<p class="desc">(<b>remote &#8594; local</b>) copy files from the remote host to the local system with the similar dir struct
+(i.e. both have <samp>/home/alex/public_html/dict</samp>); older files will be updated; files that were removed at the remote
+system, will be deleted;</p>
+<p>
+There are many options but you don't have to remember them all. In the examples above:</p>
+<ul>
+<li><code>-a</code> or <code>--archive</code>: means <i>archive mode</i>; this is actually the set of misc options
+<code>-rlptgoD</code>: recursive, copy symlinks as symlinks, preserve permissions, preserve modification times, preserve group,
+preserve owner, preserve device files; the last two options are available to super-user only (?);</li>
+<li><code>--delete</code>: delete extraneous files from dest dirs;</li>
+<li><code>-u</code> or <code>--update</code>: skip files that are newer on the receiver;</li>
+<li><code>-v</code> or <code>--verbose</code> ... ;</li>
+<li><code>-h</code> or <code>--help</code> ... (in some contexts <code>-h</code> means <i>human-readable</i>);</li>
+<li><code>-V</code> or <code>--version</code>: show version plus other info and exit;</li>
+</ul>
+
+
+
+<h5>About remote hosts</h5>
+<p>
+There are two ways for <code>rsync</code> to transfer files from host to host:</p>
+<ul>
+<li>the remote-shell, which is <code>ssh</code> (must be installed on both systems);</li>
+<li>rsync daemon (<code>rsync</code> started on remote host with <code>--daemon</code> option);</li>
+</ul>
+<p>
+Whatever you choose, you have to install <code>rsync</code> (unless it's installed already):</p>
+
+<p class="cmdc">sudo apt install rsync</p>
+<p class="or">or</p>
+<p class="cmd">sudo apt install rsync -y</p>
+<p>
+The visible diff in use of <i>ssh</i> and <i>rsync daemon</i> is <samp>:</samp> and <samp>::</samp> in <i>rsync</i> cmd after
+the host name. I prefer <i>ssh</i> (see the last two examples above: both have <samp>:</samp>)</p>
+<p>
+In case you did not install <i>ssh</i> yet,</p>
+
+<p class="cmd">sudo apt install openssh-server</p>
+<p>
+Check firewalls: requests for TCP port 22 must not be blocked!</p>
 
 </div>
 

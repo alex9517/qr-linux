@@ -580,6 +580,14 @@ used in combination, the decision is based on the maximum of these times.</p>
 provides a dynamic real-time view of running system
 (see also <a href="cmds_h.html#htop">htop</a>).</p>
 
+<p class="cmd">top</p>
+
+<p class="cmdc">top -o %MEM</p>
+<p class="desc">sort by memory use, heaviest consumers first;</p>
+
+<p class="cmdc">top -o %MEM -n 1 | head -n 17</p>
+<p class="desc"> show top ten by memory use;</p>
+
 <p class="fmt"><code>top&nbsp;</code>[<kbd>options</kbd>]</p>
 
 

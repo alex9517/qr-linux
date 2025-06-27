@@ -187,10 +187,8 @@ You can also set/change label with
 
 <p class="cmdname"><a name="env">env</a></p>
 <p>
-sets each <kbd>name</kbd> to <kbd>value</kbd> in the environment and runs
-<kbd>cmd</kbd>. If <kbd>cmd</kbd> is missing, <code>~</code> outputs
-the resulting env. The use of <code>-</code> has the same effect as
-the use of <code>-i</code> option.</p>
+sets each <kbd>name</kbd> to <kbd>value</kbd> in the environment and runs <kbd>cmd</kbd>. If <kbd>cmd</kbd> is missing,
+<code>~</code> outputs the resulting env. The use of <code>-</code> has the same effect as the use of <code>-i</code> option.</p>
 
 <p class="fmt"><code>env&nbsp;</code>[<kbd>options</kbd>] [<code>-</code>][<kbd>name</kbd><code>=</code><kbd>value</kbd>]<kbd>&nbsp;...&nbsp;</kbd>[<kbd>cmd&nbsp;</kbd>[<kbd>arg</kbd>]<kbd>&nbsp;...</kbd>]</p>
 
@@ -200,7 +198,8 @@ the use of <code>-i</code> option.</p>
 <p class="cmdc">env</p>
 <p class="or">or (probably better)</p>
 <p class="cmdc">env | less</p>
-<p class="desc">outputs the current env settings (usually it's a long list);</p>
+<p class="desc">outputs the current env settings (usually it's a long list); you can also use <code>printenv</code> or
+<code>set</code>;</p>
 
 
 
@@ -214,6 +213,49 @@ the use of <code>-i</code> option.</p>
 <p class="fmtc"><code>-u</code> <kbd>name</kbd>,
 <code>--unset=</code><kbd>name</kbd></p>
 <p class="desc">remove variable from the environment;</p>
+
+
+
+<h5>About environment variables</h5>
+<p>
+Remember that [ Linux ] env vars are case-sensitive, and the situation with env vars is a little bit complicated. First of all,
+in most cases env vars are uppercase, with words joined by underscore, e.g. <samp>JAVA_HOME</samp>. There are:</p>
+<ul>
+<li><b>system global</b> (aka <b>system-wide</b>) environment variables;</li>
+<li><b>user's global</b> (aka <p>per user</b>) env vars available to all user's processes;</li>
+<li><b>user's local</b> (aka <b>shell-specific</b> or <b>per session</b>) env vars available to the current process only; they can
+be lowercase (?);</li>
+</ul>
+<p>
+The <samp>/etc/environment</samp> file is used to set up system-wide env vars.</p>
+<p>
+The <samp>/etc/profile</samp> initializes variables for login shells only.</p>
+<p>
+The PAM (Linux Pluggable Authentication Modules) module <samp>pam_env</samp> loads the variables to be set in the environment from
+the following files in order: <samp>/etc/security/pam_env.conf</samp> and <samp>/etc/environment</samp>. These files are read
+before <samp>~/.profile</samp>, <samp>~/.bash_profile</samp>.</p>
+<p>
+To reference env var, prefix it with <samp>$</samp>, e.g.</p>
+
+<p class="cmd">echo $PATH</p>
+<p>
+To set a <b>user's global env var</b>, use:</p>
+
+<p class="fmt"><code>export </code><kbd>varname=value</kbd></p>
+<p>
+To set a <b>user's local env var</b>, use:</p>
+
+<p class="fmtc"><kbd>varname=value</kbd></p>
+<p class="or">or</p>
+<p class="fmt"><code>set </code><kbd>varname=value</kbd></p>
+<p>
+To unset a local env var,</p>
+
+<p class="fmtc"><kbd>varname=</kbd></p>
+<p class="or">or</p>
+<p class="fmt"><code>unset </code><kbd>varname</kbd></p>
+
+
 
 
 
